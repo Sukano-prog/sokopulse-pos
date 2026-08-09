@@ -425,9 +425,9 @@ function openDB() {
                 const store = db.createObjectStore('customers', { keyPath: 'id', autoIncrement: true });
                 store.createIndex('phone', 'phone', { unique: true });
                 store.createIndex('email', 'email', { unique: false });
+            }
             if (!db.objectStoreNames.contains("settings")) {
                 db.createObjectStore("settings", { keyPath: "key" });
-            }
             }
         };
         req.onsuccess = e => resolve(e.target.result);
