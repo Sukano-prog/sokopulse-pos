@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head><title>Fix Database - Create Customers Store</title></head>
+<body>
+<h2>🔧 Creating Missing Stores</h2>
+<div id="result"></div>
+<script>
+function fixDB() {
+    const result = document.getElementById('result');
+    result.innerHTML = '⏳ Opening database...';
+    
+    // Open with version 7 to trigger upgrade
+    const req = indexedDB.open('SokoPulsePOS', 7);
+    
+    req.onupgradeneeded = function(e) {
+        const db = e.target.result;
+        let created = [];
+        
+        if (!db.objectStoreNames.contains('customers')) {
+            const store = db.createObjectStore('customers', { keyPath: 'id', autoIncrement: true });
+            store.createIndex('phone', 'phone', { unique: false });
+            store.createIndex('email', 'email', { unique: false });
+            store.createIndex('name', 'name', { unique: false });
+            created.push('customers');
+            console.log('✅ Created customers store');
+        }
+        
+        if (!db.objectStoreNames.contains('settings')) {
+            db.createObjectStore('settings', { keyPath: 'key' });
+            created.push('settings');
+            console.log('✅ Created settings store');
+        }
+        
+        if (created.length > 0) {
+            result.innerHTML = '✅ Created stores: ' + created.join(', ') + '<br><br>✅ Database upgraded to version 7';
+        } else {
+            result.innerHTML = '✅ All stores already exist';
+        }
+    };
+    
+    req.onsuccess = function(e) {
+        const db = e.target.result;
+        const stores = Array.from(db.objectStoreNames);
+        result.innerHTML += '<br><br>📋 Available stores: ' + stores.join(', ');
+        result.innerHTML += '<br><br><a href="customers.html">👤 Go to Customers</a> | <a href="pos.html">🛒 Go to POS</a>';
+        db.close();
+    };
+    
+    req.onerror = function(e) {
+        result.innerHTML = '❌ Error: ' + e.target.error;
+    };
+}
+
+fixDB();
+</script>
+</body>
+</html>
