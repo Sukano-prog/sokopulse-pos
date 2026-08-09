@@ -468,7 +468,27 @@ function renderReturns() {
 async function loadOrdersForDropdown() {
     try {
         var db = await openDB();
-        allOrdersForDropdown = await dbGetAll(db, 'orders');
+        var allOrders = await dbGetAll(db, 'orders');
+        // Filter out orders that are fully returned
+        allOrdersForDropdown = allOrders.filter(function(o) {
+            // If order status is 'returned' or 'fully_returned', exclude it
+            if (o.status === 'returned' || o.status === 'fully_returned') {
+                return false;
+            }
+            // Check if all items have been returned
+            var items = o.items || [];
+            var returnedItems = o.returned_items || [];
+            // If no items, include it (shouldn't happen)
+            if (items.length === 0) return true;
+            // Check if total quantity equals returned quantity
+            var totalQty = items.reduce(function(sum, item) { return sum + (item.qty || 1); }, 0);
+            var returnedQty = returnedItems.reduce(function(sum, item) { return sum + (item.qty || 1); }, 0);
+            // If all items are returned, exclude the order
+            if (totalQty > 0 && returnedQty >= totalQty) {
+                return false;
+            }
+            return true;
+        });
         allOrdersForDropdown.sort(function(a, b) { return new Date(b.date) - new Date(a.date); });
         console.log('📋 Orders loaded for dropdown:', allOrdersForDropdown.length);
     } catch(e) {
