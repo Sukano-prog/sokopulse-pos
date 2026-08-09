@@ -109,6 +109,18 @@
             transition: all 0.15s;
         }
         .btn-export:hover { background: #e2e8f0; }
+        .btn-bulk {
+            padding: 10px 18px;
+            background: #8b5cf6;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .btn-bulk:hover { background: #7c3aed; transform: translateY(-2px); }
 
         .status-badge {
             padding: 3px 12px;
@@ -366,7 +378,7 @@
                     </select>
                     <button class="btn-receive" onclick="openReceiveModal()">📥 Receive Stock</button>
                     <button class="btn-adjust" onclick="openAdjustModal()">📊 Adjust Stock</button>
-                    <button class="btn-adjust" onclick="openBulkAdjust()" style="background:#8b5cf6;color:white;">📊 Bulk Adjust</button>
+                    <button class="btn-bulk" onclick="openBulkAdjust()">📊 Bulk Adjust</button>
                     <button class="btn-export" onclick="exportStock()">📤 Export</button>
                 </div>
 
