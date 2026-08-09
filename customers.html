@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script src="db.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Customers - SokoPulse</title>
@@ -105,7 +106,6 @@
         .empty-state .empty-icon { font-size: 48px; margin-bottom: 12px; }
         .empty-state h3 { color: #334155; font-weight: 600; }
     </style>
-    <script src="js/printer.js"></script>
 </head>
 <body>
 <div class="app">
@@ -207,7 +207,8 @@
     </div>
 </div>
 
-<script src="db.js"></script>
+
+
 <script>
 
 // ===== ALL FUNCTIONS =====
@@ -374,6 +375,7 @@ function renderCustomers() {
 }
 async function saveCustomer(e) {
     e.preventDefault();
+    const editId = document.getElementById("editId").value;
     const data = {
         name: document.getElementById("custName").value.trim(),
         phone: document.getElementById("custPhone").value.trim(),
@@ -395,13 +397,19 @@ async function saveCustomer(e) {
         const store = tx.objectStore("customers");
         
         await new Promise((resolve, reject) => {
-            const request = store.add(data);
+            let request;
+            if (editId) {
+                data.id = parseInt(editId);
+                request = store.put(data);
+            } else {
+                request = store.add(data);
+            }
             request.onsuccess = () => resolve();
             request.onerror = () => reject(request.error);
         });
         
         closeModal();
-        alert("✅ Customer added successfully");
+        alert(editId ? "✅ Customer updated successfully" : "✅ Customer added successfully");
         await loadCustomers();
     } catch(e) {
         alert("❌ Error: " + e.message);
@@ -409,7 +417,8 @@ async function saveCustomer(e) {
     }
 }
 </script>
-<script src="db.js"></script>
+
+
 <script>
 // ===== LOAD STORE NAME =====
 
@@ -541,7 +550,8 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 }
 </style>
-<script src="db.js"></script>
+
+
 <script>
 // ===== BULK EXPORT CUSTOMERS =====
 function exportCustomers() {
@@ -565,7 +575,8 @@ function exportCustomers() {
     alert('✅ Customers exported!');
 }
 </script>
-<script src="db.js"></script>
+
+
 <script>
 // ===== ACTIVATION CHECK =====
 if (localStorage.getItem('activated') !== 'true') {
