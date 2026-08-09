@@ -303,6 +303,7 @@
     </div>
 </div>
 
+<script src="db.js"></script>
 <script>
 function isAdmin() {
     try {
@@ -313,27 +314,7 @@ function isAdmin() {
     }
 }
 // ===== DATABASE FUNCTIONS =====
-function openDB() {
-    return new Promise((resolve, reject) => {
-        const req = indexedDB.open("SokoPulsePOS", 6);
-        req.onsuccess = function(e) { resolve(e.target.result); };
-        req.onerror = function(e) { reject(e.target.error); };
-    });
-}
 
-function dbGetAll(db, storeName) {
-    return new Promise((resolve, reject) => {
-        if (!db.objectStoreNames.contains(storeName)) {
-            resolve([]);
-            return;
-        }
-        const tx = db.transaction(storeName, "readonly");
-        const store = tx.objectStore(storeName);
-        const req = store.getAll();
-        req.onsuccess = function() { resolve(req.result); };
-        req.onerror = function() { reject(req.error); };
-    });
-}
 
 // ============================================================
 // RETURNS - COMPLETE SCRIPT
@@ -729,6 +710,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 </body>
 </html>
+<script src="db.js"></script>
 <script>
 function isAdmin() {
     try {
@@ -945,6 +927,7 @@ function logAction(action, details) {
     <span id="returnsDateInfo" style="font-size:11px;color:#94a3b8;margin-left:auto;"></span>
 </div>
 
+<script src="db.js"></script>
 <script>
 function isAdmin() {
     try {

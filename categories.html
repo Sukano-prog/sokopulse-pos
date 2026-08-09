@@ -145,6 +145,7 @@
     </div>
 </div>
 
+<script src="db.js"></script>
 <script>
 let categories = [];
 let products = [];
@@ -330,34 +331,9 @@ function logout() {
     }
 }
 
-function openDB() {
-    return new Promise((resolve, reject) => {
-        const req = indexedDB.open('SokoPulsePOS', 6);
-        req.onupgradeneeded = function(e) {
-            const db = e.target.result;
-            if (!db.objectStoreNames.contains('categories')) {
-                db.createObjectStore('categories', { keyPath: 'id', autoIncrement: true });
-            }
-        };
-        req.onsuccess = e => resolve(e.target.result);
-        req.onerror = e => reject(e.target.error);
-    });
-}
 
-function dbGetAll(db, storeName) {
-    return new Promise((resolve, reject) => {
-        if (!db.objectStoreNames.contains(storeName)) {
-            resolve([]);
-            return;
-        }
-        const tx = db.transaction(storeName, 'readonly');
-        const store = tx.objectStore(storeName);
-        const req = store.getAll();
-        req.onsuccess = () => resolve(req.result);
-        req.onerror = () => reject(req.error);
-    });
-}
 </script>
+<script src="db.js"></script>
 <script>
 // ===== LOAD STORE NAME =====
 async function loadStoreName() {
@@ -503,6 +479,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 }
 </style>
+<script src="db.js"></script>
 <script>
 // ===== ACTIVATION CHECK =====
 if (localStorage.getItem('activated') !== 'true') {

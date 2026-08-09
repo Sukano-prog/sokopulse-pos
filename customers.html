@@ -207,6 +207,7 @@
     </div>
 </div>
 
+<script src="db.js"></script>
 <script>
 
 // ===== ALL FUNCTIONS =====
@@ -271,15 +272,6 @@ function logout() {
     if (confirm('Logout?')) { localStorage.removeItem('pos_user'); window.location.href = 'index.html'; }
 }
 
-function dbGetAll(db, storeName) {
-    return new Promise((resolve, reject) => {
-        const tx = db.transaction(storeName, 'readonly');
-        const store = tx.objectStore(storeName);
-        const req = store.getAll();
-        req.onsuccess = () => resolve(req.result);
-        req.onerror = () => reject(req.error);
-    });
-}
 
 // ===== DOM CONTENT LOADED =====
 
@@ -416,25 +408,8 @@ async function saveCustomer(e) {
         console.error(e);
     }
 }
-function openDB() {
-    return new Promise((resolve, reject) => {
-        const req = indexedDB.open('SokoPulsePOS', 6);
-        req.onupgradeneeded = function(e) {
-            const db = e.target.result;
-            if (!db.objectStoreNames.contains('customers')) {
-                const store = db.createObjectStore('customers', { keyPath: 'id', autoIncrement: true });
-                store.createIndex('phone', 'phone', { unique: true });
-                store.createIndex('email', 'email', { unique: false });
-            }
-            if (!db.objectStoreNames.contains("settings")) {
-                db.createObjectStore("settings", { keyPath: "key" });
-            }
-        };
-        req.onsuccess = e => resolve(e.target.result);
-        req.onerror = e => reject(e.target.error);
-    });
-}
 </script>
+<script src="db.js"></script>
 <script>
 // ===== LOAD STORE NAME =====
 
@@ -566,6 +541,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 }
 </style>
+<script src="db.js"></script>
 <script>
 // ===== BULK EXPORT CUSTOMERS =====
 function exportCustomers() {
@@ -589,6 +565,7 @@ function exportCustomers() {
     alert('✅ Customers exported!');
 }
 </script>
+<script src="db.js"></script>
 <script>
 // ===== ACTIVATION CHECK =====
 if (localStorage.getItem('activated') !== 'true') {

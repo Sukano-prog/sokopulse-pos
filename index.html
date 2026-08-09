@@ -251,7 +251,8 @@
 </head>
 <body>
     <!-- ===== ACTIVATION CHECK ===== -->
-    <script>
+    <script src="db.js"></script>
+<script>
         if (localStorage.getItem("activated") !== "true") {
             window.location.href = "activation.html";
         }
@@ -309,6 +310,7 @@
     </div>
 </div>
 
+<script src="db.js"></script>
 <script>
     // ===== CHECK ACTIVATION =====
     if (localStorage.getItem("activated") !== "true") {
@@ -433,6 +435,7 @@ function toggleSidebar() {
 
 </body>
 </html>
+<script src="db.js"></script>
 <script>
     // ===== CHECK ACTIVATION =====
     if (localStorage.getItem("activated") !== "true") {
@@ -449,6 +452,7 @@ function checkSession() {
     }
 }
 </script>
+<script src="db.js"></script>
 <script>
 // ===== ACTIVATION CHECK =====
 (function() {
@@ -457,6 +461,7 @@ function checkSession() {
     }
 })();
 </script>
+<script src="db.js"></script>
 <script>
 // ===== LICENSE EXPIRY CHECK =====
 function checkLicenseExpiry() {

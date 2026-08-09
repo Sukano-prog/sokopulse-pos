@@ -267,6 +267,7 @@
     </div>
 </div>
 
+<script src="db.js"></script>
 <script>
 // ============================================================
 // SOKOPULSE POS - COMPLETE SCRIPT
@@ -286,27 +287,7 @@ var allCustomers = [];
 var orderNote = '';
 
 // ===== DB HELPERS =====
-function openDB() {
-    return new Promise(function(resolve, reject) {
-        var req = indexedDB.open('SokoPulsePOS', 6);
-        req.onsuccess = function(e) { resolve(e.target.result); };
-        req.onerror = function(e) { reject(e.target.error); };
-    });
-}
 
-function dbGetAll(db, storeName) {
-    return new Promise(function(resolve, reject) {
-        if (!db.objectStoreNames.contains(storeName)) {
-            resolve([]);
-            return;
-        }
-        var tx = db.transaction(storeName, 'readonly');
-        var store = tx.objectStore(storeName);
-        var req = store.getAll();
-        req.onsuccess = function() { resolve(req.result); };
-        req.onerror = function() { reject(req.error); };
-    });
-}
 
 function dbAdd(db, storeName, data) {
     return new Promise(function(resolve, reject) {
