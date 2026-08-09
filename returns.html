@@ -901,18 +901,24 @@ async function updateReturnStatus(id, status) {
             }
             
             // 4. LOG STOCK MOVEMENT
+            // Calculate total quantity returned
+            var totalQty = 0;
+            for (var j = 0; j < items.length; j++) {
+                totalQty += (items[j].qty || 1);
+            }
+            
             var movement = {
                 product_id: 0,
                 product_name: 'Return - ' + ret.order_number,
                 type: 'return',
-                quantity: 0,
+                quantity: totalQty,
                 previous_stock: 0,
                 new_stock: 0,
                 reason: 'Return approved: ' + ret.reason,
                 reference: ret.order_number,
                 date: new Date().toISOString(),
                 user: ret.user || 'System',
-                notes: 'Return of ' + items.length + ' items | Total: KES ' + ret.total.toFixed(2)
+                notes: 'Return of ' + items.length + ' items (' + totalQty + ' units) | Total: KES ' + ret.total.toFixed(2)
             };
             await dbAdd(db, 'stock_movements', movement);
             console.log('📊 Stock movement logged for return');
