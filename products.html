@@ -507,6 +507,17 @@ let categories = [];
 function openDB() {
     return new Promise((resolve, reject) => {
         const req = indexedDB.open('SokoPulsePOS', 6);
+        req.onupgradeneeded = function(e) {
+            const db = e.target.result;
+            if (!db.objectStoreNames.contains('products')) {
+                const store = db.createObjectStore('products', { keyPath: 'id', autoIncrement: true });
+                store.createIndex('name', 'name', { unique: false });
+                store.createIndex('category', 'category', { unique: false });
+                store.createIndex('barcode', 'barcode', { unique: false });
+                store.createIndex('price', 'price', { unique: false });
+                console.log('✅ Created products store');
+            }
+        };
         req.onsuccess = e => resolve(e.target.result);
         req.onerror = e => reject(e.target.error);
     });
