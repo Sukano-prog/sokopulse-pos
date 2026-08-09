@@ -507,6 +507,38 @@ function filterByCategory(categoryId) {
 }
 
 // ===== CART FUNCTIONS =====
+
+function addToCartBulk(productId) {
+    var product = products.find(function(p) { return p.id === productId; });
+    if (!product) return;
+    var qtyInput = document.getElementById('bulk-qty-' + productId);
+    var qty = parseInt(qtyInput.value) || 1;
+    if (qty <= 0) { alert('Please enter a valid quantity'); return; }
+    if (qty > product.current_stock) {
+        alert('❌ Not enough stock! Available: ' + product.current_stock);
+        return;
+    }
+    // Add the product multiple times or once with quantity
+    var price = mode === 'retail' ? (product.retail_price || product.selling_price) : (product.wholesale_price || product.selling_price);
+    var existing = cart.find(function(item) { return item.id === productId && item.mode === mode; });
+    if (existing) {
+        existing.qty += qty;
+    } else {
+        cart.push({
+            id: productId,
+            name: product.name,
+            price: price,
+            qty: qty,
+            discount: 0,
+            maxStock: product.current_stock,
+            mode: mode
+        });
+    }
+    renderCart();
+    saveCart();
+}
+
+
 function addToCart(productId) {
     var product = products.find(function(p) { return p.id === productId; });
     if (!product) return;
