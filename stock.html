@@ -569,13 +569,23 @@ async function loadStockData() {
         products = await dbGetAll(db, 'products');
         movements = await dbGetAll(db, 'stock_movements');
         console.log('📊 Stock data loaded - Products:', products.length, 'Movements:', movements.length);
+        console.log('📊 Calling renderStats immediately...');
         renderStats();
         renderProducts();
         populateProductSelects();
-        // Force stats card update
+        // Force stats card update multiple times to ensure it updates
         setTimeout(function() {
+            console.log('📊 Forcing stats refresh (100ms)...');
             renderStats();
         }, 100);
+        setTimeout(function() {
+            console.log('📊 Forcing stats refresh (500ms)...');
+            renderStats();
+        }, 500);
+        setTimeout(function() {
+            console.log('📊 Forcing stats refresh (1000ms)...');
+            renderStats();
+        }, 1000);
     } catch(e) {
         console.error('Error loading stock data:', e);
         document.getElementById('stockBody').innerHTML = `<tr><td colspan="9" style="text-align:center;padding:40px;color:#ef4444;">Error loading data</td></tr>`;
