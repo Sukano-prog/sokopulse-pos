@@ -271,6 +271,11 @@ function closeModal() {
 }
 
 async function deleteCustomer(id) {
+    const user = JSON.parse(localStorage.getItem('pos_user') || '{}');
+    if (user.role !== 'admin') {
+        alert('❌ Only admins can delete customers');
+        return;
+    }
     if (!confirm("Delete this customer?")) return;
     try {
         const db = await openDB();

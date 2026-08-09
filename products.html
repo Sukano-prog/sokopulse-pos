@@ -493,6 +493,7 @@
         </div>
     </div>
 </div>
+
 <script src="db.js"></script>
 <script>
 // ============================================================
@@ -820,6 +821,11 @@ async function saveProduct(e) {
     }
 }
 async function deleteProduct(id) {
+    const user = JSON.parse(localStorage.getItem('pos_user') || '{}');
+    if (user.role !== 'admin') {
+        alert('❌ Only admins can delete products');
+        return;
+    }
     if (!confirm('Delete this product?')) return;
     try {
         const db = await openDB();
@@ -1009,6 +1015,7 @@ document.addEventListener('keydown', function(e) {
     }
 });
 </script>
+
 <script src="db.js"></script>
 <script>
 // ===== LOAD STORE NAME =====
@@ -1140,6 +1147,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 }
 </style>
+
 <script src="db.js"></script>
 <script>
 // ===== ACTIVATION CHECK =====
