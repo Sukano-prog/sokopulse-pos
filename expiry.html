@@ -161,7 +161,7 @@ function renderExpiry() {
 function logout() {
     if (confirm('Logout?')) { localStorage.removeItem('pos_user'); window.location.href = 'index.html'; }
 }
-function openDB() { return new Promise((r,x) => { const req = indexedDB.open('SokoPulsePOS', 6); req.onsuccess = e => r(e.target.result); req.onerror = e => x(e.target.error); }); }
+function openDB() { return new Promise((r,x) => { const req = indexedDB.open('SokoPulsePOS', 6); req.onupgradeneeded = function(e) { const db = e.target.result; if (!db.objectStoreNames.contains('products')) { const store = db.createObjectStore('products', { keyPath: 'id', autoIncrement: true }); store.createIndex('name', 'name', { unique: false }); store.createIndex('category', 'category', { unique: false }); console.log('✅ Created products store'); } }; req.onsuccess = e => r(e.target.result); req.onerror = e => x(e.target.error); }); }
 function dbGetAll(db, store) { return new Promise((r,x) => { const tx = db.transaction(store,'readonly'); const req = tx.objectStore(store).getAll(); req.onsuccess = () => r(req.result); req.onerror = () => x(req.error); }); }
 </script>
 <script>
