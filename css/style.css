@@ -68,17 +68,6 @@ body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; height: 100vh; 
 .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
 
 /* ===== TOPBAR ===== */
-.topbar {
-    background: white;
-    padding: 12px 25px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid #e0e0e0;
-    flex-shrink: 0;
-    height: 100vh;
-    overflow-y: auto;
-}
 .topbar h1 { font-size: 18px; color: #1a3c34; }
 .topbar .info { display: flex; gap: 20px; align-items: center; font-size: 14px; color: #666; }
 .topbar .info .store-name { font-weight: bold; color: #1a3c34; }
@@ -371,3 +360,37 @@ tr:hover { background: #f8f9fa; }
         display: none !important;
     }
 }
+
+/* ===== TOPBAR ===== */
+.topbar {
+    background: white;
+    padding: 12px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e0e0e0;
+    flex-shrink: 0;
+}
+.topbar h1 { font-size: 18px; color: #1a3c34; }
+.topbar .info { display: flex; gap: 20px; align-items: center; font-size: 14px; color: #666; }
+.topbar .info .store-name { font-weight: bold; color: #1a3c34; }
+.topbar .info .badge {
+    background: #f5a623;
+    color: #1a3c34;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+}
+.topbar .left { display: flex; align-items: center; gap: 15px; }
+.topbar .right { display: flex; align-items: center; gap: 15px; }
+.topbar .hamburger {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 4px;
+    color: #0f172a;
+}
+.topbar .time { font-size: 13px; color: #94a3b8; }
