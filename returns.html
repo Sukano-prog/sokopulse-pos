@@ -857,6 +857,7 @@ async function updateReturnStatus(id, status) {
             }
             
             // 1. RESTOCK PRODUCTS
+            var restockDetails = [];
             for (var i = 0; i < items.length; i++) {
                 var item = items[i];
                 var product = allProducts.find(function(p) { 
@@ -864,8 +865,15 @@ async function updateReturnStatus(id, status) {
                 });
                 if (product) {
                     var oldStock = product.current_stock || 0;
-                    product.current_stock = oldStock + (item.qty || 1);
+                    var qty = item.qty || 1;
+                    product.current_stock = oldStock + qty;
                     await dbPut(db, 'products', product);
+                    restockDetails.push({
+                        name: product.name,
+                        oldStock: oldStock,
+                        newStock: product.current_stock,
+                        qty: qty
+                    });
                     console.log('📦 Restocked: ' + product.name + ' (' + oldStock + ' → ' + product.current_stock + ')');
                 }
             }
@@ -901,10 +909,21 @@ async function updateReturnStatus(id, status) {
             }
             
             // 4. LOG STOCK MOVEMENT
-            // Calculate total quantity returned
+            // Calculate total quantity returned and get stock changes
             var totalQty = 0;
+            var stockChangeSummary = [];
             for (var j = 0; j < items.length; j++) {
-                totalQty += (items[j].qty || 1);
+                var qty = (items[j].qty || 1);
+                totalQty += qty;
+                var productName = items[j].name || 'Unknown';
+                // Find the product to get stock info
+                var product = allProducts.find(function(p) { 
+                    return p.id === items[j].id || p.name === items[j].name; 
+                });
+                if (product) {
+                    var oldStock = product.current_stock - qty; // stock before restock
+                    stockChangeSummary.push(productName + ': ' + oldStock + ' → ' + product.current_stock);
+                }
             }
             
             var movement = {
@@ -918,7 +937,7 @@ async function updateReturnStatus(id, status) {
                 reference: ret.order_number,
                 date: new Date().toISOString(),
                 user: ret.user || 'System',
-                notes: 'Return of ' + items.length + ' items (' + totalQty + ' units) | Total: KES ' + ret.total.toFixed(2)
+                notes: 'Return of ' + items.length + ' items (' + totalQty + ' units) | ' + stockChangeSummary.join('; ')
             };
             await dbAdd(db, 'stock_movements', movement);
             console.log('📊 Stock movement logged for return');
