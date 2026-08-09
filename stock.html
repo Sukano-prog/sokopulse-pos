@@ -681,6 +681,8 @@ function renderProducts() {
     }
     
     // Apply stock status filter
+    console.log('📊 Filtering with stockFilter:', stockFilter);
+    console.log('📊 Products before filter:', filtered.length);
     if (stockFilter === 'in-stock') {
         filtered = filtered.filter(function(p) { 
             var stock = p.current_stock || 0;
@@ -698,6 +700,7 @@ function renderProducts() {
             return (p.current_stock || 0) <= 0;
         });
     }
+    console.log('📊 Products after filter:', filtered.length);
     
     if (filtered.length === 0) {
         tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:40px;color:#94a3b8;">No products found</td></tr>`;
