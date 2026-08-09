@@ -594,6 +594,31 @@ async function loadStockData() {
     }
 }
 
+
+// ===== RENDER STATS =====
+function renderStats() {
+    const total = products ? products.length : 0;
+    const inStock = products ? products.filter(p => p.current_stock > (p.min_stock_alert || 5)).length : 0;
+    const lowStock = products ? products.filter(p => p.current_stock <= (p.min_stock_alert || 5) && p.current_stock > 0).length : 0;
+    const outStock = products ? products.filter(p => p.current_stock <= 0).length : 0;
+
+    document.getElementById('totalItems').textContent = total;
+    document.getElementById('inStock').textContent = inStock;
+    document.getElementById('lowStock').textContent = lowStock;
+    document.getElementById('outStock').textContent = outStock;
+
+    const received = movements ? movements.filter(m => m.type === 'receive').reduce((s, m) => s + m.quantity, 0) : 0;
+    const sold = movements ? movements.filter(m => m.type === 'sold').reduce((s, m) => s + Math.abs(m.quantity), 0) : 0;
+    const adjusted = movements ? movements.filter(m => m.type === 'adjust').reduce((s, m) => s + Math.abs(m.quantity), 0) : 0;
+
+    document.getElementById('totalReceived').textContent = received;
+    document.getElementById('totalSold').textContent = sold;
+    document.getElementById('totalAdjusted').textContent = adjusted;
+
+    const value = products ? products.reduce((s, p) => s + ((p.cost_price || 0) * (p.current_stock || 0)), 0) : 0;
+    document.getElementById('stockValue').textContent = `KES ${value.toFixed(0)}`;
+}
+
 // ===== RENDER STATS =====
 `;
     } catch(e) {
