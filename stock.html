@@ -352,12 +352,6 @@
                         <span class="search-icon">🔍</span>
                         <input type="text" id="searchInput" placeholder="Search by name or SKU..." oninput="renderProducts()">
                     </div>
-                    <select id="stockStatusFilter" onchange="renderProducts()" style="padding:10px 14px;border:2px solid #e2e8f0;border-radius:10px;font-family:'Inter',sans-serif;font-size:13px;background:white;min-width:140px;">
-                        <option value="all">All Stock Status</option>
-                        <option value="in-stock">✅ In Stock</option>
-                        <option value="low-stock">⚠️ Low Stock</option>
-                        <option value="out-of-stock">❌ Out of Stock</option>
-                    </select>
                     <button class="btn-receive" onclick="openReceiveModal()">📥 Receive Stock</button>
                     <button class="btn-adjust" onclick="openAdjustModal()">📊 Adjust Stock</button>
                 <button class="btn-adjust" onclick="openBulkAdjust()" style="background:#8b5cf6;color:white;">📊 Bulk Adjust</button>
@@ -666,11 +660,11 @@ function renderStats() {
 
 // ===== RENDER PRODUCTS =====
 function renderProducts() {
+    let total = filtered.length;
     const tbody = document.getElementById('stockBody');
     if (!tbody) return;
     
     const search = document.getElementById('searchInput')?.value?.toLowerCase() || '';
-    const stockFilter = document.getElementById('stockStatusFilter')?.value || 'all';
     
     let filtered = products || [];
     if (search) {
@@ -679,28 +673,6 @@ function renderProducts() {
             (p.sku || '').toLowerCase().includes(search)
         );
     }
-    
-    // Apply stock status filter
-    console.log('📊 Filtering with stockFilter:', stockFilter);
-    console.log('📊 Products before filter:', filtered.length);
-    if (stockFilter === 'in-stock') {
-        filtered = filtered.filter(function(p) { 
-            var stock = p.current_stock || 0;
-            var min = p.min_stock_alert || 5;
-            return stock > min;
-        });
-    } else if (stockFilter === 'low-stock') {
-        filtered = filtered.filter(function(p) { 
-            var stock = p.current_stock || 0;
-            var min = p.min_stock_alert || 5;
-            return stock <= min && stock > 0;
-        });
-    } else if (stockFilter === 'out-of-stock') {
-        filtered = filtered.filter(function(p) { 
-            return (p.current_stock || 0) <= 0;
-        });
-    }
-    console.log('📊 Products after filter:', filtered.length);
     
     if (filtered.length === 0) {
         tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:40px;color:#94a3b8;">No products found</td></tr>`;
@@ -1615,57 +1587,65 @@ if (!checkActivation()) {
 }
 
 // ===== STOCK WITH TOTAL VALUE =====
-        filtered = filtered.filter(p => 
-            (p.name || '').toLowerCase().includes(search) || 
-            (p.sku || '').toLowerCase().includes(search)
-        );
-    }
-    
-    if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;padding:40px;color:#94a3b8;">No products found</td></tr>`;
-        return;
-    }
-    
-    tbody.innerHTML = filtered.map(p => {
-        const productMovements = movements ? movements.filter(m => m.product_id === p.id) : [];
-        const received = productMovements.filter(m => m.type === 'receive').reduce((s, m) => s + m.quantity, 0);
-        const sold = productMovements.filter(m => m.type === 'sold').reduce((s, m) => s + Math.abs(m.quantity), 0);
-        const adjusted = productMovements.filter(m => m.type === 'adjust').reduce((s, m) => s + Math.abs(m.quantity), 0);
-        const netChange = (p.current_stock || 0) - (p.initial_stock || 0);
-        
-        // Calculate total value
-        const costPrice = p.cost_price || 0;
-        const stock = p.current_stock || 0;
-        const totalValue = costPrice * stock;
-        
-        let status = 'in-stock';
-        let statusLabel = '✅ In Stock';
-        if (p.current_stock <= 0) { status = 'out-of-stock'; statusLabel = '❌ Out of Stock'; }
-        else if (p.current_stock < (p.min_stock_alert || 5)) { status = 'low-stock'; statusLabel = '⚠️ Low Stock'; }
-        
-        const stockClass = p.current_stock <= 0 ? 'red' : p.current_stock < (p.min_stock_alert || 5) ? 'orange' : 'green';
-        
-        return `
-            <tr>
-                <td><strong>${p.name || 'Unnamed'}</strong></td>
-                <td>${p.sku || '-'}</td>
-                <td><span class="stock-number ${stockClass}">${p.current_stock || 0}</span></td>
-                <td><span class="stock-number" style="font-weight:600;color:#1a3c34;">KES ${totalValue.toFixed(2)}</span></td>
-                <td>${p.min_stock_alert || 5}</td>
-                <td><span class="stock-number green">${received}</span></td>
-                <td><span class="stock-number red">${sold}</span></td>
-                <td><span class="stock-number orange">${adjusted}</span></td>
-                <td><span class="stock-number ${netChange >= 0 ? 'green' : 'red'}">${netChange >= 0 ? '+' : ''}${netChange}</span></td>
-                <td><span class="status-badge ${status}">${statusLabel}</span></td>
-                <td>
-                    <button class="btn-action receive" onclick="openReceiveModal(${p.id})">📥</button>
-                    <button class="btn-action adjust" onclick="openAdjustModal(${p.id})">📊</button>
-                    <button class="btn-action history" onclick="showProductHistory(${p.id})">📋</button>
-                </td>
-            </tr>
-        `;
-    }).join('');
-};
+// const originalRender = renderProducts;
+// renderProducts = function() {
+//     const tbody = document.getElementById('stockBody');
+//     if (!tbody) return;
+//     
+//     const search = document.getElementById('searchInput')?.value?.toLowerCase() || '';
+//     let filtered = products || [];
+//     if (search) {
+//         filtered = filtered.filter(p => 
+//             (p.name || '').toLowerCase().includes(search) || 
+//             (p.sku || '').toLowerCase().includes(search)
+//         );
+//     }
+//     
+//     if (filtered.length === 0) {
+//         tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;padding:40px;color:#94a3b8;">No products found</td></tr>`;
+//         return;
+//     }
+//     
+//     tbody.innerHTML = filtered.map(p => {
+//         const productMovements = movements ? movements.filter(m => m.product_id === p.id) : [];
+//         const received = productMovements.filter(m => m.type === 'receive').reduce((s, m) => s + m.quantity, 0);
+//         const sold = productMovements.filter(m => m.type === 'sold').reduce((s, m) => s + Math.abs(m.quantity), 0);
+//         const adjusted = productMovements.filter(m => m.type === 'adjust').reduce((s, m) => s + Math.abs(m.quantity), 0);
+//         const netChange = (p.current_stock || 0) - (p.initial_stock || 0);
+//         
+//         // Calculate total value
+//         const costPrice = p.cost_price || 0;
+//         const stock = p.current_stock || 0;
+//         const totalValue = costPrice * stock;
+//         
+//         let status = 'in-stock';
+//         let statusLabel = '✅ In Stock';
+//         if (p.current_stock <= 0) { status = 'out-of-stock'; statusLabel = '❌ Out of Stock'; }
+//         else if (p.current_stock < (p.min_stock_alert || 5)) { status = 'low-stock'; statusLabel = '⚠️ Low Stock'; }
+//         
+//         const stockClass = p.current_stock <= 0 ? 'red' : p.current_stock < (p.min_stock_alert || 5) ? 'orange' : 'green';
+//         
+//         return `
+//             <tr>
+//                 <td><strong>${p.name || 'Unnamed'}</strong></td>
+//                 <td>${p.sku || '-'}</td>
+//                 <td><span class="stock-number ${stockClass}">${p.current_stock || 0}</span></td>
+//                 <td><span class="stock-number" style="font-weight:600;color:#1a3c34;">KES ${totalValue.toFixed(2)}</span></td>
+//                 <td>${p.min_stock_alert || 5}</td>
+//                 <td><span class="stock-number green">${received}</span></td>
+//                 <td><span class="stock-number red">${sold}</span></td>
+//                 <td><span class="stock-number orange">${adjusted}</span></td>
+//                 <td><span class="stock-number ${netChange >= 0 ? 'green' : 'red'}">${netChange >= 0 ? '+' : ''}${netChange}</span></td>
+//                 <td><span class="status-badge ${status}">${statusLabel}</span></td>
+//                 <td>
+//                     <button class="btn-action receive" onclick="openReceiveModal(${p.id})">📥</button>
+//                     <button class="btn-action adjust" onclick="openAdjustModal(${p.id})">📊</button>
+//                     <button class="btn-action history" onclick="showProductHistory(${p.id})">📋</button>
+//                 </td>
+//             </tr>
+//         `;
+//     }).join('');
+// };
 </script>
 <script>
 // ===== ACTIVATION CHECK =====
@@ -1756,93 +1736,96 @@ if (!checkActivation()) {
 }
 
 // ===== FIXED RENDER PRODUCTS WITH VALUE =====
-const renderProductsWithValue = renderProducts;
-renderProducts = function() {
-    const tbody = document.getElementById('stockBody');
-    if (!tbody) return;
-    
-    const search = document.getElementById('searchInput')?.value?.toLowerCase() || '';
-    
-    let filtered = products || [];
-            (p.sku || '').toLowerCase().includes(search)
-        );
-    }
-    
-    if (filtered.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;padding:40px;color:#94a3b8;">No products found</td></tr>`;
-        return;
-    }
-    
-    tbody.innerHTML = filtered.map(p => {
-        const productMovements = movements ? movements.filter(m => m.product_id === p.id) : [];
-        const received = productMovements.filter(m => m.type === 'receive').reduce((s, m) => s + m.quantity, 0);
-        const sold = productMovements.filter(m => m.type === 'sold').reduce((s, m) => s + Math.abs(m.quantity), 0);
-        const adjusted = productMovements.filter(m => m.type === 'adjust').reduce((s, m) => s + Math.abs(m.quantity), 0);
-        const netChange = (p.current_stock || 0) - (p.initial_stock || 0);
-        
-        // Calculate total value
-        const costPrice = p.cost_price || 0;
-        const stock = p.current_stock || 0;
-        const totalValue = costPrice * stock;
-        
-        let status = 'in-stock';
-        let statusLabel = '✅ In Stock';
-        if (p.current_stock <= 0) { status = 'out-of-stock'; statusLabel = '❌ Out of Stock'; }
-        else if (p.current_stock < (p.min_stock_alert || 5)) { status = 'low-stock'; statusLabel = '⚠️ Low Stock'; }
-        
-        const stockClass = p.current_stock <= 0 ? 'red' : p.current_stock < (p.min_stock_alert || 5) ? 'orange' : 'green';
-        
-        return `
-            <tr>
-                <td>
-                    <div class="product-name">${p.name || 'Unnamed'}</div>
-                    <div class="product-sku">${p.sku || '-'}</div>
-                </td>
-                <td><span class="stock-number ${stockClass}">${p.current_stock || 0}</span></td>
-                <td><span style="font-weight:700;color:#1a3c34;">KES ${totalValue.toFixed(2)}</span></td>
-                <td>${p.min_stock_alert || 5}</td>
-                <td><span class="stock-number green">${received}</span></td>
-                <td><span class="stock-number red">${sold}</span></td>
-                <td><span class="stock-number orange">${adjusted}</span></td>
-                <td><span class="stock-number ${netChange >= 0 ? 'green' : 'red'}">${netChange >= 0 ? '+' : ''}${netChange}</span></td>
-                <td><span class="status-badge ${status}">${statusLabel}</span></td>
-                <td>
-                    <button class="btn-action receive" onclick="openReceiveModal(${p.id})">📥</button>
-                    <button class="btn-action adjust" onclick="openAdjustModal(${p.id})">📊</button>
-                    <button class="btn-action history" onclick="showProductHistory(${p.id})">📋</button>
-                </td>
-            </tr>
-        `;
-    }).join('');
-    const lowStock = products ? products.filter(function(p) {
-        const minAlert = p.min_stock_alert || 5;
-        const stock = p.current_stock || 0;
-        return stock < minAlert;  // Includes 0 stock
-    }).length : 0;
-    
-    const total = products ? products.length : 0;
-    const outStock = products ? products.filter(function(p) {
-        return (p.current_stock || 0) <= 0;
-    }).length : 0;
-    
-    const inStock = total - lowStock;
-
-    document.getElementById('totalItems').textContent = total;
-    document.getElementById('inStock').textContent = inStock;
-    document.getElementById('lowStock').textContent = lowStock;
-    document.getElementById('outStock').textContent = outStock;
-
-    const received = movements ? movements.filter(m => m.type === 'receive').reduce((s, m) => s + m.quantity, 0) : 0;
-    const sold = movements ? movements.filter(m => m.type === 'sold').reduce((s, m) => s + Math.abs(m.quantity), 0) : 0;
-    const adjusted = movements ? movements.filter(m => m.type === 'adjust').reduce((s, m) => s + Math.abs(m.quantity), 0) : 0;
-
-    document.getElementById('totalReceived').textContent = received;
-    document.getElementById('totalSold').textContent = sold;
-    document.getElementById('totalAdjusted').textContent = adjusted;
-
-    const totalValue = products ? products.reduce((s, p) => s + ((p.cost_price || 0) * (p.current_stock || 0)), 0) : 0;
-    document.getElementById('stockValue').textContent = `KES ${totalValue.toFixed(0)}`;
-    
-    console.log('📊 Stock stats:', { total, inStock, lowStock, outStock });
-};
+// const renderProductsWithValue = renderProducts;
+// renderProducts = function() {
+//     const tbody = document.getElementById('stockBody');
+//     if (!tbody) return;
+//     
+//     const search = document.getElementById('searchInput')?.value?.toLowerCase() || '';
+//     
+//     let filtered = products || [];
+//     if (search) {
+//         filtered = filtered.filter(p => 
+//             (p.name || '').toLowerCase().includes(search) || 
+//             (p.sku || '').toLowerCase().includes(search)
+//         );
+//     }
+//     
+//     if (filtered.length === 0) {
+//         tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;padding:40px;color:#94a3b8;">No products found</td></tr>`;
+//         return;
+//     }
+//     
+//     tbody.innerHTML = filtered.map(p => {
+//         const productMovements = movements ? movements.filter(m => m.product_id === p.id) : [];
+//         const received = productMovements.filter(m => m.type === 'receive').reduce((s, m) => s + m.quantity, 0);
+//         const sold = productMovements.filter(m => m.type === 'sold').reduce((s, m) => s + Math.abs(m.quantity), 0);
+//         const adjusted = productMovements.filter(m => m.type === 'adjust').reduce((s, m) => s + Math.abs(m.quantity), 0);
+//         const netChange = (p.current_stock || 0) - (p.initial_stock || 0);
+//         
+//         // Calculate total value
+//         const costPrice = p.cost_price || 0;
+//         const stock = p.current_stock || 0;
+//         const totalValue = costPrice * stock;
+//         
+//         let status = 'in-stock';
+//         let statusLabel = '✅ In Stock';
+//         if (p.current_stock <= 0) { status = 'out-of-stock'; statusLabel = '❌ Out of Stock'; }
+//         else if (p.current_stock < (p.min_stock_alert || 5)) { status = 'low-stock'; statusLabel = '⚠️ Low Stock'; }
+//         
+//         const stockClass = p.current_stock <= 0 ? 'red' : p.current_stock < (p.min_stock_alert || 5) ? 'orange' : 'green';
+//         
+//         return `
+//             <tr>
+//                 <td>
+//                     <div class="product-name">${p.name || 'Unnamed'}</div>
+//                     <div class="product-sku">${p.sku || '-'}</div>
+//                 </td>
+//                 <td><span class="stock-number ${stockClass}">${p.current_stock || 0}</span></td>
+//                 <td><span style="font-weight:700;color:#1a3c34;">KES ${totalValue.toFixed(2)}</span></td>
+//                 <td>${p.min_stock_alert || 5}</td>
+//                 <td><span class="stock-number green">${received}</span></td>
+//                 <td><span class="stock-number red">${sold}</span></td>
+//                 <td><span class="stock-number orange">${adjusted}</span></td>
+//                 <td><span class="stock-number ${netChange >= 0 ? 'green' : 'red'}">${netChange >= 0 ? '+' : ''}${netChange}</span></td>
+//                 <td><span class="status-badge ${status}">${statusLabel}</span></td>
+//                 <td>
+//                     <button class="btn-action receive" onclick="openReceiveModal(${p.id})">📥</button>
+//                     <button class="btn-action adjust" onclick="openAdjustModal(${p.id})">📊</button>
+//                     <button class="btn-action history" onclick="showProductHistory(${p.id})">📋</button>
+//                 </td>
+//             </tr>
+//         `;
+//     }).join('');
+//     const lowStock = products ? products.filter(function(p) {
+//         const minAlert = p.min_stock_alert || 5;
+//         const stock = p.current_stock || 0;
+//         return stock < minAlert;  // Includes 0 stock
+//     }).length : 0;
+//     
+//     const total = products ? products.length : 0;
+//     const outStock = products ? products.filter(function(p) {
+//         return (p.current_stock || 0) <= 0;
+//     }).length : 0;
+//     
+//     const inStock = total - lowStock;
+// 
+//     document.getElementById('totalItems').textContent = total;
+//     document.getElementById('inStock').textContent = inStock;
+//     document.getElementById('lowStock').textContent = lowStock;
+//     document.getElementById('outStock').textContent = outStock;
+// 
+//     const received = movements ? movements.filter(m => m.type === 'receive').reduce((s, m) => s + m.quantity, 0) : 0;
+//     const sold = movements ? movements.filter(m => m.type === 'sold').reduce((s, m) => s + Math.abs(m.quantity), 0) : 0;
+//     const adjusted = movements ? movements.filter(m => m.type === 'adjust').reduce((s, m) => s + Math.abs(m.quantity), 0) : 0;
+// 
+//     document.getElementById('totalReceived').textContent = received;
+//     document.getElementById('totalSold').textContent = sold;
+//     document.getElementById('totalAdjusted').textContent = adjusted;
+// 
+//     const totalValue = products ? products.reduce((s, p) => s + ((p.cost_price || 0) * (p.current_stock || 0)), 0) : 0;
+//     document.getElementById('stockValue').textContent = `KES ${totalValue.toFixed(0)}`;
+//     
+//     console.log('📊 Stock stats:', { total, inStock, lowStock, outStock });
+// };
 </script>
