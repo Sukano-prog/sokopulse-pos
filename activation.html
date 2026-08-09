@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activate - SokoPulse</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f8fafc;
+        }
+        .container {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15);
+            padding: 40px;
+            width: 420px;
+            max-width: 95%;
+            position: relative;
+            overflow: hidden;
+        }
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #1a3c34, #f5a623);
+        }
+        .logo { text-align: center; margin-bottom: 24px; }
+        .logo h1 { font-size: 28px; font-weight: 800; color: #1a3c34; }
+        .logo h1 span { color: #f5a623; }
+        .logo p { color: #94a3b8; font-size: 14px; margin-top: 4px; }
+        
+        .step { display: none; }
+        .step.active { display: block; }
+        
+        .machine-id-box {
+            background: #f8fafc;
+            padding: 16px;
+            border-radius: 12px;
+            text-align: center;
+            margin: 12px 0 16px 0;
+            border: 1px dashed #e2e8f0;
+        }
+        .machine-id-box .id {
+            font-family: monospace;
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a3c34;
+            letter-spacing: 2px;
+            word-break: break-all;
+        }
+        .machine-id-box .label { font-size: 12px; color: #94a3b8; }
+        
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 600; color: #334155; margin-bottom: 6px; }
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s;
+            background: #f8fafc;
+            text-transform: uppercase;
+            font-family: monospace;
+            font-size: 18px;
+            letter-spacing: 2px;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #1a3c34;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(26,60,52,0.1);
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 8px;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #1a3c34, #2a5c54);
+            color: white;
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(26,60,52,0.3); }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #0f172a;
+        }
+        .btn-secondary:hover { background: #e2e8f0; }
+        
+        .status {
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: 13px;
+            margin: 12px 0;
+            display: none;
+        }
+        .status.show { display: block; }
+        .status.error { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+        .status.success { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+        .status.info { background: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
+        
+        .steps-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        .steps-indicator .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #e2e8f0;
+            transition: all 0.3s;
+        }
+        .steps-indicator .dot.active { background: #1a3c34; transform: scale(1.2); }
+        .steps-indicator .dot.done { background: #22c55e; }
+        
+        .success-icon { font-size: 48px; text-align: center; margin: 16px 0; }
+        
+        .offline-badge {
+            display: inline-block;
+            background: #dcfce7;
+            color: #166534;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 12px;
+            border-radius: 20px;
+            margin-top: 4px;
+        }
+        .valid-keys {
+            font-size: 11px;
+            color: #94a3b8;
+            margin-top: 8px;
+            padding: 8px;
+            background: #f8fafc;
+            border-radius: 6px;
+        }
+        .demo-keys {
+            margin-top: 12px;
+            padding: 10px;
+            background: #fef3c7;
+            border-radius: 8px;
+            font-size: 12px;
+            color: #92400e;
+            text-align: center;
+        }
+        .demo-keys code {
+            background: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 13px;
+            font-weight: 600;
+            color: #1a3c34;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="logo">
+        <h1>🏪 <span>Soko</span>Pulse</h1>
+        <p>One-Time Activation <span class="offline-badge">🔒 Offline after activation</span></p>
+    </div>
+
+    <!-- Steps Indicator -->
+    <div class="steps-indicator">
+        <span class="dot active" id="dot1"></span>
+        <span class="dot" id="dot2"></span>
+        <span class="dot" id="dot3"></span>
+    </div>
+
+    <!-- Step 1: Machine ID -->
+    <div class="step active" id="step1">
+        <h3 style="margin-bottom:8px;">📋 Step 1: Get Machine ID</h3>
+        <p style="color:#94a3b8;font-size:13px;margin-bottom:12px;">
+            Copy this Machine ID and send it to your administrator to get an activation key.
+        </p>
+        
+        <div class="machine-id-box">
+            <div class="label">Your Machine ID</div>
+            <div class="id" id="machineId">Loading...</div>
+        </div>
+        
+        <button class="btn btn-secondary" onclick="copyMachineId()">📋 Copy Machine ID</button>
+        
+        <div class="status info show" id="nextStepInfo">
+            ℹ️ After getting your activation key, click "Next" to continue.
+        </div>
+        
+        <button class="btn btn-primary" onclick="goToStep2()">Next →</button>
+    </div>
+
+    <!-- Step 2: Enter Key -->
+    <div class="step" id="step2">
+        <h3 style="margin-bottom:8px;">🔑 Step 2: Enter Activation Key</h3>
+        <p style="color:#94a3b8;font-size:13px;margin-bottom:16px;">
+            Enter the activation key provided by your administrator.
+        </p>
+        
+        <div class="form-group">
+            <label>Activation Key</label>
+            <input type="text" id="activationKey" placeholder="Enter your activation key">
+        </div>
+        
+        <div class="valid-keys">
+            Valid key format: PERM-YYYYMMDD-XXXX, TRIAL-YYYYMMDD-XXXX, etc.
+        </div>
+        
+        <div class="demo-keys">
+            🔑 Demo keys: <code>PERM-20260101-A1B2</code> <code>PERM-20260101-C3D4</code> <code>TRIAL-20260101-G7H8</code>
+        </div>
+        
+        <div class="status" id="activationStatus"></div>
+        
+        <button class="btn btn-secondary" onclick="goToStep1()">← Back</button>
+        <button class="btn btn-primary" onclick="activateSystem()">🔓 Activate Now</button>
+    </div>
+
+    <!-- Step 3: Success -->
+    <div class="step" id="step3">
+        <div class="success-icon">🎉</div>
+        <h3 style="text-align:center;margin-bottom:8px;">Activation Successful!</h3>
+        <p style="text-align:center;color:#94a3b8;font-size:14px;margin-bottom:16px;">
+            Your POS system is now activated. You can use it fully offline.
+        </p>
+        <div style="text-align:center;font-size:12px;color:#94a3b8;margin-bottom:16px;">
+            🔒 This machine is permanently activated
+        </div>
+        <button class="btn btn-primary" onclick="goToPOS()">🚀 Go to POS</button>
+    </div>
+</div>
+
+<script>
+// ============================================================
+// ONE-TIME ACTIVATION SYSTEM
+// ============================================================
+
+// ===== GENERATE MACHINE ID =====
+function getMachineId() {
+    let machineId = localStorage.getItem('machine_id');
+    if (!machineId) {
+        const components = [
+            navigator.userAgent,
+            navigator.language,
+            screen.width,
+            screen.height,
+            navigator.hardwareConcurrency || 0,
+            navigator.platform,
+            navigator.deviceMemory || 0
+        ];
+        machineId = btoa(components.join('|')).slice(0, 24);
+        localStorage.setItem('machine_id', machineId);
+    }
+    return machineId;
+}
+
+function displayMachineId() {
+    document.getElementById('machineId').textContent = getMachineId();
+}
+
+function copyMachineId() {
+    const id = getMachineId();
+    navigator.clipboard.writeText(id).then(() => {
+        alert('✅ Machine ID copied to clipboard!');
+    }).catch(() => {
+        const input = document.createElement('input');
+        input.value = id;
+        document.body.appendChild(input);
+        input.select();
+        document.execCommand('copy');
+        document.body.removeChild(input);
+        alert('✅ Machine ID copied!');
+    });
+}
+
+// ===== STEP NAVIGATION =====
+function goToStep1() {
+    document.getElementById('step1').classList.add('active');
+    document.getElementById('step2').classList.remove('active');
+    document.getElementById('step3').classList.remove('active');
+    updateDots(0);
+}
+
+function goToStep2() {
+    if (!localStorage.getItem('machine_id')) {
+        alert('Please generate a Machine ID first.');
+        return;
+    }
+    document.getElementById('step1').classList.remove('active');
+    document.getElementById('step2').classList.add('active');
+    document.getElementById('step3').classList.remove('active');
+    updateDots(1);
+    document.getElementById('activationKey').focus();
+}
+
+function goToStep3() {
+    document.getElementById('step1').classList.remove('active');
+    document.getElementById('step2').classList.remove('active');
+    document.getElementById('step3').classList.add('active');
+    updateDots(2);
+}
+
+function updateDots(step) {
+    for (let i = 1; i <= 3; i++) {
+        const dot = document.getElementById('dot' + i);
+        dot.classList.remove('active', 'done');
+        if (i < step + 1) dot.classList.add('done');
+        if (i === step + 1) dot.classList.add('active');
+    }
+}
+
+// ===== ACTIVATE =====
+function activateSystem() {
+    const key = document.getElementById('activationKey').value.trim().toUpperCase();
+    const status = document.getElementById('activationStatus');
+    
+    if (!key || key.length < 8) {
+        status.className = 'status error show';
+        status.textContent = '❌ Please enter a valid activation key.';
+        return;
+    }
+    
+    status.className = 'status info show';
+    status.textContent = '⏳ Validating...';
+    document.querySelector('.btn-primary').disabled = true;
+    
+    // Simulate validation (in production, this would call your server)
+    setTimeout(() => {
+        // Check key format: TYPE-YYYYMMDD-XXXX
+        const pattern = /^[A-Z]{4,5}-[0-9]{8}-[A-Z0-9]{4}$/;
+        const isValid = pattern.test(key);
+        
+        if (isValid) {
+            // Parse expiry from key type
+            const parts = key.split('-');
+            const type = parts[0];
+            
+            // Set expiry based on type
+            const now = new Date();
+            let expiryDate = new Date(now);
+            let typeLabel = '';
+            
+            switch(type) {
+                case 'PERM':
+                    expiryDate.setFullYear(now.getFullYear() + 10);
+                    typeLabel = 'Permanent';
+                    break;
+                case 'Y1YR':
+                    expiryDate.setFullYear(now.getFullYear() + 1);
+                    typeLabel = '1 Year';
+                    break;
+                case 'M6MO':
+                    expiryDate.setMonth(now.getMonth() + 6);
+                    typeLabel = '6 Months';
+                    break;
+                case 'M3MO':
+                    expiryDate.setMonth(now.getMonth() + 3);
+                    typeLabel = '3 Months';
+                    break;
+                case 'M1MO':
+                    expiryDate.setMonth(now.getMonth() + 1);
+                    typeLabel = '1 Month';
+                    break;
+                case 'TRIAL':
+                    expiryDate.setDate(now.getDate() + 14);
+                    typeLabel = 'Trial (14 days)';
+                    break;
+                default:
+                    expiryDate.setFullYear(now.getFullYear() + 10);
+                    typeLabel = 'Permanent';
+            }
+            
+            // Store activation
+            localStorage.setItem('activated', 'true');
+            localStorage.setItem('activation_key', key);
+            localStorage.setItem('activation_date', now.toISOString());
+            localStorage.setItem('expiry_date', expiryDate.toISOString());
+            localStorage.setItem('license_type', typeLabel);
+            localStorage.setItem('machine_id', getMachineId());
+            
+            status.className = 'status success show';
+            status.textContent = '✅ Activation successful! License: ' + typeLabel;
+            
+            setTimeout(goToStep3, 1000);
+        } else {
+            status.className = 'status error show';
+            status.textContent = '❌ Invalid activation key format. Use TYPE-YYYYMMDD-XXXX';
+            document.querySelector('.btn-primary').disabled = false;
+        }
+    }, 1500);
+}
+
+// ===== GO TO POS =====
+function goToPOS() {
+    window.location.href = 'index.html';
+}
+
+// ===== CHECK IF ALREADY ACTIVATED =====
+function checkActivation() {
+    if (localStorage.getItem('activated') === 'true') {
+        // Check if expired
+        const expiryDate = localStorage.getItem('expiry_date');
+        if (expiryDate) {
+            const expiry = new Date(expiryDate);
+            const now = new Date();
+            if (expiry < now) {
+                localStorage.removeItem('activated');
+                localStorage.removeItem('activation_key');
+                localStorage.removeItem('expiry_date');
+                localStorage.removeItem('pos_user');
+                localStorage.removeItem('pos_logged_in');
+                alert('⚠️ Your license has expired. Please contact your administrator.');
+                return;
+            }
+        }
+        window.location.href = 'index.html';
+    }
+}
+
+// ===== FORMAT KEY INPUT =====
+document.getElementById('activationKey').addEventListener('input', function(e) {
+    let value = this.value.toUpperCase().replace(/[^A-Z0-9-]/g, '');
+    this.value = value;
+});
+
+// ===== INIT =====
+displayMachineId();
+checkActivation();
+</script>
+</body>
+</html>

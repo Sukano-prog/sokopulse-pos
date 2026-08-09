@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Activation - SokoPulse</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; min-height: 100vh; background: #f8fafc; padding: 20px; display: flex; align-items: center; justify-content: center; }
+        .container { background: white; border-radius: 24px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15); padding: 40px; max-width: 650px; width: 100%; }
+        .container::before { content: ''; display: block; height: 4px; background: linear-gradient(90deg, #1a3c34, #f5a623); border-radius: 24px 24px 0 0; margin: -40px -40px 20px -40px; }
+        h1 { font-size: 24px; color: #1a3c34; margin-bottom: 4px; }
+        .subtitle { color: #64748b; font-size: 14px; margin-bottom: 20px; }
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 600; color: #334155; margin-bottom: 6px; }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s;
+            background: white;
+        }
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #1a3c34;
+            box-shadow: 0 0 0 4px rgba(26,60,52,0.1);
+        }
+        .btn { padding: 12px 24px; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; transition: all 0.2s; }
+        .btn-primary { background: #1a3c34; color: white; }
+        .btn-primary:hover { background: #2a5c54; transform: translateY(-2px); }
+        .btn-secondary { background: #f1f5f9; color: #0f172a; }
+        .btn-secondary:hover { background: #e2e8f0; }
+        .btn-success { background: #22c55e; color: white; }
+        .btn-success:hover { background: #16a34a; transform: translateY(-2px); }
+        .btn-danger { background: #ef4444; color: white; }
+        .btn-danger:hover { background: #dc2626; }
+        .key-box { background: #f8fafc; padding: 16px; border-radius: 10px; border: 1px dashed #e2e8f0; text-align: center; margin: 12px 0; }
+        .key-box .key { font-family: monospace; font-size: 24px; font-weight: 700; color: #1a3c34; letter-spacing: 2px; word-break: break-all; }
+        .key-box .label { font-size: 12px; color: #94a3b8; }
+        .key-box .expiry-info { font-size: 13px; color: #64748b; margin-top: 4px; }
+        .status { padding: 10px 14px; border-radius: 8px; font-size: 13px; margin: 10px 0; display: none; }
+        .status.show { display: block; }
+        .status.success { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+        .status.error { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+        .status.info { background: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
+        .row { display: flex; gap: 10px; flex-wrap: wrap; }
+        .row .btn { flex: 1; text-align: center; }
+        .license-list { max-height: 300px; overflow-y: auto; font-size: 13px; }
+        .license-item { padding: 10px 0; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+        .license-item .key-text { font-family: monospace; font-size: 13px; font-weight: 600; color: #0f172a; }
+        .license-item .info { font-size: 12px; color: #94a3b8; }
+        .license-item .status-badge { font-size: 10px; padding: 2px 10px; border-radius: 20px; background: #dcfce7; color: #166534; }
+        .license-item .status-badge.expired { background: #fee2e2; color: #991b1b; }
+        .license-item .status-badge.expiring { background: #fef3c7; color: #92400e; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .auto-expiry-info { background: #f8fafc; padding: 8px 12px; border-radius: 6px; font-size: 12px; color: #64748b; margin-top: 4px; }
+        @media (max-width: 600px) { .container { padding: 20px; } .container::before { margin: -20px -20px 20px -20px; } .grid-2 { grid-template-columns: 1fr; } .row { flex-direction: column; } .row .btn { width: 100%; } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🔑 License Key Generator</h1>
+    <p class="subtitle">Generate activation keys with auto-expiry dates.</p>
+
+    <div class="form-group">
+        <label>Machine ID (from user)</label>
+        <input type="text" id="machineIdInput" placeholder="Paste the user's Machine ID here..." style="font-family:monospace;font-size:14px;">
+    </div>
+
+    <div class="grid-2">
+        <div class="form-group">
+            <label>License Type</label>
+            <select id="licenseType" onchange="updateExpiryDate()">
+                <option value="permanent">♾️ Permanent</option>
+                <option value="1year">📅 1 Year</option>
+                <option value="6months">📅 6 Months</option>
+                <option value="3months">📅 3 Months</option>
+                <option value="1month">📅 1 Month</option>
+                <option value="trial">🧪 Trial (14 days)</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Expiry Date (auto-set)</label>
+            <input type="date" id="customExpiry" readonly style="background:#f1f5f9;cursor:not-allowed;">
+            <div class="auto-expiry-info" id="expiryInfo">Auto-set based on license type</div>
+        </div>
+    </div>
+
+    <div class="row">
+        <button class="btn btn-primary" onclick="generateKey()">🔑 Generate Key</button>
+        <button class="btn btn-secondary" onclick="copyKey()">📋 Copy Key</button>
+    </div>
+
+    <div class="status" id="status"></div>
+
+    <div id="generatedKey" style="display:none;">
+        <div class="key-box">
+            <div class="label">Generated Activation Key</div>
+            <div class="key" id="activationKey">XXXX-XXXX-XXXX-XXXX</div>
+            <div class="expiry-info" id="expiryDisplay"></div>
+        </div>
+        <button class="btn btn-success" onclick="copyKey()">📋 Copy Key</button>
+    </div>
+
+    <hr style="margin:20px 0;border-color:#e2e8f0;">
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <h3>📋 Active Licenses</h3>
+        <button class="btn btn-danger" onclick="clearAllKeys()" style="padding:6px 14px;font-size:12px;">🗑️ Clear All</button>
+    </div>
+    <div class="license-list" id="licenseList">
+        <p style="color:#94a3b8;">No licenses generated yet.</p>
+    </div>
+</div>
+
+<script>
+// ============================================================
+// ADMIN ACTIVATION TOOL - WITH AUTO-EXPIRY
+// ============================================================
+
+let generatedKeys = JSON.parse(localStorage.getItem('generated_keys') || '[]');
+
+// ===== UPDATE EXPIRY DATE =====
+function updateExpiryDate() {
+    const type = document.getElementById('licenseType').value;
+    const expiryInput = document.getElementById('customExpiry');
+    const info = document.getElementById('expiryInfo');
+    const now = new Date();
+    
+    let expiryDate = new Date(now);
+    let label = '';
+    
+    switch(type) {
+        case 'permanent':
+            expiryDate.setFullYear(now.getFullYear() + 10);
+            label = '♾️ Never expires';
+            break;
+        case '1year':
+            expiryDate.setFullYear(now.getFullYear() + 1);
+            label = '📅 Expires in 1 year';
+            break;
+        case '6months':
+            expiryDate.setMonth(now.getMonth() + 6);
+            label = '📅 Expires in 6 months';
+            break;
+        case '3months':
+            expiryDate.setMonth(now.getMonth() + 3);
+            label = '📅 Expires in 3 months';
+            break;
+        case '1month':
+            expiryDate.setMonth(now.getMonth() + 1);
+            label = '📅 Expires in 1 month';
+            break;
+        case 'trial':
+            expiryDate.setDate(now.getDate() + 14);
+            label = '🧪 Expires in 14 days (trial)';
+            break;
+        default:
+            expiryDate.setFullYear(now.getFullYear() + 10);
+            label = '♾️ Never expires';
+    }
+    
+    expiryInput.value = expiryDate.toISOString().slice(0, 10);
+    info.textContent = label;
+}
+
+// ===== GENERATE KEY =====
+function generateKey() {
+    const machineId = document.getElementById('machineIdInput').value.trim();
+    const type = document.getElementById('licenseType').value;
+    const expiryDateStr = document.getElementById('customExpiry').value;
+    const status = document.getElementById('status');
+    const keyDisplay = document.getElementById('generatedKey');
+    const keyEl = document.getElementById('activationKey');
+    const expiryDisplay = document.getElementById('expiryDisplay');
+    
+    if (!machineId || machineId.length < 10) {
+        status.className = 'status error show';
+        status.textContent = '❌ Please enter a valid Machine ID';
+        return;
+    }
+    
+    // Generate key
+    const today = new Date();
+    const date = today.getFullYear() + 
+                 String(today.getMonth() + 1).padStart(2, '0') + 
+                 String(today.getDate()).padStart(2, '0');
+    
+    let hash = '';
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    for (let i = 0; i < 4; i++) {
+        hash += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    
+    const typeMap = {
+        'permanent': 'PERM',
+        '1year': 'Y1YR',
+        '6months': 'M6MO',
+        '3months': 'M3MO',
+        '1month': 'M1MO',
+        'trial': 'TRIAL'
+    };
+    
+    const key = typeMap[type] + '-' + date + '-' + hash;
+    
+    // Save the license with expiry
+    const license = {
+        key: key,
+        machineId: machineId,
+        type: type,
+        generated: new Date().toISOString(),
+        expires: new Date(expiryDateStr).toISOString(),
+        isActive: true
+    };
+    
+    generatedKeys.push(license);
+    localStorage.setItem('generated_keys', JSON.stringify(generatedKeys));
+    
+    // Display the key
+    keyEl.textContent = key;
+    const expiryDisplayStr = new Date(expiryDateStr).toLocaleDateString();
+    const typeLabels = {
+        'permanent': '♾️ Permanent',
+        '1year': '📅 1 Year',
+        '6months': '📅 6 Months',
+        '3months': '📅 3 Months',
+        '1month': '📅 1 Month',
+        'trial': '🧪 Trial'
+    };
+    expiryDisplay.textContent = typeLabels[type] + ' | Expires: ' + expiryDisplayStr;
+    keyDisplay.style.display = 'block';
+    status.className = 'status success show';
+    status.textContent = '✅ Key generated successfully!';
+    
+    renderLicenseList();
+}
+
+function copyKey() {
+    const key = document.getElementById('activationKey').textContent;
+    navigator.clipboard.writeText(key).then(() => {
+        alert('✅ Key copied to clipboard!');
+    }).catch(() => {
+        const input = document.createElement('input');
+        input.value = key;
+        document.body.appendChild(input);
+        input.select();
+        document.execCommand('copy');
+        document.body.removeChild(input);
+        alert('✅ Key copied!');
+    });
+}
+
+function renderLicenseList() {
+    const container = document.getElementById('licenseList');
+    if (generatedKeys.length === 0) {
+        container.innerHTML = '<p style="color:#94a3b8;">No licenses generated yet.</p>';
+        return;
+    }
+    
+    const typeLabels = {
+        'permanent': '♾️',
+        '1year': '📅 1Y',
+        '6months': '📅 6M',
+        '3months': '📅 3M',
+        '1month': '📅 1M',
+        'trial': '🧪'
+    };
+    
+    let html = '';
+    generatedKeys.slice().reverse().forEach((lic, index) => {
+        const expires = new Date(lic.expires);
+        const now = new Date();
+        const isExpired = expires < now;
+        const daysLeft = Math.ceil((expires - now) / (1000 * 60 * 60 * 24));
+        const originalIndex = generatedKeys.length - 1 - index;
+        
+        let statusClass = 'status-badge';
+        let statusText = '✅ Active';
+        if (isExpired) {
+            statusClass += ' expired';
+            statusText = '⚠️ Expired';
+        } else if (daysLeft < 30) {
+            statusClass += ' expiring';
+            statusText = '⚠️ ' + daysLeft + ' days left';
+        }
+        
+        html += `<div class="license-item">
+            <div>
+                <div class="key-text">${lic.key}</div>
+                <div class="info">${typeLabels[lic.type] || lic.type} | Expires: ${expires.toLocaleDateString()} ${isExpired ? '❌' : ''}</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+                <span class="${statusClass}">${statusText}</span>
+                <button onclick="deleteLicense(${originalIndex})" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:14px;">✕</button>
+            </div>
+        </div>`;
+    });
+    container.innerHTML = html;
+}
+
+function deleteLicense(index) {
+    if (!confirm('Delete this license?')) return;
+    generatedKeys.splice(index, 1);
+    localStorage.setItem('generated_keys', JSON.stringify(generatedKeys));
+    renderLicenseList();
+}
+
+function clearAllKeys() {
+    if (!confirm('Delete ALL licenses?')) return;
+    generatedKeys = [];
+    localStorage.setItem('generated_keys', JSON.stringify(generatedKeys));
+    renderLicenseList();
+}
+
+// Init
+updateExpiryDate();
+renderLicenseList();
+</script>
+</body>
+</html>
