@@ -70,17 +70,503 @@
             transform: translateY(-50%);
             color: #94a3b8;
         }
-        .
-                    
-        
-        
-        
-        
-        
+        .btn-receive {
+            padding: 10px 18px;
+            background: #22c55e;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .btn-receive:hover { background: #16a34a; transform: translateY(-2px); }
+        .btn-adjust {
+            padding: 10px 18px;
+            background: #f59e0b;
+            color: #0f172a;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .btn-adjust:hover { background: #d97706; transform: translateY(-2px); }
+        .btn-export {
+            padding: 10px 18px;
+            background: #f1f5f9;
+            color: #0f172a;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .btn-export:hover { background: #e2e8f0; }
 
-        
-        /* ===== MODERN BUTTON STYLES ===== */
-        
+        .status-badge {
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .status-badge.in-stock { background: #dcfce7; color: #166534; }
+        .status-badge.low-stock { background: #fef3c7; color: #92400e; }
+        .status-badge.out-of-stock { background: #fee2e2; color: #991b1b; }
+
+        .btn-action {
+            padding: 4px 10px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 11px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            transition: all 0.15s;
+            margin: 0 2px;
+        }
+        .btn-action.receive { background: #dcfce7; color: #166534; }
+        .btn-action.receive:hover { background: #bbf7d0; }
+        .btn-action.adjust { background: #fef3c7; color: #92400e; }
+        .btn-action.adjust:hover { background: #fde68a; }
+        .btn-action.history { background: #dbeafe; color: #1e40af; }
+        .btn-action.history:hover { background: #bfdbfe; }
+
+        .movement-type {
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .movement-type.receive { background: #dcfce7; color: #166534; }
+        .movement-type.sold { background: #fee2e2; color: #991b1b; }
+        .movement-type.adjust { background: #fef3c7; color: #92400e; }
+        .movement-type.return { background: #dbeafe; color: #1e40af; }
+
+        .tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 16px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 2px;
+        }
+        .tabs button {
+            padding: 8px 20px;
+            border: none;
+            background: none;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 13px;
+            color: #94a3b8;
+            cursor: pointer;
+            border-radius: 8px 8px 0 0;
+            transition: all 0.2s;
+        }
+        .tabs button:hover { color: #0f172a; background: #f1f5f9; }
+        .tabs button.active {
+            color: #1a3c34;
+            background: #f1f5f9;
+            border-bottom: 3px solid #1a3c34;
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        .movement-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 13px;
+        }
+        .movement-row:hover { background: #f8fafc; }
+        .movement-row .movement-date { color: #94a3b8; min-width: 100px; }
+        .movement-row .movement-product { font-weight: 500; flex: 1; }
+        .movement-row .movement-qty { font-weight: 600; min-width: 60px; text-align: right; }
+        .movement-row .movement-qty.positive { color: #22c55e; }
+        .movement-row .movement-qty.negative { color: #ef4444; }
+        .movement-row .movement-from-to { color: #94a3b8; font-size: 12px; min-width: 80px; }
+        .movement-row .movement-reason { color: #94a3b8; font-size: 12px; min-width: 80px; }
+
+        .modal-content { max-width: 550px; }
+        .modal-content .form-row { display: flex; gap: 12px; }
+        .modal-content .form-row .form-group { flex: 1; }
+
+        /* Stock table with per-product stats */
+        .stock-table-container {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #f1f5f9;
+        }
+        .stock-table-container table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        .stock-table-container th {
+            background: #f8fafc;
+            padding: 10px 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #64748b;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            border-bottom: 2px solid #e2e8f0;
+            white-space: nowrap;
+        }
+        .stock-table-container td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #f1f5f9;
+            vertical-align: middle;
+        }
+        .stock-table-container tr:hover td {
+            background: #f8fafc;
+        }
+        .stock-table-container .product-name {
+            font-weight: 600;
+            color: #0f172a;
+        }
+        .stock-table-container .product-sku {
+            font-size: 11px;
+            color: #94a3b8;
+        }
+        .stock-table-container .stock-number {
+            font-weight: 600;
+        }
+        .stock-table-container .stock-number.green { color: #22c55e; }
+        .stock-table-container .stock-number.red { color: #ef4444; }
+        .stock-table-container .stock-number.orange { color: #f59e0b; }
+
+        .stock-summary-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+            gap: 6px;
+            padding: 8px 12px;
+            background: #f8fafc;
+            border-radius: 6px;
+            margin-top: 8px;
+            font-size: 12px;
+        }
+        .stock-summary-row .item { text-align: center; }
+        .stock-summary-row .item .label { font-size: 9px; color: #94a3b8; text-transform: uppercase; font-weight: 600; }
+        .stock-summary-row .item .value { font-size: 14px; font-weight: 700; color: #0f172a; }
+        .stock-summary-row .item .value.green { color: #22c55e; }
+        .stock-summary-row .item .value.red { color: #ef4444; }
+        .stock-summary-row .item .value.orange { color: #f59e0b; }
+        .stock-summary-row .item .value.blue { color: #3b82f6; }
+
+        @media (max-width: 768px) {
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+            .stock-summary-row { grid-template-columns: 1fr 1fr 1fr; }
+            .modal-content .form-row { flex-direction: column; }
+            .stock-table-container {
+                overflow-x: auto;
+            }
+            .stock-table-container table { font-size: 12px; }
+            .stock-table-container th,
+            .stock-table-container td { padding: 6px 8px; white-space: nowrap; }
+            .tabs button { padding: 6px 14px; font-size: 12px; }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+            .stock-summary-row { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+    <script src="js/printer.js"></script>
+</head>
+<body>
+<div class="app">
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <aside class="sidebar">
+        <div class="logo">🏪 <span>Soko</span>Pulse <button class="close-btn" onclick="toggleSidebar()">✕</button></div>
+        <nav>
+            <div class="nav-label">Main</div>
+            <a href="pos.html">🛒 POS</a>
+            <a href="dashboard.html">📊 Dashboard</a>
+            <a href="orders.html">📋 Orders</a>
+            <div class="nav-label">Inventory</div>
+            <a href="products.html">📦 Products</a>
+            <a href="categories.html">📂 Categories</a>
+            <a href="suppliers.html">📦 Suppliers</a>
+            <a href="stock.html" class="active">📦 Stock</a>
+            <a href="expiry.html">⏰ Expiry</a>
+            <div class="nav-label">Management</div>
+            <a href="customers.html">👤 Customers</a>
+            <a href="reports.html">📈 Reports</a>
+            <a href="audit.html">📋 Audit</a>
+            <a href="returns.html">🔄 Returns</a>
+            <a href="settings.html">⚙️ Settings</a>
+        </nav>
+        <div class="user-section">
+            <div class="name" id="userName">Administrator</div>
+            <div class="role" id="userRole">Admin</div>
+        </div>
+        <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div class="left">
+                <button class="hamburger" onclick="toggleSidebar()">☰</button>
+                <h1>📦 Stock Management</h1>
+            </div>
+            <div class="right">
+                <span class="store-badge">🏪 SokoPulse</span>
+                <span class="time" id="timeDisplay"></span>
+            </div>
+        </header>
+
+        <div class="page-container">
+            <!-- Stats -->
+            <div class="stats-grid" id="statsGrid">
+                <div class="stat-card"><div class="stat-number" id="totalItems">0</div><div class="stat-label">📦 Total</div></div>
+                <div class="stat-card"><div class="stat-number green" id="inStock">0</div><div class="stat-label">✅ In Stock</div></div>
+                <div class="stat-card"><div class="stat-number orange" id="lowStock">0</div><div class="stat-label">⚠️ Low</div></div>
+                <div class="stat-card"><div class="stat-number red" id="outStock">0</div><div class="stat-label">❌ Out</div></div>
+                <div class="stat-card"><div class="stat-number blue" id="totalReceived">0</div><div class="stat-label">📥 Received</div></div>
+                <div class="stat-card"><div class="stat-number red" id="totalSold">0</div><div class="stat-label">📤 Sold</div></div>
+                <div class="stat-card"><div class="stat-number orange" id="totalAdjusted">0</div><div class="stat-label">📊 Adjusted</div></div>
+                <div class="stat-card"><div class="stat-number purple" id="stockValue">KES 0</div><div class="stat-label">💰 Value</div></div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="active" onclick="switchTab('products')">📦 Stock Levels</button>
+                <button onclick="switchTab('movements')">📊 Movements</button>
+                <button onclick="switchTab('summary')">📋 Product Summary</button>
+            </div>
+
+            <!-- Tab: Products (with per-product stats) -->
+            <div class="tab-content active" id="tab-products">
+                <div class="toolbar">
+                    <div class="search-wrapper">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" id="searchInput" placeholder="Search by name or SKU..." oninput="renderProducts()">
+                    </div>
+                    <button class="btn-receive" onclick="openReceiveModal()">📥 Receive Stock</button>
+                    <button class="btn-adjust" onclick="openAdjustModal()">📊 Adjust Stock</button>
+                <button class="btn-adjust" onclick="openBulkAdjust()" style="background:#8b5cf6;color:white;">📊 Bulk Adjust</button>
+                    <button class="btn-export" onclick="exportStock()">📤 Export</button>
+                </div>
+
+                <div class="stock-table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Stock</th><th>Value</th>
+                                <th>Min</th>
+                                <th>Received</th>
+                                <th>Sold</th>
+                                <th>Adjusted</th>
+                                <th>Net</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="stockBody">
+                            <tr><td colspan="9" style="text-align:center;padding:40px;color:#94a3b8;">Loading products...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tab: Movements -->
+            <div class="tab-content" id="tab-movements">
+                <div class="toolbar">
+                    <div class="search-wrapper">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" id="movementSearch" placeholder="Search movements..." oninput="renderMovements()">
+                    </div>
+                    <select id="movementFilter" onchange="renderMovements()" style="padding:10px 14px;border:2px solid #e2e8f0;border-radius:10px;font-family:'Inter',sans-serif;font-size:13px;">
+                        <option value="all">All Types</option>
+                        <option value="receive">📥 Receive</option>
+                        <option value="sold">📤 Sold</option>
+                        <option value="adjust">📊 Adjust</option>
+                        <option value="return">🔄 Return</option>
+                    </select>
+                </div>
+
+                <div class="stock-table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Product</th>
+                                <th>Type</th>
+                                <th>Qty</th>
+                                <th>From → To</th>
+                                <th>Reason / Reference</th>
+                            </tr>
+                        </thead>
+                        <tbody id="movementsBody">
+                            <tr><td colspan="6" style="text-align:center;padding:40px;color:#94a3b8;">No movements recorded</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tab: Summary (per product) -->
+            <div class="tab-content" id="tab-summary">
+                <div style="margin-bottom:12px;">
+                    <select id="summaryProductSelect" onchange="renderSummary()" style="padding:10px 14px;border:2px solid #e2e8f0;border-radius:10px;font-family:'Inter',sans-serif;font-size:13px;width:100%;max-width:350px;">
+                        <option value="">Select a product to view summary...</option>
+                    </select>
+                </div>
+                <div class="stock-summary-row" id="productSummary">
+                    <div class="item"><div class="label">Product</div><div class="value">-</div></div>
+                    <div class="item"><div class="label">Current Stock</div><div class="value">-</div></div>
+                    <div class="item"><div class="label">Total Received</div><div class="value">-</div></div>
+                    <div class="item"><div class="label">Total Sold</div><div class="value">-</div></div>
+                    <div class="item"><div class="label">Total Adjusted</div><div class="value">-</div></div>
+                    <div class="item"><div class="label">Stock Value</div><div class="value">-</div></div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Receive Modal -->
+<div class="modal" id="receiveModal">
+    <div class="modal-content">
+        <span class="modal-close" onclick="closeModal('receiveModal')">&times;</span>
+        <h2>📥 Receive Stock</h2>
+        <form id="receiveForm" onsubmit="receiveStock(event)">
+            <div class="form-group">
+                <label>Product *</label>
+                <select id="receiveProduct" required>
+                    <option value="">Select product...</option>
+                </select>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Quantity *</label>
+                    <input type="number" id="receiveQty" required min="1" placeholder="Enter quantity">
+                </div>
+                <div class="form-group">
+                    <label>Cost Price (KES)</label>
+                    <input type="number" id="receiveCost" step="0.01" placeholder="0.00">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Supplier</label>
+                    <input type="text" id="receiveSupplier" placeholder="Supplier name">
+                </div>
+                <div class="form-group">
+                    <label>Invoice Number</label>
+                    <input type="text" id="receiveInvoice" placeholder="Invoice #">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Batch Number</label>
+                    <input type="text" id="receiveBatch" placeholder="Batch # (optional)">
+                </div>
+                <div class="form-group">
+                    <label>Expiry Date</label>
+                    <input type="date" id="receiveExpiry">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Notes</label>
+                <textarea id="receiveNotes" rows="2" placeholder="Optional notes"></textarea>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-cancel" onclick="closeModal('receiveModal')">Cancel</button>
+                <button type="submit" class="btn-save">📥 Receive Stock</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Adjust Modal -->
+<div class="modal" id="adjustModal">
+    <div class="modal-content">
+        <span class="modal-close" onclick="closeModal('adjustModal')">&times;</span>
+        <h2>📊 Adjust Stock</h2>
+        <form id="adjustForm" onsubmit="adjustStock(event)">
+            <div class="form-group">
+                <label>Product *</label>
+                <select id="adjustProduct" required>
+                    <option value="">Select product...</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Current Stock</label>
+                <input type="text" id="adjustCurrentStock" disabled>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Adjustment Type *</label>
+                    <select id="adjustType" required>
+                        <option value="increase">➕ Increase Stock</option>
+                        <option value="decrease">➖ Decrease Stock</option>
+                        <option value="set">📊 Set Stock Level</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Quantity *</label>
+                    <input type="number" id="adjustQty" required min="0" placeholder="Enter quantity">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Reason *</label>
+                <select id="adjustReason" required>
+                    <option value="">Select reason...</option>
+                    <option value="damaged">Damaged</option>
+                    <option value="expired">Expired</option>
+                    <option value="theft">Theft</option>
+                    <option value="correction">Stock Take Correction</option>
+                    <option value="returned">Returned to Supplier</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Notes</label>
+                <textarea id="adjustNotes" rows="2" placeholder="Optional notes"></textarea>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-cancel" onclick="closeModal('adjustModal')">Cancel</button>
+                <button type="submit" class="btn-save">📊 Adjust Stock</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+// ===== ACTIVATION CHECK =====
+function checkActivation() {
+    const activationKey = localStorage.getItem('activation_key');
+    const activationExpiry = localStorage.getItem('activation_expiry');
+    
+    if (!activationKey) {
+        window.location.href = 'activation.html';
+        return false;
+    }
+    
+    // Check if expired
+    if (activationExpiry && activationExpiry !== 'permanent') {
+        const expiryDate = new Date(activationExpiry);
+        const now = new Date();
+        if (now > expiryDate) {
+            localStorage.removeItem('activation_key');
+            localStorage.removeItem('activation_expiry');
+            window.location.href = 'activation.html';
+            return false;
+        }
+    }
+    
+    return true;
+}
 
 // Run check immediately
 if (!checkActivation()) {
@@ -179,7 +665,6 @@ function renderProducts() {
     if (!tbody) return;
     
     const search = document.getElementById('searchInput')?.value?.toLowerCase() || '';
-    const stockFilter = document.getElementById('stockStatusFilter')?.value || 'all';
     
     let filtered = products || [];
     if (search) {
@@ -187,15 +672,6 @@ function renderProducts() {
             (p.name || '').toLowerCase().includes(search) || 
             (p.sku || '').toLowerCase().includes(search)
         );
-    }
-    
-    // Apply stock status filter
-    if (stockFilter === 'in-stock') {
-        filtered = filtered.filter(p => (p.current_stock || 0) > (p.min_stock_alert || 5));
-    } else if (stockFilter === 'low-stock') {
-        filtered = filtered.filter(p => (p.current_stock || 0) <= (p.min_stock_alert || 5) && (p.current_stock || 0) > 0);
-    } else if (stockFilter === 'out-of-stock') {
-        filtered = filtered.filter(p => (p.current_stock || 0) <= 0);
     }
     
     if (filtered.length === 0) {
@@ -736,14 +1212,6 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('timeDisplay').textContent = new Date().toLocaleTimeString('en-KE', { hour12: false });
     }, 1000);
     loadStockData();
-    
-    // Add event listener for stock filter
-    const filterEl = document.getElementById('stockStatusFilter');
-    if (filterEl) {
-        filterEl.addEventListener('change', function() {
-            renderProducts();
-        });
-    }
 });
 
 // ===== SEARCH EVENTS =====
