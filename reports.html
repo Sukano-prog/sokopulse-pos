@@ -378,11 +378,20 @@ function isAdmin() {
 }
 if (!isAdmin()) {
     window.location.href = "pos.html";
+}
 
+
+// Admin-only page - redirect if not admin
+    window.location.href = "pos.html";
+}
 function toggleSidebar() {
     document.querySelector(".sidebar")?.classList.toggle("open");
     document.querySelector(".sidebar-overlay")?.classList.toggle("show");
 }
+
+
+// Admin-only page check
+// Admin-only page check
 
 function logout() {
     if (confirm('Logout?')) {
