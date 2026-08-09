@@ -1246,6 +1246,14 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('timeDisplay').textContent = new Date().toLocaleTimeString('en-KE', { hour12: false });
     }, 1000);
     loadStockData();
+    
+    // Add event listener for stock filter
+    const filterEl = document.getElementById('stockStatusFilter');
+    if (filterEl) {
+        filterEl.addEventListener('change', function() {
+            renderProducts();
+        });
+    }
 });
 
 // ===== SEARCH EVENTS =====
