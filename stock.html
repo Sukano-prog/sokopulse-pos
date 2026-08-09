@@ -568,6 +568,7 @@ async function loadStockData() {
         const db = await openDB();
         products = await dbGetAll(db, 'products');
         movements = await dbGetAll(db, 'stock_movements');
+        console.log('📊 Stock data loaded - Products:', products.length, 'Movements:', movements.length);
         renderStats();
         renderProducts();
         populateProductSelects();
