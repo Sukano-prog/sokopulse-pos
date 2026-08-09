@@ -756,6 +756,72 @@ function loadProfitLoss() {
     var grossMargin = totalRevenue > 0 ? (grossProfit / totalRevenue) * 100 : 0;
 
     var container = document.getElementById('profitLossResult');
+    
+    // Calculate product breakdown
+    var productProfit = {};
+    orders.forEach(function(o) {
+        if (o.items) {
+            var items = typeof o.items === 'string' ? JSON.parse(o.items) : o.items;
+            items.forEach(function(item) {
+                var name = item.name || 'Unknown';
+                var qty = item.qty || 1;
+                var price = item.price || 0;
+                var revenue = price * qty;
+                var product = allProducts.find(function(p) { return p.id === item.id || p.name === item.name; });
+                var costPrice = product ? (product.cost_price || 0) : 0;
+                var cost = costPrice * qty;
+                if (!productProfit[name]) {
+                    productProfit[name] = { revenue: 0, cost: 0, qty: 0 };
+                }
+                productProfit[name].revenue += revenue;
+                productProfit[name].cost += cost;
+                productProfit[name].qty += qty;
+            });
+        }
+    });
+    
+    var productHtml = '';
+    var sortedProducts = Object.keys(productProfit).sort(function(a, b) {
+        return (productProfit[b].revenue - productProfit[b].cost) - (productProfit[a].revenue - productProfit[a].cost);
+    });
+    
+    if (sortedProducts.length > 0) {
+        productHtml = '<div style="background:white;border-radius:12px;padding:20px;border:1px solid #e2e8f0;margin-top:12px;">' +
+            '<h3 style="font-size:16px;font-weight:700;color:#0f172a;margin-bottom:12px;">📦 Profit by Product</h3>' +
+            '<div style="overflow-x:auto;">' +
+            '<table style="width:100%;border-collapse:collapse;font-size:13px;">' +
+                '<thead>' +
+                    '<tr style="background:#f8fafc;border-bottom:2px solid #e2e8f0;">' +
+                        '<th style="padding:8px 12px;text-align:left;font-weight:600;color:#64748b;">Product</th>' +
+                        '<th style="padding:8px 12px;text-align:center;font-weight:600;color:#64748b;">Qty Sold</th>' +
+                        '<th style="padding:8px 12px;text-align:right;font-weight:600;color:#64748b;">Revenue</th>' +
+                        '<th style="padding:8px 12px;text-align:right;font-weight:600;color:#64748b;">Cost</th>' +
+                        '<th style="padding:8px 12px;text-align:right;font-weight:600;color:#64748b;">Profit</th>' +
+                        '<th style="padding:8px 12px;text-align:right;font-weight:600;color:#64748b;">Margin</th>' +
+                    '</tr>' +
+                '</thead>' +
+                '<tbody>';
+        
+        sortedProducts.forEach(function(name) {
+            var data = productProfit[name];
+            var profit = data.revenue - data.cost;
+            var margin = data.revenue > 0 ? (profit / data.revenue) * 100 : 0;
+            var profitColor = profit >= 0 ? '#166534' : '#991b1b';
+            var bgColor = profit >= 0 ? '#f0fdf4' : '#fef2f2';
+            productHtml +=
+                '<tr style="border-bottom:1px solid #f1f5f9;">' +
+                    '<td style="padding:8px 12px;font-weight:500;color:#0f172a;">' + name + '</td>' +
+                    '<td style="padding:8px 12px;text-align:center;color:#64748b;">' + data.qty + '</td>' +
+                    '<td style="padding:8px 12px;text-align:right;color:#166534;">KES ' + data.revenue.toFixed(0) + '</td>' +
+                    '<td style="padding:8px 12px;text-align:right;color:#92400e;">KES ' + data.cost.toFixed(0) + '</td>' +
+                    '<td style="padding:8px 12px;text-align:right;font-weight:600;color:' + profitColor + ';">KES ' + profit.toFixed(0) + '</td>' +
+                    '<td style="padding:8px 12px;text-align:right;color:' + profitColor + ';">' + margin.toFixed(1) + '%</td>' +
+                '</tr>';
+        });
+        
+        productHtml += '</tbody></table></div></div>';
+    }
+
     container.innerHTML = 
         '<div style="background:white;border-radius:12px;padding:20px;border:1px solid #e2e8f0;margin-bottom:16px;">' +
             '<h3 style="font-size:16px;font-weight:700;color:#0f172a;margin-bottom:12px;">📊 Profit & Loss Summary</h3>' +
@@ -796,7 +862,8 @@ function loadProfitLoss() {
         '</div>' +
         '<div style="background:#f8fafc;padding:12px 16px;border-radius:8px;font-size:12px;color:#64748b;border:1px solid #e2e8f0;">' +
             '<span>💡 Gross Profit = Revenue - COGS | Gross Margin = (Gross Profit / Revenue) × 100</span>' +
-        '</div>';
+        '</div>' +
+        productHtml;
     console.log('✅ Profit/Loss loaded');
 }
 
