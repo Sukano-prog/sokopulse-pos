@@ -103,7 +103,21 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('userName').textContent = user.name || user.username;
     document.getElementById('userRole').textContent = user.role || 'User';
     setInterval(() => { document.getElementById('timeDisplay').textContent = new Date().toLocaleTimeString('en-KE', { hour12: false }); }, 1000);
+    loadProducts();
 });
+function loadProducts() {
+    openDB().then(function(db) {
+        dbGetAll(db, 'products').then(function(data) {
+            products = data || [];
+            renderExpiry();
+        }).catch(function(e) {
+            console.error('Error loading products:', e);
+        });
+    }).catch(function(e) {
+        console.error('Error opening database:', e);
+    });
+}
+
 function renderExpiry() {
     const tbody = document.getElementById('expiryBody');
     const today = new Date();
