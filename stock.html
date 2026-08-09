@@ -1615,14 +1615,6 @@ if (!checkActivation()) {
 }
 
 // ===== STOCK WITH TOTAL VALUE =====
-const originalRender = renderProducts;
-renderProducts = function() {
-    const tbody = document.getElementById('stockBody');
-    if (!tbody) return;
-    
-    const search = document.getElementById('searchInput')?.value?.toLowerCase() || '';
-    let filtered = products || [];
-    if (search) {
         filtered = filtered.filter(p => 
             (p.name || '').toLowerCase().includes(search) || 
             (p.sku || '').toLowerCase().includes(search)
@@ -1772,9 +1764,6 @@ renderProducts = function() {
     const search = document.getElementById('searchInput')?.value?.toLowerCase() || '';
     
     let filtered = products || [];
-    if (search) {
-        filtered = filtered.filter(p => 
-            (p.name || '').toLowerCase().includes(search) || 
             (p.sku || '').toLowerCase().includes(search)
         );
     }
