@@ -1,0 +1,1621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock - SokoPulse</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <style>
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        .stat-card {
+            background: white;
+            padding: 12px 16px;
+            border-radius: 10px;
+            border: 1px solid #f1f5f9;
+            text-align: center;
+        }
+        .stat-card .stat-number {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+        .stat-card .stat-label {
+            font-size: 10px;
+            color: #94a3b8;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .stat-card .stat-number.green { color: #22c55e; }
+        .stat-card .stat-number.red { color: #ef4444; }
+        .stat-card .stat-number.orange { color: #f59e0b; }
+        .stat-card .stat-number.blue { color: #3b82f6; }
+        .stat-card .stat-number.purple { color: #8b5cf6; }
+
+        .toolbar {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+            align-items: center;
+        }
+        .toolbar .search-wrapper {
+            flex: 1;
+            position: relative;
+            min-width: 180px;
+        }
+        .toolbar .search-wrapper input {
+            width: 100%;
+            padding: 10px 14px 10px 38px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+        }
+        .toolbar .search-wrapper input:focus {
+            outline: none;
+            border-color: #1a3c34;
+        }
+        .toolbar .search-wrapper .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+        }
+        .btn-receive {
+            padding: 10px 18px;
+            background: #22c55e;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .btn-receive:hover { background: #16a34a; transform: translateY(-2px); }
+        .btn-adjust {
+            padding: 10px 18px;
+            background: #f59e0b;
+            color: #0f172a;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .btn-adjust:hover { background: #d97706; transform: translateY(-2px); }
+        .btn-export {
+            padding: 10px 18px;
+            background: #f1f5f9;
+            color: #0f172a;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .btn-export:hover { background: #e2e8f0; }
+
+        .status-badge {
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .status-badge.in-stock { background: #dcfce7; color: #166534; }
+        .status-badge.low-stock { background: #fef3c7; color: #92400e; }
+        .status-badge.out-of-stock { background: #fee2e2; color: #991b1b; }
+
+        .btn-action {
+            padding: 4px 10px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 11px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            transition: all 0.15s;
+            margin: 0 2px;
+        }
+        .btn-action.receive { background: #dcfce7; color: #166534; }
+        .btn-action.receive:hover { background: #bbf7d0; }
+        .btn-action.adjust { background: #fef3c7; color: #92400e; }
+        .btn-action.adjust:hover { background: #fde68a; }
+        .btn-action.history { background: #dbeafe; color: #1e40af; }
+        .btn-action.history:hover { background: #bfdbfe; }
+
+        .movement-type {
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .movement-type.receive { background: #dcfce7; color: #166534; }
+        .movement-type.sold { background: #fee2e2; color: #991b1b; }
+        .movement-type.adjust { background: #fef3c7; color: #92400e; }
+        .movement-type.return { background: #dbeafe; color: #1e40af; }
+
+        .tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 16px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 2px;
+        }
+        .tabs button {
+            padding: 8px 20px;
+            border: none;
+            background: none;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 13px;
+            color: #94a3b8;
+            cursor: pointer;
+            border-radius: 8px 8px 0 0;
+            transition: all 0.2s;
+        }
+        .tabs button:hover { color: #0f172a; background: #f1f5f9; }
+        .tabs button.active {
+            color: #1a3c34;
+            background: #f1f5f9;
+            border-bottom: 3px solid #1a3c34;
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        .movement-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 13px;
+        }
+        .movement-row:hover { background: #f8fafc; }
+        .movement-row .movement-date { color: #94a3b8; min-width: 100px; }
+        .movement-row .movement-product { font-weight: 500; flex: 1; }
+        .movement-row .movement-qty { font-weight: 600; min-width: 60px; text-align: right; }
+        .movement-row .movement-qty.positive { color: #22c55e; }
+        .movement-row .movement-qty.negative { color: #ef4444; }
+        .movement-row .movement-from-to { color: #94a3b8; font-size: 12px; min-width: 80px; }
+        .movement-row .movement-reason { color: #94a3b8; font-size: 12px; min-width: 80px; }
+
+        .modal-content { max-width: 550px; }
+        .modal-content .form-row { display: flex; gap: 12px; }
+        .modal-content .form-row .form-group { flex: 1; }
+
+        /* Stock table with per-product stats */
+        .stock-table-container {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #f1f5f9;
+        }
+        .stock-table-container table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        .stock-table-container th {
+            background: #f8fafc;
+            padding: 10px 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #64748b;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            border-bottom: 2px solid #e2e8f0;
+            white-space: nowrap;
+        }
+        .stock-table-container td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #f1f5f9;
+            vertical-align: middle;
+        }
+        .stock-table-container tr:hover td {
+            background: #f8fafc;
+        }
+        .stock-table-container .product-name {
+            font-weight: 600;
+            color: #0f172a;
+        }
+        .stock-table-container .product-sku {
+            font-size: 11px;
+            color: #94a3b8;
+        }
+        .stock-table-container .stock-number {
+            font-weight: 600;
+        }
+        .stock-table-container .stock-number.green { color: #22c55e; }
+        .stock-table-container .stock-number.red { color: #ef4444; }
+        .stock-table-container .stock-number.orange { color: #f59e0b; }
+
+        .stock-summary-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+            gap: 6px;
+            padding: 8px 12px;
+            background: #f8fafc;
+            border-radius: 6px;
+            margin-top: 8px;
+            font-size: 12px;
+        }
+        .stock-summary-row .item { text-align: center; }
+        .stock-summary-row .item .label { font-size: 9px; color: #94a3b8; text-transform: uppercase; font-weight: 600; }
+        .stock-summary-row .item .value { font-size: 14px; font-weight: 700; color: #0f172a; }
+        .stock-summary-row .item .value.green { color: #22c55e; }
+        .stock-summary-row .item .value.red { color: #ef4444; }
+        .stock-summary-row .item .value.orange { color: #f59e0b; }
+        .stock-summary-row .item .value.blue { color: #3b82f6; }
+
+        @media (max-width: 768px) {
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+            .stock-summary-row { grid-template-columns: 1fr 1fr 1fr; }
+            .modal-content .form-row { flex-direction: column; }
+            .stock-table-container {
+                overflow-x: auto;
+            }
+            .stock-table-container table { font-size: 12px; }
+            .stock-table-container th,
+            .stock-table-container td { padding: 6px 8px; white-space: nowrap; }
+            .tabs button { padding: 6px 14px; font-size: 12px; }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+            .stock-summary-row { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+    <script src="js/printer.js"></script>
+</head>
+<body>
+<div class="app">
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <aside class="sidebar">
+        <div class="logo">🏪 <span>Soko</span>Pulse <button class="close-btn" onclick="toggleSidebar()">✕</button></div>
+        <nav>
+            <div class="nav-label">Main</div>
+            <a href="pos.html">🛒 POS</a>
+            <a href="dashboard.html">📊 Dashboard</a>
+            <a href="orders.html">📋 Orders</a>
+            <div class="nav-label">Inventory</div>
+            <a href="products.html">📦 Products</a>
+            <a href="categories.html">📂 Categories</a>
+            <a href="suppliers.html">📦 Suppliers</a>
+            <a href="stock.html" class="active">📦 Stock</a>
+            <a href="expiry.html">⏰ Expiry</a>
+            <div class="nav-label">Management</div>
+            <a href="customers.html">👤 Customers</a>
+            <a href="reports.html">📈 Reports</a>
+            <a href="audit.html">📋 Audit</a>
+            <a href="returns.html">🔄 Returns</a>
+            <a href="settings.html">⚙️ Settings</a>
+        </nav>
+        <div class="user-section">
+            <div class="name" id="userName">Administrator</div>
+            <div class="role" id="userRole">Admin</div>
+        </div>
+        <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div class="left">
+                <button class="hamburger" onclick="toggleSidebar()">☰</button>
+                <h1>📦 Stock Management</h1>
+            </div>
+            <div class="right">
+                <span class="store-badge">🏪 SokoPulse</span>
+                <span class="time" id="timeDisplay"></span>
+            </div>
+        </header>
+
+        <div class="page-container">
+            <!-- Stats -->
+            <div class="stats-grid" id="statsGrid">
+                <div class="stat-card"><div class="stat-number" id="totalItems">0</div><div class="stat-label">📦 Total</div></div>
+                <div class="stat-card"><div class="stat-number green" id="inStock">0</div><div class="stat-label">✅ In Stock</div></div>
+                <div class="stat-card"><div class="stat-number orange" id="lowStock">0</div><div class="stat-label">⚠️ Low</div></div>
+                <div class="stat-card"><div class="stat-number red" id="outStock">0</div><div class="stat-label">❌ Out</div></div>
+                <div class="stat-card"><div class="stat-number blue" id="totalReceived">0</div><div class="stat-label">📥 Received</div></div>
+                <div class="stat-card"><div class="stat-number red" id="totalSold">0</div><div class="stat-label">📤 Sold</div></div>
+                <div class="stat-card"><div class="stat-number orange" id="totalAdjusted">0</div><div class="stat-label">📊 Adjusted</div></div>
+                <div class="stat-card"><div class="stat-number purple" id="stockValue">KES 0</div><div class="stat-label">💰 Value</div></div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="active" onclick="switchTab('products')">📦 Stock Levels</button>
+                <button onclick="switchTab('movements')">📊 Movements</button>
+                <button onclick="switchTab('summary')">📋 Product Summary</button>
+            </div>
+
+            <!-- Tab: Products (with per-product stats) -->
+            <div class="tab-content active" id="tab-products">
+                <div class="toolbar">
+                    <div class="search-wrapper">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" id="searchInput" placeholder="Search by name or SKU..." oninput="renderProducts()">
+                    </div>
+                    <button class="btn-receive" onclick="openReceiveModal()">📥 Receive Stock</button>
+                    <button class="btn-adjust" onclick="openAdjustModal()">📊 Adjust Stock</button>
+                <button class="btn-adjust" onclick="openBulkAdjust()" style="background:#8b5cf6;color:white;">📊 Bulk Adjust</button>
+                    <button class="btn-export" onclick="exportStock()">📤 Export</button>
+                </div>
+
+                <div class="stock-table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Stock</th><th>Value</th>
+                                <th>Min</th>
+                                <th>Received</th>
+                                <th>Sold</th>
+                                <th>Adjusted</th>
+                                <th>Net</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="stockBody">
+                            <tr><td colspan="9" style="text-align:center;padding:40px;color:#94a3b8;">Loading products...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tab: Movements -->
+            <div class="tab-content" id="tab-movements">
+                <div class="toolbar">
+                    <div class="search-wrapper">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" id="movementSearch" placeholder="Search movements..." oninput="renderMovements()">
+                    </div>
+                    <select id="movementFilter" onchange="renderMovements()" style="padding:10px 14px;border:2px solid #e2e8f0;border-radius:10px;font-family:'Inter',sans-serif;font-size:13px;">
+                        <option value="all">All Types</option>
+                        <option value="receive">📥 Receive</option>
+                        <option value="sold">📤 Sold</option>
+                        <option value="adjust">📊 Adjust</option>
+                        <option value="return">🔄 Return</option>
+                    </select>
+                </div>
+
+                <div class="stock-table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Product</th>
+                                <th>Type</th>
+                                <th>Qty</th>
+                                <th>From → To</th>
+                                <th>Reason / Reference</th>
+                            </tr>
+                        </thead>
+                        <tbody id="movementsBody">
+                            <tr><td colspan="6" style="text-align:center;padding:40px;color:#94a3b8;">No movements recorded</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tab: Summary (per product) -->
+            <div class="tab-content" id="tab-summary">
+                <div style="margin-bottom:12px;">
+                    <select id="summaryProductSelect" onchange="renderSummary()" style="padding:10px 14px;border:2px solid #e2e8f0;border-radius:10px;font-family:'Inter',sans-serif;font-size:13px;width:100%;max-width:350px;">
+                        <option value="">Select a product to view summary...</option>
+                    </select>
+                </div>
+                <div class="stock-summary-row" id="productSummary">
+                    <div class="item"><div class="label">Product</div><div class="value">-</div></div>
+                    <div class="item"><div class="label">Current Stock</div><div class="value">-</div></div>
+                    <div class="item"><div class="label">Total Received</div><div class="value">-</div></div>
+                    <div class="item"><div class="label">Total Sold</div><div class="value">-</div></div>
+                    <div class="item"><div class="label">Total Adjusted</div><div class="value">-</div></div>
+                    <div class="item"><div class="label">Stock Value</div><div class="value">-</div></div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Receive Modal -->
+<div class="modal" id="receiveModal">
+    <div class="modal-content">
+        <span class="modal-close" onclick="closeModal('receiveModal')">&times;</span>
+        <h2>📥 Receive Stock</h2>
+        <form id="receiveForm" onsubmit="receiveStock(event)">
+            <div class="form-group">
+                <label>Product *</label>
+                <select id="receiveProduct" required>
+                    <option value="">Select product...</option>
+                </select>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Quantity *</label>
+                    <input type="number" id="receiveQty" required min="1" placeholder="Enter quantity">
+                </div>
+                <div class="form-group">
+                    <label>Cost Price (KES)</label>
+                    <input type="number" id="receiveCost" step="0.01" placeholder="0.00">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Supplier</label>
+                    <input type="text" id="receiveSupplier" placeholder="Supplier name">
+                </div>
+                <div class="form-group">
+                    <label>Invoice Number</label>
+                    <input type="text" id="receiveInvoice" placeholder="Invoice #">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Batch Number</label>
+                    <input type="text" id="receiveBatch" placeholder="Batch # (optional)">
+                </div>
+                <div class="form-group">
+                    <label>Expiry Date</label>
+                    <input type="date" id="receiveExpiry">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Notes</label>
+                <textarea id="receiveNotes" rows="2" placeholder="Optional notes"></textarea>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-cancel" onclick="closeModal('receiveModal')">Cancel</button>
+                <button type="submit" class="btn-save">📥 Receive Stock</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Adjust Modal -->
+<div class="modal" id="adjustModal">
+    <div class="modal-content">
+        <span class="modal-close" onclick="closeModal('adjustModal')">&times;</span>
+        <h2>📊 Adjust Stock</h2>
+        <form id="adjustForm" onsubmit="adjustStock(event)">
+            <div class="form-group">
+                <label>Product *</label>
+                <select id="adjustProduct" required>
+                    <option value="">Select product...</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Current Stock</label>
+                <input type="text" id="adjustCurrentStock" disabled>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Adjustment Type *</label>
+                    <select id="adjustType" required>
+                        <option value="increase">➕ Increase Stock</option>
+                        <option value="decrease">➖ Decrease Stock</option>
+                        <option value="set">📊 Set Stock Level</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Quantity *</label>
+                    <input type="number" id="adjustQty" required min="0" placeholder="Enter quantity">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Reason *</label>
+                <select id="adjustReason" required>
+                    <option value="">Select reason...</option>
+                    <option value="damaged">Damaged</option>
+                    <option value="expired">Expired</option>
+                    <option value="theft">Theft</option>
+                    <option value="correction">Stock Take Correction</option>
+                    <option value="returned">Returned to Supplier</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Notes</label>
+                <textarea id="adjustNotes" rows="2" placeholder="Optional notes"></textarea>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-cancel" onclick="closeModal('adjustModal')">Cancel</button>
+                <button type="submit" class="btn-save">📊 Adjust Stock</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+// ===== STOCK PAGE - UNIFIED SCRIPT =====
+
+// ===== STATE =====
+let products = [];
+let movements = [];
+let currentUser = null;
+let bulkStockSelected = new Set();
+
+// ===== DB HELPERS =====
+function openDB() {
+    return new Promise((resolve, reject) => {
+        const req = indexedDB.open('SokoPulsePOS', 6);
+        req.onupgradeneeded = function(e) {
+            const db = e.target.result;
+            if (!db.objectStoreNames.contains('stock_movements')) {
+                const store = db.createObjectStore('stock_movements', { keyPath: 'id', autoIncrement: true });
+                store.createIndex('product_id', 'product_id', { unique: false });
+                store.createIndex('type', 'type', { unique: false });
+                store.createIndex('date', 'date', { unique: false });
+            }
+        };
+        req.onsuccess = e => resolve(e.target.result);
+        req.onerror = e => reject(e.target.error);
+    });
+}
+
+function dbGetAll(db, storeName) {
+    return new Promise((resolve, reject) => {
+        if (!db.objectStoreNames.contains(storeName)) {
+            resolve([]);
+            return;
+        }
+        const tx = db.transaction(storeName, 'readonly');
+        const store = tx.objectStore(storeName);
+        const req = store.getAll();
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+    });
+}
+
+// ===== TOGGLE SIDEBAR =====
+function toggleSidebar() {
+    document.querySelector('.sidebar').classList.toggle('open');
+    document.querySelector('.sidebar-overlay').classList.toggle('show');
+}
+
+// ===== LOAD DATA =====
+async function loadStockData() {
+    try {
+        const db = await openDB();
+        products = await dbGetAll(db, 'products');
+        movements = await dbGetAll(db, 'stock_movements');
+        renderStats();
+        renderProducts();
+        populateProductSelects();
+    } catch(e) {
+        console.error('Error loading stock data:', e);
+        document.getElementById('stockBody').innerHTML = `<tr><td colspan="9" style="text-align:center;padding:40px;color:#ef4444;">Error loading data</td></tr>`;
+    }
+}
+
+// ===== RENDER STATS =====
+function renderStats() {
+    const total = products ? products.length : 0;
+    const inStock = products ? products.filter(p => p.current_stock > (p.min_stock_alert || 5)).length : 0;
+    const lowStock = products ? products.filter(p => p.current_stock <= (p.min_stock_alert || 5) && p.current_stock > 0).length : 0;
+    const outStock = products ? products.filter(p => p.current_stock <= 0).length : 0;
+
+    document.getElementById('totalItems').textContent = total;
+    document.getElementById('inStock').textContent = inStock;
+    document.getElementById('lowStock').textContent = lowStock;
+    document.getElementById('outStock').textContent = outStock;
+
+    const received = movements ? movements.filter(m => m.type === 'receive').reduce((s, m) => s + m.quantity, 0) : 0;
+    const sold = movements ? movements.filter(m => m.type === 'sold').reduce((s, m) => s + Math.abs(m.quantity), 0) : 0;
+    const adjusted = movements ? movements.filter(m => m.type === 'adjust').reduce((s, m) => s + Math.abs(m.quantity), 0) : 0;
+
+    document.getElementById('totalReceived').textContent = received;
+    document.getElementById('totalSold').textContent = sold;
+    document.getElementById('totalAdjusted').textContent = adjusted;
+
+    const value = products ? products.reduce((s, p) => s + ((p.cost_price || 0) * (p.current_stock || 0)), 0) : 0;
+    document.getElementById('stockValue').textContent = `KES ${value.toFixed(0)}`;
+}
+
+// ===== RENDER PRODUCTS =====
+function renderProducts() {
+    let total = filtered.length;
+    const tbody = document.getElementById('stockBody');
+    if (!tbody) return;
+    
+    const search = document.getElementById('searchInput')?.value?.toLowerCase() || '';
+    
+    let filtered = products || [];
+    if (search) {
+        filtered = filtered.filter(p => 
+            (p.name || '').toLowerCase().includes(search) || 
+            (p.sku || '').toLowerCase().includes(search)
+        );
+    }
+    
+    if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;padding:40px;color:#94a3b8;">No products found</td></tr>`;
+        return;
+    }
+    
+    tbody.innerHTML = filtered.map(p => {
+        const productMovements = movements ? movements.filter(m => m.product_id === p.id) : [];
+        const received = productMovements.filter(m => m.type === 'receive').reduce((s, m) => s + m.quantity, 0);
+        const sold = productMovements.filter(m => m.type === 'sold').reduce((s, m) => s + Math.abs(m.quantity), 0);
+        const adjusted = productMovements.filter(m => m.type === 'adjust').reduce((s, m) => s + Math.abs(m.quantity), 0);
+        const netChange = (p.current_stock || 0) - (p.initial_stock || 0);
+        
+        let status = 'in-stock';
+        let statusLabel = '✅ In Stock';
+        if (p.current_stock <= 0) { status = 'out-of-stock'; statusLabel = '❌ Out of Stock'; }
+        else if (p.current_stock < (p.min_stock_alert || 5)) { status = 'low-stock'; statusLabel = '⚠️ Low Stock'; }
+        
+        const stockClass = p.current_stock <= 0 ? 'red' : p.current_stock < (p.min_stock_alert || 5) ? 'orange' : 'green';
+        
+        return `
+            <tr>
+                <td>
+                    <div class="product-name">${p.name || 'Unnamed'}</div>
+                    <div class="product-sku">${p.sku || '-'}</div>
+                </td>
+                <td><span class="stock-number ${stockClass}">${p.current_stock || 0}</span></td>
+                <td>${p.min_stock_alert || 5}</td>
+                <td><span class="stock-number green">${received}</span></td>
+                <td><span class="stock-number red">${sold}</span></td>
+                <td><span class="stock-number orange">${adjusted}</span></td>
+                <td><span class="stock-number ${netChange >= 0 ? 'green' : 'red'}">${netChange >= 0 ? '+' : ''}${netChange}</span></td>
+                <td><span class="status-badge ${status}">${statusLabel}</span></td>
+                <td>
+                    <button class="btn-action receive" onclick="openReceiveModal(${p.id})">📥</button>
+                    <button class="btn-action adjust" onclick="openAdjustModal(${p.id})">📊</button>
+                    <button class="btn-action history" onclick="showProductHistory(${p.id})">📋</button>
+                </td>
+            </tr>
+        `;
+    }).join('');
+}
+
+// ===== RENDER MOVEMENTS =====
+function renderMovements() {
+    const tbody = document.getElementById('movementsBody');
+    if (!tbody) return;
+    
+    const search = document.getElementById('movementSearch')?.value?.toLowerCase() || '';
+    const filter = document.getElementById('movementFilter')?.value || 'all';
+    
+    if (!movements || movements.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:40px;color:#94a3b8;">No movements recorded</td></tr>`;
+        return;
+    }
+    
+    let filtered = [...movements].sort((a, b) => new Date(b.date) - new Date(a.date));
+    
+    if (filter !== 'all') {
+        filtered = filtered.filter(m => m.type === filter);
+    }
+    if (search) {
+        filtered = filtered.filter(m => 
+            (m.product_name || '').toLowerCase().includes(search)
+        );
+    }
+    
+    if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:40px;color:#94a3b8;">No movements found</td></tr>`;
+        return;
+    }
+    
+    const typeLabels = {
+        receive: '📥 Receive',
+        sold: '📤 Sold',
+        adjust: '📊 Adjust',
+        return: '🔄 Return'
+    };
+    
+    tbody.innerHTML = filtered.map(m => {
+        const qtyClass = m.quantity > 0 ? 'positive' : 'negative';
+        const fromTo = `${m.previous_stock || 0} → ${m.new_stock || 0}`;
+        const reason = m.reason || m.reference || '-';
+        return `
+            <tr>
+                <td style="font-size:12px;color:#94a3b8;">${new Date(m.date).toLocaleString()}</td>
+                <td><strong>${m.product_name || 'Unknown'}</strong></td>
+                <td><span class="movement-type ${m.type}">${typeLabels[m.type] || m.type}</span></td>
+                <td class="${qtyClass}">${m.quantity > 0 ? '+' : ''}${m.quantity}</td>
+                <td style="font-size:12px;color:#94a3b8;">${fromTo}</td>
+                <td style="font-size:12px;color:#94a3b8;">${reason}</td>
+            </tr>
+        `;
+    }).join('');
+}
+
+// ===== RENDER SUMMARY =====
+function renderSummary() {
+    const select = document.getElementById('summaryProductSelect');
+    if (!select) return;
+    const productId = parseInt(select.value);
+    const container = document.getElementById('productSummary');
+    if (!container) return;
+    
+    if (!productId) {
+        container.innerHTML = `
+            <div style="text-align:center;padding:20px;color:#94a3b8;grid-column:1/-1;">Select a product to view summary</div>
+        `;
+        return;
+    }
+    
+    const product = products.find(p => p.id === productId);
+    if (!product) return;
+    
+    const productMovements = movements.filter(m => m.product_id === productId);
+    const received = productMovements.filter(m => m.type === 'receive').reduce((s, m) => s + m.quantity, 0);
+    const sold = productMovements.filter(m => m.type === 'sold').reduce((s, m) => s + Math.abs(m.quantity), 0);
+    const adjusted = productMovements.filter(m => m.type === 'adjust').reduce((s, m) => s + Math.abs(m.quantity), 0);
+    const value = (product.cost_price || 0) * (product.current_stock || 0);
+    
+    container.innerHTML = `
+        <div class="item"><div class="label">Product</div><div class="value">${product.name}</div></div>
+        <div class="item"><div class="label">Current Stock</div><div class="value">${product.current_stock || 0}</div></div>
+        <div class="item"><div class="label">Total Received</div><div class="value green">${received}</div></div>
+        <div class="item"><div class="label">Total Sold</div><div class="value red">${sold}</div></div>
+        <div class="item"><div class="label">Total Adjusted</div><div class="value orange">${adjusted}</div></div>
+        <div class="item"><div class="label">Stock Value</div><div class="value blue">KES ${value.toFixed(0)}</div></div>
+    `;
+}
+
+// ===== POPULATE PRODUCT SELECTS =====
+function populateProductSelects() {
+    const selects = ['receiveProduct', 'adjustProduct', 'summaryProductSelect'];
+    selects.forEach(id => {
+        const select = document.getElementById(id);
+        if (!select) return;
+        const currentValue = select.value;
+        select.innerHTML = '<option value="">Select product...</option>';
+        if (products && products.length > 0) {
+            products.forEach(p => {
+                select.innerHTML += `<option value="${p.id}">${p.name} (Stock: ${p.current_stock || 0})</option>`;
+            });
+        }
+        if (currentValue) select.value = currentValue;
+    });
+}
+
+// ===== SWITCH TAB =====
+function switchTab(tab) {
+    document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    
+    const tabMap = {
+        'products': 'tab-products',
+        'movements': 'tab-movements',
+        'summary': 'tab-summary'
+    };
+    
+    document.querySelectorAll('.tabs button').forEach(b => {
+        if (b.textContent.toLowerCase().includes(tab) || b.textContent.includes(tab.charAt(0).toUpperCase() + tab.slice(1))) {
+            b.classList.add('active');
+        }
+    });
+    
+    const contentId = tabMap[tab] || `tab-${tab}`;
+    const content = document.getElementById(contentId);
+    if (content) {
+        content.classList.add('active');
+    }
+    
+    if (tab === 'movements') renderMovements();
+    if (tab === 'summary') renderSummary();
+}
+
+// ===== CLOSE MODAL =====
+function closeModal(modalId) {
+    if (modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) modal.classList.remove('show');
+    } else {
+        document.querySelectorAll('.modal.show').forEach(m => m.classList.remove('show'));
+    }
+}
+
+// ===== OPEN RECEIVE MODAL =====
+function openReceiveModal(productId) {
+    const modal = document.getElementById('receiveModal');
+    if (!modal) return;
+    modal.classList.add('show');
+    populateProductSelects();
+    if (productId) {
+        document.getElementById('receiveProduct').value = productId;
+    }
+    document.getElementById('receiveQty').value = '';
+    document.getElementById('receiveCost').value = '';
+    document.getElementById('receiveSupplier').value = '';
+    document.getElementById('receiveInvoice').value = '';
+    document.getElementById('receiveBatch').value = '';
+    document.getElementById('receiveExpiry').value = '';
+    document.getElementById('receiveNotes').value = '';
+}
+
+// ===== OPEN ADJUST MODAL =====
+function openAdjustModal(productId) {
+    const modal = document.getElementById('adjustModal');
+    if (!modal) return;
+    modal.classList.add('show');
+    populateProductSelects();
+    if (productId) {
+        document.getElementById('adjustProduct').value = productId;
+        const product = products.find(p => p.id === productId);
+        document.getElementById('adjustCurrentStock').value = product ? (product.current_stock || 0) : '0';
+    }
+    document.getElementById('adjustType').value = 'increase';
+    document.getElementById('adjustQty').value = '';
+    document.getElementById('adjustReason').value = '';
+    document.getElementById('adjustNotes').value = '';
+}
+
+// ===== RECEIVE STOCK =====
+async function receiveStock(e) {
+    e.preventDefault();
+    const productId = parseInt(document.getElementById('receiveProduct').value);
+    const qty = parseInt(document.getElementById('receiveQty').value);
+    const cost = parseFloat(document.getElementById('receiveCost').value) || 0;
+    const supplier = document.getElementById('receiveSupplier').value;
+    const invoice = document.getElementById('receiveInvoice').value;
+    const batch = document.getElementById('receiveBatch').value;
+    const expiry = document.getElementById('receiveExpiry').value;
+    const notes = document.getElementById('receiveNotes').value;
+
+    if (!productId || !qty || qty <= 0) {
+        alert('❌ Please select a product and enter a valid quantity');
+        return;
+    }
+
+    const product = products.find(p => p.id === productId);
+    if (!product) { alert('❌ Product not found'); return; }
+
+    const oldStock = product.current_stock || 0;
+    const newStock = oldStock + qty;
+
+    if (!confirm(`📥 Receive ${qty} units of ${product.name}?\nCurrent stock: ${oldStock}\nNew stock: ${newStock}`)) return;
+
+    try {
+        const db = await openDB();
+        const tx1 = db.transaction('products', 'readwrite');
+        const store1 = tx1.objectStore('products');
+        product.current_stock = newStock;
+        if (expiry) product.expiry_date = expiry;
+        if (cost > 0) product.cost_price = cost;
+        await store1.put(product);
+
+        const movement = {
+            product_id: productId,
+            product_name: product.name,
+            type: 'receive',
+            quantity: qty,
+            previous_stock: oldStock,
+            new_stock: newStock,
+            cost_price: cost,
+            supplier: supplier,
+            invoice: invoice,
+            batch: batch,
+            notes: notes,
+            reference: invoice || 'RCP-' + Date.now().toString().slice(-6),
+            date: new Date().toISOString(),
+            user: currentUser ? currentUser.username : 'system'
+        };
+
+        const tx2 = db.transaction('stock_movements', 'readwrite');
+        const store2 = tx2.objectStore('stock_movements');
+        await store2.add(movement);
+
+        closeModal('receiveModal');
+        await loadStockData();
+        alert(`✅ Received ${qty} units of ${product.name}\nNew stock: ${newStock}`);
+    } catch(e) {
+        alert('❌ Error: ' + e.message);
+    }
+}
+
+// ===== ADJUST STOCK =====
+async function adjustStock(e) {
+    e.preventDefault();
+    const productId = parseInt(document.getElementById('adjustProduct').value);
+    const type = document.getElementById('adjustType').value;
+    const qty = parseInt(document.getElementById('adjustQty').value);
+    const reason = document.getElementById('adjustReason').value;
+    const notes = document.getElementById('adjustNotes').value;
+
+    if (!productId || !qty || qty < 0 || !reason) {
+        alert('❌ Please fill in all required fields');
+        return;
+    }
+
+    const product = products.find(p => p.id === productId);
+    if (!product) { alert('❌ Product not found'); return; }
+
+    const oldStock = product.current_stock || 0;
+    let newStock = oldStock;
+
+    if (type === 'increase') {
+        newStock = oldStock + qty;
+    } else if (type === 'decrease') {
+        if (qty > oldStock) {
+            alert(`❌ Cannot decrease below 0. Current stock: ${oldStock}`);
+            return;
+        }
+        newStock = oldStock - qty;
+    } else if (type === 'set') {
+        newStock = qty;
+    }
+
+    if (!confirm(`📊 Adjust stock for ${product.name}?\nCurrent: ${oldStock}\nNew: ${newStock}\nReason: ${reason}`)) return;
+
+    try {
+        const db = await openDB();
+        const tx1 = db.transaction('products', 'readwrite');
+        const store1 = tx1.objectStore('products');
+        product.current_stock = newStock;
+        await store1.put(product);
+
+        const movement = {
+            product_id: productId,
+            product_name: product.name,
+            type: 'adjust',
+            adjustment_type: type,
+            quantity: type === 'increase' ? qty : type === 'decrease' ? -qty : qty - oldStock,
+            previous_stock: oldStock,
+            new_stock: newStock,
+            reason: reason,
+            notes: notes,
+            reference: 'ADJ-' + Date.now().toString().slice(-6),
+            date: new Date().toISOString(),
+            user: currentUser ? currentUser.username : 'system'
+        };
+
+        const tx2 = db.transaction('stock_movements', 'readwrite');
+        const store2 = tx2.objectStore('stock_movements');
+        await store2.add(movement);
+
+        closeModal('adjustModal');
+        await loadStockData();
+        alert(`✅ Stock adjusted successfully!\n${product.name}: ${oldStock} → ${newStock}`);
+    } catch(e) {
+        alert('❌ Error: ' + e.message);
+    }
+}
+
+// ===== SHOW PRODUCT HISTORY =====
+function showProductHistory(productId) {
+    const product = products.find(p => p.id === productId);
+    if (!product) return;
+
+    const productMovements = movements.filter(m => m.product_id === productId);
+    if (productMovements.length === 0) {
+        alert(`📋 ${product.name}\n\nNo movements recorded for this product.`);
+        return;
+    }
+
+    let msg = `📋 Stock History: ${product.name}\n`;
+    msg += `Current Stock: ${product.current_stock || 0}\n`;
+    msg += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+    msg += `Date          Type     Qty    From→To\n`;
+    msg += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
+
+    productMovements.sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(m => {
+        const date = new Date(m.date).toLocaleDateString();
+        const type = m.type.padEnd(7);
+        const qty = (m.quantity > 0 ? '+' : '') + m.quantity;
+        const fromTo = `${m.previous_stock || 0}→${m.new_stock || 0}`;
+        msg += `${date}  ${type}  ${qty.padEnd(5)}  ${fromTo}\n`;
+    });
+
+    alert(msg);
+}
+
+// ===== EXPORT STOCK =====
+function exportStock() {
+    if (!products || products.length === 0) {
+        alert('❌ No products to export');
+        return;
+    }
+
+    let csv = 'Product,SKU,Current Stock,Min Alert,Received,Sold,Adjusted,Net Change,Cost Price,Selling Price,Expiry Date,Status\n';
+    products.forEach(p => {
+        const productMovements = movements ? movements.filter(m => m.product_id === p.id) : [];
+        const received = productMovements.filter(m => m.type === 'receive').reduce((s, m) => s + m.quantity, 0);
+        const sold = productMovements.filter(m => m.type === 'sold').reduce((s, m) => s + Math.abs(m.quantity), 0);
+        const adjusted = productMovements.filter(m => m.type === 'adjust').reduce((s, m) => s + Math.abs(m.quantity), 0);
+        const netChange = (p.current_stock || 0) - (p.initial_stock || 0);
+        const status = p.current_stock <= 0 ? 'Out of Stock' : p.current_stock < (p.min_stock_alert || 5) ? 'Low Stock' : 'In Stock';
+        csv += `${p.name || ''},${p.sku || ''},${p.current_stock || 0},${p.min_stock_alert || 5},${received},${sold},${adjusted},${netChange},${p.cost_price || 0},${p.selling_price || 0},${p.expiry_date || ''},${status}\n`;
+    });
+
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `stock_${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+// ===== BULK STOCK ADJUST =====
+function openBulkAdjust() {
+    const modal = document.getElementById('bulkAdjustModal');
+    if (!modal) return;
+    modal.classList.add('show');
+    bulkStockSelected = new Set();
+    renderBulkStockList();
+}
+
+function renderBulkStockList() {
+    const container = document.getElementById('bulkStockList');
+    if (!container) return;
+    
+    if (!products || products.length === 0) {
+        container.innerHTML = '<div style="text-align:center;padding:20px;color:#94a3b8;">No products available</div>';
+        return;
+    }
+
+    container.innerHTML = products.map(p => `
+        <label style="display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:4px;cursor:pointer;hover:background:#f8fafc;">
+            <input type="checkbox" class="bulk-stock-checkbox" value="${p.id}" onchange="toggleBulkStock(${p.id}, this.checked)">
+            <span><strong>${p.name}</strong> - Stock: ${p.current_stock || 0}</span>
+        </label>
+    `).join('');
+
+    updateBulkStockCount();
+}
+
+function toggleBulkStock(id, checked) {
+    if (checked) {
+        bulkStockSelected.add(id);
+    } else {
+        bulkStockSelected.delete(id);
+    }
+    updateBulkStockCount();
+}
+
+function updateBulkStockCount() {
+    const el = document.getElementById('bulkStockCount');
+    if (el) el.textContent = bulkStockSelected.size;
+}
+
+async function bulkAdjustStock() {
+    const count = bulkStockSelected.size;
+    if (count === 0) {
+        alert('❌ Select at least one product');
+        return;
+    }
+
+    const type = document.getElementById('bulkAdjustType')?.value || 'increase';
+    const qty = parseInt(document.getElementById('bulkAdjustQty')?.value);
+    const reason = document.getElementById('bulkAdjustReason')?.value || 'bulk';
+
+    if (!qty || qty < 0) {
+        alert('❌ Enter a valid quantity');
+        return;
+    }
+
+    if (!confirm(`📊 Apply ${type} ${qty} to ${count} products?\nReason: ${reason}`)) return;
+
+    try {
+        const db = await openDB();
+        const tx = db.transaction('products', 'readwrite');
+        const store = tx.objectStore('products');
+
+        let adjusted = 0;
+        for (const id of bulkStockSelected) {
+            const product = products.find(p => p.id === id);
+            if (!product) continue;
+
+            const oldStock = product.current_stock || 0;
+            let newStock = oldStock;
+
+            if (type === 'increase') {
+                newStock = oldStock + qty;
+            } else if (type === 'decrease') {
+                newStock = Math.max(0, oldStock - qty);
+            } else if (type === 'set') {
+                newStock = qty;
+            }
+
+            product.current_stock = newStock;
+            await store.put(product);
+
+            const movement = {
+                product_id: id,
+                product_name: product.name,
+                type: 'adjust',
+                adjustment_type: type,
+                quantity: type === 'increase' ? qty : type === 'decrease' ? -qty : qty - oldStock,
+                previous_stock: oldStock,
+                new_stock: newStock,
+                reason: reason,
+                notes: `Bulk adjustment: ${count} products`,
+                reference: 'BULK-' + Date.now().toString().slice(-6),
+                date: new Date().toISOString(),
+                user: currentUser ? currentUser.username : 'system'
+            };
+
+            const tx2 = db.transaction('stock_movements', 'readwrite');
+            const store2 = tx2.objectStore('stock_movements');
+            await store2.add(movement);
+
+            adjusted++;
+        }
+
+        closeModal('bulkAdjustModal');
+        await loadStockData();
+        alert(`✅ ${adjusted} products adjusted successfully!`);
+    } catch(e) {
+        alert('❌ Error: ' + e.message);
+    }
+}
+
+// ===== LOGOUT =====
+function logout() {
+    if (confirm('Logout?')) {
+        localStorage.removeItem('pos_user');
+        window.location.href = 'index.html';
+    }
+}
+
+// ===== INIT =====
+document.addEventListener('DOMContentLoaded', function() {
+    const userData = localStorage.getItem('pos_user');
+    if (!userData) { window.location.href = 'index.html'; return; }
+    const user = JSON.parse(userData);
+    currentUser = user;
+    document.getElementById('userName').textContent = user.name || user.username;
+    document.getElementById('userRole').textContent = user.role || 'User';
+    setInterval(() => {
+        document.getElementById('timeDisplay').textContent = new Date().toLocaleTimeString('en-KE', { hour12: false });
+    }, 1000);
+    loadStockData();
+});
+
+// ===== SEARCH EVENTS =====
+document.getElementById('searchInput')?.addEventListener('input', renderProducts);
+document.getElementById('movementSearch')?.addEventListener('input', renderMovements);
+document.getElementById('movementFilter')?.addEventListener('change', renderMovements);
+
+// ===== KEYBOARD SHORTCUTS =====
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        document.querySelectorAll('.modal.show').forEach(m => m.classList.remove('show'));
+    }
+    if (e.ctrlKey && e.key === 'r') {
+        e.preventDefault();
+        loadStockData();
+    }
+});
+</script>
+
+<!-- Bulk Adjust Modal -->
+<div class="modal" id="bulkAdjustModal">
+    <div class="modal-content" style="max-width:500px;">
+        <span class="modal-close" onclick="closeModal('bulkAdjustModal')">&times;</span>
+        <h2>📊 Bulk Stock Adjust</h2>
+        <p style="color:#94a3b8;font-size:13px;margin-bottom:12px;">
+            Adjust stock for multiple products at once.
+        </p>
+
+        <div id="bulkStockList" style="max-height:300px;overflow-y:auto;border:1px solid #e2e8f0;border-radius:8px;padding:8px;margin-bottom:12px;">
+            <div style="text-align:center;padding:20px;color:#94a3b8;">Loading products...</div>
+        </div>
+
+        <div class="form-group">
+            <label>Adjustment Type</label>
+            <select id="bulkAdjustType">
+                <option value="increase">➕ Increase Stock</option>
+                <option value="decrease">➖ Decrease Stock</option>
+                <option value="set">📊 Set Stock Level</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Quantity</label>
+            <input type="number" id="bulkAdjustQty" placeholder="Enter quantity" min="0">
+        </div>
+
+        <div class="form-group">
+            <label>Reason</label>
+            <select id="bulkAdjustReason">
+                <option value="bulk">Bulk Adjustment</option>
+                <option value="damaged">Damaged</option>
+                <option value="expired">Expired</option>
+                <option value="theft">Theft</option>
+                <option value="correction">Stock Take Correction</option>
+            </select>
+        </div>
+
+        <div style="color:#94a3b8;font-size:12px;margin-bottom:12px;">
+            Selected: <span id="bulkStockCount">0</span> products
+        </div>
+
+        <div class="modal-actions">
+            <button type="button" class="btn-cancel" onclick="closeModal('bulkAdjustModal')">Cancel</button>
+            <button type="button" class="btn-save" onclick="bulkAdjustStock()">📊 Apply to Selected</button>
+        </div>
+    </div>
+</div>
+
+<style>
+/* ===== TOPBAR - STORE NAME ALWAYS VISIBLE ===== */
+.topbar {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 10px 20px !important;
+    background: white !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    flex-shrink: 0 !important;
+    min-height: 56px !important;
+}
+.topbar .left {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    flex: 1 !important;
+}
+.topbar .right {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    flex-shrink: 0 !important;
+}
+.topbar .right .store-badge {
+    display: inline-block !important;
+    font-size: 13px !important;
+    padding: 4px 14px !important;
+    background: #f1f5f9 !important;
+    border-radius: 20px !important;
+    color: #0f172a !important;
+    font-weight: 600 !important;
+    white-space: nowrap !important;
+}
+.topbar .right .time {
+    font-size: 13px !important;
+    color: #64748b !important;
+    font-weight: 500 !important;
+}
+
+@media (max-width: 768px) {
+    .topbar {
+        padding: 6px 10px !important;
+        min-height: 48px !important;
+        flex-wrap: nowrap !important;
+    }
+    .topbar .left {
+        gap: 6px !important;
+        flex: 0 0 auto !important;
+    }
+    .topbar .left .hamburger {
+        font-size: 18px !important;
+        padding: 2px 6px !important;
+        display: block !important;
+        background: none !important;
+        border: none !important;
+        cursor: pointer !important;
+    }
+    .topbar .left h1 {
+        font-size: 13px !important;
+        white-space: nowrap !important;
+    }
+    .topbar .right {
+        flex: 1 !important;
+        justify-content: flex-end !important;
+        gap: 6px !important;
+    }
+    .topbar .right .store-badge {
+        display: inline-block !important;
+        font-size: 11px !important;
+        padding: 3px 12px !important;
+        background: #1a3c34 !important;
+        color: white !important;
+        border-radius: 16px !important;
+        max-width: 120px !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        white-space: nowrap !important;
+        font-weight: 600 !important;
+    }
+    .topbar .right .time {
+        font-size: 10px !important;
+        color: #64748b !important;
+        display: inline-block !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .topbar {
+        padding: 4px 8px !important;
+        min-height: 42px !important;
+    }
+    .topbar .left .hamburger {
+        font-size: 16px !important;
+        padding: 2px 4px !important;
+    }
+    .topbar .left h1 {
+        font-size: 12px !important;
+    }
+    .topbar .right .store-badge {
+        font-size: 10px !important;
+        padding: 2px 8px !important;
+        max-width: 80px !important;
+    }
+    .topbar .right .time {
+        font-size: 9px !important;
+    }
+}
+</style>
+<script>
+// ===== CHECK FOR STOCK UPDATES =====
+function checkForStockUpdates() {
+    const lastUpdate = sessionStorage.getItem('stock_updated');
+    if (lastUpdate) {
+        const lastCheck = sessionStorage.getItem('stock_checked') || '0';
+        if (parseInt(lastUpdate) > parseInt(lastCheck)) {
+            console.log('🔄 Stock update detected, refreshing...');
+            sessionStorage.setItem('stock_checked', lastUpdate);
+            loadStockData();
+            return true;
+        }
+    }
+    return false;
+}
+
+// Override loadStockData to check for updates
+const originalLoadStock = loadStockData;
+loadStockData = async function() {
+    await originalLoadStock();
+    // Clear the notification after loading
+    sessionStorage.removeItem('stock_updated');
+};
+
+// Check for updates on page load
+document.addEventListener('DOMContentLoaded', function() {
+    // ... existing code ...
+    setTimeout(checkForStockUpdates, 500);
+});
+
+// Also check when page becomes visible again
+document.addEventListener('visibilitychange', function() {
+    if (!document.hidden) {
+        checkForStockUpdates();
+    }
+});
+</script>
+<!-- Add refresh button to toolbar -->
+<button onclick="loadStockData()" style="padding:10px 18px;background:#1a3c34;color:white;border:none;border-radius:10px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;">🔄 Refresh</button>
+<script>
+// ===== BULK EXPORT STOCK =====
+function exportStock() {
+    if (products.length === 0) {
+        alert('❌ No stock data to export');
+        return;
+    }
+    
+    let csv = 'Product,SKU,Current Stock,Min Alert,Cost Price,Selling Price,Expiry Date,Status\n';
+    products.forEach(p => {
+        const status = p.current_stock <= 0 ? 'Out of Stock' : p.current_stock < (p.min_stock_alert || 5) ? 'Low Stock' : 'In Stock';
+        csv += `${p.name || ''},${p.sku || ''},${p.current_stock || 0},${p.min_stock_alert || 5},${p.cost_price || 0},${p.selling_price || 0},${p.expiry_date || ''},${status}\n`;
+    });
+    
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `stock_${new Date().toISOString().slice(0,10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    alert('✅ Stock exported!');
+}
+</script>
+<script>
+// ===== ACTIVATION CHECK =====
+if (localStorage.getItem('activated') !== 'true') {
+    window.location.href = 'activation.html';
+}
+</script>
+<style>
+/* Add Total Value column style */
+td .value-amount {
+    font-weight: 600;
+    color: #1a3c34;
+}
+</style>
+<script>
+// ===== STOCK WITH TOTAL VALUE =====
+const originalRender = renderProducts;
+renderProducts = function() {
+    const tbody = document.getElementById('stockBody');
+    if (!tbody) return;
+    
+    const search = document.getElementById('searchInput')?.value?.toLowerCase() || '';
+    let filtered = products || [];
+    if (search) {
+        filtered = filtered.filter(p => 
+            (p.name || '').toLowerCase().includes(search) || 
+            (p.sku || '').toLowerCase().includes(search)
+        );
+    }
+    
+    if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;padding:40px;color:#94a3b8;">No products found</td></tr>`;
+        return;
+    }
+    
+    tbody.innerHTML = filtered.map(p => {
+        const productMovements = movements ? movements.filter(m => m.product_id === p.id) : [];
+        const received = productMovements.filter(m => m.type === 'receive').reduce((s, m) => s + m.quantity, 0);
+        const sold = productMovements.filter(m => m.type === 'sold').reduce((s, m) => s + Math.abs(m.quantity), 0);
+        const adjusted = productMovements.filter(m => m.type === 'adjust').reduce((s, m) => s + Math.abs(m.quantity), 0);
+        const netChange = (p.current_stock || 0) - (p.initial_stock || 0);
+        
+        // Calculate total value
+        const costPrice = p.cost_price || 0;
+        const stock = p.current_stock || 0;
+        const totalValue = costPrice * stock;
+        
+        let status = 'in-stock';
+        let statusLabel = '✅ In Stock';
+        if (p.current_stock <= 0) { status = 'out-of-stock'; statusLabel = '❌ Out of Stock'; }
+        else if (p.current_stock < (p.min_stock_alert || 5)) { status = 'low-stock'; statusLabel = '⚠️ Low Stock'; }
+        
+        const stockClass = p.current_stock <= 0 ? 'red' : p.current_stock < (p.min_stock_alert || 5) ? 'orange' : 'green';
+        
+        return `
+            <tr>
+                <td><strong>${p.name || 'Unnamed'}</strong></td>
+                <td>${p.sku || '-'}</td>
+                <td><span class="stock-number ${stockClass}">${p.current_stock || 0}</span></td>
+                <td><span class="stock-number" style="font-weight:600;color:#1a3c34;">KES ${totalValue.toFixed(2)}</span></td>
+                <td>${p.min_stock_alert || 5}</td>
+                <td><span class="stock-number green">${received}</span></td>
+                <td><span class="stock-number red">${sold}</span></td>
+                <td><span class="stock-number orange">${adjusted}</span></td>
+                <td><span class="stock-number ${netChange >= 0 ? 'green' : 'red'}">${netChange >= 0 ? '+' : ''}${netChange}</span></td>
+                <td><span class="status-badge ${status}">${statusLabel}</span></td>
+                <td>
+                    <button class="btn-action receive" onclick="openReceiveModal(${p.id})">📥</button>
+                    <button class="btn-action adjust" onclick="openAdjustModal(${p.id})">📊</button>
+                    <button class="btn-action history" onclick="showProductHistory(${p.id})">📋</button>
+                </td>
+            </tr>
+        `;
+    }).join('');
+};
+</script>
+<script>
+// Update stats to include total stock value
+const originalRenderStats = renderStats;
+renderStats = function() {
+    const total = products ? products.length : 0;
+    const inStock = products ? products.filter(p => p.current_stock > (p.min_stock_alert || 5)).length : 0;
+    const lowStock = products ? products.filter(p => p.current_stock <= (p.min_stock_alert || 5) && p.current_stock > 0).length : 0;
+    const outStock = products ? products.filter(p => p.current_stock <= 0).length : 0;
+
+    document.getElementById('totalItems').textContent = total;
+    document.getElementById('inStock').textContent = inStock;
+    document.getElementById('lowStock').textContent = lowStock;
+    document.getElementById('outStock').textContent = outStock;
+
+    const received = movements ? movements.filter(m => m.type === 'receive').reduce((s, m) => s + m.quantity, 0) : 0;
+    const sold = movements ? movements.filter(m => m.type === 'sold').reduce((s, m) => s + Math.abs(m.quantity), 0) : 0;
+    const adjusted = movements ? movements.filter(m => m.type === 'adjust').reduce((s, m) => s + Math.abs(m.quantity), 0) : 0;
+
+    document.getElementById('totalReceived').textContent = received;
+    document.getElementById('totalSold').textContent = sold;
+    document.getElementById('totalAdjusted').textContent = adjusted;
+
+    // Calculate total stock value
+    const totalValue = products ? products.reduce((s, p) => s + ((p.cost_price || 0) * (p.current_stock || 0)), 0) : 0;
+    document.getElementById('stockValue').textContent = `KES ${totalValue.toFixed(0)}`;
+};
+</script>
+<script>
+// ===== FIXED RENDER PRODUCTS WITH VALUE =====
+const renderProductsWithValue = renderProducts;
+renderProducts = function() {
+    const tbody = document.getElementById('stockBody');
+    if (!tbody) return;
+    
+    const search = document.getElementById('searchInput')?.value?.toLowerCase() || '';
+    
+    let filtered = products || [];
+    if (search) {
+        filtered = filtered.filter(p => 
+            (p.name || '').toLowerCase().includes(search) || 
+            (p.sku || '').toLowerCase().includes(search)
+        );
+    }
+    
+    if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;padding:40px;color:#94a3b8;">No products found</td></tr>`;
+        return;
+    }
+    
+    tbody.innerHTML = filtered.map(p => {
+        const productMovements = movements ? movements.filter(m => m.product_id === p.id) : [];
+        const received = productMovements.filter(m => m.type === 'receive').reduce((s, m) => s + m.quantity, 0);
+        const sold = productMovements.filter(m => m.type === 'sold').reduce((s, m) => s + Math.abs(m.quantity), 0);
+        const adjusted = productMovements.filter(m => m.type === 'adjust').reduce((s, m) => s + Math.abs(m.quantity), 0);
+        const netChange = (p.current_stock || 0) - (p.initial_stock || 0);
+        
+        // Calculate total value
+        const costPrice = p.cost_price || 0;
+        const stock = p.current_stock || 0;
+        const totalValue = costPrice * stock;
+        
+        let status = 'in-stock';
+        let statusLabel = '✅ In Stock';
+        if (p.current_stock <= 0) { status = 'out-of-stock'; statusLabel = '❌ Out of Stock'; }
+        else if (p.current_stock < (p.min_stock_alert || 5)) { status = 'low-stock'; statusLabel = '⚠️ Low Stock'; }
+        
+        const stockClass = p.current_stock <= 0 ? 'red' : p.current_stock < (p.min_stock_alert || 5) ? 'orange' : 'green';
+        
+        return `
+            <tr>
+                <td>
+                    <div class="product-name">${p.name || 'Unnamed'}</div>
+                    <div class="product-sku">${p.sku || '-'}</div>
+                </td>
+                <td><span class="stock-number ${stockClass}">${p.current_stock || 0}</span></td>
+                <td><span style="font-weight:700;color:#1a3c34;">KES ${totalValue.toFixed(2)}</span></td>
+                <td>${p.min_stock_alert || 5}</td>
+                <td><span class="stock-number green">${received}</span></td>
+                <td><span class="stock-number red">${sold}</span></td>
+                <td><span class="stock-number orange">${adjusted}</span></td>
+                <td><span class="stock-number ${netChange >= 0 ? 'green' : 'red'}">${netChange >= 0 ? '+' : ''}${netChange}</span></td>
+                <td><span class="status-badge ${status}">${statusLabel}</span></td>
+                <td>
+                    <button class="btn-action receive" onclick="openReceiveModal(${p.id})">📥</button>
+                    <button class="btn-action adjust" onclick="openAdjustModal(${p.id})">📊</button>
+                    <button class="btn-action history" onclick="showProductHistory(${p.id})">📋</button>
+                </td>
+            </tr>
+        `;
+    }).join('');
+    const lowStock = products ? products.filter(function(p) {
+        const minAlert = p.min_stock_alert || 5;
+        const stock = p.current_stock || 0;
+        return stock < minAlert;  // Includes 0 stock
+    }).length : 0;
+    
+    const total = products ? products.length : 0;
+    const outStock = products ? products.filter(function(p) {
+        return (p.current_stock || 0) <= 0;
+    }).length : 0;
+    
+    const inStock = total - lowStock;
+
+    document.getElementById('totalItems').textContent = total;
+    document.getElementById('inStock').textContent = inStock;
+    document.getElementById('lowStock').textContent = lowStock;
+    document.getElementById('outStock').textContent = outStock;
+
+    const received = movements ? movements.filter(m => m.type === 'receive').reduce((s, m) => s + m.quantity, 0) : 0;
+    const sold = movements ? movements.filter(m => m.type === 'sold').reduce((s, m) => s + Math.abs(m.quantity), 0) : 0;
+    const adjusted = movements ? movements.filter(m => m.type === 'adjust').reduce((s, m) => s + Math.abs(m.quantity), 0) : 0;
+
+    document.getElementById('totalReceived').textContent = received;
+    document.getElementById('totalSold').textContent = sold;
+    document.getElementById('totalAdjusted').textContent = adjusted;
+
+    const totalValue = products ? products.reduce((s, p) => s + ((p.cost_price || 0) * (p.current_stock || 0)), 0) : 0;
+    document.getElementById('stockValue').textContent = `KES ${totalValue.toFixed(0)}`;
+    
+    console.log('📊 Stock stats:', { total, inStock, lowStock, outStock });
+};
+</script>

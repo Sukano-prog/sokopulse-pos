@@ -1,0 +1,12 @@
+// Find and replace the renderProducts function
+// The issue: using 'total' without defining it
+
+// In the renderProducts function, we need to declare:
+// const total = products ? products.length : 0;
+
+// And then use that variable
+
+// Here's the fix:
+// Look for: "const outStock = products ? products.filter(function(p) {"
+// Add before it: "const total = products ? products.length : 0;"
+

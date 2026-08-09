@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Returns - SokoPulse</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <style>
+        .toolbar {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+            align-items: center;
+        }
+        .toolbar .search-wrapper {
+            flex: 1;
+            position: relative;
+            min-width: 180px;
+        }
+        .toolbar .search-wrapper input {
+            width: 100%;
+            padding: 10px 14px 10px 38px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+        }
+        .toolbar .search-wrapper input:focus {
+            outline: none;
+            border-color: #1a3c34;
+        }
+        .toolbar .search-wrapper .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+        }
+        .btn-new-return {
+            padding: 10px 18px;
+            background: #f59e0b;
+            color: #0f172a;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+        }
+        .btn-new-return:hover { background: #d97706; }
+        .btn-refresh {
+            padding: 10px 18px;
+            background: #1a3c34;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+        }
+        .btn-refresh:hover { background: #2a5c54; }
+
+        .return-item {
+            background: white;
+            border-radius: 8px;
+            padding: 12px 16px;
+            border: 1px solid #f1f5f9;
+            margin-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            transition: all 0.15s;
+        }
+        .return-item:hover { border-color: #f59e0b; }
+        .return-item .info { flex: 1; min-width: 0; }
+        .return-item .info .order { font-weight: 600; color: #0f172a; }
+        .return-item .info .details { font-size: 13px; color: #64748b; }
+        .return-item .info .reason { font-size: 12px; color: #94a3b8; }
+        .return-item .amount { font-weight: 700; color: #1a3c34; white-space: nowrap; }
+        .return-item .status {
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .return-item .status.pending { background: #fef3c7; color: #92400e; }
+        .return-item .status.approved { background: #dcfce7; color: #166534; }
+        .return-item .status.rejected { background: #fee2e2; color: #991b1b; }
+
+        .btn-action {
+            padding: 4px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            transition: all 0.15s;
+        }
+        .btn-action.approve { background: #dcfce7; color: #166534; }
+        .btn-action.approve:hover { background: #bbf7d0; }
+        .btn-action.reject { background: #fee2e2; color: #991b1b; }
+        .btn-action.reject:hover { background: #fecaca; }
+        .btn-action.view { background: #dbeafe; color: #1e40af; }
+        .btn-action.view:hover { background: #bfdbfe; }
+
+        .modal-content { max-width: 550px; }
+        .modal-content .return-items-list {
+            max-height: 250px;
+            overflow-y: auto;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 8px;
+            margin: 8px 0;
+        }
+        .return-item-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 13px;
+        }
+        
+        .dropdown-container { position: relative; }
+        .dropdown-container input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            background: white;
+        }
+        .dropdown-container input:focus { outline: none; border-color: #1a3c34; }
+        .dropdown-list {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            max-height: 200px;
+            overflow-y: auto;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            z-index: 100;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+        }
+        .dropdown-list.show { display: block; }
+        .dropdown-item {
+            padding: 8px 14px;
+            cursor: pointer;
+            font-size: 13px;
+            border-bottom: 1px solid #f1f5f9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .dropdown-item:hover { background: #f8fafc; }
+        .dropdown-item .order-id { font-weight: 600; color: #0f172a; }
+        .dropdown-item .order-info { font-size: 11px; color: #94a3b8; }
+        .dropdown-item .order-amount { font-weight: 600; color: #1a3c34; }
+        .no-results { padding: 12px 14px; color: #94a3b8; text-align: center; font-size: 13px; }
+
+        @media (max-width: 768px) {
+            .toolbar { flex-direction: column; align-items: stretch; }
+            .toolbar .search-wrapper { min-width: unset; }
+            .btn-new-return, .btn-refresh { width: 100%; }
+            .return-item { flex-direction: column; align-items: flex-start; }
+            .return-item .amount { align-self: flex-start; }
+        }
+    </style>
+</head>
+<body>
+<div class="app">
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <aside class="sidebar">
+        <div class="logo">🏪 <span>Soko</span>Pulse <button class="close-btn" onclick="toggleSidebar()">✕</button></div>
+        <nav>
+            <div class="nav-label">Main</div>
+            <a href="pos.html">🛒 POS</a>
+            <a href="dashboard.html">📊 Dashboard</a>
+            <a href="orders.html">📋 Orders</a>
+            <div class="nav-label">Inventory</div>
+            <a href="products.html">📦 Products</a>
+            <a href="stock.html">📦 Stock</a>
+            <a href="expiry.html">⏰ Expiry</a>
+            <a href="categories.html">📂 Categories</a>
+            <a href="suppliers.html">📦 Suppliers</a>
+            <div class="nav-label">Management</div>
+            <a href="customers.html">👤 Customers</a>
+            <a href="reports.html">📈 Reports</a>
+            <a href="audit.html" class="active">📋 Audit</a>
+            <a href="returns.html">🔄 Returns</a>
+            <a href="settings.html">⚙️ Settings</a>
+        </nav>
+        <div class="user-section"><div class="name" id="userName">Administrator</div><div class="role" id="userRole">Admin</div></div>
+        <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div class="left">
+                <button class="hamburger" onclick="toggleSidebar()">☰</button>
+                <h1>🔄 Returns</h1>
+            </div>
+            <div class="right">
+                <span class="store-badge">🏪 SokoPulse</span>
+                <span class="time" id="timeDisplay"></span>
+            </div>
+        </header>
+
+        <div class="page-container">
+            <div class="toolbar">
+                <div class="search-wrapper">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="searchInput" placeholder="Search by order or customer..." oninput="renderReturns()">
+                </div>
+                <button class="btn-new-return" onclick="openNewReturn()">➕ New Return</button>
+                <button class="btn-refresh" onclick="loadReturns()">🔄 Refresh</button>
+            </div>
+
+            <div id="returnsList">
+                <div style="text-align:center;padding:40px;color:#94a3b8;">Loading returns...</div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- New Return Modal -->
+<div class="modal" id="returnModal">
+    <div class="modal-content">
+        <span class="modal-close" onclick="closeModal()">&times;</span>
+        <h2>🔄 Process Return</h2>
+        <form id="returnForm" onsubmit="processReturn(event)">
+            <div class="form-group">
+                <label>Order Number</label>
+                <div class="dropdown-container">
+                    <input type="text" id="orderSearchInput" placeholder="🔍 Search by order number or customer..." oninput="filterOrderDropdown()" onfocus="toggleOrderDropdown()" autocomplete="off">
+                    <input type="hidden" id="returnOrderNumber">
+                    <div class="dropdown-list" id="orderDropdownList"></div>
+                </div>
+                <div style="font-size:11px;color:#94a3b8;margin-top:4px;">Type to search, click to select</div>
+            </div>
+            <div id="orderItemsForReturn" style="display:none;">
+                <div class="form-group">
+                    <label>Select Items to Return</label>
+                    <div class="return-items-list" id="returnItemsList"></div>
+                </div>
+                <div class="form-group">
+                    <label>Return Reason</label>
+                    <select id="returnReason" required>
+                        <option value="damaged">Damaged</option>
+                        <option value="wrong_item">Wrong Item</option>
+                        <option value="customer_cancelled">Customer Cancelled</option>
+                        <option value="expired">Expired</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Notes</label>
+                    <textarea id="returnNotes" rows="2" placeholder="Additional notes"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Refund Method</label>
+                    <select id="refundMethod">
+                        <option value="cash">💵 Cash</option>
+                        <option value="mpesa">📱 M-Pesa</option>
+                        <option value="card">💳 Card</option>
+                        <option value="credit">📋 Store Credit</option>
+                    </select>
+                </div>
+            </div>
+            <div id="returnSummary" style="display:none;background:#f8fafc;padding:12px;border-radius:6px;margin:8px 0;">
+                <strong>Total Refund: </strong><span id="returnTotal">KES 0.00</span>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
+                <button type="submit" class="btn-save">🔄 Process Return</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- View Return Modal -->
+<div class="modal" id="viewReturnModal">
+    <div class="modal-content">
+        <span class="modal-close" onclick="closeViewModal()">&times;</span>
+        <h2 id="viewReturnTitle">Return Details</h2>
+        <div id="viewReturnContent"></div>
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeViewModal()">Close</button>
+        </div>
+    </div>
+</div>
+
+<script>
+function isAdmin() {
+    try {
+        const user = JSON.parse(localStorage.getItem("pos_user") || "{}");
+        return user.role === "admin";
+    } catch(e) {
+        return false;
+    }
+}
+// ===== DATABASE FUNCTIONS =====
+function openDB() {
+    return new Promise((resolve, reject) => {
+        const req = indexedDB.open("SokoPulsePOS", 6);
+        req.onsuccess = function(e) { resolve(e.target.result); };
+        req.onerror = function(e) { reject(e.target.error); };
+    });
+}
+
+function dbGetAll(db, storeName) {
+    return new Promise((resolve, reject) => {
+        if (!db.objectStoreNames.contains(storeName)) {
+            resolve([]);
+            return;
+        }
+        const tx = db.transaction(storeName, "readonly");
+        const store = tx.objectStore(storeName);
+        const req = store.getAll();
+        req.onsuccess = function() { resolve(req.result); };
+        req.onerror = function() { reject(req.error); };
+    });
+}
+
+// ============================================================
+// RETURNS - COMPLETE SCRIPT
+// ============================================================
+
+var returns = [];
+var orders = [];
+var allProducts = [];
+var selectedOrderItems = [];
+var allOrdersForDropdown = [];
+
+// ===== DB HELPERS =====
+
+function dbPut(db, storeName, data) {
+    return new Promise(function(resolve, reject) {
+        var tx = db.transaction(storeName, 'readwrite');
+        var store = tx.objectStore(storeName);
+        var req = store.put(data);
+        req.onsuccess = function() { resolve(req.result); };
+        req.onerror = function() { reject(req.error); };
+    });
+}
+
+// ===== SIDEBAR =====
+function toggleSidebar() {
+    document.querySelector('.sidebar').classList.toggle('open');
+    document.querySelector('.sidebar-overlay').classList.toggle('show');
+}
+
+function logout() {
+    if (confirm('Logout?')) {
+        localStorage.removeItem('pos_user');
+        window.location.href = 'index.html';
+    }
+}
+
+function updateTime() {
+    var el = document.getElementById('timeDisplay');
+    if (el) el.textContent = new Date().toLocaleTimeString('en-KE', { hour12: false });
+}
+
+// ===== LOAD RETURNS =====
+
+
+async function loadReturns() {
+    try {
+        var db = await openDB();
+        returns = await dbGetAll(db, 'returns');
+        orders = await dbGetAll(db, 'orders');
+        allProducts = await dbGetAll(db, 'products');
+        renderReturns();
+        console.log('🔄 Returns loaded:', returns.length);
+    } catch(e) {
+        console.error('Error loading returns:', e);
+        document.getElementById('returnsList').innerHTML = '<div style="text-align:center;padding:40px;color:#ef4444;">Error loading returns</div>';
+    }
+}
+
+function renderReturns() {
+    var container = document.getElementById('returnsList');
+    var search = document.getElementById('searchInput').value.toLowerCase();
+
+    var filtered = returns;
+    if (search) {
+        filtered = filtered.filter(function(r) {
+            return (r.order_number || '').toLowerCase().includes(search) ||
+                   (r.customer_name || '').toLowerCase().includes(search);
+        });
+    }
+
+    if (filtered.length === 0) {
+        container.innerHTML = '<div style="text-align:center;padding:40px;color:#94a3b8;">No returns found</div>';
+        return;
+    }
+
+    var statusLabels = {
+        'pending': '⏳ Pending',
+        'approved': '✅ Approved',
+        'rejected': '❌ Rejected'
+    };
+
+    var html = '';
+    filtered.sort(function(a, b) { return new Date(b.date) - new Date(a.date); });
+    filtered.forEach(function(r) {
+        var statusClass = r.status || 'pending';
+        html += '<div class="return-item">';
+        html += '<div class="info">';
+        html += '<div class="order">Order: ' + (r.order_number || '#') + '</div>';
+        html += '<div class="details">Customer: ' + (r.customer_name || 'Unknown') + '</div>';
+        html += '<div class="reason">Reason: ' + (r.reason || '-') + '</div>';
+        html += '</div>';
+        html += '<div class="amount">KES ' + (r.total || 0).toFixed(2) + '</div>';
+        html += '<span class="status ' + statusClass + '">' + (statusLabels[statusClass] || statusClass) + '</span>';
+        html += '<div>';
+        html += '<button class="btn-action view" onclick="viewReturn(' + r.id + ')">👁️</button>';
+        if (r.status === 'pending') {
+            html += '<button class="btn-action approve" onclick="updateReturnStatus(' + r.id + ', \'approved\')">✅ Approve</button>';
+            html += '<button class="btn-action reject" onclick="updateReturnStatus(' + r.id + ', \'rejected\')">❌ Reject</button>';
+        }
+        html += '</div>';
+        html += '</div>';
+    });
+
+    container.innerHTML = html;
+}
+
+// ===== DROPDOWN FUNCTIONS =====
+async function loadOrdersForDropdown() {
+    try {
+        var db = await openDB();
+        allOrdersForDropdown = await dbGetAll(db, 'orders');
+        allOrdersForDropdown.sort(function(a, b) { return new Date(b.date) - new Date(a.date); });
+        console.log('📋 Orders loaded for dropdown:', allOrdersForDropdown.length);
+    } catch(e) {
+        console.error('Error loading orders for dropdown:', e);
+    }
+}
+
+function toggleOrderDropdown() {
+    var list = document.getElementById('orderDropdownList');
+    if (!list) return;
+    list.classList.toggle('show');
+    if (list.classList.contains('show')) {
+        renderOrderDropdown(allOrdersForDropdown);
+        document.getElementById('orderSearchInput').focus();
+    }
+}
+
+function filterOrderDropdown() {
+    var search = document.getElementById('orderSearchInput').value.toLowerCase();
+    var filtered = allOrdersForDropdown.filter(function(o) {
+        return (o.order_number || '').toLowerCase().includes(search) ||
+               (o.customer_name || '').toLowerCase().includes(search);
+    });
+    renderOrderDropdown(filtered);
+}
+
+function renderOrderDropdown(ordersList) {
+    var list = document.getElementById('orderDropdownList');
+    if (!list) return;
+    if (ordersList.length === 0) {
+        list.innerHTML = '<div class="no-results">No orders found</div>';
+        return;
+    }
+    var html = '';
+    ordersList.forEach(function(o) {
+        var total = o.total || 0;
+        var customer = o.customer_name || 'Walk-in';
+        var date = new Date(o.date).toLocaleDateString();
+        html += '<div class="dropdown-item" onclick="selectOrder(\'' + o.order_number + '\')">';
+        html += '<div><div class="order-id">' + o.order_number + '</div>';
+        html += '<div class="order-info">' + customer + ' | ' + date + '</div></div>';
+        html += '<div class="order-amount">KES ' + total.toFixed(2) + '</div>';
+        html += '</div>';
+    });
+    list.innerHTML = html;
+}
+
+function selectOrder(orderNumber) {
+    document.getElementById('returnOrderNumber').value = orderNumber;
+    document.getElementById('orderDropdownList').classList.remove('show');
+    loadOrderForReturn();
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(e) {
+    var container = document.querySelector('.dropdown-container');
+    if (container && !container.contains(e.target)) {
+        var list = document.getElementById('orderDropdownList');
+        if (list) list.classList.remove('show');
+    }
+});
+
+// ===== NEW RETURN =====
+function openNewReturn() {
+    document.getElementById('returnModal').classList.add('show');
+    document.getElementById('returnOrderNumber').value = '';
+    document.getElementById('orderSearchInput').value = '';
+    document.getElementById('returnReason').value = 'damaged';
+    document.getElementById('returnNotes').value = '';
+    document.getElementById('refundMethod').value = 'cash';
+    document.getElementById('orderItemsForReturn').style.display = 'none';
+    document.getElementById('returnSummary').style.display = 'none';
+    selectedOrderItems = [];
+    loadOrdersForDropdown();
+}
+
+function closeModal() {
+    document.getElementById('returnModal').classList.remove('show');
+}
+
+function closeViewModal() {
+    document.getElementById('viewReturnModal').classList.remove('show');
+}
+
+function loadOrderForReturn() {
+    var orderNumber = document.getElementById('returnOrderNumber').value.trim();
+    if (!orderNumber) {
+        alert('Please select an order from the dropdown');
+        return;
+    }
+
+    var order = orders.find(function(o) {
+        return o.order_number === orderNumber;
+    });
+
+    if (!order) {
+        alert('❌ Order not found');
+        return;
+    }
+
+    var items = [];
+    if (order.items) {
+        if (typeof order.items === 'string') {
+            try { items = JSON.parse(order.items); } catch(e) { items = []; }
+        } else if (Array.isArray(order.items)) {
+            items = order.items;
+        }
+    }
+
+    if (items.length === 0) {
+        alert('❌ No items in this order');
+        return;
+    }
+
+    selectedOrderItems = items;
+    var list = document.getElementById('returnItemsList');
+    var html = '';
+    items.forEach(function(item, index) {
+        html += '<div class="return-item-row">';
+        html += '<span><input type="checkbox" class="return-item-check" data-index="' + index + '" checked> ' + item.name + '</span>';
+        html += '<span>x' + (item.qty || 1) + ' = KES ' + ((item.price || 0) * (item.qty || 1)).toFixed(2) + '</span>';
+        html += '</div>';
+    });
+    list.innerHTML = html;
+
+    document.getElementById('orderItemsForReturn').style.display = 'block';
+    document.getElementById('returnSummary').style.display = 'block';
+
+    updateReturnTotal();
+
+    document.querySelectorAll('.return-item-check').forEach(function(cb) {
+        cb.addEventListener('change', updateReturnTotal);
+    });
+}
+
+function updateReturnTotal() {
+    var total = 0;
+    var checkboxes = document.querySelectorAll('.return-item-check:checked');
+    checkboxes.forEach(function(cb) {
+        var index = parseInt(cb.dataset.index);
+        var item = selectedOrderItems[index];
+        if (item) {
+            total += (item.price || 0) * (item.qty || 1);
+        }
+    });
+    document.getElementById('returnTotal').textContent = 'KES ' + total.toFixed(2);
+}
+
+async function processReturn(e) {
+    e.preventDefault();
+    var orderNumber = document.getElementById('returnOrderNumber').value.trim();
+    var reason = document.getElementById('returnReason').value;
+    var notes = document.getElementById('returnNotes').value;
+    var refundMethod = document.getElementById('refundMethod').value;
+
+    if (!orderNumber) {
+        alert('Please select an order');
+        return;
+    }
+
+    var selectedItems = [];
+    var checkboxes = document.querySelectorAll('.return-item-check:checked');
+    checkboxes.forEach(function(cb) {
+        var index = parseInt(cb.dataset.index);
+        var item = selectedOrderItems[index];
+        if (item) {
+            selectedItems.push(item);
+        }
+    });
+
+    if (selectedItems.length === 0) {
+        alert('Please select at least one item to return');
+        return;
+    }
+
+    var total = selectedItems.reduce(function(s, item) {
+        return s + (item.price || 0) * (item.qty || 1);
+    }, 0);
+
+    if (!confirm('Process return of ' + selectedItems.length + ' items for KES ' + total.toFixed(2) + '?')) return;
+
+    var order = orders.find(function(o) { return o.order_number === orderNumber; });
+    var customerName = order ? order.customer_name : 'Unknown';
+
+    var returnData = {
+        order_number: orderNumber,
+        customer_name: customerName,
+        items: JSON.stringify(selectedItems),
+        total: total,
+        reason: reason,
+        notes: notes,
+        refund_method: refundMethod,
+        status: 'pending',
+        date: new Date().toISOString(),
+        user: JSON.parse(localStorage.getItem('pos_user') || '{}').username || 'System'
+    };
+
+    try {
+        var db = await openDB();
+        await dbAdd(db, 'returns', returnData);
+        closeModal();
+        loadReturns();
+        alert('✅ Return submitted for approval!');
+    } catch(e) {
+        alert('❌ Error processing return: ' + e.message);
+    }
+}
+
+// ===== VIEW RETURN =====
+function viewReturn(id) {
+    var ret = returns.find(function(r) { return r.id === id; });
+    if (!ret) return;
+
+    var modal = document.getElementById('viewReturnModal');
+    document.getElementById('viewReturnTitle').textContent = '🔄 Return #' + ret.id;
+
+    var items = [];
+    if (ret.items) {
+        try { items = JSON.parse(ret.items); } catch(e) { items = []; }
+    }
+
+    var html = '<div style="margin:8px 0;">';
+    html += '<p><strong>Order:</strong> ' + ret.order_number + '</p>';
+    html += '<p><strong>Customer:</strong> ' + (ret.customer_name || 'Unknown') + '</p>';
+    html += '<p><strong>Reason:</strong> ' + (ret.reason || '-') + '</p>';
+    html += '<p><strong>Refund Method:</strong> ' + (ret.refund_method || 'Cash') + '</p>';
+    html += '<p><strong>Status:</strong> <span class="status ' + (ret.status || 'pending') + '">' + (ret.status || 'pending') + '</span></p>';
+    html += '<p><strong>Total Refund:</strong> KES ' + (ret.total || 0).toFixed(2) + '</p>';
+    if (ret.notes) html += '<p><strong>Notes:</strong> ' + ret.notes + '</p>';
+    html += '</div>';
+
+    if (items.length > 0) {
+        html += '<div style="border-top:1px solid #e2e8f0;padding-top:10px;"><h4>📦 Items Returned</h4>';
+        items.forEach(function(item) {
+            html += '<div class="return-item-row"><span>' + item.name + '</span><span>x' + (item.qty || 1) + ' = KES ' + ((item.price || 0) * (item.qty || 1)).toFixed(2) + '</span></div>';
+        });
+        html += '</div>';
+    }
+
+    document.getElementById('viewReturnContent').innerHTML = html;
+    modal.classList.add('show');
+}
+
+// ===== UPDATE RETURN STATUS =====
+async function updateReturnStatus(id, status) {
+    if (!isAdmin()) {
+        alert("❌ Only admins can approve returns");
+        return;
+    }
+    if (!isAdmin()) { alert("❌ Only admins can approve returns"); return; }
+    if (!confirm('Update return to ' + status + '?')) return;
+
+    try {
+        var db = await openDB();
+        var ret = returns.find(function(r) { return r.id === id; });
+        if (!ret) { alert('Return not found'); return; }
+
+        ret.status = status;
+        await dbPut(db, 'returns', ret);
+        loadReturns();
+        alert('✅ Return updated to ' + status);
+    } catch(e) {
+        alert('❌ Error: ' + e.message);
+    }
+}
+
+// ===== INIT =====
+document.addEventListener('DOMContentLoaded', function() {
+    var userData = localStorage.getItem('pos_user');
+    if (!userData) {
+        window.location.href = 'index.html';
+        return;
+    }
+    var user = JSON.parse(userData);
+    document.getElementById('userName').textContent = user.name || user.username;
+    document.getElementById('userRole').textContent = user.role || 'User';
+
+    setInterval(updateTime, 1000);
+    updateTime();
+    loadReturns();
+});
+</script>
+</body>
+</html>
+<script>
+function isAdmin() {
+    try {
+        const user = JSON.parse(localStorage.getItem("pos_user") || "{}");
+        return user.role === "admin";
+    } catch(e) {
+        return false;
+    }
+}
+// ===== SYNC RETURN WITH SYSTEM =====
+async function processReturn(e) {
+    e.preventDefault();
+    var orderNumber = document.getElementById('returnOrderNumber').value.trim();
+    var reason = document.getElementById('returnReason').value;
+    var notes = document.getElementById('returnNotes').value;
+    var refundMethod = document.getElementById('refundMethod').value;
+
+    if (!orderNumber) {
+        alert('Please select an order');
+        return;
+    }
+
+    var selectedItems = [];
+    var checkboxes = document.querySelectorAll('.return-item-check:checked');
+    checkboxes.forEach(function(cb) {
+        var index = parseInt(cb.dataset.index);
+        var item = selectedOrderItems[index];
+        if (item) {
+            selectedItems.push(item);
+        }
+    });
+
+    if (selectedItems.length === 0) {
+        alert('Please select at least one item to return');
+        return;
+    }
+
+    var total = selectedItems.reduce(function(s, item) {
+        return s + (item.price || 0) * (item.qty || 1);
+    }, 0);
+
+    if (!confirm('Process return of ' + selectedItems.length + ' items for KES ' + total.toFixed(2) + '?')) return;
+
+    var order = orders.find(function(o) { return o.order_number === orderNumber; });
+    var customerName = order ? order.customer_name : 'Unknown';
+
+    var returnData = {
+        order_number: orderNumber,
+        customer_name: customerName,
+        items: JSON.stringify(selectedItems),
+        total: total,
+        reason: reason,
+        notes: notes,
+        refund_method: refundMethod,
+        status: 'pending',
+        date: new Date().toISOString(),
+        user: JSON.parse(localStorage.getItem('pos_user') || '{}').username || 'System'
+    };
+
+    try {
+        var db = await openDB();
+        await dbAdd(db, 'returns', returnData);
+        
+        // Log action
+        logAction('return', 'Return submitted for order ' + orderNumber + ' - KES ' + total.toFixed(2));
+        
+        closeModal();
+        loadReturns();
+        alert('✅ Return submitted for approval!\n\nOnce approved, stock will be updated automatically.');
+        
+    } catch(e) {
+        alert('❌ Error processing return: ' + e.message);
+    }
+}
+
+// ===== APPROVE RETURN - SYNC WITH SYSTEM =====
+async function updateReturnStatus(id, status) {
+    if (!isAdmin()) {
+        alert("❌ Only admins can approve returns");
+        return;
+    }
+    if (!isAdmin()) { alert("❌ Only admins can approve returns"); return; }
+    if (!confirm('Update return to ' + status + '?')) return;
+
+    try {
+        var db = await openDB();
+        var ret = returns.find(function(r) { return r.id === id; });
+        if (!ret) { alert('Return not found'); return; }
+
+        var oldStatus = ret.status;
+        ret.status = status;
+        await dbPut(db, 'returns', ret);
+
+        // ===== IF APPROVED, SYNC WITH SYSTEM =====
+        if (status === 'approved') {
+            var order = orders.find(function(o) { return o.order_number === ret.order_number; });
+            var items = [];
+            if (ret.items) {
+                try { items = JSON.parse(ret.items); } catch(e) { items = []; }
+            }
+            
+            // 1. RESTOCK PRODUCTS
+            for (var i = 0; i < items.length; i++) {
+                var item = items[i];
+                var product = allProducts.find(function(p) { 
+                    return p.id === item.id || p.name === item.name; 
+                });
+                if (product) {
+                    var oldStock = product.current_stock || 0;
+                    product.current_stock = oldStock + (item.qty || 1);
+                    await dbPut(db, 'products', product);
+                    console.log('📦 Restocked: ' + product.name + ' (' + oldStock + ' → ' + product.current_stock + ')');
+                }
+            }
+            
+            // 2. UPDATE ORDER STATUS (if order exists)
+            if (order) {
+                // Track returned items
+                var returnedItems = order.returned_items || [];
+                for (var j = 0; j < items.length; j++) {
+                    var item = items[j];
+                    var existing = returnedItems.find(function(r) { return r.name === item.name; });
+                    if (existing) {
+                        existing.qty = (existing.qty || 0) + (item.qty || 1);
+                    } else {
+                        returnedItems.push({ name: item.name, qty: item.qty || 1 });
+                    }
+                }
+                order.returned_items = returnedItems;
+                order.status = 'partially_returned';
+                await dbPut(db, 'orders', order);
+                console.log('📋 Order updated: ' + order.order_number + ' → partially_returned');
+            }
+            
+            // 3. UPDATE CUSTOMER CREDIT (if refund method is credit)
+            if (ret.refund_method === 'credit' && order && order.customer_id) {
+                var customers = await dbGetAll(db, 'customers');
+                var customer = customers.find(function(c) { return c.id === order.customer_id; });
+                if (customer) {
+                    customer.credit = (customer.credit || 0) - ret.total;
+                    await dbPut(db, 'customers', customer);
+                    console.log('💳 Customer credit updated: ' + customer.name + ' → KES ' + customer.credit.toFixed(2));
+                }
+            }
+            
+            // 4. LOG STOCK MOVEMENT
+            var movement = {
+                product_id: 0,
+                product_name: 'Return - ' + ret.order_number,
+                type: 'return',
+                quantity: 0,
+                previous_stock: 0,
+                new_stock: 0,
+                reason: 'Return approved: ' + ret.reason,
+                reference: ret.order_number,
+                date: new Date().toISOString(),
+                user: ret.user || 'System',
+                notes: 'Return of ' + items.length + ' items | Total: KES ' + ret.total.toFixed(2)
+            };
+            await dbAdd(db, 'stock_movements', movement);
+            console.log('📊 Stock movement logged for return');
+        }
+
+        // Log action
+        logAction('return', 'Return ' + ret.order_number + ' updated to ' + status);
+
+        loadReturns();
+        alert('✅ Return updated to ' + status + 
+              (status === 'approved' ? '\n\n✅ Stock updated!\n✅ Order updated!\n✅ Customer credit updated!' : ''));
+        
+    } catch(e) {
+        alert('❌ Error updating return: ' + e.message);
+    }
+}
+
+// ===== LOG ACTION =====
+function logAction(action, details) {
+    var user = JSON.parse(localStorage.getItem('pos_user') || '{}');
+    var log = {
+        user: user.username || 'System',
+        action: action,
+        details: details,
+        date: new Date().toISOString()
+    };
+    openDB().then(function(db) {
+        if (db.objectStoreNames.contains('audit_log')) {
+            var tx = db.transaction('audit_log', 'readwrite');
+            var store = tx.objectStore('audit_log');
+            store.add(log);
+        }
+    }).catch(function(e) {
+        console.error('Error logging action:', e);
+    });
+}
+</script>
+<!-- Date Range Filter -->
+<div class="date-filter" style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;align-items:center;background:white;padding:8px 12px;border-radius:8px;border:1px solid #e2e8f0;">
+    <span style="font-size:12px;font-weight:600;color:#0f172a;">📅 Period:</span>
+    <select id="returnsPeriod" onchange="applyReturnsFilter()" style="padding:6px 12px;border:2px solid #e2e8f0;border-radius:6px;font-size:12px;font-family:'Inter',sans-serif;background:white;">
+        <option value="today">Today</option>
+        <option value="yesterday">Yesterday</option>
+        <option value="week" selected>Last 7 Days</option>
+        <option value="month">Last 30 Days</option>
+        <option value="quarter">Last 90 Days</option>
+        <option value="year">Last Year</option>
+        <option value="custom">Custom</option>
+    </select>
+    <div id="returnsCustomDates" style="display:none;gap:6px;align-items:center;flex-wrap:wrap;">
+        <input type="date" id="returnsStartDate" style="padding:6px 10px;border:2px solid #e2e8f0;border-radius:6px;font-size:12px;">
+        <span style="color:#94a3b8;">→</span>
+        <input type="date" id="returnsEndDate" style="padding:6px 10px;border:2px solid #e2e8f0;border-radius:6px;font-size:12px;">
+        <button onclick="applyReturnsFilter()" style="padding:6px 14px;background:#1a3c34;color:white;border:none;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;">Apply</button>
+    </div>
+    <span id="returnsDateInfo" style="font-size:11px;color:#94a3b8;margin-left:auto;"></span>
+</div>
+
+<script>
+function isAdmin() {
+    try {
+        const user = JSON.parse(localStorage.getItem("pos_user") || "{}");
+        return user.role === "admin";
+    } catch(e) {
+        return false;
+    }
+}
+// ===== RETURNS DATE FILTER =====
+function applyReturnsFilter() {
+    var period = document.getElementById('returnsPeriod').value;
+    var startDate, endDate;
+    var now = new Date();
+    var today = now.toISOString().slice(0, 10);
+    
+    document.getElementById('returnsCustomDates').style.display = period === 'custom' ? 'flex' : 'none';
+    
+    if (period === 'custom') {
+        startDate = document.getElementById('returnsStartDate').value;
+        endDate = document.getElementById('returnsEndDate').value;
+        if (!startDate || !endDate) {
+            alert('Please select both start and end dates');
+            return;
+        }
+    } else {
+        var start = new Date(now);
+        switch(period) {
+            case 'today': break;
+            case 'yesterday': start.setDate(start.getDate() - 1); break;
+            case 'week': start.setDate(start.getDate() - 7); break;
+            case 'month': start.setDate(start.getDate() - 30); break;
+            case 'quarter': start.setDate(start.getDate() - 90); break;
+            case 'year': start.setFullYear(start.getFullYear() - 1); break;
+            default: start.setDate(start.getDate() - 7);
+        }
+        startDate = start.toISOString().slice(0, 10);
+        endDate = today;
+    }
+    
+    window.returnsStartDate = startDate;
+    window.returnsEndDate = endDate;
+    
+    document.getElementById('returnsDateInfo').textContent = '📆 ' + startDate + ' → ' + endDate;
+    
+    renderReturns();
+}
+
+// Override renderReturns with date filter
+var originalRenderReturns = renderReturns;
+renderReturns = function() {
+    var container = document.getElementById('returnsList');
+    var search = document.getElementById('searchInput').value.toLowerCase();
+
+    var filtered = returns;
+    
+    // Apply date filter
+    if (window.returnsStartDate && window.returnsEndDate) {
+        filtered = filtered.filter(function(r) {
+            if (!r.date) return false;
+            var d = r.date.slice(0, 10);
+            return d >= window.returnsStartDate && d <= window.returnsEndDate;
+        });
+    }
+    
+    // Apply search
+    if (search) {
+        filtered = filtered.filter(function(r) {
+            return (r.order_number || '').toLowerCase().includes(search) ||
+                   (r.customer_name || '').toLowerCase().includes(search);
+        });
+    }
+
+    if (filtered.length === 0) {
+        container.innerHTML = '<div style="text-align:center;padding:40px;color:#94a3b8;">No returns found for this period</div>';
+        return;
+    }
+
+    var statusLabels = {
+        'pending': '⏳ Pending',
+        'approved': '✅ Approved',
+        'rejected': '❌ Rejected'
+    };
+
+    var html = '';
+    filtered.sort(function(a, b) { return new Date(b.date) - new Date(a.date); });
+    filtered.forEach(function(r) {
+        var statusClass = r.status || 'pending';
+        html += '<div class="return-item">';
+        html += '<div class="info">';
+        html += '<div class="order">Order: ' + (r.order_number || '#') + '</div>';
+        html += '<div class="details">Customer: ' + (r.customer_name || 'Unknown') + '</div>';
+        html += '<div class="reason">Reason: ' + (r.reason || '-') + '</div>';
+        html += '</div>';
+        html += '<div class="amount">KES ' + (r.total || 0).toFixed(2) + '</div>';
+        html += '<span class="status ' + statusClass + '">' + (statusLabels[statusClass] || statusClass) + '</span>';
+        html += '<div>';
+        html += '<button class="btn-action view" onclick="viewReturn(' + r.id + ')">👁️</button>';
+        if (r.status === 'pending') {
+            html += '<button class="btn-action approve" onclick="updateReturnStatus(' + r.id + ', \'approved\')">✅ Approve</button>';
+            html += '<button class="btn-action reject" onclick="updateReturnStatus(' + r.id + ', \'rejected\')">❌ Reject</button>';
+        }
+        html += '</div>';
+        html += '</div>';
+    });
+
+    container.innerHTML = html;
+};
+
+// Init returns filter on page load
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(function() {
+        var today = new Date();
+        var start = new Date();
+        start.setDate(start.getDate() - 7);
+        document.getElementById('returnsStartDate').value = start.toISOString().slice(0, 10);
+        document.getElementById('returnsEndDate').value = today.toISOString().slice(0, 10);
+        applyReturnsFilter();
+    }, 300);
+});
+</script>
+
+        req.onsuccess = function() { resolve(req.result); };
+        req.onerror = function() { reject(req.error); };
+    });
+}
