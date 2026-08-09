@@ -351,6 +351,15 @@ function activateSystem() {
         const pattern = /^[A-Z]{4,5}-[0-9]{8}-[A-Z0-9]{4}$/;
         const isValid = pattern.test(key);
         
+        // REJECT DEMO KEYS (for production)
+        const demoKeys = ['PERM-20260101-A1B2', 'PERM-20260101-C3D4', 'TRIAL-20260101-G7H8'];
+        if (demoKeys.includes(key)) {
+            status.className = 'status error show';
+            status.textContent = '❌ Demo keys are not valid for production. Please contact your administrator.';
+            document.querySelector('.btn-primary').disabled = false;
+            return;
+        }
+        
         if (isValid) {
             // Parse expiry from key type
             const parts = key.split('-');
