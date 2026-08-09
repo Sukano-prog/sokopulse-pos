@@ -288,20 +288,11 @@ function isAdmin() {
 }
 if (!isAdmin()) {
     window.location.href = "pos.html";
-}
 
-
-// Admin-only page - redirect if not admin
-    window.location.href = "pos.html";
-}
 function toggleSidebar() {
     document.querySelector(".sidebar")?.classList.toggle("open");
     document.querySelector(".sidebar-overlay")?.classList.toggle("show");
 }
-
-
-// Admin-only page check
-// Admin-only page check
 
 function logout() {
     if (confirm('Logout?')) {
@@ -681,32 +672,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <script>
 
-function isAdmin() {
-    try {
-        const user = JSON.parse(localStorage.getItem("pos_user") || "{}");
-        return user.role === "admin";
-    } catch(e) {
-        return false;
-    }
-}
-if (!isAdmin()) {
-    window.location.href = "pos.html";
-}
-
-
-// Admin-only page - redirect if not admin
-    window.location.href = "pos.html";
-}
-
-
-// Admin-only page check
-// Admin-only page check
-
-async function loadStockAlertSettings() {
-    try {
-        var db = await openDB();
-        var settings = await dbGetAll(db, 'settings');
-        var map = {};
+;
         settings.forEach(function(s) { map[s.key] = s.value; });
         if (map.stock_alerts_enabled) document.getElementById('stockAlertsEnabled').value = map.stock_alerts_enabled;
         if (map.default_min_stock) document.getElementById('defaultMinStock').value = map.default_min_stock;
