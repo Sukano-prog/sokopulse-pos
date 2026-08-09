@@ -1136,6 +1136,7 @@ function showReceipt(order) {
     receipt += '================================\n';
     receipt += 'Order: ' + (order.order_number || 'ORD-' + Date.now().toString().slice(-6)) + '\n';
     receipt += 'Date: ' + new Date(order.date).toLocaleString() + '\n';
+    receipt += 'Cashier: ' + (currentUser ? currentUser.name || currentUser.username : 'System') + '\n';
     receipt += 'Mode: ' + (order.mode || 'Retail') + '\n';
     if (settings.showCustomer !== false) {
         receipt += 'Customer: ' + (order.customer_name || 'Walk-in') + '\n';
