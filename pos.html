@@ -559,7 +559,7 @@ function renderCart() {
             '<span class="name">' + item.name + '</span>' +
             '<div class="qty">' +
                 '<button onclick="updateQty(' + i + ', -0.5)">−</button>' +
-                '<span>' + item.qty.toFixed(1) + '</span>' +
+                '<input type="number" class="qty-input" value="' + item.qty + '" step="0.1" min="0.1" onchange="updateQtyInput(' + i + ', this.value)" style="width:50px;text-align:center;border:1px solid #ddd;border-radius:4px;padding:4px;font-size:14px;">' +
                 '<button onclick="updateQty(' + i + ', 0.5)">+</button>' +
             '</div>' +
             '<div class="discount-input">' +
@@ -587,6 +587,18 @@ function updateTotals() {
     document.getElementById('cartTax').textContent = 'KES ' + tax.toFixed(2);
     document.getElementById('cartTotal').textContent = 'KES ' + total.toFixed(2);
     document.getElementById('cartCount').textContent = cart.reduce(function(s, i) { return s + i.qty; }, 0) + ' items';
+}
+
+function updateQtyInput(index, value) {
+    var item = cart[index];
+    if (!item) return;
+    var newQty = parseFloat(value);
+    if (isNaN(newQty) || newQty <= 0) {
+        cart.splice(index, 1);
+    } else {
+        item.qty = parseFloat(newQty.toFixed(2));
+    }
+    renderCart();
 }
 
 function updateQty(index, delta) {
