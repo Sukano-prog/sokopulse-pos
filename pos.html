@@ -558,9 +558,9 @@ function renderCart() {
         return '<div class="cart-item">' +
             '<span class="name">' + item.name + '</span>' +
             '<div class="qty">' +
-                '<button onclick="updateQty(' + i + ', -1)">−</button>' +
+                '<button onclick="updateQty(' + i + ', -0.5)">−</button>' +
                 '<span>' + item.qty.toFixed(1) + '</span>' +
-                '<button onclick="updateQty(' + i + ', 1)">+</button>' +
+                '<button onclick="updateQty(' + i + ', 0.5)">+</button>' +
             '</div>' +
             '<div class="discount-input">' +
                 '<input type="number" class="item-discount" value="' + discount + '" min="0" max="100" onchange="updateItemDiscount(' + i + ', this.value)">' +
@@ -593,7 +593,7 @@ function updateQty(index, delta) {
     var item = cart[index];
     if (!item) return;
     var newQty = parseFloat((item.qty + delta).toFixed(2));
-    if (newQty < 1) {
+    if (newQty <= 0) {
         cart.splice(index, 1);
     } else if (newQty > item.maxStock) {
         alert('❌ Not enough stock');
