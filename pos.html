@@ -1009,8 +1009,23 @@ function processPayment(method) {
                 var item = cart[i];
                 var product = products.find(function(p) { return p.id === item.id; });
                 if (product) {
+                    var oldStock = product.current_stock;
                     product.current_stock -= item.qty;
                     dbPut(db, 'products', product);
+                    
+                    // Log stock movement
+                    var movement = {
+                        product_id: product.id,
+                        product_name: product.name,
+                        type: 'sold',
+                        quantity: item.qty,
+                        previous_stock: oldStock,
+                        new_stock: product.current_stock,
+                        reference: order.order_number,
+                        date: new Date().toISOString(),
+                        user: 'system'
+                    };
+                    dbAdd(db, 'stock_movements', movement);
                 }
             }
             if (selectedCustomer && method !== 'credit') {
