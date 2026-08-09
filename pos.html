@@ -1172,6 +1172,9 @@ function showReceipt(order) {
     receipt += '================================\n';
     receipt += '  ' + (settings.footer || 'Thank you for shopping with us!') + '\n';
     receipt += '================================\n';
+    receipt += '          SokoPulse POS\n';
+    receipt += '       Offline Retail System\n';
+    receipt += '================================\n';
     content.textContent = receipt;
     modal.classList.add('show');
 }
