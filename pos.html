@@ -1120,9 +1120,9 @@ function showReceipt(order) {
     if (!modal || !content) return;
     var items = order.items || [];
     var storeName = document.getElementById('storeName')?.textContent || 'SokoPulse';
-    var storeAddress = document.getElementById('storeAddress')?.textContent || '';
-    var storePhone = document.getElementById('storePhone')?.textContent || '';
-    var storeEmail = document.getElementById('storeEmail')?.textContent || '';
+    var storeAddress = document.getElementById('storeAddressDisplay')?.textContent || '';
+    var storePhone = document.getElementById('storePhoneDisplay')?.textContent || '';
+    var storeEmail = document.getElementById('storeEmailDisplay')?.textContent || '';
     var subtotal = order.subtotal || items.reduce(function(s, i) { return s + (i.price || 0) * (i.qty || 1) * (1 - (i.discount || 0) / 100); }, 0);
     var tax = 0;
     var taxDisplay = '';
