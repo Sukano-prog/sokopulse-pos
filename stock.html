@@ -594,10 +594,12 @@ function renderStats() {
     document.getElementById('lowStock').textContent = lowStock;
     document.getElementById('outStock').textContent = outStock;
 
+    console.log('📊 renderStats - movements:', movements ? movements.length : 'undefined');
     const received = movements ? movements.filter(m => m.type === 'receive').reduce((s, m) => s + m.quantity, 0) : 0;
     const sold = movements ? movements.filter(m => m.type === 'sold').reduce((s, m) => s + Math.abs(m.quantity), 0) : 0;
     const adjusted = movements ? movements.filter(m => m.type === 'adjust').reduce((s, m) => s + Math.abs(m.quantity), 0) : 0;
 
+    console.log('📊 renderStats - received:', received, 'sold:', sold, 'adjusted:', adjusted);
     document.getElementById('totalReceived').textContent = received;
     document.getElementById('totalSold').textContent = sold;
     document.getElementById('totalAdjusted').textContent = adjusted;
