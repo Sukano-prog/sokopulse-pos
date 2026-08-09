@@ -303,6 +303,7 @@
     </div>
 </div>
 
+
 <script src="db.js"></script>
 <script>
 function isAdmin() {
@@ -327,6 +328,48 @@ var selectedOrderItems = [];
 var allOrdersForDropdown = [];
 
 // ===== DB HELPERS =====
+
+
+
+function dbAdd(db, storeName, data) {
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction(storeName, 'readwrite');
+        const store = tx.objectStore(storeName);
+        const req = store.add(data);
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+    });
+}
+
+function dbPut(db, storeName, data) {
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction(storeName, 'readwrite');
+        const store = tx.objectStore(storeName);
+        const req = store.put(data);
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+    });
+}
+
+function dbGet(db, storeName, id) {
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction(storeName, 'readonly');
+        const store = tx.objectStore(storeName);
+        const req = store.get(id);
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+    });
+}
+
+function dbDelete(db, storeName, id) {
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction(storeName, 'readwrite');
+        const store = tx.objectStore(storeName);
+        const req = store.delete(id);
+        req.onsuccess = () => resolve();
+        req.onerror = () => reject(req.error);
+    });
+}
 
 function dbPut(db, storeName, data) {
     return new Promise(function(resolve, reject) {
@@ -710,6 +753,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 </body>
 </html>
+
 <script src="db.js"></script>
 <script>
 function isAdmin() {
@@ -926,6 +970,7 @@ function logAction(action, details) {
     </div>
     <span id="returnsDateInfo" style="font-size:11px;color:#94a3b8;margin-left:auto;"></span>
 </div>
+
 
 <script src="db.js"></script>
 <script>
