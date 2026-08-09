@@ -352,6 +352,12 @@
                         <span class="search-icon">🔍</span>
                         <input type="text" id="searchInput" placeholder="Search by name or SKU..." oninput="renderProducts()">
                     </div>
+                    <select id="stockStatusFilter" onchange="renderProducts()" style="padding:10px 14px;border:2px solid #e2e8f0;border-radius:10px;font-family:'Inter',sans-serif;font-size:13px;background:white;min-width:140px;">
+                        <option value="all">All Stock Status</option>
+                        <option value="in-stock">✅ In Stock</option>
+                        <option value="low-stock">⚠️ Low Stock</option>
+                        <option value="out-of-stock">❌ Out of Stock</option>
+                    </select>
                     <button class="btn-receive" onclick="openReceiveModal()">📥 Receive Stock</button>
                     <button class="btn-adjust" onclick="openAdjustModal()">📊 Adjust Stock</button>
                 <button class="btn-adjust" onclick="openBulkAdjust()" style="background:#8b5cf6;color:white;">📊 Bulk Adjust</button>
@@ -665,6 +671,7 @@ function renderProducts() {
     if (!tbody) return;
     
     const search = document.getElementById('searchInput')?.value?.toLowerCase() || '';
+    const stockFilter = document.getElementById('stockStatusFilter')?.value || 'all';
     
     let filtered = products || [];
     if (search) {
@@ -672,6 +679,25 @@ function renderProducts() {
             (p.name || '').toLowerCase().includes(search) || 
             (p.sku || '').toLowerCase().includes(search)
         );
+    }
+    
+    // Apply stock status filter
+    if (stockFilter === 'in-stock') {
+        filtered = filtered.filter(function(p) { 
+            var stock = p.current_stock || 0;
+            var min = p.min_stock_alert || 5;
+            return stock > min;
+        });
+    } else if (stockFilter === 'low-stock') {
+        filtered = filtered.filter(function(p) { 
+            var stock = p.current_stock || 0;
+            var min = p.min_stock_alert || 5;
+            return stock <= min && stock > 0;
+        });
+    } else if (stockFilter === 'out-of-stock') {
+        filtered = filtered.filter(function(p) { 
+            return (p.current_stock || 0) <= 0;
+        });
     }
     
     if (filtered.length === 0) {
