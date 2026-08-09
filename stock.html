@@ -594,6 +594,7 @@ async function loadStockData() {
 
 // ===== RENDER STATS =====
 function renderStats() {
+    alert("renderStats called!");
     try {
         console.log("📊 renderStats called - movements length:", movements ? movements.length : "undefined");
         const total = products ? products.length : 0;
