@@ -1133,6 +1133,9 @@ function showReceipt(order) {
     var total = subtotal + tax;
     var receipt = '================================\n';
     receipt += '        ' + storeName + '\n';
+    if (storeAddress) receipt += '        ' + storeAddress + '\n';
+    if (storePhone) receipt += '        Tel: ' + storePhone + '\n';
+    if (storeEmail) receipt += '        Email: ' + storeEmail + '\n';
     receipt += '================================\n';
     receipt += 'Order: ' + (order.order_number || 'ORD-' + Date.now().toString().slice(-6)) + '\n';
     receipt += 'Date: ' + new Date(order.date).toLocaleString() + '\n';
