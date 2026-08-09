@@ -422,6 +422,9 @@ async function testReceipt() {
         receipt += '================================\n';
         var win = window.open('', '_blank', 'width=400,height=600');
         win.document.write('<html><head><title>Test Receipt</title><style>body{font-family:monospace;padding:20px;white-space:pre;}</style></head><body>' + receipt + '</body></html>');
+    } catch(e) {
+        console.error('Error in testReceipt:', e);
+        alert('❌ Error testing receipt: ' + e.message);
     }
 }// ===== USERS =====
 async function loadUsers() {
