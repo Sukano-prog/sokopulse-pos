@@ -584,6 +584,7 @@ async function loadStockData() {
 
 // ===== RENDER STATS =====
 function renderStats() {
+    console.log("📊 renderStats called - movements length:", movements ? movements.length : "undefined");
     const total = products ? products.length : 0;
     const inStock = products ? products.filter(p => p.current_stock > (p.min_stock_alert || 5)).length : 0;
     const lowStock = products ? products.filter(p => p.current_stock <= (p.min_stock_alert || 5) && p.current_stock > 0).length : 0;
