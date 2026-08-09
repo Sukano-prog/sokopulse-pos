@@ -243,7 +243,19 @@
 </head>
 <body>
 <div class="app">
-    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+    <div class="sidebar-overlay" onclick="toggleSidebar()">
+                <div class="filter-group" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                    <label style="font-size:12px;font-weight:600;color:#0f172a;">📦 Product</label>
+                    <select id="productFilter" onchange="loadActiveReport()" style="padding:8px 12px;border:2px solid #e2e8f0;border-radius:8px;font-family:'Inter',sans-serif;font-size:13px;background:white;min-width:150px;">
+                        <option value="all">All Products</option>
+                    </select>
+                </div>
+                <div class="filter-group" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                    <label style="font-size:12px;font-weight:600;color:#0f172a;">📂 Category</label>
+                    <select id="categoryFilter" onchange="loadActiveReport()" style="padding:8px 12px;border:2px solid #e2e8f0;border-radius:8px;font-family:'Inter',sans-serif;font-size:13px;background:white;min-width:130px;">
+                        <option value="all">All Categories</option>
+                    </select>
+                </div></div>
 
     <aside class="sidebar">
         <div class="logo">🏪 <span>Soko</span>Pulse <button class="close-btn" onclick="toggleSidebar()">✕</button></div>
@@ -494,6 +506,40 @@ function loadActiveReport() {
     }
 }
 
+function getProductFilter() {
+    var el = document.getElementById('productFilter');
+    return el ? el.value : 'all';
+}
+
+function getCategoryFilter() {
+    var el = document.getElementById('categoryFilter');
+    return el ? el.value : 'all';
+}
+
+function populateProductFilters() {
+    var productSelect = document.getElementById('productFilter');
+    var categorySelect = document.getElementById('categoryFilter');
+    if (!productSelect || !allProducts) return;
+    var currentProduct = productSelect.value;
+    var currentCategory = categorySelect ? categorySelect.value : 'all';
+    productSelect.innerHTML = '<option value="all">All Products</option>';
+    var categories = {};
+    allProducts.forEach(function(p) {
+        var name = p.name || 'Unnamed';
+        var cat = p.category || 'Uncategorized';
+        categories[cat] = true;
+        productSelect.innerHTML += '<option value="' + p.id + '">' + name + '</option>';
+    });
+    productSelect.value = currentProduct;
+    if (categorySelect) {
+        categorySelect.innerHTML = '<option value="all">All Categories</option>';
+        Object.keys(categories).sort().forEach(function(cat) {
+            categorySelect.innerHTML += '<option value="' + cat + '">' + cat + '</option>';
+        });
+        categorySelect.value = currentCategory;
+    }
+}
+
 function getDateRange() {
     var startInput = document.getElementById('reportStartDate');
     var endInput = document.getElementById('reportEndDate');
@@ -510,6 +556,7 @@ async function loadAllData() {
         allOrders = await dbGetAll(db, 'orders');
         allProducts = await dbGetAll(db, 'products');
         allCustomers = await dbGetAll(db, 'customers');
+        populateProductFilters();
     } catch(e) {
         console.error('Error loading data:', e);
     }
