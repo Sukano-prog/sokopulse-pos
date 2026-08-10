@@ -542,7 +542,6 @@
         </form>
     </div>
 </div>
-<script src="db.js"></script>
 <script>
 // ===== STOCK PAGE - UNIFIED SCRIPT =====
 
@@ -1360,7 +1359,6 @@ document.addEventListener('keydown', function(e) {
     }
 }
 </style>
-<script src="db.js"></script>
 <script>
 // ===== CHECK FOR STOCK UPDATES =====
 function checkForStockUpdates() {
@@ -1400,7 +1398,6 @@ document.addEventListener('visibilitychange', function() {
 </script>
 <!-- Add refresh button to toolbar -->
 <button onclick="loadStockData()" style="padding:10px 18px;background:#1a3c34;color:white;border:none;border-radius:10px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;">🔄 Refresh</button>
-<script src="db.js"></script>
 <script>
 // ===== BULK EXPORT STOCK =====
 function exportStock() {
@@ -1425,7 +1422,6 @@ function exportStock() {
     alert('✅ Stock exported!');
 }
 </script>
-<script src="db.js"></script>
 <script>
 // ===== ACTIVATION CHECK =====
 if (localStorage.getItem('activated') !== 'true') {
@@ -1439,7 +1435,6 @@ td .value-amount {
     color: #1a3c34;
 }
 </style>
-<script src="db.js"></script>
 <script>
 // ===== STOCK WITH TOTAL VALUE =====
 const originalRender = renderProducts;
@@ -1502,7 +1497,6 @@ renderProducts = function() {
     }).join('');
 };
 </script>
-<script src="db.js"></script>
 <script>
 // Update stats to include total stock value
 const originalRenderStats = renderStats;
@@ -1530,7 +1524,6 @@ renderStats = function() {
     document.getElementById('stockValue').textContent = `KES ${totalValue.toFixed(0)}`;
 };
 </script>
-<script src="db.js"></script>
 <script>
 // ===== FIXED RENDER PRODUCTS WITH VALUE =====
 const renderProductsWithValue = renderProducts;

@@ -80,7 +80,6 @@
         </div>
     </main>
 </div>
-<script src="db.js"></script>
 <script>
 function toggleSidebar() {
     document.querySelector(".sidebar").classList.toggle("open");
@@ -151,26 +150,11 @@ function logout() {
 function openDB() { return new Promise((r,x) => { const req = indexedDB.open('SokoPulsePOS', 6); req.onsuccess = e => r(e.target.result); req.onerror = e => x(e.target.error); }); }
 function dbGetAll(db, store) { return new Promise((r,x) => { const tx = db.transaction(store,'readonly'); const req = tx.objectStore(store).getAll(); req.onsuccess = () => r(req.result); req.onerror = () => x(req.error); }); }
 </script>
-<script src="db.js"></script>
 <script>
 // ===== LOAD STORE NAME =====
 
 document.addEventListener("DOMContentLoaded", function() {
 });
-</script>
-
-<script>
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/sw.js')
-            .then(function(reg) {
-                console.log('✅ Service Worker registered');
-            })
-            .catch(function(err) {
-                console.log('❌ Service Worker registration failed:', err);
-            });
-    });
-}
 </script>
 </body>
 </html>
@@ -294,7 +278,6 @@ if ('serviceWorker' in navigator) {
     }
 }
 </style>
-<script src="db.js"></script>
 <script>
 // ===== ACTIVATION CHECK =====
 if (localStorage.getItem('activated') !== 'true') {

@@ -276,7 +276,6 @@
     </main>
 </div>
 
-<script src="db.js"></script>
 <script>
 
 function isAdmin() {
@@ -430,21 +429,7 @@ async function testReceipt() {
         receipt += '  ' + footer + '\n';
         receipt += '================================\n';
         var win = window.open('', '_blank', 'width=400,height=600');
-        win.document.write('<html><head><title>Test Receipt</title><style>body{font-family:monospace;padding:20px;white-space:pre;}</style></head><body>' + receipt + '
-<script>
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/sw.js')
-            .then(function(reg) {
-                console.log('✅ Service Worker registered');
-            })
-            .catch(function(err) {
-                console.log('❌ Service Worker registration failed:', err);
-            });
-    });
-}
-</script>
-</body></html>');
+        win.document.write('<html><head><title>Test Receipt</title><style>body{font-family:monospace;padding:20px;white-space:pre;}</style></head><body>' + receipt + '</body></html>');
         win.document.close();
         win.print();
     } catch(e) { alert('Error: ' + e.message); }
@@ -664,20 +649,6 @@ document.addEventListener('DOMContentLoaded', function() {
     loadStoreName();
 });
 </script>
-
-<script>
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/sw.js')
-            .then(function(reg) {
-                console.log('✅ Service Worker registered');
-            })
-            .catch(function(err) {
-                console.log('❌ Service Worker registration failed:', err);
-            });
-    });
-}
-</script>
 </body>
 </html>
 <!-- Min Stock Alert Settings -->
@@ -708,7 +679,6 @@ if ('serviceWorker' in navigator) {
     </div>
 </div>
 
-<script src="db.js"></script>
 <script>
 
 function isAdmin() {

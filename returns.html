@@ -303,7 +303,6 @@
     </div>
 </div>
 
-<script src="db.js"></script>
 <script>
 function isAdmin() {
     try {
@@ -728,23 +727,8 @@ document.addEventListener('DOMContentLoaded', function() {
     loadReturns();
 });
 </script>
-
-<script>
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/sw.js')
-            .then(function(reg) {
-                console.log('✅ Service Worker registered');
-            })
-            .catch(function(err) {
-                console.log('❌ Service Worker registration failed:', err);
-            });
-    });
-}
-</script>
 </body>
 </html>
-<script src="db.js"></script>
 <script>
 function isAdmin() {
     try {
@@ -961,7 +945,6 @@ function logAction(action, details) {
     <span id="returnsDateInfo" style="font-size:11px;color:#94a3b8;margin-left:auto;"></span>
 </div>
 
-<script src="db.js"></script>
 <script>
 function isAdmin() {
     try {

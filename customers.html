@@ -207,7 +207,6 @@
     </div>
 </div>
 
-<script src="db.js"></script>
 <script>
 
 // ===== ALL FUNCTIONS =====
@@ -436,27 +435,12 @@ function openDB() {
     });
 }
 </script>
-<script src="db.js"></script>
 <script>
 // ===== LOAD STORE NAME =====
 
 document.addEventListener("DOMContentLoaded", function() {
     loadCustomers();
 });
-</script>
-
-<script>
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/sw.js')
-            .then(function(reg) {
-                console.log('✅ Service Worker registered');
-            })
-            .catch(function(err) {
-                console.log('❌ Service Worker registration failed:', err);
-            });
-    });
-}
 </script>
 </body>
 </html>
@@ -582,7 +566,6 @@ if ('serviceWorker' in navigator) {
     }
 }
 </style>
-<script src="db.js"></script>
 <script>
 // ===== BULK EXPORT CUSTOMERS =====
 function exportCustomers() {
@@ -606,7 +589,6 @@ function exportCustomers() {
     alert('✅ Customers exported!');
 }
 </script>
-<script src="db.js"></script>
 <script>
 // ===== ACTIVATION CHECK =====
 if (localStorage.getItem('activated') !== 'true') {
