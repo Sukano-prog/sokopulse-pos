@@ -1256,15 +1256,6 @@ document.getElementById('searchInput')?.addEventListener('input', renderProducts
 setInterval(checkLowStock, 300000);
 </script>
 
-
-<script>
-)
-            .catch(function(err) {
-                console.log('❌ Service Worker registration failed:', err);
-            });
-    });
-}
-</script>
 </body>
 </html>
 <style>
@@ -1782,17 +1773,3 @@ setInterval(checkLowStock, 300000);
     }
 }
 </style>
-
-<script>
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/sw.js')
-            .then(function(reg) {
-                console.log('✅ Service Worker registered');
-            })
-            .catch(function(err) {
-                console.log('❌ Service Worker registration failed:', err);
-            });
-    });
-}
-</script>
