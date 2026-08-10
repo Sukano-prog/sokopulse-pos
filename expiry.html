@@ -164,6 +164,20 @@ function logout() {
     if (confirm('Logout?')) { localStorage.removeItem('pos_user'); window.location.href = 'index.html'; }
 }
 </script>
+
+<script>
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/sw.js')
+            .then(function(reg) {
+                console.log('✅ Service Worker registered');
+            })
+            .catch(function(err) {
+                console.log('❌ Service Worker registration failed:', err);
+            });
+    });
+}
+</script>
 </body>
 </html>
 <style>
