@@ -271,9 +271,11 @@ async function loadAudit() {
             console.log('⚠️ audit_log store not found - creating it now');
             // Create the store by closing and reopening with upgrade
             db.close();
-            var req = indexedDB.open('SokoPulsePOS', 6);
+            var req = indexedDB.open('SokoPulsePOS', 7);
+            req.onupgradeneeded = function(e) {
                 var db2 = e.target.result;
                 if (!db2.objectStoreNames.contains('audit_log')) {
+                    var store = db2.createObjectStore('audit_log', { keyPath: 'id', autoIncrement: true });
                     store.createIndex('date', 'date', { unique: false });
                     store.createIndex('user', 'user', { unique: false });
                     store.createIndex('action', 'action', { unique: false });
@@ -285,6 +287,7 @@ async function loadAudit() {
                 auditLogs = [];
                 renderAudit();
                 console.log('📋 Audit store created, no records yet');
+                db2.close();
             };
             req.onerror = function(e) {
                 console.error('Error creating audit store:', e);
@@ -428,6 +431,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
+
 <script>
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
@@ -443,171 +447,3 @@ if ('serviceWorker' in navigator) {
 </script>
 </body>
 </html>
-<!-- Date Range Filter -->
-<div class="date-filter" style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;align-items:center;background:white;padding:8px 12px;border-radius:8px;border:1px solid #e2e8f0;">
-    <span style="font-size:12px;font-weight:600;color:#0f172a;">📅 Period:</span>
-    <select id="auditPeriod" onchange="applyAuditFilter()" style="padding:6px 12px;border:2px solid #e2e8f0;border-radius:6px;font-size:12px;font-family:'Inter',sans-serif;background:white;">
-        <option value="today">Today</option>
-        <option value="yesterday">Yesterday</option>
-        <option value="week" selected>Last 7 Days</option>
-        <option value="month">Last 30 Days</option>
-        <option value="quarter">Last 90 Days</option>
-        <option value="year">Last Year</option>
-        <option value="custom">Custom</option>
-    </select>
-    <div id="auditCustomDates" style="display:none;gap:6px;align-items:center;flex-wrap:wrap;">
-        <input type="date" id="auditStartDate" style="padding:6px 10px;border:2px solid #e2e8f0;border-radius:6px;font-size:12px;">
-        <span style="color:#94a3b8;">→</span>
-        <input type="date" id="auditEndDate" style="padding:6px 10px;border:2px solid #e2e8f0;border-radius:6px;font-size:12px;">
-        <button onclick="applyAuditFilter()" style="padding:6px 14px;background:#1a3c34;color:white;border:none;border-radius:6px;cursor:pointer;font-size:12px;font-weight:600;">Apply</button>
-    </div>
-    <span id="auditDateInfo" style="font-size:11px;color:#94a3b8;margin-left:auto;"></span>
-</div>
-
-
-<script>
-
-function isAdmin() {
-    try {
-        const user = JSON.parse(localStorage.getItem("pos_user") || "{}");
-        return user.role === "admin";
-    } catch(e) {
-        return false;
-    }
-}
-if (!isAdmin()) {
-    window.location.href = "pos.html";
-}
-
-// ===== AUDIT DATE FILTER =====
-function applyAuditFilter() {
-    var period = document.getElementById('auditPeriod').value;
-    var startDate, endDate;
-    var now = new Date();
-    var today = now.toISOString().slice(0, 10);
-    
-    // Show/hide custom dates
-    document.getElementById('auditCustomDates').style.display = period === 'custom' ? 'flex' : 'none';
-    
-    if (period === 'custom') {
-        startDate = document.getElementById('auditStartDate').value;
-        endDate = document.getElementById('auditEndDate').value;
-        if (!startDate || !endDate) {
-            alert('Please select both start and end dates');
-            return;
-        }
-    } else {
-        var start = new Date(now);
-        switch(period) {
-            case 'today': break;
-            case 'yesterday': start.setDate(start.getDate() - 1); break;
-            case 'week': start.setDate(start.getDate() - 7); break;
-            case 'month': start.setDate(start.getDate() - 30); break;
-            case 'quarter': start.setDate(start.getDate() - 90); break;
-            case 'year': start.setFullYear(start.getFullYear() - 1); break;
-            default: start.setDate(start.getDate() - 7);
-        }
-        startDate = start.toISOString().slice(0, 10);
-        endDate = today;
-    }
-    
-    // Store filter
-    window.auditStartDate = startDate;
-    window.auditEndDate = endDate;
-    
-    document.getElementById('auditDateInfo').textContent = '📆 ' + startDate + ' → ' + endDate;
-    
-    // Re-render audit with filter
-    renderAudit();
-}
-
-// Override renderAudit to use date filter
-var originalRenderAudit = renderAudit;
-renderAudit = function() {
-    var container = document.getElementById('auditList');
-    var search = document.getElementById('searchInput').value.toLowerCase();
-    var filter = document.getElementById('actionFilter').value;
-    
-    var filtered = auditLogs;
-    
-    // Apply date filter
-    if (window.auditStartDate && window.auditEndDate) {
-        filtered = filtered.filter(function(a) {
-            if (!a.date) return false;
-            var d = a.date.slice(0, 10);
-            return d >= window.auditStartDate && d <= window.auditEndDate;
-        });
-    }
-    
-    // Apply search
-    if (search) {
-        filtered = filtered.filter(function(a) {
-            return (a.user || '').toLowerCase().includes(search) ||
-                   (a.action || '').toLowerCase().includes(search) ||
-                   (a.details || '').toLowerCase().includes(search);
-        });
-    }
-    
-    // Apply action filter
-    if (filter !== 'all') {
-        filtered = filtered.filter(function(a) { return a.action === filter; });
-    }
-
-    if (filtered.length === 0) {
-        container.innerHTML = '<div style="text-align:center;padding:40px;color:#94a3b8;">No audit records found for this period</div>';
-        return;
-    }
-
-    var actionLabels = {
-        'login': '🔐 Login',
-        'sale': '💰 Sale',
-        'return': '🔄 Return',
-        'adjust': '📊 Stock Adjust',
-        'delete': '🗑️ Delete',
-        'update': '✏️ Update',
-        'credit': '💳 Credit',
-        'logout': '🚪 Logout'
-    };
-
-    var actionClasses = {
-        'login': 'login',
-        'sale': 'sale',
-        'return': 'return',
-        'adjust': 'adjust',
-        'delete': 'delete',
-        'update': 'update',
-        'credit': 'credit',
-        'logout': 'login'
-    };
-
-    var html = '';
-    filtered.forEach(function(a) {
-        var actionLabel = actionLabels[a.action] || a.action;
-        var actionClass = actionClasses[a.action] || '';
-        var date = new Date(a.date);
-        var timeStr = date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
-        html += '<div class="audit-item">';
-        html += '<div class="info">';
-        html += '<span class="action-badge ' + actionClass + '">' + actionLabel + '</span>';
-        html += ' <span class="action">' + (a.details || '') + '</span>';
-        html += '<div class="user">👤 ' + (a.user || 'System') + '</div>';
-        html += '</div>';
-        html += '<div class="time">' + timeStr + '</div>';
-        html += '</div>';
-    });
-
-    container.innerHTML = html;
-};
-
-// Init audit filter on page load
-document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(function() {
-        var today = new Date();
-        var start = new Date();
-        start.setDate(start.getDate() - 7);
-        document.getElementById('auditStartDate').value = start.toISOString().slice(0, 10);
-        document.getElementById('auditEndDate').value = today.toISOString().slice(0, 10);
-        applyAuditFilter();
-    }, 300);
-});
-</script>
