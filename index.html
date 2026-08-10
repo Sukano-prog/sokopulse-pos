@@ -251,9 +251,7 @@
 </head>
 <body>
     <!-- ===== ACTIVATION CHECK ===== -->
-    
-<script src="db.js"></script>
-<script>
+    <script>
         if (localStorage.getItem("activated") !== "true") {
             window.location.href = "activation.html";
         }
@@ -311,7 +309,6 @@
     </div>
 </div>
 
-
 <script>
     // ===== CHECK ACTIVATION =====
     if (localStorage.getItem("activated") !== "true") {
@@ -327,13 +324,17 @@
     function openDB() {
         return new Promise((resolve, reject) => {
             const request = indexedDB.open('SokoPulsePOS', 6);
+            request.onupgradeneeded = function(e) {
                 const db = e.target.result;
                 if (!db.objectStoreNames.contains('users')) {
+                    const store = db.createObjectStore('users', { keyPath: 'id', autoIncrement: true });
                     store.createIndex('username', 'username', { unique: true });
                 }
                 if (!db.objectStoreNames.contains('products')) {
+                    db.createObjectStore('products', { keyPath: 'id', autoIncrement: true });
                 }
                 if (!db.objectStoreNames.contains('orders')) {
+                    db.createObjectStore('orders', { keyPath: 'id', autoIncrement: true });
                 }
             };
             request.onsuccess = function(e) {
@@ -430,23 +431,8 @@ function toggleSidebar() {
 }
 </script>
 
-
-<script>
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/sw.js')
-            .then(function(reg) {
-                console.log('✅ Service Worker registered');
-            })
-            .catch(function(err) {
-                console.log('❌ Service Worker registration failed:', err);
-            });
-    });
-}
-</script>
 </body>
 </html>
-
 <script>
     // ===== CHECK ACTIVATION =====
     if (localStorage.getItem("activated") !== "true") {
@@ -463,7 +449,6 @@ function checkSession() {
     }
 }
 </script>
-
 <script>
 // ===== ACTIVATION CHECK =====
 (function() {
@@ -472,7 +457,6 @@ function checkSession() {
     }
 })();
 </script>
-
 <script>
 // ===== LICENSE EXPIRY CHECK =====
 function checkLicenseExpiry() {
