@@ -4,6 +4,24 @@
 const DB_NAME = 'SokoPulsePOS';
 const DB_VERSION = 6;
 
+
+
+// ===== IMMEDIATE DATABASE SETUP =====
+// This runs as soon as db.js loads
+(function() {
+    console.log('🔧 Checking database setup...');
+    const req = indexedDB.open(DB_NAME, DB_VERSION);
+    req.onsuccess = function(e) {
+        const db = e.target.result;
+        const stores = Array.from(db.objectStoreNames);
+        console.log('📋 Current stores:', stores);
+        db.close();
+    };
+    req.onerror = function(e) {
+        console.log('⚠️ Database not found, will be created on first use.');
+    };
+})();
+
 function openDB() {
     return new Promise((resolve, reject) => {
         const req = indexedDB.open(DB_NAME, DB_VERSION);
