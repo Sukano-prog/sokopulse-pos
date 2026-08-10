@@ -1137,6 +1137,7 @@ function showReceipt(order) {
     receipt += 'Order: ' + (order.order_number || 'ORD-' + Date.now().toString().slice(-6)) + '\n';
     receipt += 'Date: ' + new Date(order.date).toLocaleString() + '\n';
     receipt += 'Mode: ' + (order.mode || 'Retail') + '\n';
+    receipt += 'Cashier: ' + (currentUser ? currentUser.name || currentUser.username : 'System') + '\n';
     if (settings.showCustomer !== false) {
         receipt += 'Customer: ' + (order.customer_name || 'Walk-in') + '\n';
     }
@@ -1164,6 +1165,9 @@ function showReceipt(order) {
     receipt += 'Status: ' + (order.status || 'Completed') + '\n';
     receipt += '================================\n';
     receipt += '  ' + (settings.footer || 'Thank you for shopping with us!') + '\n';
+    receipt += '================================\n';
+    receipt += '          SokoPulse POS\n';
+    receipt += '       Offline Retail System\n';
     receipt += '================================\n';
     content.textContent = receipt;
     modal.classList.add('show');
