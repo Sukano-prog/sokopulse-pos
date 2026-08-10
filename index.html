@@ -311,6 +311,12 @@
     </div>
 </div>
 
+
+<script>
+    // ===== CHECK ACTIVATION =====
+    if (localStorage.getItem("activated") !== "true") {
+        window.location.href = "activation.html";
+    }
     const DEFAULT_USERS = [
         { username: 'admin', password: 'admin123', role: 'admin', name: 'Administrator' },
         { username: 'cashier', password: 'cashier123', role: 'cashier', name: 'Cashier' }
@@ -321,21 +327,17 @@
     function openDB() {
         return new Promise((resolve, reject) => {
             const request = indexedDB.open('SokoPulsePOS', 6);
-            request.onupgradeneeded = function(e) {
                 const db = e.target.result;
                 if (!db.objectStoreNames.contains('users')) {
-                    const store = db.createObjectStore('users', { keyPath: 'id', autoIncrement: true });
                     store.createIndex('username', 'username', { unique: true });
                 }
                 if (!db.objectStoreNames.contains('products')) {
-                    db.createObjectStore('products', { keyPath: 'id', autoIncrement: true });
                 }
                 if (!db.objectStoreNames.contains('orders')) {
-                    db.createObjectStore('orders', { keyPath: 'id', autoIncrement: true });
                 }
             };
             request.onsuccess = function(e) {
-                const db = e.target.result;
+                db = e.target.result;
                 resolve(db);
             };
             request.onerror = function(e) {
@@ -429,8 +431,27 @@ function toggleSidebar() {
 </script>
 
 
+<script>
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/sw.js')
+            .then(function(reg) {
+                console.log('✅ Service Worker registered');
+            })
+            .catch(function(err) {
+                console.log('❌ Service Worker registration failed:', err);
+            });
+    });
+}
+</script>
 </body>
 </html>
+
+<script>
+    // ===== CHECK ACTIVATION =====
+    if (localStorage.getItem("activated") !== "true") {
+        window.location.href = "activation.html";
+    }
 // ===== SESSION CHECK =====
 function checkSession() {
     const user = localStorage.getItem('pos_user');
@@ -443,6 +464,14 @@ function checkSession() {
 }
 </script>
 
+<script>
+// ===== ACTIVATION CHECK =====
+(function() {
+    if (localStorage.getItem('activated') !== 'true') {
+        window.location.href = 'activation.html';
+    }
+})();
+</script>
 
 <script>
 // ===== LICENSE EXPIRY CHECK =====
@@ -482,5 +511,3 @@ document.addEventListener('DOMContentLoaded', function() {
     checkLicenseExpiry();
 });
 </script>
-</body>
-</html>
