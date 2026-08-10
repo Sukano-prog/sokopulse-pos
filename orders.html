@@ -140,9 +140,9 @@
         </nav>
         <div class="user-section">
             <div class="name" id="userName">Administrator</div>
-        <button class="logout-btn" onclick="logout()">🚪 Logout</button>
             <div class="role" id="userRole">Admin</div>
         </div>
+        <button class="logout-btn" onclick="logout()">🚪 Logout</button>
     </aside>
 
     <main class="main-content">
@@ -247,8 +247,6 @@
     </div>
 </div>
 
-
-<script src="db.js"></script>
 <script>
 
 function isAdmin() {
@@ -270,7 +268,27 @@ if (!isAdmin()) {
 var orders = [];
 
 // ===== DB HELPERS =====
+function openDB() {
+    return new Promise(function(resolve, reject) {
+        var req = indexedDB.open('SokoPulsePOS', 6);
+        req.onsuccess = function(e) { resolve(e.target.result); };
+        req.onerror = function(e) { reject(e.target.error); };
+    });
+}
 
+function dbGetAll(db, storeName) {
+    return new Promise(function(resolve, reject) {
+        if (!db.objectStoreNames.contains(storeName)) {
+            resolve([]);
+            return;
+        }
+        var tx = db.transaction(storeName, 'readonly');
+        var store = tx.objectStore(storeName);
+        var req = store.getAll();
+        req.onsuccess = function() { resolve(req.result); };
+        req.onerror = function() { reject(req.error); };
+    });
+}
 
 function dbPut(db, storeName, data) {
     return new Promise(function(resolve, reject) {
@@ -444,30 +462,7 @@ function reprintReceipt(id) {
         alert('Please allow popups for printing');
         return;
     }
-    win.document.write('<html><head><title>Receipt</title><style>body{font-family:monospace;padding:20px;white-space:pre;}</style></head><body>' + receipt + '
-<script>
-    window.addEventListener('load', function() {
-            .then(function(reg) {
-                console.log('✅ Service Worker registered');
-            })
-            .catch(function(err) {
-                console.log('❌ Service Worker registration failed:', err);
-            });
-    });
-}
-</script>
-<script>
-    window.addEventListener("load", function() {
-            .then(function(reg) {
-                console.log("✅ Service Worker registered");
-            })
-            .catch(function(err) {
-                console.log("❌ Service Worker registration failed:", err);
-            });
-    });
-}
-</script>
-</body></html>');
+    win.document.write('<html><head><title>Receipt</title><style>body{font-family:monospace;padding:20px;white-space:pre;}</style></head><body>' + receipt + '</body></html>');
     win.document.close();
     win.print();
 }
@@ -621,30 +616,7 @@ function printBulkFromPreview() {
         alert('Please allow popups for printing');
         return;
     }
-    win.document.write('<html><head><title>Bulk Receipts</title><style>body{font-family:"Courier New",monospace;padding:20px;white-space:pre;font-size:12px;background:white;margin:0;}@media print{body{padding:10px;}@page{margin:0.5cm;}}</style></head><body>' + receipt + '
-<script>
-    window.addEventListener('load', function() {
-            .then(function(reg) {
-                console.log('✅ Service Worker registered');
-            })
-            .catch(function(err) {
-                console.log('❌ Service Worker registration failed:', err);
-            });
-    });
-}
-</script>
-<script>
-    window.addEventListener("load", function() {
-            .then(function(reg) {
-                console.log("✅ Service Worker registered");
-            })
-            .catch(function(err) {
-                console.log("❌ Service Worker registration failed:", err);
-            });
-    });
-}
-</script>
-</body></html>');
+    win.document.write('<html><head><title>Bulk Receipts</title><style>body{font-family:"Courier New",monospace;padding:20px;white-space:pre;font-size:12px;background:white;margin:0;}@media print{body{padding:10px;}@page{margin:0.5cm;}}</style></head><body>' + receipt + '</body></html>');
     win.document.close();
     win.print();
 }
@@ -702,29 +674,6 @@ document.addEventListener('keydown', function(e) {
         });
     }
 });
-</script>
-
-<script>
-    window.addEventListener('load', function() {
-            .then(function(reg) {
-                console.log('✅ Service Worker registered');
-            })
-            .catch(function(err) {
-                console.log('❌ Service Worker registration failed:', err);
-            });
-    });
-}
-</script>
-<script>
-    window.addEventListener("load", function() {
-            .then(function(reg) {
-                console.log("✅ Service Worker registered");
-            })
-            .catch(function(err) {
-                console.log("❌ Service Worker registration failed:", err);
-            });
-    });
-}
 </script>
 </body>
 </html>

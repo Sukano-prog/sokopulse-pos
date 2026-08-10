@@ -243,19 +243,7 @@
 </head>
 <body>
 <div class="app">
-    <div class="sidebar-overlay" onclick="toggleSidebar()">
-                <div class="filter-group" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-                    <label style="font-size:12px;font-weight:600;color:#0f172a;">📦 Product</label>
-                    <select id="productFilter" onchange="loadActiveReport()" style="padding:8px 12px;border:2px solid #e2e8f0;border-radius:8px;font-family:'Inter',sans-serif;font-size:13px;background:white;min-width:150px;">
-                        <option value="all">All Products</option>
-                    </select>
-                </div>
-                <div class="filter-group" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-                    <label style="font-size:12px;font-weight:600;color:#0f172a;">📂 Category</label>
-                    <select id="categoryFilter" onchange="loadActiveReport()" style="padding:8px 12px;border:2px solid #e2e8f0;border-radius:8px;font-family:'Inter',sans-serif;font-size:13px;background:white;min-width:130px;">
-                        <option value="all">All Categories</option>
-                    </select>
-                </div></div>
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
 
     <aside class="sidebar">
         <div class="logo">🏪 <span>Soko</span>Pulse <button class="close-btn" onclick="toggleSidebar()">✕</button></div>
@@ -378,8 +366,6 @@
     </main>
 </div>
 
-
-<script src="db.js"></script>
 <script>
 
 function isAdmin() {
@@ -395,6 +381,9 @@ if (!isAdmin()) {
 }
 
 
+// Admin-only page - redirect if not admin
+    window.location.href = "pos.html";
+}
 function toggleSidebar() {
     document.querySelector(".sidebar")?.classList.toggle("open");
     document.querySelector(".sidebar-overlay")?.classList.toggle("show");
@@ -416,7 +405,27 @@ function updateTime() {
     if (el) el.textContent = new Date().toLocaleTimeString('en-KE', { hour12: false });
 }
 
+function openDB() {
+    return new Promise(function(resolve, reject) {
+        var req = indexedDB.open('SokoPulsePOS', 6);
+        req.onsuccess = function(e) { resolve(e.target.result); };
+        req.onerror = function(e) { reject(e.target.error); };
+    });
+}
 
+function dbGetAll(db, storeName) {
+    return new Promise(function(resolve, reject) {
+        if (!db.objectStoreNames.contains(storeName)) {
+            resolve([]);
+            return;
+        }
+        var tx = db.transaction(storeName, 'readonly');
+        var store = tx.objectStore(storeName);
+        var req = store.getAll();
+        req.onsuccess = function() { resolve(req.result); };
+        req.onerror = function() { reject(req.error); };
+    });
+}
 
 function switchTab(tab) {
     currentTab = tab;
@@ -506,40 +515,6 @@ function loadActiveReport() {
     }
 }
 
-function getProductFilter() {
-    var el = document.getElementById('productFilter');
-    return el ? el.value : 'all';
-}
-
-function getCategoryFilter() {
-    var el = document.getElementById('categoryFilter');
-    return el ? el.value : 'all';
-}
-
-function populateProductFilters() {
-    var productSelect = document.getElementById('productFilter');
-    var categorySelect = document.getElementById('categoryFilter');
-    if (!productSelect || !allProducts) return;
-    var currentProduct = productSelect.value;
-    var currentCategory = categorySelect ? categorySelect.value : 'all';
-    productSelect.innerHTML = '<option value="all">All Products</option>';
-    var categories = {};
-    allProducts.forEach(function(p) {
-        var name = p.name || 'Unnamed';
-        var cat = p.category || 'Uncategorized';
-        categories[cat] = true;
-        productSelect.innerHTML += '<option value="' + p.id + '">' + name + '</option>';
-    });
-    productSelect.value = currentProduct;
-    if (categorySelect) {
-        categorySelect.innerHTML = '<option value="all">All Categories</option>';
-        Object.keys(categories).sort().forEach(function(cat) {
-            categorySelect.innerHTML += '<option value="' + cat + '">' + cat + '</option>';
-        });
-        categorySelect.value = currentCategory;
-    }
-}
-
 function getDateRange() {
     var startInput = document.getElementById('reportStartDate');
     var endInput = document.getElementById('reportEndDate');
@@ -556,7 +531,6 @@ async function loadAllData() {
         allOrders = await dbGetAll(db, 'orders');
         allProducts = await dbGetAll(db, 'products');
         allCustomers = await dbGetAll(db, 'customers');
-        populateProductFilters();
     } catch(e) {
         console.error('Error loading data:', e);
     }
@@ -803,114 +777,18 @@ function loadProfitLoss() {
     var grossMargin = totalRevenue > 0 ? (grossProfit / totalRevenue) * 100 : 0;
 
     var container = document.getElementById('profitLossResult');
-    
-    // Calculate product breakdown
-    var productProfit = {};
-    orders.forEach(function(o) {
-        if (o.items) {
-            var items = typeof o.items === 'string' ? JSON.parse(o.items) : o.items;
-            items.forEach(function(item) {
-                var name = item.name || 'Unknown';
-                var qty = item.qty || 1;
-                var price = item.price || 0;
-                var revenue = price * qty;
-                var product = allProducts.find(function(p) { return p.id === item.id || p.name === item.name; });
-                var costPrice = product ? (product.cost_price || 0) : 0;
-                var cost = costPrice * qty;
-                if (!productProfit[name]) {
-                    productProfit[name] = { revenue: 0, cost: 0, qty: 0 };
-                }
-                productProfit[name].revenue += revenue;
-                productProfit[name].cost += cost;
-                productProfit[name].qty += qty;
-            });
-        }
-    });
-    
-    var productHtml = '';
-    var sortedProducts = Object.keys(productProfit).sort(function(a, b) {
-        return (productProfit[b].revenue - productProfit[b].cost) - (productProfit[a].revenue - productProfit[a].cost);
-    });
-    
-    if (sortedProducts.length > 0) {
-        productHtml = '<div style="background:white;border-radius:12px;padding:20px;border:1px solid #e2e8f0;margin-top:12px;">' +
-            '<h3 style="font-size:16px;font-weight:700;color:#0f172a;margin-bottom:12px;">📦 Profit by Product</h3>' +
-            '<div style="overflow-x:auto;">' +
-            '<table style="width:100%;border-collapse:collapse;font-size:13px;">' +
-                '<thead>' +
-                    '<tr style="background:#f8fafc;border-bottom:2px solid #e2e8f0;">' +
-                        '<th style="padding:8px 12px;text-align:left;font-weight:600;color:#64748b;">Product</th>' +
-                        '<th style="padding:8px 12px;text-align:center;font-weight:600;color:#64748b;">Qty Sold</th>' +
-                        '<th style="padding:8px 12px;text-align:right;font-weight:600;color:#64748b;">Revenue</th>' +
-                        '<th style="padding:8px 12px;text-align:right;font-weight:600;color:#64748b;">Cost</th>' +
-                        '<th style="padding:8px 12px;text-align:right;font-weight:600;color:#64748b;">Profit</th>' +
-                        '<th style="padding:8px 12px;text-align:right;font-weight:600;color:#64748b;">Margin</th>' +
-                    '</tr>' +
-                '</thead>' +
-                '<tbody>';
-        
-        sortedProducts.forEach(function(name) {
-            var data = productProfit[name];
-            var profit = data.revenue - data.cost;
-            var margin = data.revenue > 0 ? (profit / data.revenue) * 100 : 0;
-            var profitColor = profit >= 0 ? '#166534' : '#991b1b';
-            var bgColor = profit >= 0 ? '#f0fdf4' : '#fef2f2';
-            productHtml +=
-                '<tr style="border-bottom:1px solid #f1f5f9;">' +
-                    '<td style="padding:8px 12px;font-weight:500;color:#0f172a;">' + name + '</td>' +
-                    '<td style="padding:8px 12px;text-align:center;color:#64748b;">' + data.qty + '</td>' +
-                    '<td style="padding:8px 12px;text-align:right;color:#166534;">KES ' + data.revenue.toFixed(0) + '</td>' +
-                    '<td style="padding:8px 12px;text-align:right;color:#92400e;">KES ' + data.cost.toFixed(0) + '</td>' +
-                    '<td style="padding:8px 12px;text-align:right;font-weight:600;color:' + profitColor + ';">KES ' + profit.toFixed(0) + '</td>' +
-                    '<td style="padding:8px 12px;text-align:right;color:' + profitColor + ';">' + margin.toFixed(1) + '%</td>' +
-                '</tr>';
-        });
-        
-        productHtml += '</tbody></table></div></div>';
-    }
-
     container.innerHTML = 
-        '<div style="background:white;border-radius:12px;padding:20px;border:1px solid #e2e8f0;margin-bottom:16px;">' +
-            '<h3 style="font-size:16px;font-weight:700;color:#0f172a;margin-bottom:12px;">📊 Profit & Loss Summary</h3>' +
-            '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;">' +
-                '<div style="background:#f0fdf4;padding:16px;border-radius:10px;border:1px solid #bbf7d0;text-align:center;">' +
-                    '<div style="font-size:12px;color:#166534;font-weight:600;text-transform:uppercase;">💰 Total Revenue</div>' +
-                    '<div style="font-size:28px;font-weight:800;color:#166534;">KES ' + totalRevenue.toFixed(0) + '</div>' +
-                '</div>' +
-                '<div style="background:#fef3c7;padding:16px;border-radius:10px;border:1px solid #fde68a;text-align:center;">' +
-                    '<div style="font-size:12px;color:#92400e;font-weight:600;text-transform:uppercase;">📦 Cost of Goods Sold</div>' +
-                    '<div style="font-size:28px;font-weight:800;color:#92400e;">KES ' + totalCOGS.toFixed(0) + '</div>' +
-                    '<div style="font-size:12px;color:#92400e;">(' + totalUnits + ' units sold)</div>' +
-                '</div>' +
-                '<div style="background:' + (grossProfit >= 0 ? '#dbeafe' : '#fee2e2') + ';padding:16px;border-radius:10px;border:1px solid ' + (grossProfit >= 0 ? '#bfdbfe' : '#fecaca') + ';text-align:center;">' +
-                    '<div style="font-size:12px;color:' + (grossProfit >= 0 ? '#1e40af' : '#991b1b') + ';font-weight:600;text-transform:uppercase;">' + (grossProfit >= 0 ? '📈' : '📉') + ' Gross Profit</div>' +
-                    '<div style="font-size:28px;font-weight:800;color:' + (grossProfit >= 0 ? '#1e40af' : '#991b1b') + ';">KES ' + grossProfit.toFixed(0) + '</div>' +
-                    '<div style="font-size:14px;color:' + (grossProfit >= 0 ? '#1e40af' : '#991b1b') + ';">' + (grossProfit >= 0 ? '✅ Profitable' : '⚠️ Loss') + '</div>' +
-                '</div>' +
-                '<div style="background:#f5f3ff;padding:16px;border-radius:10px;border:1px solid #ddd6fe;text-align:center;">' +
-                    '<div style="font-size:12px;color:#5b21b6;font-weight:600;text-transform:uppercase;">📊 Gross Margin</div>' +
-                    '<div style="font-size:28px;font-weight:800;color:#5b21b6;">' + grossMargin.toFixed(1) + '%</div>' +
-                '</div>' +
-            '</div>' +
+        '<div class="profit-loss-grid">' +
+            '<div class="report-stat"><div class="number green">KES ' + totalRevenue.toFixed(0) + '</div><div class="label">💰 Revenue</div></div>' +
+            '<div class="report-stat"><div class="number orange">KES ' + totalCOGS.toFixed(0) + '</div><div class="label">📦 COGS (' + totalUnits + ' units)</div></div>' +
+            '<div class="report-stat"><div class="number blue">KES ' + grossProfit.toFixed(0) + '</div><div class="label">📈 Gross Profit</div></div>' +
+            '<div class="report-stat"><div class="number">' + grossMargin.toFixed(1) + '%</div><div class="label">📊 Gross Margin</div></div>' +
         '</div>' +
-        '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:12px;">' +
-            '<div style="background:white;padding:12px 16px;border-radius:8px;border:1px solid #e2e8f0;text-align:center;">' +
-                '<div style="font-size:11px;color:#94a3b8;font-weight:600;text-transform:uppercase;">📅 Period</div>' +
-                '<div style="font-size:14px;font-weight:600;color:#0f172a;">' + range.start + ' → ' + range.end + '</div>' +
-            '</div>' +
-            '<div style="background:white;padding:12px 16px;border-radius:8px;border:1px solid #e2e8f0;text-align:center;">' +
-                '<div style="font-size:11px;color:#94a3b8;font-weight:600;text-transform:uppercase;">📋 Total Orders</div>' +
-                '<div style="font-size:14px;font-weight:600;color:#0f172a;">' + totalOrders + '</div>' +
-            '</div>' +
-            '<div style="background:white;padding:12px 16px;border-radius:8px;border:1px solid #e2e8f0;text-align:center;">' +
-                '<div style="font-size:11px;color:#94a3b8;font-weight:600;text-transform:uppercase;">📊 Average Order</div>' +
-                '<div style="font-size:14px;font-weight:600;color:#0f172a;">KES ' + avgOrder.toFixed(0) + '</div>' +
-            '</div>' +
-        '</div>' +
-        '<div style="background:#f8fafc;padding:12px 16px;border-radius:8px;font-size:12px;color:#64748b;border:1px solid #e2e8f0;">' +
-            '<span>💡 Gross Profit = Revenue - COGS | Gross Margin = (Gross Profit / Revenue) × 100</span>' +
-        '</div>' +
-        productHtml;
+        '<div style="background:#f8fafc;padding:12px 16px;border-radius:8px;font-size:13px;color:#64748b;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">' +
+            '<span>📅 Period: ' + range.start + ' → ' + range.end + '</span>' +
+            '<span>📋 Orders: ' + totalOrders + '</span>' +
+            '<span>📊 Avg Order: KES ' + avgOrder.toFixed(0) + '</span>' +
+        '</div>';
     console.log('✅ Profit/Loss loaded');
 }
 
@@ -954,29 +832,76 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
-
-
-<script>
-    window.addEventListener('load', function() {
-            .then(function(reg) {
-                console.log('✅ Service Worker registered');
-            })
-            .catch(function(err) {
-                console.log('❌ Service Worker registration failed:', err);
-            });
-    });
-}
-</script>
-<script>
-    window.addEventListener("load", function() {
-            .then(function(reg) {
-                console.log("✅ Service Worker registered");
-            })
-            .catch(function(err) {
-                console.log("❌ Service Worker registration failed:", err);
-            });
-    });
-}
-</script>
 </body>
 </html>
+<script>
+
+function isAdmin() {
+    try {
+        const user = JSON.parse(localStorage.getItem("pos_user") || "{}");
+        return user.role === "admin";
+    } catch(e) {
+        return false;
+    }
+}
+if (!isAdmin()) {
+    window.location.href = "pos.html";
+}
+
+
+// Admin-only page - redirect if not admin
+    window.location.href = "pos.html";
+}
+
+
+// Admin-only page check
+// Admin-only page check
+</script>
+<script>
+
+function isAdmin() {
+    try {
+        const user = JSON.parse(localStorage.getItem("pos_user") || "{}");
+        return user.role === "admin";
+    } catch(e) {
+        return false;
+    }
+}
+if (!isAdmin()) {
+    window.location.href = "pos.html";
+}
+
+
+// Admin-only page - redirect if not admin
+    window.location.href = "pos.html";
+}
+
+
+// Admin-only page check
+// Admin-only page check
+</script>
+
+<!-- Add Tax tab to reports -->
+<script>
+
+function isAdmin() {
+    try {
+        const user = JSON.parse(localStorage.getItem("pos_user") || "{}");
+        return user.role === "admin";
+    } catch(e) {
+        return false;
+    }
+}
+if (!isAdmin()) {
+    window.location.href = "pos.html";
+}
+
+
+// Admin-only page - redirect if not admin
+    window.location.href = "pos.html";
+}
+
+
+// Admin-only page check
+// Admin-only page check
+</script>

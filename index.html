@@ -251,9 +251,7 @@
 </head>
 <body>
     <!-- ===== ACTIVATION CHECK ===== -->
-    
-<script src="db.js"></script>
-<script>
+    <script>
         if (localStorage.getItem("activated") !== "true") {
             window.location.href = "activation.html";
         }
@@ -311,8 +309,6 @@
     </div>
 </div>
 
-
-<script src="db.js"></script>
 <script>
     // ===== CHECK ACTIVATION =====
     if (localStorage.getItem("activated") !== "true") {
@@ -435,33 +431,8 @@ function toggleSidebar() {
 }
 </script>
 
-
-<script>
-    window.addEventListener('load', function() {
-            .then(function(reg) {
-                console.log('✅ Service Worker registered');
-            })
-            .catch(function(err) {
-                console.log('❌ Service Worker registration failed:', err);
-            });
-    });
-}
-</script>
-<script>
-    window.addEventListener("load", function() {
-            .then(function(reg) {
-                console.log("✅ Service Worker registered");
-            })
-            .catch(function(err) {
-                console.log("❌ Service Worker registration failed:", err);
-            });
-    });
-}
-</script>
 </body>
 </html>
-
-<script src="db.js"></script>
 <script>
     // ===== CHECK ACTIVATION =====
     if (localStorage.getItem("activated") !== "true") {
@@ -478,8 +449,6 @@ function checkSession() {
     }
 }
 </script>
-
-<script src="db.js"></script>
 <script>
 // ===== ACTIVATION CHECK =====
 (function() {
@@ -488,8 +457,6 @@ function checkSession() {
     }
 })();
 </script>
-
-<script src="db.js"></script>
 <script>
 // ===== LICENSE EXPIRY CHECK =====
 function checkLicenseExpiry() {
