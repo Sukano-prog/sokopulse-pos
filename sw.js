@@ -21,7 +21,8 @@ const urlsToCache = [
     '/css/style.css',
     '/css/responsive.css',
     '/db.js',
-    '/admin_restrictions.js'
+    '/admin_restrictions.js',
+    '/js/printer.js'
 ];
 
 self.addEventListener('install', function(event) {
