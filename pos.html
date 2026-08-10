@@ -270,6 +270,11 @@
 
 <script src="db.js"></script>
 <script>
+function toggleSidebar() {
+    document.querySelector('.sidebar').classList.toggle('open');
+    document.querySelector('.sidebar-overlay').classList.toggle('show');
+}
+
 // ============================================================
 // SOKOPULSE POS - COMPLETE SCRIPT
 // ============================================================
@@ -311,10 +316,7 @@ function dbPut(db, storeName, data) {
 }
 
 // ===== SIDEBAR =====
-function toggleSidebar() {
-    document.querySelector('.sidebar').classList.toggle('open');
-    document.querySelector('.sidebar-overlay').classList.toggle('show');
-}
+
 
 function logout() {
     if (confirm('Logout?')) {
