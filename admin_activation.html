@@ -323,28 +323,5 @@ function clearAllKeys() {
 updateExpiryDate();
 renderLicenseList();
 </script>
-
-<script>
-    window.addEventListener('load', function() {
-            .then(function(reg) {
-                console.log('✅ Service Worker registered');
-            })
-            .catch(function(err) {
-                console.log('❌ Service Worker registration failed:', err);
-            });
-    });
-}
-</script>
-<script>
-    window.addEventListener("load", function() {
-            .then(function(reg) {
-                console.log("✅ Service Worker registered");
-            })
-            .catch(function(err) {
-                console.log("❌ Service Worker registration failed:", err);
-            });
-    });
-}
-</script>
 </body>
 </html>

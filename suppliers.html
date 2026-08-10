@@ -155,9 +155,9 @@
         </nav>
         <div class="user-section">
             <div class="name" id="userName">Administrator</div>
+        <button class="logout-btn" onclick="logout()">🚪 Logout</button>
             <div class="role" id="userRole">Admin</div>
         </div>
-        <button class="logout-btn" onclick="logout()">🚪 Logout</button>
     </aside>
 
     <main class="main-content">
@@ -228,6 +228,7 @@
     </div>
 </div>
 
+
 <script src="db.js"></script>
 <script>
 // ============================================================
@@ -238,13 +239,6 @@ let suppliers = [];
 let editingId = null;
 
 // ===== DB HELPERS =====
-function openDB() {
-    return new Promise((resolve, reject) => {
-        const req = indexedDB.open('SokoPulsePOS', 6);
-        req.onsuccess = e => resolve(e.target.result);
-        req.onerror = e => reject(e.target.error);
-    });
-}
 
 function dbAdd(db, storeName, data) {
     return new Promise((resolve, reject) => {
@@ -266,19 +260,6 @@ function dbPut(db, storeName, data) {
     });
 }
 
-function dbGetAll(db, storeName) {
-    return new Promise((resolve, reject) => {
-        if (!db.objectStoreNames.contains(storeName)) {
-            resolve([]);
-            return;
-        }
-        const tx = db.transaction(storeName, 'readonly');
-        const store = tx.objectStore(storeName);
-        const req = store.getAll();
-        req.onsuccess = () => resolve(req.result);
-        req.onerror = () => reject(req.error);
-    });
-}
 
 function dbDelete(db, storeName, id) {
     return new Promise((resolve, reject) => {
@@ -502,6 +483,7 @@ document.addEventListener('keydown', function(e) {
 </script>
 </body>
 </html>
+
 <script src="db.js"></script>
 <script>
 // ===== ACTIVATION CHECK =====

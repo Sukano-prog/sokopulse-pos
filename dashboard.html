@@ -247,9 +247,9 @@
         </nav>
         <div class="user-section">
             <div class="name" id="userName">Administrator</div>
+        <button class="logout-btn" onclick="logout()">🚪 Logout</button>
             <div class="role" id="userRole">Admin</div>
         </div>
-        <button class="logout-btn" onclick="logout()">🚪 Logout</button>
     </aside>
 
     <main class="main-content">
@@ -331,6 +331,7 @@
     </main>
 </div>
 
+
 <script src="db.js"></script>
 <script>
 
@@ -355,27 +356,7 @@ let orders = [];
 let customers = [];
 
 // ===== DB HELPERS =====
-function openDB() {
-    return new Promise((resolve, reject) => {
-        const req = indexedDB.open('SokoPulsePOS', 6);
-        req.onsuccess = e => resolve(e.target.result);
-        req.onerror = e => reject(e.target.error);
-    });
-}
 
-function dbGetAll(db, storeName) {
-    return new Promise((resolve, reject) => {
-        if (!db.objectStoreNames.contains(storeName)) {
-            resolve([]);
-            return;
-        }
-        const tx = db.transaction(storeName, 'readonly');
-        const store = tx.objectStore(storeName);
-        const req = store.getAll();
-        req.onsuccess = () => resolve(req.result);
-        req.onerror = () => reject(req.error);
-    });
-}
 
 // ===== TOGGLE SIDEBAR =====
 function toggleSidebar() {
@@ -574,6 +555,7 @@ document.addEventListener('DOMContentLoaded', function() {
     <!-- Stats will be updated by JavaScript -->
 </div>
 
+
 <script src="db.js"></script>
 <script>
 
@@ -709,6 +691,7 @@ function renderFilteredStats() {
     `;
 }
 </script>
+
 <script src="db.js"></script>
 <script>
 
@@ -856,6 +839,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 }
 </style>
+
 <script src="db.js"></script>
 <script>
 
@@ -891,6 +875,7 @@ if (localStorage.getItem('activated') !== 'true') {
     </div>
 </div>
 
+
 <script src="db.js"></script>
 <script>
 
@@ -913,6 +898,7 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(loadStockValuation, 500);
 });
 </script>
+
 <script src="db.js"></script>
 <script>
 
@@ -930,6 +916,7 @@ if (!isAdmin()) {
 
 // ===== LOW STOCK - INCLUDE OUT OF STOCK =====
 </script>
+
 <script src="db.js"></script>
 <script>
 

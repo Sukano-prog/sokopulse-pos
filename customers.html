@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script src="db.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Customers - SokoPulse</title>
@@ -105,7 +106,6 @@
         .empty-state .empty-icon { font-size: 48px; margin-bottom: 12px; }
         .empty-state h3 { color: #334155; font-weight: 600; }
     </style>
-    <script src="js/printer.js"></script>
 </head>
 <body>
 <div class="app">
@@ -133,9 +133,9 @@
         </nav>
         <div class="user-section">
             <div class="name" id="userName">Administrator</div>
+        <button class="logout-btn" onclick="logout()">🚪 Logout</button>
             <div class="role" id="userRole">Admin</div>
         </div>
-        <button class="logout-btn" onclick="logout()">🚪 Logout</button>
     </aside>
 
     <main class="main-content">
@@ -151,6 +151,21 @@
         </header>
 
         <div class="page-container">
+        <div class="stats-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:16px;">
+            <div class="stat-card" style="background:white;padding:12px 16px;border-radius:10px;border:1px solid #e2e8f0;text-align:center;">
+                <div style="font-size:11px;color:#94a3b8;font-weight:600;text-transform:uppercase;">Total Customers</div>
+                <div style="font-size:24px;font-weight:700;color:#0f172a;" id="totalCustomers">0</div>
+            </div>
+            <div class="stat-card" style="background:white;padding:12px 16px;border-radius:10px;border:1px solid #e2e8f0;text-align:center;">
+                <div style="font-size:11px;color:#94a3b8;font-weight:600;text-transform:uppercase;">Total Credit</div>
+                <div style="font-size:24px;font-weight:700;color:#f59e0b;" id="totalCredit">KES 0</div>
+            </div>
+            <div class="stat-card" style="background:white;padding:12px 16px;border-radius:10px;border:1px solid #e2e8f0;text-align:center;">
+                <div style="font-size:11px;color:#94a3b8;font-weight:600;text-transform:uppercase;">Total Spent</div>
+                <div style="font-size:24px;font-weight:700;color:#1a3c34;" id="totalSpent">KES 0</div>
+            </div>
+        </div>
+
             <div class="toolbar">
                 <div class="search-wrapper">
                     <span class="search-icon">🔍</span>
@@ -207,7 +222,8 @@
     </div>
 </div>
 
-<script src="db.js"></script>
+
+
 <script>
 
 // ===== ALL FUNCTIONS =====
@@ -272,15 +288,6 @@ function logout() {
     if (confirm('Logout?')) { localStorage.removeItem('pos_user'); window.location.href = 'index.html'; }
 }
 
-function dbGetAll(db, storeName) {
-    return new Promise((resolve, reject) => {
-        const tx = db.transaction(storeName, 'readonly');
-        const store = tx.objectStore(storeName);
-        const req = store.getAll();
-        req.onsuccess = () => resolve(req.result);
-        req.onerror = () => reject(req.error);
-    });
-}
 
 // ===== DOM CONTENT LOADED =====
 
@@ -299,6 +306,7 @@ async function loadCustomers() {
             customers = req.result;
             console.log('Customers loaded:', customers.length);
             renderCustomers();
+    updateCustomerStats();
         };
         req.onerror = function() {
             console.error('Error getting customers');
@@ -330,6 +338,19 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('timeDisplay').textContent = new Date().toLocaleTimeString('en-KE', { hour12: false });
     }, 1000);
 });
+
+function updateCustomerStats() {
+    const total = customers.length;
+    const totalCredit = customers.reduce((sum, c) => sum + (c.credit || 0), 0);
+    const totalSpent = customers.reduce((sum, c) => sum + (c.total_spent || 0), 0);
+    const el1 = document.getElementById('totalCustomers');
+    const el2 = document.getElementById('totalCredit');
+    const el3 = document.getElementById('totalSpent');
+    if (el1) el1.textContent = total;
+    if (el2) el2.textContent = 'KES ' + totalCredit.toFixed(2);
+    if (el3) el3.textContent = 'KES ' + totalSpent.toFixed(2);
+}
+
 function renderCustomers() {
     const container = document.getElementById('customersList');
     const search = document.getElementById('searchInput').value.toLowerCase();
@@ -383,6 +404,7 @@ function renderCustomers() {
 }
 async function saveCustomer(e) {
     e.preventDefault();
+    const editId = document.getElementById("editId").value;
     const data = {
         name: document.getElementById("custName").value.trim(),
         phone: document.getElementById("custPhone").value.trim(),
@@ -404,43 +426,33 @@ async function saveCustomer(e) {
         const store = tx.objectStore("customers");
         
         await new Promise((resolve, reject) => {
-            const request = store.add(data);
+            let request;
+            if (editId) {
+                data.id = parseInt(editId);
+                request = store.put(data);
+            } else {
+                request = store.add(data);
+            }
             request.onsuccess = () => resolve();
             request.onerror = () => reject(request.error);
         });
         
         closeModal();
-        alert("✅ Customer added successfully");
+        alert(editId ? "✅ Customer updated successfully" : "✅ Customer added successfully");
         await loadCustomers();
     } catch(e) {
         alert("❌ Error: " + e.message);
         console.error(e);
     }
 }
-function openDB() {
-    return new Promise((resolve, reject) => {
-        const req = indexedDB.open('SokoPulsePOS', 6);
-        req.onupgradeneeded = function(e) {
-            const db = e.target.result;
-            if (!db.objectStoreNames.contains('customers')) {
-                const store = db.createObjectStore('customers', { keyPath: 'id', autoIncrement: true });
-                store.createIndex('phone', 'phone', { unique: true });
-                store.createIndex('email', 'email', { unique: false });
-            if (!db.objectStoreNames.contains("settings")) {
-                db.createObjectStore("settings", { keyPath: "key" });
-            }
-            }
-        };
-        req.onsuccess = e => resolve(e.target.result);
-        req.onerror = e => reject(e.target.error);
-    });
-}
 </script>
-<script src="db.js"></script>
+
+
 <script>
 // ===== LOAD STORE NAME =====
 
 document.addEventListener("DOMContentLoaded", function() {
+    loadCustomers();
     loadCustomers();
 });
 </script>
@@ -568,7 +580,8 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 }
 </style>
-<script src="db.js"></script>
+
+
 <script>
 // ===== BULK EXPORT CUSTOMERS =====
 function exportCustomers() {
@@ -592,7 +605,8 @@ function exportCustomers() {
     alert('✅ Customers exported!');
 }
 </script>
-<script src="db.js"></script>
+
+
 <script>
 // ===== ACTIVATION CHECK =====
 if (localStorage.getItem('activated') !== 'true') {

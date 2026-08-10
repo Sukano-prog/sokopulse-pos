@@ -140,9 +140,9 @@
         </nav>
         <div class="user-section">
             <div class="name" id="userName">Administrator</div>
+        <button class="logout-btn" onclick="logout()">🚪 Logout</button>
             <div class="role" id="userRole">Admin</div>
         </div>
-        <button class="logout-btn" onclick="logout()">🚪 Logout</button>
     </aside>
 
     <main class="main-content">
@@ -247,6 +247,7 @@
     </div>
 </div>
 
+
 <script src="db.js"></script>
 <script>
 
@@ -269,27 +270,7 @@ if (!isAdmin()) {
 var orders = [];
 
 // ===== DB HELPERS =====
-function openDB() {
-    return new Promise(function(resolve, reject) {
-        var req = indexedDB.open('SokoPulsePOS', 6);
-        req.onsuccess = function(e) { resolve(e.target.result); };
-        req.onerror = function(e) { reject(e.target.error); };
-    });
-}
 
-function dbGetAll(db, storeName) {
-    return new Promise(function(resolve, reject) {
-        if (!db.objectStoreNames.contains(storeName)) {
-            resolve([]);
-            return;
-        }
-        var tx = db.transaction(storeName, 'readonly');
-        var store = tx.objectStore(storeName);
-        var req = store.getAll();
-        req.onsuccess = function() { resolve(req.result); };
-        req.onerror = function() { reject(req.error); };
-    });
-}
 
 function dbPut(db, storeName, data) {
     return new Promise(function(resolve, reject) {

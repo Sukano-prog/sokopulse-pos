@@ -267,38 +267,9 @@
     </div>
 </div>
 
+
 <script src="db.js"></script>
 <script>
-// ===== ACTIVATION CHECK =====
-function checkActivation() {
-    const activationKey = localStorage.getItem('activation_key');
-    const activationExpiry = localStorage.getItem('activation_expiry');
-    
-    if (!activationKey) {
-        window.location.href = 'activation.html';
-        return false;
-    }
-    
-    // Check if expired
-    if (activationExpiry && activationExpiry !== 'permanent') {
-        const expiryDate = new Date(activationExpiry);
-        const now = new Date();
-        if (now > expiryDate) {
-            localStorage.removeItem('activation_key');
-            localStorage.removeItem('activation_expiry');
-            window.location.href = 'activation.html';
-            return false;
-        }
-    }
-    
-    return true;
-}
-
-// Run check immediately
-if (!checkActivation()) {
-    // Redirect already happens in checkActivation
-}
-
 // ============================================================
 // SOKOPULSE POS - COMPLETE SCRIPT
 // ============================================================
@@ -317,27 +288,7 @@ var allCustomers = [];
 var orderNote = '';
 
 // ===== DB HELPERS =====
-function openDB() {
-    return new Promise(function(resolve, reject) {
-        var req = indexedDB.open('SokoPulsePOS', 6);
-        req.onsuccess = function(e) { resolve(e.target.result); };
-        req.onerror = function(e) { reject(e.target.error); };
-    });
-}
 
-function dbGetAll(db, storeName) {
-    return new Promise(function(resolve, reject) {
-        if (!db.objectStoreNames.contains(storeName)) {
-            resolve([]);
-            return;
-        }
-        var tx = db.transaction(storeName, 'readonly');
-        var store = tx.objectStore(storeName);
-        var req = store.getAll();
-        req.onsuccess = function() { resolve(req.result); };
-        req.onerror = function() { reject(req.error); };
-    });
-}
 
 function dbAdd(db, storeName, data) {
     return new Promise(function(resolve, reject) {
@@ -556,6 +507,38 @@ function filterByCategory(categoryId) {
 }
 
 // ===== CART FUNCTIONS =====
+
+function addToCartBulk(productId) {
+    var product = products.find(function(p) { return p.id === productId; });
+    if (!product) return;
+    var qtyInput = document.getElementById('bulk-qty-' + productId);
+    var qty = parseInt(qtyInput.value) || 1;
+    if (qty <= 0) { alert('Please enter a valid quantity'); return; }
+    if (qty > product.current_stock) {
+        alert('❌ Not enough stock! Available: ' + product.current_stock);
+        return;
+    }
+    // Add the product multiple times or once with quantity
+    var price = mode === 'retail' ? (product.retail_price || product.selling_price) : (product.wholesale_price || product.selling_price);
+    var existing = cart.find(function(item) { return item.id === productId && item.mode === mode; });
+    if (existing) {
+        existing.qty += qty;
+    } else {
+        cart.push({
+            id: productId,
+            name: product.name,
+            price: price,
+            qty: qty,
+            discount: 0,
+            maxStock: product.current_stock,
+            mode: mode
+        });
+    }
+    renderCart();
+    saveCart();
+}
+
+
 function addToCart(productId) {
     var product = products.find(function(p) { return p.id === productId; });
     if (!product) return;
@@ -607,9 +590,9 @@ function renderCart() {
         return '<div class="cart-item">' +
             '<span class="name">' + item.name + '</span>' +
             '<div class="qty">' +
-                '<button onclick="updateQty(' + i + ', -1)">−</button>' +
-                '<span>' + item.qty + '</span>' +
-                '<button onclick="updateQty(' + i + ', 1)">+</button>' +
+                '<button onclick="updateQty(' + i + ', -0.5)">−</button>' +
+                '<input type="number" class="qty-input" value="' + item.qty + '" step="0.1" min="0.1" onchange="updateQtyInput(' + i + ', this.value)" style="width:50px;text-align:center;border:1px solid #ddd;border-radius:4px;padding:4px;font-size:14px;">' +
+                '<button onclick="updateQty(' + i + ', 0.5)">+</button>' +
             '</div>' +
             '<div class="discount-input">' +
                 '<input type="number" class="item-discount" value="' + discount + '" min="0" max="100" onchange="updateItemDiscount(' + i + ', this.value)">' +
@@ -638,11 +621,23 @@ function updateTotals() {
     document.getElementById('cartCount').textContent = cart.reduce(function(s, i) { return s + i.qty; }, 0) + ' items';
 }
 
+function updateQtyInput(index, value) {
+    var item = cart[index];
+    if (!item) return;
+    var newQty = parseFloat(value);
+    if (isNaN(newQty) || newQty <= 0) {
+        cart.splice(index, 1);
+    } else {
+        item.qty = parseFloat(newQty.toFixed(2));
+    }
+    renderCart();
+}
+
 function updateQty(index, delta) {
     var item = cart[index];
     if (!item) return;
-    var newQty = item.qty + delta;
-    if (newQty < 1) {
+    var newQty = parseFloat((item.qty + delta).toFixed(2));
+    if (newQty <= 0) {
         cart.splice(index, 1);
     } else if (newQty > item.maxStock) {
         alert('❌ Not enough stock');
@@ -1046,8 +1041,23 @@ function processPayment(method) {
                 var item = cart[i];
                 var product = products.find(function(p) { return p.id === item.id; });
                 if (product) {
+                    var oldStock = product.current_stock;
                     product.current_stock -= item.qty;
                     dbPut(db, 'products', product);
+                    
+                    // Log stock movement
+                    var movement = {
+                        product_id: product.id,
+                        product_name: product.name,
+                        type: 'sold',
+                        quantity: item.qty,
+                        previous_stock: oldStock,
+                        new_stock: product.current_stock,
+                        reference: order.order_number,
+                        date: new Date().toISOString(),
+                        user: 'system'
+                    };
+                    dbAdd(db, 'stock_movements', movement);
                 }
             }
             if (selectedCustomer && method !== 'credit') {

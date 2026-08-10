@@ -303,6 +303,7 @@
     </div>
 </div>
 
+
 <script src="db.js"></script>
 <script>
 function isAdmin() {
@@ -314,27 +315,7 @@ function isAdmin() {
     }
 }
 // ===== DATABASE FUNCTIONS =====
-function openDB() {
-    return new Promise((resolve, reject) => {
-        const req = indexedDB.open("SokoPulsePOS", 6);
-        req.onsuccess = function(e) { resolve(e.target.result); };
-        req.onerror = function(e) { reject(e.target.error); };
-    });
-}
 
-function dbGetAll(db, storeName) {
-    return new Promise((resolve, reject) => {
-        if (!db.objectStoreNames.contains(storeName)) {
-            resolve([]);
-            return;
-        }
-        const tx = db.transaction(storeName, "readonly");
-        const store = tx.objectStore(storeName);
-        const req = store.getAll();
-        req.onsuccess = function() { resolve(req.result); };
-        req.onerror = function() { reject(req.error); };
-    });
-}
 
 // ============================================================
 // RETURNS - COMPLETE SCRIPT
@@ -347,6 +328,48 @@ var selectedOrderItems = [];
 var allOrdersForDropdown = [];
 
 // ===== DB HELPERS =====
+
+
+
+function dbAdd(db, storeName, data) {
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction(storeName, 'readwrite');
+        const store = tx.objectStore(storeName);
+        const req = store.add(data);
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+    });
+}
+
+function dbPut(db, storeName, data) {
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction(storeName, 'readwrite');
+        const store = tx.objectStore(storeName);
+        const req = store.put(data);
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+    });
+}
+
+function dbGet(db, storeName, id) {
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction(storeName, 'readonly');
+        const store = tx.objectStore(storeName);
+        const req = store.get(id);
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+    });
+}
+
+function dbDelete(db, storeName, id) {
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction(storeName, 'readwrite');
+        const store = tx.objectStore(storeName);
+        const req = store.delete(id);
+        req.onsuccess = () => resolve();
+        req.onerror = () => reject(req.error);
+    });
+}
 
 function dbPut(db, storeName, data) {
     return new Promise(function(resolve, reject) {
@@ -445,7 +468,27 @@ function renderReturns() {
 async function loadOrdersForDropdown() {
     try {
         var db = await openDB();
-        allOrdersForDropdown = await dbGetAll(db, 'orders');
+        var allOrders = await dbGetAll(db, 'orders');
+        // Filter out orders that are fully returned
+        allOrdersForDropdown = allOrders.filter(function(o) {
+            // If order status is 'returned' or 'fully_returned', exclude it
+            if (o.status === 'returned' || o.status === 'fully_returned') {
+                return false;
+            }
+            // Check if all items have been returned
+            var items = o.items || [];
+            var returnedItems = o.returned_items || [];
+            // If no items, include it (shouldn't happen)
+            if (items.length === 0) return true;
+            // Check if total quantity equals returned quantity
+            var totalQty = items.reduce(function(sum, item) { return sum + (item.qty || 1); }, 0);
+            var returnedQty = returnedItems.reduce(function(sum, item) { return sum + (item.qty || 1); }, 0);
+            // If all items are returned, exclude the order
+            if (totalQty > 0 && returnedQty >= totalQty) {
+                return false;
+            }
+            return true;
+        });
         allOrdersForDropdown.sort(function(a, b) { return new Date(b.date) - new Date(a.date); });
         console.log('📋 Orders loaded for dropdown:', allOrdersForDropdown.length);
     } catch(e) {
@@ -730,6 +773,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 </body>
 </html>
+
 <script src="db.js"></script>
 <script>
 function isAdmin() {
@@ -833,6 +877,7 @@ async function updateReturnStatus(id, status) {
             }
             
             // 1. RESTOCK PRODUCTS
+            var restockDetails = [];
             for (var i = 0; i < items.length; i++) {
                 var item = items[i];
                 var product = allProducts.find(function(p) { 
@@ -840,8 +885,15 @@ async function updateReturnStatus(id, status) {
                 });
                 if (product) {
                     var oldStock = product.current_stock || 0;
-                    product.current_stock = oldStock + (item.qty || 1);
+                    var qty = item.qty || 1;
+                    product.current_stock = oldStock + qty;
                     await dbPut(db, 'products', product);
+                    restockDetails.push({
+                        name: product.name,
+                        oldStock: oldStock,
+                        newStock: product.current_stock,
+                        qty: qty
+                    });
                     console.log('📦 Restocked: ' + product.name + ' (' + oldStock + ' → ' + product.current_stock + ')');
                 }
             }
@@ -877,18 +929,35 @@ async function updateReturnStatus(id, status) {
             }
             
             // 4. LOG STOCK MOVEMENT
+            // Calculate total quantity returned and get stock changes
+            var totalQty = 0;
+            var stockChangeSummary = [];
+            for (var j = 0; j < items.length; j++) {
+                var qty = (items[j].qty || 1);
+                totalQty += qty;
+                var productName = items[j].name || 'Unknown';
+                // Find the product to get stock info
+                var product = allProducts.find(function(p) { 
+                    return p.id === items[j].id || p.name === items[j].name; 
+                });
+                if (product) {
+                    var oldStock = product.current_stock - qty; // stock before restock
+                    stockChangeSummary.push(productName + ': ' + oldStock + ' → ' + product.current_stock);
+                }
+            }
+            
             var movement = {
                 product_id: 0,
                 product_name: 'Return - ' + ret.order_number,
                 type: 'return',
-                quantity: 0,
+                quantity: totalQty,
                 previous_stock: 0,
                 new_stock: 0,
                 reason: 'Return approved: ' + ret.reason,
                 reference: ret.order_number,
                 date: new Date().toISOString(),
                 user: ret.user || 'System',
-                notes: 'Return of ' + items.length + ' items | Total: KES ' + ret.total.toFixed(2)
+                notes: 'Return of ' + items.length + ' items (' + totalQty + ' units) | ' + stockChangeSummary.join('; ')
             };
             await dbAdd(db, 'stock_movements', movement);
             console.log('📊 Stock movement logged for return');
@@ -946,6 +1015,7 @@ function logAction(action, details) {
     </div>
     <span id="returnsDateInfo" style="font-size:11px;color:#94a3b8;margin-left:auto;"></span>
 </div>
+
 
 <script src="db.js"></script>
 <script>

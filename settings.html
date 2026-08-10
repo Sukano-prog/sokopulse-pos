@@ -276,6 +276,7 @@
     </main>
 </div>
 
+
 <script src="db.js"></script>
 <script>
 
@@ -291,18 +292,10 @@ if (!isAdmin()) {
     window.location.href = "pos.html";
 }
 
-
-// Admin-only page - redirect if not admin
-    window.location.href = "pos.html";
-}
 function toggleSidebar() {
     document.querySelector(".sidebar")?.classList.toggle("open");
     document.querySelector(".sidebar-overlay")?.classList.toggle("show");
 }
-
-
-// Admin-only page check
-// Admin-only page check
 
 function logout() {
     if (confirm('Logout?')) {
@@ -316,27 +309,7 @@ function updateTime() {
     if (el) el.textContent = new Date().toLocaleTimeString('en-KE', { hour12: false });
 }
 
-function openDB() {
-    return new Promise(function(resolve, reject) {
-        var req = indexedDB.open('SokoPulsePOS', 6);
-        req.onsuccess = function(e) { resolve(e.target.result); };
-        req.onerror = function(e) { reject(e.target.error); };
-    });
-}
 
-function dbGetAll(db, storeName) {
-    return new Promise(function(resolve, reject) {
-        if (!db.objectStoreNames.contains(storeName)) {
-            resolve([]);
-            return;
-        }
-        var tx = db.transaction(storeName, 'readonly');
-        var store = tx.objectStore(storeName);
-        var req = store.getAll();
-        req.onsuccess = function() { resolve(req.result); };
-        req.onerror = function() { reject(req.error); };
-    });
-}
 
 // ===== TAX =====
 async function saveTaxSettings() {
@@ -431,87 +404,45 @@ async function testReceipt() {
         receipt += '================================\n';
         var win = window.open('', '_blank', 'width=400,height=600');
         win.document.write('<html><head><title>Test Receipt</title><style>body{font-family:monospace;padding:20px;white-space:pre;}</style></head><body>' + receipt + '</body></html>');
-        win.document.close();
-        win.print();
-    } catch(e) { alert('Error: ' + e.message); }
-}
-
-// ===== PRINTER =====
-async function savePrinterSettings() {
-    var data = { printer_enabled: document.getElementById('printerEnabled').value, auto_print: document.getElementById('autoPrint').value, printer_type: document.getElementById('printerType').value };
-    try {
-        var db = await openDB();
-        var tx = db.transaction('settings', 'readwrite');
-        var store = tx.objectStore('settings');
-        for (var key in data) { await store.put({ key: key, value: data[key] }); }
-        alert('✅ Printer settings saved!');
-    } catch(e) { alert('❌ Error: ' + e.message); }
-}
-
-async function testPrinter() {
-    try {
-        if (typeof ThermalPrinter === 'undefined') { alert('❌ Printer module not loaded. Use browser print.'); return; }
-        var printer = new ThermalPrinter();
-        await printer.detect();
-        await printer.connect();
-        var testOrder = { order_number: 'TEST-001', date: new Date().toISOString(), items: [{ name: 'Test Product 1', qty: 2, price: 100 }, { name: 'Test Product 2', qty: 1, price: 250 }], total: 450, payment_method: 'Cash', customer_name: 'Test Customer', mode: 'Retail', status: 'Completed' };
-        var store = { name: 'SokoPulse', address: 'Test Store', phone: '0712345678' };
-        await printer.printReceipt(testOrder, store);
-        alert('✅ Test print sent!');
-    } catch(e) { alert('❌ Test print failed: ' + e.message); }
-}
-
-// ===== USERS =====
+    } catch(e) {
+        console.error('Error in testReceipt:', e);
+        alert('❌ Error testing receipt: ' + e.message);
+    }
+}// ===== USERS =====
 async function loadUsers() {
     try {
         var db = await openDB();
         var users = await dbGetAll(db, 'users');
         var container = document.getElementById('usersList');
-        if (users.length === 0) { container.innerHTML = '<div style="text-align:center;padding:10px;color:#94a3b8;">No users found</div>'; return; }
+        if (!container) return;
+        if (users.length === 0) {
+            container.innerHTML = '<div style="text-align:center;padding:10px;color:#94a3b8;">No users found</div>';
+            return;
+        }
         container.innerHTML = users.map(function(u) {
             return '<div class="user-row"><div class="user-info"><div class="name">' + (u.name || u.username) + '</div><div class="role"><span class="role-badge ' + (u.role || 'cashier') + '">' + (u.role || 'cashier') + '</span></div></div><div class="user-actions"><button class="btn-reset-pass" onclick="resetPassword(' + u.id + ')">🔑 Reset</button>' + (u.username !== 'admin' ? '<button class="btn-delete-user" onclick="deleteUser(' + u.id + ')">🗑️</button>' : '') + '</div></div>';
         }).join('');
-    } catch(e) { document.getElementById('usersList').innerHTML = '<div style="text-align:center;padding:10px;color:#ef4444;">Error loading users</div>'; }
+    } catch(e) {
+        console.error('Error loading users:', e);
+    }
 }
 
 async function addUser() {
-    var username = document.getElementById("newUsername").value.trim();
-    var password = document.getElementById("newPassword").value.trim();
-    var role = document.getElementById("newRole").value;
-    if (!username || !password) { alert("❌ Please enter username and password"); return; }
+    var username = document.getElementById('newUsername').value.trim();
+    var password = document.getElementById('newPassword').value.trim();
+    var role = document.getElementById('newRole').value;
+    if (!username || !password) { alert('❌ Please enter username and password'); return; }
     try {
         var db = await openDB();
-        var users = await dbGetAll(db, "users");
-        if (users.find(function(u) { return u.username === username; })) { alert("❌ Username already exists"); return; }
-        
-        await new Promise(function(resolve, reject) {
-            var tx = db.transaction("users", "readwrite");
-            var store = tx.objectStore("users");
-            var request = store.add({ username: username, password: password, role: role, name: username, created_at: new Date().toISOString() });
-            request.onsuccess = function() { resolve(); };
-            request.onerror = function() { reject(request.error); };
-            tx.onerror = function() { reject(tx.error); };
-        });
-        
-        document.getElementById("newUsername").value = "";
-        document.getElementById("newPassword").value = "";
-        await loadUsers();
-        alert("✅ User added successfully!");
-    } catch(e) { alert("❌ Error: " + e.message); console.error(e); }
-}
-
-async function resetPassword(id) {
-    var newPass = prompt('Enter new password:');
-    if (!newPass || newPass.length < 4) { alert('❌ Password must be at least 4 characters'); return; }
-    try {
-        var db = await openDB();
+        var users = await dbGetAll(db, 'users');
+        if (users.find(function(u) { return u.username === username; })) { alert('❌ Username already exists'); return; }
         var tx = db.transaction('users', 'readwrite');
         var store = tx.objectStore('users');
-        var user = await store.get(id);
-        user.password = newPass;
-        await store.put(user);
-        alert('✅ Password reset successfully!');
+        await store.add({ username: username, password: password, role: role, name: username, created_at: new Date().toISOString() });
+        document.getElementById('newUsername').value = '';
+        document.getElementById('newPassword').value = '';
         loadUsers();
+        alert('✅ User added successfully!');
     } catch(e) { alert('❌ Error: ' + e.message); }
 }
 
@@ -527,22 +458,36 @@ async function deleteUser(id) {
     } catch(e) { alert('❌ Error: ' + e.message); }
 }
 
+async function resetPassword(id) {
+    var newPassword = prompt('Enter new password:');
+    if (!newPassword) return;
+    try {
+        var db = await openDB();
+        var users = await dbGetAll(db, 'users');
+        var user = users.find(function(u) { return u.id === id; });
+        if (!user) { alert('User not found'); return; }
+        user.password = newPassword;
+        var tx = db.transaction('users', 'readwrite');
+        var store = tx.objectStore('users');
+        await store.put(user);
+        alert('✅ Password reset successfully!');
+    } catch(e) { alert('❌ Error: ' + e.message); }
+}
+
 // ===== BACKUP =====
 async function backupData() {
     try {
         var db = await openDB();
-        var stores = ['products', 'orders', 'customers', 'stock_movements', 'users', 'settings'];
+        var stores = ['products', 'customers', 'orders', 'users', 'settings', 'returns', 'audit_log', 'stock_movements'];
         var data = {};
         for (var i = 0; i < stores.length; i++) {
-            if (db.objectStoreNames.contains(stores[i])) {
-                data[stores[i]] = await dbGetAll(db, stores[i]);
-            }
+            data[stores[i]] = await dbGetAll(db, stores[i]);
         }
         var blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
         var url = URL.createObjectURL(blob);
         var a = document.createElement('a');
         a.href = url;
-        a.download = 'sokopulse_backup_' + new Date().toISOString().slice(0, 10) + '.json';
+        a.download = 'backup_' + new Date().toISOString().slice(0, 10) + '.json';
         a.click();
         URL.revokeObjectURL(url);
         alert('✅ Backup downloaded!');
@@ -551,78 +496,53 @@ async function backupData() {
 
 async function restoreData() {
     var fileInput = document.getElementById('restoreFile');
-    if (!fileInput.files || fileInput.files.length === 0) { alert('❌ Please select a backup file'); return; }
-    if (!confirm('⚠️ This will overwrite all current data. Continue?')) return;
-    try {
-        var file = fileInput.files[0];
-        var text = await file.text();
-        var data = JSON.parse(text);
-        var db = await openDB();
-        for (var storeName in data) {
-            if (db.objectStoreNames.contains(storeName)) {
-                var tx = db.transaction(storeName, 'readwrite');
-                var store = tx.objectStore(storeName);
-                await store.clear();
-                for (var j = 0; j < data[storeName].length; j++) { await store.add(data[storeName][j]); }
+    if (!fileInput.files || fileInput.files.length === 0) { alert('Please select a backup file'); return; }
+    var file = fileInput.files[0];
+    var reader = new FileReader();
+    reader.onload = async function(e) {
+        try {
+            var data = JSON.parse(e.target.result);
+            var db = await openDB();
+            var stores = Object.keys(data);
+            for (var i = 0; i < stores.length; i++) {
+                var storeName = stores[i];
+                if (db.objectStoreNames.contains(storeName)) {
+                    var tx = db.transaction(storeName, 'readwrite');
+                    var store = tx.objectStore(storeName);
+                    store.clear();
+                    for (var j = 0; j < data[storeName].length; j++) {
+                        store.add(data[storeName][j]);
+                    }
+                }
             }
+            alert('✅ Data restored successfully!');
+            location.reload();
+        } catch(err) {
+            alert('❌ Error restoring data: ' + err.message);
         }
-        alert('✅ Data restored successfully!');
-        loadUsers();
-    } catch(e) { alert('❌ Error: ' + e.message); }
+    };
+    reader.readAsText(file);
 }
 
 async function clearAllData() {
-    if (!confirm('⚠️⚠️⚠️ This will delete ALL data! Are you sure?')) return;
-    if (!confirm('⚠️ Final confirmation: Delete all data?')) return;
+    if (!confirm('⚠️ This will delete ALL data! Are you sure?')) return;
+    if (!confirm('⚠️ FINAL WARNING: This cannot be undone!')) return;
     try {
         var db = await openDB();
-        var stores = ['products', 'orders', 'customers', 'stock_movements'];
+        var stores = ['products', 'customers', 'orders', 'users', 'settings', 'returns', 'audit_log', 'stock_movements'];
         for (var i = 0; i < stores.length; i++) {
             if (db.objectStoreNames.contains(stores[i])) {
                 var tx = db.transaction(stores[i], 'readwrite');
                 var store = tx.objectStore(stores[i]);
-                await store.clear();
+                store.clear();
             }
         }
         alert('✅ All data cleared!');
-        loadUsers();
+        location.reload();
     } catch(e) { alert('❌ Error: ' + e.message); }
 }
 
-// ===== LOAD SETTINGS =====
-async function loadSettings() {
-    try {
-        var db = await openDB();
-        var settings = await dbGetAll(db, 'settings');
-        var map = {};
-        settings.forEach(function(s) { map[s.key] = s.value; });
-        if (map.tax_enabled) document.getElementById('taxEnabled').value = map.tax_enabled;
-        if (map.tax_rate) document.getElementById('taxRate').value = map.tax_rate;
-        if (map.tax_name) document.getElementById('taxName').value = map.tax_name;
-        if (map.receiptFooter) document.getElementById('receiptFooter').value = map.receiptFooter;
-        if (map.receiptShowTax) document.getElementById('receiptShowTax').checked = map.receiptShowTax === 'yes';
-        if (map.receiptShowDiscount) document.getElementById('receiptShowDiscount').checked = map.receiptShowDiscount === 'yes';
-        if (map.receiptShowCustomer) document.getElementById('receiptShowCustomer').checked = map.receiptShowCustomer === 'yes';
-        if (map.receiptShowCashier) document.getElementById('receiptShowCashier').checked = map.receiptShowCashier === 'yes';
-        if (map.printer_enabled) document.getElementById('printerEnabled').value = map.printer_enabled;
-        if (map.auto_print) document.getElementById('autoPrint').value = map.auto_print;
-        if (map.printer_type) document.getElementById('printerType').value = map.printer_type;
-        if (map.payments) {
-            try {
-                var payments = JSON.parse(map.payments);
-                document.querySelectorAll('.toggle-row').forEach(function(row) {
-                    var label = row.querySelector('label').textContent.trim();
-                    var key = label.replace('💵 ', '').replace('📱 ', '').replace('💳 ', '').replace('📋 ', '').replace('🏦 ', '').toLowerCase();
-                    var toggle = row.querySelector('.toggle-switch');
-                    if (payments[key] === true || payments[key] === 'true') { toggle.classList.add('active'); }
-                    else { toggle.classList.remove('active'); }
-                });
-            } catch(e) { /* ignore */ }
-        }
-    } catch(e) { console.error('Error loading settings:', e); }
-}
-
-// ===== LOAD STORE NAME =====
+// ===== STORE NAME =====
 async function loadStoreName() {
     try {
         var db = await openDB();
@@ -634,6 +554,57 @@ async function loadStoreName() {
             if (el) el.textContent = '🏪 ' + map.storeName;
         }
     } catch(e) { console.error('Error loading store name:', e); }
+}
+
+// ===== SETTINGS =====
+async function loadSettings() {
+    try {
+        var db = await openDB();
+        var settings = await dbGetAll(db, 'settings');
+        var map = {};
+        settings.forEach(function(s) { map[s.key] = s.value; });
+        if (map.tax_enabled) document.getElementById('taxEnabled').value = map.tax_enabled;
+        if (map.tax_rate) document.getElementById('taxRate').value = map.tax_rate;
+        if (map.tax_name) document.getElementById('taxName').value = map.tax_name;
+        if (map.storeName) document.getElementById('storeName').value = map.storeName;
+        if (map.storeAddress) document.getElementById('storeAddress').value = map.storeAddress;
+        if (map.storePhone) document.getElementById('storePhone').value = map.storePhone;
+        if (map.storeEmail) document.getElementById('storeEmail').value = map.storeEmail;
+        if (map.receiptFooter) document.getElementById('receiptFooter').value = map.receiptFooter;
+        if (map.receiptShowTax === 'yes') document.getElementById('receiptShowTax').checked = true;
+        if (map.receiptShowDiscount === 'yes') document.getElementById('receiptShowDiscount').checked = true;
+        if (map.receiptShowCustomer === 'yes') document.getElementById('receiptShowCustomer').checked = true;
+        if (map.receiptShowCashier === 'yes') document.getElementById('receiptShowCashier').checked = true;
+    } catch(e) { console.error('Error loading settings:', e); }
+}
+
+// ===== PRINTER =====
+async function savePrinterSettings() {
+    var data = {
+        printer_enabled: document.getElementById('printerEnabled').value,
+        auto_print: document.getElementById('autoPrint').value,
+        printer_type: document.getElementById('printerType').value
+    };
+    try {
+        var db = await openDB();
+        var tx = db.transaction('settings', 'readwrite');
+        var store = tx.objectStore('settings');
+        for (var key in data) { await store.put({ key: key, value: data[key] }); }
+        alert('✅ Printer settings saved!');
+    } catch(e) { alert('❌ Error: ' + e.message); }
+}
+
+async function testPrinter() {
+    alert('🖨️ Testing printer... Check console for details.');
+    try {
+        if (typeof posPrinter !== 'undefined') {
+            await posPrinter.testPrint();
+        } else {
+            alert('⚠️ Printer module not loaded. Using browser print...');
+            var win = window.open('', '_blank', 'width=400,height=600');
+            win.document.write('<html><head><title>Test Print</title><style>body{font-family:monospace;padding:20px;}</style></head><body><h1>Test Print</h1><p>If you see this, printing works!</p><button onclick="window.print()">Print</button></body></html>');
+        }
+    } catch(e) { alert('❌ Error: ' + e.message); }
 }
 
 // ===== INIT =====
@@ -650,76 +621,6 @@ document.addEventListener('DOMContentLoaded', function() {
     loadStoreName();
 });
 </script>
+
 </body>
 </html>
-<!-- Min Stock Alert Settings -->
-<div class="settings-card">
-    <div class="card-header"><span class="icon">🔔</span> Stock Alert Settings</div>
-    <div class="card-body">
-        <div class="form-group">
-            <label>Enable Stock Alerts</label>
-            <select id="stockAlertsEnabled">
-                <option value="true">✅ Yes</option>
-                <option value="false">❌ No</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label>Default Min Stock Alert</label>
-            <input type="number" id="defaultMinStock" value="5" min="0" max="1000">
-            <div style="font-size:11px;color:#94a3b8;margin-top:4px;">Products will alert when stock falls below this number</div>
-        </div>
-        <div class="form-group">
-            <label>Alert Frequency</label>
-            <select id="alertFrequency">
-                <option value="once">Once per session</option>
-                <option value="always">Always show</option>
-                <option value="daily">Once per day</option>
-            </select>
-        </div>
-        <button class="btn-save-setting" onclick="saveStockAlertSettings()">💾 Save Stock Alert Settings</button>
-    </div>
-</div>
-
-<script src="db.js"></script>
-<script>
-
-function isAdmin() {
-    try {
-        const user = JSON.parse(localStorage.getItem("pos_user") || "{}");
-        return user.role === "admin";
-    } catch(e) {
-        return false;
-    }
-}
-if (!isAdmin()) {
-    window.location.href = "pos.html";
-}
-
-
-// Admin-only page - redirect if not admin
-    window.location.href = "pos.html";
-}
-
-
-// Admin-only page check
-// Admin-only page check
-
-async function loadStockAlertSettings() {
-    try {
-        var db = await openDB();
-        var settings = await dbGetAll(db, 'settings');
-        var map = {};
-        settings.forEach(function(s) { map[s.key] = s.value; });
-        if (map.stock_alerts_enabled) document.getElementById('stockAlertsEnabled').value = map.stock_alerts_enabled;
-        if (map.default_min_stock) document.getElementById('defaultMinStock').value = map.default_min_stock;
-        if (map.alert_frequency) document.getElementById('alertFrequency').value = map.alert_frequency;
-    } catch(e) {
-        console.error('Error loading stock alert settings:', e);
-    }
-}
-
-// Load on page load
-document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(loadStockAlertSettings, 300);
-});
-</script>

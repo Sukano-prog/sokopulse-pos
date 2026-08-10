@@ -320,9 +320,9 @@
         </nav>
         <div class="user-section">
             <div class="name" id="userName">Administrator</div>
+        <button class="logout-btn" onclick="logout()">🚪 Logout</button>
             <div class="role" id="userRole">Admin</div>
         </div>
-        <button class="logout-btn" onclick="logout()">🚪 Logout</button>
     </aside>
     <main class="main-content">
         <header class="topbar">
@@ -493,6 +493,7 @@
         </div>
     </div>
 </div>
+
 <script src="db.js"></script>
 <script>
 // ============================================================
@@ -505,26 +506,6 @@ let imageDataStore = null;
 let selectedProducts = new Set();
 let categories = [];
 // ===== DB HELPERS =====
-function openDB() {
-    return new Promise((resolve, reject) => {
-        const req = indexedDB.open('SokoPulsePOS', 6);
-        req.onsuccess = e => resolve(e.target.result);
-        req.onerror = e => reject(e.target.error);
-    });
-}
-function dbGetAll(db, storeName) {
-    return new Promise((resolve, reject) => {
-        if (!db.objectStoreNames.contains(storeName)) {
-            resolve([]);
-            return;
-        }
-        const tx = db.transaction(storeName, 'readonly');
-        const store = tx.objectStore(storeName);
-        const req = store.getAll();
-        req.onsuccess = () => resolve(req.result);
-        req.onerror = () => reject(req.error);
-    });
-}
 // ===== TOGGLE SIDEBAR =====
 function toggleSidebar() {
     document.querySelector('.sidebar').classList.toggle('open');
@@ -1029,6 +1010,7 @@ document.addEventListener('keydown', function(e) {
     }
 });
 </script>
+
 <script src="db.js"></script>
 <script>
 // ===== LOAD STORE NAME =====
@@ -1160,6 +1142,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 }
 </style>
+
 <script src="db.js"></script>
 <script>
 // ===== ACTIVATION CHECK =====

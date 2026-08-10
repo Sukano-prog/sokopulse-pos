@@ -56,9 +56,9 @@
         </nav>
         <div class="user-section">
             <div class="name" id="userName">Administrator</div>
+        <button class="logout-btn" onclick="logout()">🚪 Logout</button>
             <div class="role" id="userRole">Admin</div>
         </div>
-        <button class="logout-btn" onclick="logout()">🚪 Logout</button>
     </aside>
     <main class="main-content">
         <header class="topbar">
@@ -80,6 +80,7 @@
         </div>
     </main>
 </div>
+
 <script src="db.js"></script>
 <script>
 function toggleSidebar() {
@@ -104,7 +105,21 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('userName').textContent = user.name || user.username;
     document.getElementById('userRole').textContent = user.role || 'User';
     setInterval(() => { document.getElementById('timeDisplay').textContent = new Date().toLocaleTimeString('en-KE', { hour12: false }); }, 1000);
+    loadProducts();
 });
+function loadProducts() {
+    openDB().then(function(db) {
+        dbGetAll(db, 'products').then(function(data) {
+            products = data || [];
+            renderExpiry();
+        }).catch(function(e) {
+            console.error('Error loading products:', e);
+        });
+    }).catch(function(e) {
+        console.error('Error opening database:', e);
+    });
+}
+
 function renderExpiry() {
     const tbody = document.getElementById('expiryBody');
     const today = new Date();
@@ -148,15 +163,6 @@ function renderExpiry() {
 function logout() {
     if (confirm('Logout?')) { localStorage.removeItem('pos_user'); window.location.href = 'index.html'; }
 }
-function openDB() { return new Promise((r,x) => { const req = indexedDB.open('SokoPulsePOS', 6); req.onsuccess = e => r(e.target.result); req.onerror = e => x(e.target.error); }); }
-function dbGetAll(db, store) { return new Promise((r,x) => { const tx = db.transaction(store,'readonly'); const req = tx.objectStore(store).getAll(); req.onsuccess = () => r(req.result); req.onerror = () => x(req.error); }); }
-</script>
-<script src="db.js"></script>
-<script>
-// ===== LOAD STORE NAME =====
-
-document.addEventListener("DOMContentLoaded", function() {
-});
 </script>
 </body>
 </html>
@@ -280,6 +286,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 }
 </style>
+
 <script src="db.js"></script>
 <script>
 // ===== ACTIVATION CHECK =====

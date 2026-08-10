@@ -253,30 +253,6 @@
 
 
 <script src="db.js"></script>
-
-<script>
-// Auto-setup database on first visit
-document.addEventListener('DOMContentLoaded', function() {
-    // Check if database is already set up
-    const req = indexedDB.open('SokoPulsePOS', 6);
-    req.onsuccess = function(e) {
-        const db = e.target.result;
-        const stores = Array.from(db.objectStoreNames);
-        db.close();
-        // If less than 8 stores, redirect to setup
-        if (stores.length < 8) {
-            console.log('🔄 Database needs setup. Redirecting to setup_db.html...');
-            window.location.href = 'setup_db.html';
-        }
-    };
-    req.onerror = function(e) {
-        // Database doesn't exist, redirect to setup
-        console.log('🔄 Database not found. Redirecting to setup_db.html...');
-        window.location.href = 'setup_db.html';
-    };
-});
-</script>
-
 <script>
 // ============================================================
 // ONE-TIME ACTIVATION SYSTEM
@@ -482,29 +458,6 @@ document.getElementById('activationKey').addEventListener('input', function(e) {
 // ===== INIT =====
 displayMachineId();
 checkActivation();
-</script>
-
-<script>
-    window.addEventListener('load', function() {
-            .then(function(reg) {
-                console.log('✅ Service Worker registered');
-            })
-            .catch(function(err) {
-                console.log('❌ Service Worker registration failed:', err);
-            });
-    });
-}
-</script>
-<script>
-    window.addEventListener("load", function() {
-            .then(function(reg) {
-                console.log("✅ Service Worker registered");
-            })
-            .catch(function(err) {
-                console.log("❌ Service Worker registration failed:", err);
-            });
-    });
-}
 </script>
 </body>
 </html>

@@ -16,8 +16,6 @@ body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; height: 100vh; 
     flex-shrink: 0;
     height: 100vh;
     overflow-y: auto;
-    position: sticky;
-    top: 0;
 }
 .sidebar .logo {
     font-size: 22px;
@@ -70,15 +68,6 @@ body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; height: 100vh; 
 .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
 
 /* ===== TOPBAR ===== */
-.topbar {
-    background: white;
-    padding: 12px 25px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid #e0e0e0;
-    flex-shrink: 0;
-}
 .topbar h1 { font-size: 18px; color: #1a3c34; }
 .topbar .info { display: flex; gap: 20px; align-items: center; font-size: 14px; color: #666; }
 .topbar .info .store-name { font-weight: bold; color: #1a3c34; }
@@ -282,3 +271,126 @@ tr:hover { background: #f8f9fa; }
     .stats-grid { grid-template-columns: 1fr 1fr; }
     .modal-content { margin: 10% auto; padding: 20px; width: 95%; }
 }
+
+/* ===== FORCE FULL SIDEBAR ON DESKTOP ===== */
+@media (min-width: 769px) {
+    .sidebar {
+        width: 220px !important;
+        padding: 20px 0 !important;
+    }
+    .sidebar .logo {
+        font-size: 22px !important;
+        padding: 0 20px 20px !important;
+        border-bottom: 1px solid rgba(255,255,255,0.1) !important;
+    }
+    .sidebar .logo span { color: #f5a623 !important; }
+    .sidebar nav { flex: 1 !important; padding: 20px 10px !important; }
+    .sidebar nav a {
+        display: block !important;
+        color: rgba(255,255,255,0.7) !important;
+        text-decoration: none !important;
+        padding: 10px 14px !important;
+        border-radius: 6px !important;
+        margin-bottom: 2px !important;
+        font-size: 14px !important;
+        transition: 0.3s !important;
+        text-align: left !important;
+    }
+    .sidebar nav a:hover,
+    .sidebar nav a.active {
+        background: rgba(255,255,255,0.1) !important;
+        color: white !important;
+    }
+    .sidebar nav a.active {
+        background: #f5a623 !important;
+        color: #1a3c34 !important;
+        font-weight: bold !important;
+    }
+    .sidebar .nav-label {
+        display: block !important;
+        font-size: 10px !important;
+        text-transform: uppercase !important;
+        letter-spacing: 1px !important;
+        color: rgba(255,255,255,0.3) !important;
+        padding: 12px 14px 6px !important;
+        font-weight: 600 !important;
+    }
+    .sidebar .user-section {
+        display: block !important;
+        padding: 12px 14px !important;
+        border-top: 1px solid rgba(255,255,255,0.1) !important;
+        margin-top: auto !important;
+    }
+    .sidebar .user-section .name {
+        font-size: 14px !important;
+        font-weight: 600 !important;
+        color: white !important;
+    }
+    .sidebar .user-section .role {
+        font-size: 11px !important;
+        color: rgba(255,255,255,0.5) !important;
+        text-transform: uppercase !important;
+    }
+    .sidebar .logout-btn {
+        display: block !important;
+        margin: 10px 14px !important;
+        padding: 10px 16px !important;
+        background: #c0392b !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 8px !important;
+        font-size: 14px !important;
+        font-weight: 600 !important;
+        cursor: pointer !important;
+        width: calc(100% - 28px) !important;
+        font-family: 'Inter', sans-serif !important;
+        transition: background 0.3s !important;
+    }
+    .sidebar .logout-btn:hover {
+        background: #e74c3c !important;
+    }
+    /* Hide hamburger and close button on desktop */
+    .hamburger {
+        display: none !important;
+    }
+    .sidebar .close-btn {
+        display: none !important;
+    }
+    .sidebar-overlay {
+        display: none !important;
+    }
+}
+
+/* ===== TOPBAR ===== */
+.topbar {
+    background: white;
+    padding: 12px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e0e0e0;
+    flex-shrink: 0;
+}
+.topbar h1 { font-size: 18px; color: #1a3c34; }
+.topbar .info { display: flex; gap: 20px; align-items: center; font-size: 14px; color: #666; }
+.topbar .info .store-name { font-weight: bold; color: #1a3c34; }
+.topbar .info .badge {
+    background: #f5a623;
+    color: #1a3c34;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+}
+.topbar .left { display: flex; align-items: center; gap: 15px; }
+.topbar .right { display: flex; align-items: center; gap: 15px; }
+.topbar .hamburger {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 4px;
+    color: #0f172a;
+}
+.topbar .time { font-size: 13px; color: #94a3b8; }
