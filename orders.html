@@ -457,9 +457,7 @@ function reprintReceipt(id) {
 }
 </script>
 <script>
-if ("serviceWorker" in navigator) {
     window.addEventListener("load", function() {
-        navigator.serviceWorker.register("/sw.js")
             .then(function(reg) {
                 console.log("✅ Service Worker registered");
             })
@@ -636,9 +634,7 @@ function printBulkFromPreview() {
 }
 </script>
 <script>
-if ("serviceWorker" in navigator) {
     window.addEventListener("load", function() {
-        navigator.serviceWorker.register("/sw.js")
             .then(function(reg) {
                 console.log("✅ Service Worker registered");
             })
@@ -720,9 +716,7 @@ document.addEventListener('keydown', function(e) {
 }
 </script>
 <script>
-if ("serviceWorker" in navigator) {
     window.addEventListener("load", function() {
-        navigator.serviceWorker.register("/sw.js")
             .then(function(reg) {
                 console.log("✅ Service Worker registered");
             })
