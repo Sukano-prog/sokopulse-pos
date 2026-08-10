@@ -93,7 +93,6 @@ function createFreshDatabase() {
     
     const req = indexedDB.open(DB_NAME, DB_VERSION);
     
-    req.onupgradeneeded = function(e) {
         const db = e.target.result;
         let stores = [];
         
@@ -113,7 +112,6 @@ function createFreshDatabase() {
         
         for (const [storeName, indexes] of Object.entries(storeConfigs)) {
             if (!db.objectStoreNames.contains(storeName)) {
-                const store = db.createObjectStore(storeName, { keyPath: 'id', autoIncrement: true });
                 for (const idx of indexes) {
                     store.createIndex(idx, idx, { unique: false });
                 }

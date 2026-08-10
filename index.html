@@ -328,17 +328,13 @@
     function openDB() {
         return new Promise((resolve, reject) => {
             const request = indexedDB.open('SokoPulsePOS', 6);
-            request.onupgradeneeded = function(e) {
                 const db = e.target.result;
                 if (!db.objectStoreNames.contains('users')) {
-                    const store = db.createObjectStore('users', { keyPath: 'id', autoIncrement: true });
                     store.createIndex('username', 'username', { unique: true });
                 }
                 if (!db.objectStoreNames.contains('products')) {
-                    db.createObjectStore('products', { keyPath: 'id', autoIncrement: true });
                 }
                 if (!db.objectStoreNames.contains('orders')) {
-                    db.createObjectStore('orders', { keyPath: 'id', autoIncrement: true });
                 }
             };
             request.onsuccess = function(e) {

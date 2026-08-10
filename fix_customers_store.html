@@ -18,13 +18,11 @@ function fixCustomersStore() {
     
     const req = indexedDB.open(DB_NAME, DB_VERSION);
     
-    req.onupgradeneeded = function(e) {
         const db = e.target.result;
         let created = [];
         
         // Create customers store
         if (!db.objectStoreNames.contains('customers')) {
-            const store = db.createObjectStore('customers', { keyPath: 'id', autoIncrement: true });
             store.createIndex('name', 'name', { unique: false });
             store.createIndex('phone', 'phone', { unique: false });
             store.createIndex('email', 'email', { unique: false });
@@ -45,7 +43,6 @@ function fixCustomersStore() {
         
         for (const [name, indexes] of Object.entries(stores)) {
             if (!db.objectStoreNames.contains(name)) {
-                const store = db.createObjectStore(name, { keyPath: 'id', autoIncrement: true });
                 for (const idx of indexes) {
                     store.createIndex(idx, idx, { unique: false });
                 }
