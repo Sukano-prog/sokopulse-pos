@@ -446,14 +446,25 @@ function reprintReceipt(id) {
     }
     win.document.write('<html><head><title>Receipt</title><style>body{font-family:monospace;padding:20px;white-space:pre;}</style></head><body>' + receipt + '
 <script>
-if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/sw.js')
             .then(function(reg) {
                 console.log('✅ Service Worker registered');
             })
             .catch(function(err) {
                 console.log('❌ Service Worker registration failed:', err);
+            });
+    });
+}
+</script>
+<script>
+if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function() {
+        navigator.serviceWorker.register("/sw.js")
+            .then(function(reg) {
+                console.log("✅ Service Worker registered");
+            })
+            .catch(function(err) {
+                console.log("❌ Service Worker registration failed:", err);
             });
     });
 }
@@ -614,14 +625,25 @@ function printBulkFromPreview() {
     }
     win.document.write('<html><head><title>Bulk Receipts</title><style>body{font-family:"Courier New",monospace;padding:20px;white-space:pre;font-size:12px;background:white;margin:0;}@media print{body{padding:10px;}@page{margin:0.5cm;}}</style></head><body>' + receipt + '
 <script>
-if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/sw.js')
             .then(function(reg) {
                 console.log('✅ Service Worker registered');
             })
             .catch(function(err) {
                 console.log('❌ Service Worker registration failed:', err);
+            });
+    });
+}
+</script>
+<script>
+if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function() {
+        navigator.serviceWorker.register("/sw.js")
+            .then(function(reg) {
+                console.log("✅ Service Worker registered");
+            })
+            .catch(function(err) {
+                console.log("❌ Service Worker registration failed:", err);
             });
     });
 }
@@ -687,14 +709,25 @@ document.addEventListener('keydown', function(e) {
 </script>
 
 <script>
-if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/sw.js')
             .then(function(reg) {
                 console.log('✅ Service Worker registered');
             })
             .catch(function(err) {
                 console.log('❌ Service Worker registration failed:', err);
+            });
+    });
+}
+</script>
+<script>
+if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function() {
+        navigator.serviceWorker.register("/sw.js")
+            .then(function(reg) {
+                console.log("✅ Service Worker registered");
+            })
+            .catch(function(err) {
+                console.log("❌ Service Worker registration failed:", err);
             });
     });
 }

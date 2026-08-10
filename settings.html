@@ -405,14 +405,25 @@ async function testReceipt() {
         var win = window.open('', '_blank', 'width=400,height=600');
         win.document.write('<html><head><title>Test Receipt</title><style>body{font-family:monospace;padding:20px;white-space:pre;}</style></head><body>' + receipt + '
 <script>
-if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/sw.js')
             .then(function(reg) {
                 console.log('✅ Service Worker registered');
             })
             .catch(function(err) {
                 console.log('❌ Service Worker registration failed:', err);
+            });
+    });
+}
+</script>
+<script>
+if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function() {
+        navigator.serviceWorker.register("/sw.js")
+            .then(function(reg) {
+                console.log("✅ Service Worker registered");
+            })
+            .catch(function(err) {
+                console.log("❌ Service Worker registration failed:", err);
             });
     });
 }
@@ -618,14 +629,25 @@ async function testPrinter() {
             var win = window.open('', '_blank', 'width=400,height=600');
             win.document.write('<html><head><title>Test Print</title><style>body{font-family:monospace;padding:20px;}</style></head><body><h1>Test Print</h1><p>If you see this, printing works!</p><button onclick="window.print()">Print</button>
 <script>
-if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/sw.js')
             .then(function(reg) {
                 console.log('✅ Service Worker registered');
             })
             .catch(function(err) {
                 console.log('❌ Service Worker registration failed:', err);
+            });
+    });
+}
+</script>
+<script>
+if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function() {
+        navigator.serviceWorker.register("/sw.js")
+            .then(function(reg) {
+                console.log("✅ Service Worker registered");
+            })
+            .catch(function(err) {
+                console.log("❌ Service Worker registration failed:", err);
             });
     });
 }
@@ -652,14 +674,25 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 <script>
-if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/sw.js')
             .then(function(reg) {
                 console.log('✅ Service Worker registered');
             })
             .catch(function(err) {
                 console.log('❌ Service Worker registration failed:', err);
+            });
+    });
+}
+</script>
+<script>
+if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function() {
+        navigator.serviceWorker.register("/sw.js")
+            .then(function(reg) {
+                console.log("✅ Service Worker registered");
+            })
+            .catch(function(err) {
+                console.log("❌ Service Worker registration failed:", err);
             });
     });
 }

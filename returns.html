@@ -313,7 +313,7 @@ function isAdmin() {
     } catch(e) {
         return false;
     }
-}
+
 // ===== DATABASE FUNCTIONS =====
 
 
@@ -339,7 +339,7 @@ function dbAdd(db, storeName, data) {
         req.onsuccess = () => resolve(req.result);
         req.onerror = () => reject(req.error);
     });
-}
+
 
 function dbPut(db, storeName, data) {
     return new Promise((resolve, reject) => {
@@ -349,7 +349,7 @@ function dbPut(db, storeName, data) {
         req.onsuccess = () => resolve(req.result);
         req.onerror = () => reject(req.error);
     });
-}
+
 
 function dbGet(db, storeName, id) {
     return new Promise((resolve, reject) => {
@@ -359,7 +359,7 @@ function dbGet(db, storeName, id) {
         req.onsuccess = () => resolve(req.result);
         req.onerror = () => reject(req.error);
     });
-}
+
 
 function dbDelete(db, storeName, id) {
     return new Promise((resolve, reject) => {
@@ -369,7 +369,7 @@ function dbDelete(db, storeName, id) {
         req.onsuccess = () => resolve();
         req.onerror = () => reject(req.error);
     });
-}
+
 
 function dbPut(db, storeName, data) {
     return new Promise(function(resolve, reject) {
@@ -379,25 +379,25 @@ function dbPut(db, storeName, data) {
         req.onsuccess = function() { resolve(req.result); };
         req.onerror = function() { reject(req.error); };
     });
-}
+
 
 // ===== SIDEBAR =====
 function toggleSidebar() {
     document.querySelector('.sidebar').classList.toggle('open');
     document.querySelector('.sidebar-overlay').classList.toggle('show');
-}
+
 
 function logout() {
     if (confirm('Logout?')) {
         localStorage.removeItem('pos_user');
         window.location.href = 'index.html';
     }
-}
+
 
 function updateTime() {
     var el = document.getElementById('timeDisplay');
     if (el) el.textContent = new Date().toLocaleTimeString('en-KE', { hour12: false });
-}
+
 
 // ===== LOAD RETURNS =====
 
@@ -414,7 +414,7 @@ async function loadReturns() {
         console.error('Error loading returns:', e);
         document.getElementById('returnsList').innerHTML = '<div style="text-align:center;padding:40px;color:#ef4444;">Error loading returns</div>';
     }
-}
+
 
 function renderReturns() {
     var container = document.getElementById('returnsList');
@@ -462,7 +462,7 @@ function renderReturns() {
     });
 
     container.innerHTML = html;
-}
+
 
 // ===== DROPDOWN FUNCTIONS =====
 async function loadOrdersForDropdown() {
@@ -494,7 +494,7 @@ async function loadOrdersForDropdown() {
     } catch(e) {
         console.error('Error loading orders for dropdown:', e);
     }
-}
+
 
 function toggleOrderDropdown() {
     var list = document.getElementById('orderDropdownList');
@@ -504,7 +504,7 @@ function toggleOrderDropdown() {
         renderOrderDropdown(allOrdersForDropdown);
         document.getElementById('orderSearchInput').focus();
     }
-}
+
 
 function filterOrderDropdown() {
     var search = document.getElementById('orderSearchInput').value.toLowerCase();
@@ -513,7 +513,7 @@ function filterOrderDropdown() {
                (o.customer_name || '').toLowerCase().includes(search);
     });
     renderOrderDropdown(filtered);
-}
+
 
 function renderOrderDropdown(ordersList) {
     var list = document.getElementById('orderDropdownList');
@@ -534,13 +534,13 @@ function renderOrderDropdown(ordersList) {
         html += '</div>';
     });
     list.innerHTML = html;
-}
+
 
 function selectOrder(orderNumber) {
     document.getElementById('returnOrderNumber').value = orderNumber;
     document.getElementById('orderDropdownList').classList.remove('show');
     loadOrderForReturn();
-}
+
 
 // Close dropdown when clicking outside
 document.addEventListener('click', function(e) {
@@ -549,7 +549,7 @@ document.addEventListener('click', function(e) {
         var list = document.getElementById('orderDropdownList');
         if (list) list.classList.remove('show');
     }
-});
+);
 
 // ===== NEW RETURN =====
 function openNewReturn() {
@@ -563,15 +563,15 @@ function openNewReturn() {
     document.getElementById('returnSummary').style.display = 'none';
     selectedOrderItems = [];
     loadOrdersForDropdown();
-}
+
 
 function closeModal() {
     document.getElementById('returnModal').classList.remove('show');
-}
+
 
 function closeViewModal() {
     document.getElementById('viewReturnModal').classList.remove('show');
-}
+
 
 function loadOrderForReturn() {
     var orderNumber = document.getElementById('returnOrderNumber').value.trim();
@@ -622,7 +622,7 @@ function loadOrderForReturn() {
     document.querySelectorAll('.return-item-check').forEach(function(cb) {
         cb.addEventListener('change', updateReturnTotal);
     });
-}
+
 
 function updateReturnTotal() {
     var total = 0;
@@ -635,7 +635,7 @@ function updateReturnTotal() {
         }
     });
     document.getElementById('returnTotal').textContent = 'KES ' + total.toFixed(2);
-}
+
 
 async function processReturn(e) {
     e.preventDefault();
@@ -695,7 +695,7 @@ async function processReturn(e) {
     } catch(e) {
         alert('❌ Error processing return: ' + e.message);
     }
-}
+
 
 // ===== VIEW RETURN =====
 function viewReturn(id) {
@@ -730,7 +730,7 @@ function viewReturn(id) {
 
     document.getElementById('viewReturnContent').innerHTML = html;
     modal.classList.add('show');
-}
+
 
 // ===== UPDATE RETURN STATUS =====
 async function updateReturnStatus(id, status) {
@@ -753,7 +753,7 @@ async function updateReturnStatus(id, status) {
     } catch(e) {
         alert('❌ Error: ' + e.message);
     }
-}
+
 
 // ===== INIT =====
 document.addEventListener('DOMContentLoaded', function() {
@@ -769,13 +769,11 @@ document.addEventListener('DOMContentLoaded', function() {
     setInterval(updateTime, 1000);
     updateTime();
     loadReturns();
-});
+);
 </script>
 
 <script>
-if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/sw.js')
             .then(function(reg) {
                 console.log('✅ Service Worker registered');
             })
@@ -783,7 +781,20 @@ if ('serviceWorker' in navigator) {
                 console.log('❌ Service Worker registration failed:', err);
             });
     });
-}
+
+</script>
+<script>
+if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function() {
+        navigator.serviceWorker.register("/sw.js")
+            .then(function(reg) {
+                console.log("✅ Service Worker registered");
+            })
+            .catch(function(err) {
+                console.log("❌ Service Worker registration failed:", err);
+            });
+    });
+
 </script>
 </body>
 </html>
@@ -797,7 +808,7 @@ function isAdmin() {
     } catch(e) {
         return false;
     }
-}
+
 // ===== SYNC RETURN WITH SYSTEM =====
 async function processReturn(e) {
     e.preventDefault();
@@ -862,7 +873,7 @@ async function processReturn(e) {
     } catch(e) {
         alert('❌ Error processing return: ' + e.message);
     }
-}
+
 
 // ===== APPROVE RETURN - SYNC WITH SYSTEM =====
 async function updateReturnStatus(id, status) {
@@ -987,7 +998,7 @@ async function updateReturnStatus(id, status) {
     } catch(e) {
         alert('❌ Error updating return: ' + e.message);
     }
-}
+
 
 // ===== LOG ACTION =====
 function logAction(action, details) {
@@ -1007,7 +1018,7 @@ function logAction(action, details) {
     }).catch(function(e) {
         console.error('Error logging action:', e);
     });
-}
+
 </script>
 <!-- Date Range Filter -->
 <div class="date-filter" style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;align-items:center;background:white;padding:8px 12px;border-radius:8px;border:1px solid #e2e8f0;">
@@ -1040,7 +1051,7 @@ function isAdmin() {
     } catch(e) {
         return false;
     }
-}
+
 // ===== RETURNS DATE FILTER =====
 function applyReturnsFilter() {
     var period = document.getElementById('returnsPeriod').value;
@@ -1078,7 +1089,7 @@ function applyReturnsFilter() {
     document.getElementById('returnsDateInfo').textContent = '📆 ' + startDate + ' → ' + endDate;
     
     renderReturns();
-}
+
 
 // Override renderReturns with date filter
 var originalRenderReturns = renderReturns;
@@ -1139,7 +1150,7 @@ renderReturns = function() {
     });
 
     container.innerHTML = html;
-};
+;
 
 // Init returns filter on page load
 document.addEventListener('DOMContentLoaded', function() {
@@ -1151,10 +1162,10 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('returnsEndDate').value = today.toISOString().slice(0, 10);
         applyReturnsFilter();
     }, 300);
-});
+);
 </script>
 
         req.onsuccess = function() { resolve(req.result); };
         req.onerror = function() { reject(req.error); };
     });
-}
+
