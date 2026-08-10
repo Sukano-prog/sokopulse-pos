@@ -4,6 +4,7 @@
 <body>
 <h2>🔧 Creating Missing Stores</h2>
 <div id="result"></div>
+
 <script src="db.js"></script>
 <script>
 function fixDB() {
@@ -53,6 +54,20 @@ function fixDB() {
 }
 
 fixDB();
+</script>
+
+<script>
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/sw.js')
+            .then(function(reg) {
+                console.log('✅ Service Worker registered');
+            })
+            .catch(function(err) {
+                console.log('❌ Service Worker registration failed:', err);
+            });
+    });
+}
 </script>
 </body>
 </html>

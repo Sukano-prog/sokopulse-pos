@@ -251,7 +251,8 @@
 </head>
 <body>
     <!-- ===== ACTIVATION CHECK ===== -->
-    <script src="db.js"></script>
+    
+<script src="db.js"></script>
 <script>
         if (localStorage.getItem("activated") !== "true") {
             window.location.href = "activation.html";
@@ -309,6 +310,7 @@
         </div>
     </div>
 </div>
+
 
 <script src="db.js"></script>
 <script>
@@ -433,8 +435,23 @@ function toggleSidebar() {
 }
 </script>
 
+
+<script>
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/sw.js')
+            .then(function(reg) {
+                console.log('✅ Service Worker registered');
+            })
+            .catch(function(err) {
+                console.log('❌ Service Worker registration failed:', err);
+            });
+    });
+}
+</script>
 </body>
 </html>
+
 <script src="db.js"></script>
 <script>
     // ===== CHECK ACTIVATION =====
@@ -452,6 +469,7 @@ function checkSession() {
     }
 }
 </script>
+
 <script src="db.js"></script>
 <script>
 // ===== ACTIVATION CHECK =====
@@ -461,6 +479,7 @@ function checkSession() {
     }
 })();
 </script>
+
 <script src="db.js"></script>
 <script>
 // ===== LICENSE EXPIRY CHECK =====

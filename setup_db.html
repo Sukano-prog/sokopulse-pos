@@ -6,6 +6,7 @@
 <body>
 <h2>📦 Setting up Database</h2>
 <div id="result"></div>
+
 <script src="db.js"></script>
 <script>
 const DB_NAME = 'SokoPulsePOS';
@@ -67,6 +68,20 @@ function setupDatabase() {
 }
 
 setupDatabase();
+</script>
+
+<script>
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/sw.js')
+            .then(function(reg) {
+                console.log('✅ Service Worker registered');
+            })
+            .catch(function(err) {
+                console.log('❌ Service Worker registration failed:', err);
+            });
+    });
+}
 </script>
 </body>
 </html>

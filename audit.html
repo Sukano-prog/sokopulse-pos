@@ -185,6 +185,7 @@
     </main>
 </div>
 
+
 <script src="db.js"></script>
 <script>
 
@@ -428,6 +429,20 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+
+<script>
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/sw.js')
+            .then(function(reg) {
+                console.log('✅ Service Worker registered');
+            })
+            .catch(function(err) {
+                console.log('❌ Service Worker registration failed:', err);
+            });
+    });
+}
+</script>
 </body>
 </html>
 <!-- Date Range Filter -->
@@ -450,6 +465,7 @@ document.addEventListener('DOMContentLoaded', function() {
     </div>
     <span id="auditDateInfo" style="font-size:11px;color:#94a3b8;margin-left:auto;"></span>
 </div>
+
 
 <script src="db.js"></script>
 <script>

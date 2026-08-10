@@ -145,6 +145,7 @@
     </div>
 </div>
 
+
 <script src="db.js"></script>
 <script>
 let categories = [];
@@ -333,6 +334,7 @@ function logout() {
 
 
 </script>
+
 <script src="db.js"></script>
 <script>
 // ===== LOAD STORE NAME =====
@@ -355,6 +357,20 @@ async function loadStoreName() {
 document.addEventListener("DOMContentLoaded", function() {
     setTimeout(loadStoreName, 300);
 });
+</script>
+
+<script>
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/sw.js')
+            .then(function(reg) {
+                console.log('✅ Service Worker registered');
+            })
+            .catch(function(err) {
+                console.log('❌ Service Worker registration failed:', err);
+            });
+    });
+}
 </script>
 </body>
 </html>
@@ -479,6 +495,7 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 }
 </style>
+
 <script src="db.js"></script>
 <script>
 // ===== ACTIVATION CHECK =====

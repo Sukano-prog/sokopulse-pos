@@ -35,6 +35,7 @@
     <div id="result">Click a button to start...</div>
 </div>
 
+
 <script src="db.js"></script>
 <script>
 const DB_NAME = 'SokoPulsePOS';
@@ -325,6 +326,20 @@ function addSampleData() {
 window.onload = function() {
     setTimeout(checkDatabase, 500);
 };
+</script>
+
+<script>
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/sw.js')
+            .then(function(reg) {
+                console.log('✅ Service Worker registered');
+            })
+            .catch(function(err) {
+                console.log('❌ Service Worker registration failed:', err);
+            });
+    });
+}
 </script>
 </body>
 </html>

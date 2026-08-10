@@ -6,6 +6,7 @@
 <body>
 <h2>🔧 Creating Customers Store</h2>
 <div id="result"></div>
+
 <script src="db.js"></script>
 <script>
 function fixCustomersStore() {
@@ -74,6 +75,20 @@ function fixCustomersStore() {
 }
 
 fixCustomersStore();
+</script>
+
+<script>
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/sw.js')
+            .then(function(reg) {
+                console.log('✅ Service Worker registered');
+            })
+            .catch(function(err) {
+                console.log('❌ Service Worker registration failed:', err);
+            });
+    });
+}
 </script>
 </body>
 </html>
