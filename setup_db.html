@@ -18,7 +18,6 @@ function setupDatabase() {
     
     const req = indexedDB.open(DB_NAME, DB_VERSION);
     
-    req.onupgradeneeded = function(e) {
         const db = e.target.result;
         let created = [];
         
@@ -35,7 +34,6 @@ function setupDatabase() {
         
         for (const [name, indexes] of Object.entries(stores)) {
             if (!db.objectStoreNames.contains(name)) {
-                const store = db.createObjectStore(name, { keyPath: 'id', autoIncrement: true });
                 for (const idx of indexes) {
                     store.createIndex(idx, idx, { unique: false });
                 }
