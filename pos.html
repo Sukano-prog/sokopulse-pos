@@ -1193,10 +1193,6 @@ function printFromPreview() {
     var doc = iframe.contentWindow.document;
     doc.open();
     doc.write('<html><head><title>Receipt</title><style>body{font-family:"Courier New",monospace;font-size:14px;padding:20px;white-space:pre;background:white;margin:0;}@media print{body{padding:10px;}@page{margin:0.5cm;}}</style></head><body>' + receipt + '</body></html>');
-    });
-}
-</script>
-</body></html>');
     doc.close();
     setTimeout(function() {
         iframe.contentWindow.print();
