@@ -270,11 +270,6 @@
 
 <script src="db.js"></script>
 <script>
-function toggleSidebar() {
-    document.querySelector('.sidebar').classList.toggle('open');
-    document.querySelector('.sidebar-overlay').classList.toggle('show');
-}
-
 // ============================================================
 // SOKOPULSE POS - COMPLETE SCRIPT
 // ============================================================
@@ -316,7 +311,10 @@ function dbPut(db, storeName, data) {
 }
 
 // ===== SIDEBAR =====
-
+function toggleSidebar() {
+    document.querySelector('.sidebar').classList.toggle('open');
+    document.querySelector('.sidebar-overlay').classList.toggle('show');
+}
 
 function logout() {
     if (confirm('Logout?')) {
@@ -1122,9 +1120,6 @@ function showReceipt(order) {
     if (!modal || !content) return;
     var items = order.items || [];
     var storeName = document.getElementById('storeName')?.textContent || 'SokoPulse';
-    var storeAddress = document.getElementById('storeAddressDisplay')?.textContent || '';
-    var storePhone = document.getElementById('storePhoneDisplay')?.textContent || '';
-    var storeEmail = document.getElementById('storeEmailDisplay')?.textContent || '';
     var subtotal = order.subtotal || items.reduce(function(s, i) { return s + (i.price || 0) * (i.qty || 1) * (1 - (i.discount || 0) / 100); }, 0);
     var tax = 0;
     var taxDisplay = '';
@@ -1138,13 +1133,9 @@ function showReceipt(order) {
     var total = subtotal + tax;
     var receipt = '================================\n';
     receipt += '        ' + storeName + '\n';
-    if (storeAddress) receipt += '        ' + storeAddress + '\n';
-    if (storePhone) receipt += '        Tel: ' + storePhone + '\n';
-    if (storeEmail) receipt += '        Email: ' + storeEmail + '\n';
     receipt += '================================\n';
     receipt += 'Order: ' + (order.order_number || 'ORD-' + Date.now().toString().slice(-6)) + '\n';
     receipt += 'Date: ' + new Date(order.date).toLocaleString() + '\n';
-    receipt += 'Cashier: ' + (currentUser ? currentUser.name || currentUser.username : 'System') + '\n';
     receipt += 'Mode: ' + (order.mode || 'Retail') + '\n';
     if (settings.showCustomer !== false) {
         receipt += 'Customer: ' + (order.customer_name || 'Walk-in') + '\n';
@@ -1174,9 +1165,6 @@ function showReceipt(order) {
     receipt += '================================\n';
     receipt += '  ' + (settings.footer || 'Thank you for shopping with us!') + '\n';
     receipt += '================================\n';
-    receipt += '          SokoPulse POS\n';
-    receipt += '       Offline Retail System\n';
-    receipt += '================================\n';
     content.textContent = receipt;
     modal.classList.add('show');
 }
@@ -1205,9 +1193,6 @@ function printFromPreview() {
     var doc = iframe.contentWindow.document;
     doc.open();
     doc.write('<html><head><title>Receipt</title><style>body{font-family:"Courier New",monospace;font-size:14px;padding:20px;white-space:pre;background:white;margin:0;}@media print{body{padding:10px;}@page{margin:0.5cm;}}</style></head><body>' + receipt + '</body></html>');
-                
-}
-</script>
     doc.close();
     setTimeout(function() {
         iframe.contentWindow.print();
@@ -1271,13 +1256,6 @@ document.getElementById('searchInput')?.addEventListener('input', renderProducts
 setInterval(checkLowStock, 300000);
 </script>
 
-
-<script>
-)
-            .catch(function(err) {
-                
-}
-</script>
 </body>
 </html>
 <style>
