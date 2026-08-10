@@ -1152,17 +1152,7 @@ function printFromPreview() {
     document.body.appendChild(iframe);
     var doc = iframe.contentWindow.document;
     doc.open();
-    doc.write('<html><head><title>Receipt</title><style>body{font-family:"Courier New",monospace;font-size:14px;padding:20px;white-space:pre;background:white;margin:0;}@media print{body{padding:10px;}@page{margin:0.5cm;}}</style></head><body>' + receipt + '
-<script>
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/sw.js')
-            .then(function(reg) {
-                console.log('✅ Service Worker registered');
-            })
-            .catch(function(err) {
-                console.log('❌ Service Worker registration failed:', err);
-            });
+    doc.write('<html><head><title>Receipt</title><style>body{font-family:"Courier New",monospace;font-size:14px;padding:20px;white-space:pre;background:white;margin:0;}@media print{body{padding:10px;}@page{margin:0.5cm;}}</style></head><body>' + receipt + '</body></html>');
     });
 }
 </script>
@@ -1232,15 +1222,7 @@ setInterval(checkLowStock, 300000);
 
 
 <script>
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/sw.js')
-            .then(function(reg) {
-                console.log('✅ Service Worker registered');
-            })
-            .catch(function(err) {
-                console.log('❌ Service Worker registration failed:', err);
-            });
+
     });
 }
 </script>
@@ -1761,3 +1743,5 @@ if ('serviceWorker' in navigator) {
     }
 }
 </style>
+</body>
+</html>
