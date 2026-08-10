@@ -1120,6 +1120,9 @@ function showReceipt(order) {
     if (!modal || !content) return;
     var items = order.items || [];
     var storeName = document.getElementById('storeName')?.textContent || 'SokoPulse';
+    var storeAddress = document.getElementById('storeAddressDisplay')?.textContent || '';
+    var storePhone = document.getElementById('storePhoneDisplay')?.textContent || '';
+    var storeEmail = document.getElementById('storeEmailDisplay')?.textContent || '';
     var subtotal = order.subtotal || items.reduce(function(s, i) { return s + (i.price || 0) * (i.qty || 1) * (1 - (i.discount || 0) / 100); }, 0);
     var tax = 0;
     var taxDisplay = '';
@@ -1133,6 +1136,9 @@ function showReceipt(order) {
     var total = subtotal + tax;
     var receipt = '================================\n';
     receipt += '        ' + storeName + '\n';
+    if (storeAddress) receipt += '        ' + storeAddress + '\n';
+    if (storePhone) receipt += '        Tel: ' + storePhone + '\n';
+    if (storeEmail) receipt += '        Email: ' + storeEmail + '\n';
     receipt += '================================\n';
     receipt += 'Order: ' + (order.order_number || 'ORD-' + Date.now().toString().slice(-6)) + '\n';
     receipt += 'Date: ' + new Date(order.date).toLocaleString() + '\n';
