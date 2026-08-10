@@ -268,6 +268,36 @@
 </div>
 
 <script>
+// ===== ACTIVATION CHECK =====
+function checkActivation() {
+    const activationKey = localStorage.getItem('activation_key');
+    const activationExpiry = localStorage.getItem('activation_expiry');
+    
+    if (!activationKey) {
+        window.location.href = 'activation.html';
+        return false;
+    }
+    
+    // Check if expired
+    if (activationExpiry && activationExpiry !== 'permanent') {
+        const expiryDate = new Date(activationExpiry);
+        const now = new Date();
+        if (now > expiryDate) {
+            localStorage.removeItem('activation_key');
+            localStorage.removeItem('activation_expiry');
+            window.location.href = 'activation.html';
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+// Run check immediately
+if (!checkActivation()) {
+    // Redirect already happens in checkActivation
+}
+
 // ============================================================
 // SOKOPULSE POS - COMPLETE SCRIPT
 // ============================================================
