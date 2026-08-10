@@ -403,21 +403,9 @@ async function testReceipt() {
         receipt += '  ' + footer + '\n';
         receipt += '================================\n';
         var win = window.open('', '_blank', 'width=400,height=600');
-        win.document.write('<html><head><title>Test Receipt</title><style>body{font-family:monospace;padding:20px;white-space:pre;}</style></head><body>' + receipt + '
-<script>
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/sw.js')
-            .then(function(reg) {
-                console.log('✅ Service Worker registered');
-            })
-            .catch(function(err) {
-                console.log('❌ Service Worker registration failed:', err);
-            });
-    });
-}
-</script>
-</body></html>');
+        win.document.write('<html><head><title>Test Receipt</title><style>body{font-family:monospace;padding:20px;white-space:pre;}</style></head><body>' + receipt + '</body></html>');
+        win.document.close();
+        win.print();
     } catch(e) {
         console.error('Error in testReceipt:', e);
         alert('❌ Error testing receipt: ' + e.message);
@@ -616,21 +604,7 @@ async function testPrinter() {
         } else {
             alert('⚠️ Printer module not loaded. Using browser print...');
             var win = window.open('', '_blank', 'width=400,height=600');
-            win.document.write('<html><head><title>Test Print</title><style>body{font-family:monospace;padding:20px;}</style></head><body><h1>Test Print</h1><p>If you see this, printing works!</p><button onclick="window.print()">Print</button>
-<script>
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/sw.js')
-            .then(function(reg) {
-                console.log('✅ Service Worker registered');
-            })
-            .catch(function(err) {
-                console.log('❌ Service Worker registration failed:', err);
-            });
-    });
-}
-</script>
-</body></html>');
+            win.document.write('<html><head><title>Test Print</title><style>body{font-family:monospace;padding:20px;}</style></head><body><h1>Test Print</h1><p>If you see this, printing works!</p><button onclick="window.print()">Print</button></body></html>');
         }
     } catch(e) { alert('❌ Error: ' + e.message); }
 }
@@ -649,7 +623,6 @@ document.addEventListener('DOMContentLoaded', function() {
     loadStoreName();
 });
 </script>
-
 
 
 <script>
