@@ -14,10 +14,12 @@ function fixDB() {
     // Open with version 7 to trigger upgrade
     const req = indexedDB.open('SokoPulsePOS', 7);
     
+    req.onupgradeneeded = function(e) {
         const db = e.target.result;
         let created = [];
         
         if (!db.objectStoreNames.contains('customers')) {
+            const store = db.createObjectStore('customers', { keyPath: 'id', autoIncrement: true });
             store.createIndex('phone', 'phone', { unique: false });
             store.createIndex('email', 'email', { unique: false });
             store.createIndex('name', 'name', { unique: false });
@@ -26,6 +28,7 @@ function fixDB() {
         }
         
         if (!db.objectStoreNames.contains('settings')) {
+            db.createObjectStore('settings', { keyPath: 'key' });
             created.push('settings');
             console.log('✅ Created settings store');
         }

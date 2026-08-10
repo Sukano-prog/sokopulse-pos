@@ -272,8 +272,10 @@ async function loadAudit() {
             // Create the store by closing and reopening with upgrade
             db.close();
             var req = indexedDB.open('SokoPulsePOS', 6);
+            req.onupgradeneeded = function(e) {
                 var db2 = e.target.result;
                 if (!db2.objectStoreNames.contains('audit_log')) {
+                    var store = db2.createObjectStore('audit_log', { keyPath: 'id', autoIncrement: true });
                     store.createIndex('date', 'date', { unique: false });
                     store.createIndex('user', 'user', { unique: false });
                     store.createIndex('action', 'action', { unique: false });
@@ -598,5 +600,3 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 300);
 });
 </script>
-</body>
-</html>

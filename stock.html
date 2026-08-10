@@ -542,7 +542,6 @@
         </form>
     </div>
 </div>
-<script src="db.js"></script>
 <script>
 // ===== ACTIVATION CHECK =====
 function checkActivation() {
@@ -583,9 +582,36 @@ let currentUser = null;
 let bulkStockSelected = new Set();
 
 // ===== DB HELPERS =====
+function openDB() {
+    return new Promise((resolve, reject) => {
+        const req = indexedDB.open('SokoPulsePOS', 6);
+        req.onupgradeneeded = function(e) {
+            const db = e.target.result;
+            if (!db.objectStoreNames.contains('stock_movements')) {
+                const store = db.createObjectStore('stock_movements', { keyPath: 'id', autoIncrement: true });
+                store.createIndex('product_id', 'product_id', { unique: false });
+                store.createIndex('type', 'type', { unique: false });
+                store.createIndex('date', 'date', { unique: false });
+            }
+        };
+        req.onsuccess = e => resolve(e.target.result);
+        req.onerror = e => reject(e.target.error);
+    });
+}
 
-
-
+function dbGetAll(db, storeName) {
+    return new Promise((resolve, reject) => {
+        if (!db.objectStoreNames.contains(storeName)) {
+            resolve([]);
+            return;
+        }
+        const tx = db.transaction(storeName, 'readonly');
+        const store = tx.objectStore(storeName);
+        const req = store.getAll();
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+    });
+}
 
 // ===== TOGGLE SIDEBAR =====
 function toggleSidebar() {
@@ -1363,7 +1389,6 @@ document.addEventListener('keydown', function(e) {
     }
 }
 </style>
-<script src="db.js"></script>
 <script>
 // ===== ACTIVATION CHECK =====
 function checkActivation() {
@@ -1433,7 +1458,6 @@ document.addEventListener('visibilitychange', function() {
 </script>
 <!-- Add refresh button to toolbar -->
 <button onclick="loadStockData()" style="padding:10px 18px;background:#1a3c34;color:white;border:none;border-radius:10px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;">🔄 Refresh</button>
-<script src="db.js"></script>
 <script>
 // ===== ACTIVATION CHECK =====
 function checkActivation() {
@@ -1488,7 +1512,6 @@ function exportStock() {
     alert('✅ Stock exported!');
 }
 </script>
-<script src="db.js"></script>
 <script>
 // ===== ACTIVATION CHECK =====
 function checkActivation() {
@@ -1532,7 +1555,6 @@ td .value-amount {
     color: #1a3c34;
 }
 </style>
-<script src="db.js"></script>
 <script>
 // ===== ACTIVATION CHECK =====
 function checkActivation() {
@@ -1625,7 +1647,6 @@ renderProducts = function() {
     }).join('');
 };
 </script>
-<script src="db.js"></script>
 <script>
 // ===== ACTIVATION CHECK =====
 function checkActivation() {
@@ -1683,7 +1704,6 @@ renderStats = function() {
     document.getElementById('stockValue').textContent = `KES ${totalValue.toFixed(0)}`;
 };
 </script>
-<script src="db.js"></script>
 <script>
 // ===== ACTIVATION CHECK =====
 function checkActivation() {
@@ -1809,5 +1829,3 @@ renderProducts = function() {
     console.log('📊 Stock stats:', { total, inStock, lowStock, outStock });
 };
 </script>
-</body>
-</html>
