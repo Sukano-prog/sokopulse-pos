@@ -158,6 +158,20 @@ function dbGetAll(db, store) { return new Promise((r,x) => { const tx = db.trans
 document.addEventListener("DOMContentLoaded", function() {
 });
 </script>
+
+<script>
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/sw.js')
+            .then(function(reg) {
+                console.log('✅ Service Worker registered');
+            })
+            .catch(function(err) {
+                console.log('❌ Service Worker registration failed:', err);
+            });
+    });
+}
+</script>
 </body>
 </html>
 <style>
