@@ -396,10 +396,39 @@ function renderLicenseList() {
 }
 
 function deleteLicense(index) {
-    if (!confirm('Delete this license?')) return;
+    if (!confirm('⚠️ DELETE LICENSE?\n\nThis will IMMEDIATELY lock out the store!')) return;
+    if (!confirm('⚠️ FINAL WARNING: This cannot be undone!')) return;
+    
+    const license = generatedKeys[index];
+    if (!license) return;
+    
+    try {
+        // Add to revoked licenses
+        const db = openDB();
+        db.then(function(db) {
+            if (db.objectStoreNames.contains('revoked_licenses')) {
+                const tx = db.transaction('revoked_licenses', 'readwrite');
+                const store = tx.objectStore('revoked_licenses');
+                store.add({
+                    key: license.key,
+                    machine_id: license.machineId || '',
+                    store_name: license.storeName || 'Unknown',
+                    revoked_at: new Date().toISOString()
+                }).onsuccess = function() {
+                    console.log('✅ License revoked:', license.key);
+                };
+            }
+            db.close();
+        });
+    } catch(e) {
+        console.error('Error revoking license:', e);
+    }
+    
+    // Remove from list
     generatedKeys.splice(index, 1);
     localStorage.setItem('generated_keys', JSON.stringify(generatedKeys));
     renderLicenseList();
+    alert('✅ License revoked! Store is now locked out.');
 }
 
 function clearAllKeys() {
