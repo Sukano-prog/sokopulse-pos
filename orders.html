@@ -250,6 +250,17 @@
 
 <script src="db.js"></script>
 <script>
+function isAdmin() {
+    try {
+        const user = JSON.parse(localStorage.getItem("pos_user") || "{}");
+        return user.role === "admin";
+    } catch(e) {
+        return false;
+    }
+}
+if (!isAdmin()) {
+    window.location.href = "pos.html";
+}
 
 function isAdmin() {
     try {
@@ -662,6 +673,17 @@ document.addEventListener('keydown', function(e) {
 </html>
 
 <script>
+function isAdmin() {
+    try {
+        const user = JSON.parse(localStorage.getItem("pos_user") || "{}");
+        return user.role === "admin";
+    } catch(e) {
+        return false;
+    }
+}
+if (!isAdmin()) {
+    window.location.href = "pos.html";
+}
 if ("serviceWorker" in navigator) {
     window.addEventListener("load", function() {
         navigator.serviceWorker.register("/sw.js")

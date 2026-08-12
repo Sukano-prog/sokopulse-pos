@@ -334,6 +334,17 @@
 
 <script src="db.js"></script>
 <script>
+function isAdmin() {
+    try {
+        const user = JSON.parse(localStorage.getItem("pos_user") || "{}");
+        return user.role === "admin";
+    } catch(e) {
+        return false;
+    }
+}
+if (!isAdmin()) {
+    window.location.href = "pos.html";
+}
 
 function isAdmin() {
     try {
@@ -539,6 +550,17 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 <script>
+function isAdmin() {
+    try {
+        const user = JSON.parse(localStorage.getItem("pos_user") || "{}");
+        return user.role === "admin";
+    } catch(e) {
+        return false;
+    }
+}
+if (!isAdmin()) {
+    window.location.href = "pos.html";
+}
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
         navigator.serviceWorker.register('/sw.js')
@@ -571,6 +593,17 @@ if ('serviceWorker' in navigator) {
 
 
 <script>
+function isAdmin() {
+    try {
+        const user = JSON.parse(localStorage.getItem("pos_user") || "{}");
+        return user.role === "admin";
+    } catch(e) {
+        return false;
+    }
+}
+if (!isAdmin()) {
+    window.location.href = "pos.html";
+}
 
 function isAdmin() {
     try {
@@ -706,6 +739,17 @@ function renderFilteredStats() {
 </script>
 
 <script>
+function isAdmin() {
+    try {
+        const user = JSON.parse(localStorage.getItem("pos_user") || "{}");
+        return user.role === "admin";
+    } catch(e) {
+        return false;
+    }
+}
+if (!isAdmin()) {
+    window.location.href = "pos.html";
+}
 
 function isAdmin() {
     try {
@@ -853,6 +897,17 @@ document.addEventListener('DOMContentLoaded', function() {
 </style>
 
 <script>
+function isAdmin() {
+    try {
+        const user = JSON.parse(localStorage.getItem("pos_user") || "{}");
+        return user.role === "admin";
+    } catch(e) {
+        return false;
+    }
+}
+if (!isAdmin()) {
+    window.location.href = "pos.html";
+}
 
 function isAdmin() {
     try {
@@ -888,6 +943,17 @@ if (localStorage.getItem('activated') !== 'true') {
 
 
 <script>
+function isAdmin() {
+    try {
+        const user = JSON.parse(localStorage.getItem("pos_user") || "{}");
+        return user.role === "admin";
+    } catch(e) {
+        return false;
+    }
+}
+if (!isAdmin()) {
+    window.location.href = "pos.html";
+}
 
 function isAdmin() {
     try {
@@ -910,6 +976,17 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 <script>
+function isAdmin() {
+    try {
+        const user = JSON.parse(localStorage.getItem("pos_user") || "{}");
+        return user.role === "admin";
+    } catch(e) {
+        return false;
+    }
+}
+if (!isAdmin()) {
+    window.location.href = "pos.html";
+}
 
 function isAdmin() {
     try {
@@ -927,6 +1004,17 @@ if (!isAdmin()) {
 </script>
 
 <script>
+function isAdmin() {
+    try {
+        const user = JSON.parse(localStorage.getItem("pos_user") || "{}");
+        return user.role === "admin";
+    } catch(e) {
+        return false;
+    }
+}
+if (!isAdmin()) {
+    window.location.href = "pos.html";
+}
 
 function isAdmin() {
     try {
