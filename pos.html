@@ -1035,16 +1035,10 @@ function confirmCashPayment() {
     }
     
     var change = received - total;
-    var confirmMsg = '💵 Cash Payment
-
-';
-    confirmMsg += 'Total: KES ' + total.toFixed(2) + '
-';
-    confirmMsg += 'Received: KES ' + received.toFixed(2) + '
-';
-    confirmMsg += 'Change: KES ' + change.toFixed(2) + '
-
-';
+    var confirmMsg = '💵 Cash Payment\n\n';
+    confirmMsg += 'Total: KES ' + total.toFixed(2) + '\n';
+    confirmMsg += 'Received: KES ' + received.toFixed(2) + '\n';
+    confirmMsg += 'Change: KES ' + change.toFixed(2) + '\n\n';
     confirmMsg += 'Confirm payment?';
     
     if (!confirm(confirmMsg)) return;
