@@ -94,8 +94,20 @@
     <p class="subtitle">Generate activation keys with auto-expiry dates.</p>
 
     <div class="form-group">
+        <label>Store Name / Business Name</label>
+        <input type="text" id="storeNameInput" placeholder="e.g. Mama's Grocery, John's Hardware..." style="font-family:'Inter',sans-serif;font-size:14px;">
+    </div>
+    <div class="form-group">
         <label>Machine ID (from user)</label>
         <input type="text" id="machineIdInput" placeholder="Paste the user's Machine ID here..." style="font-family:monospace;font-size:14px;">
+    </div>
+    <div class="form-group">
+        <label>Store Owner Name</label>
+        <input type="text" id="ownerNameInput" placeholder="e.g. John Doe" style="font-family:'Inter',sans-serif;font-size:14px;">
+    </div>
+    <div class="form-group">
+        <label>Store Phone</label>
+        <input type="text" id="storePhoneInput" placeholder="0712345678" style="font-family:'Inter',sans-serif;font-size:14px;">
     </div>
 
     <div class="grid-2">
@@ -135,9 +147,15 @@
 
     <hr style="margin:20px 0;border-color:#e2e8f0;">
 
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-        <h3>📋 Active Licenses</h3>
-        <button class="btn btn-danger" onclick="clearAllKeys()" style="padding:6px 14px;font-size:12px;">🗑️ Clear All</button>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
+        <div>
+            <h3>📋 Store Licenses</h3>
+            <span style="font-size:12px;color:#94a3b8;" id="storeCount">Total: 0 stores</span>
+        </div>
+        <div style="display:flex;gap:8px;">
+            <button class="btn btn-secondary" onclick="exportStores()" style="padding:6px 14px;font-size:12px;">📤 Export</button>
+            <button class="btn btn-danger" onclick="clearAllKeys()" style="padding:6px 14px;font-size:12px;">🗑️ Clear All</button>
+        </div>
     </div>
     <div class="license-list" id="licenseList">
         <p style="color:#94a3b8;">No licenses generated yet.</p>
@@ -199,7 +217,10 @@ function updateExpiryDate() {
 
 // ===== GENERATE KEY =====
 function generateKey() {
+    const storeName = document.getElementById('storeNameInput').value.trim() || 'Unnamed Store';
     const machineId = document.getElementById('machineIdInput').value.trim();
+    const ownerName = document.getElementById('ownerNameInput').value.trim() || 'Unknown';
+    const storePhone = document.getElementById('storePhoneInput').value.trim() || '';
     const type = document.getElementById('licenseType').value;
     const expiryDateStr = document.getElementById('customExpiry').value;
     const status = document.getElementById('status');
@@ -238,8 +259,12 @@ function generateKey() {
     
     // Save the license with expiry
     const license = {
-        key: key,
+        id: 'STORE-' + Date.now().toString().slice(-6),
+        storeName: storeName,
         machineId: machineId,
+        ownerName: ownerName,
+        storePhone: storePhone,
+        key: key,
         type: type,
         generated: new Date().toISOString(),
         expires: new Date(expiryDateStr).toISOString(),
@@ -283,10 +308,40 @@ function copyKey() {
     });
 }
 
+
+
+function exportStores() {
+    if (generatedKeys.length === 0) {
+        alert('❌ No stores to export');
+        return;
+    }
+    
+    let csv = 'Store Name,Owner,Machine ID,Phone,License Key,Type,Generated,Expires,Status\n';
+    generatedKeys.forEach(function(lic) {
+        const expires = new Date(lic.expires);
+        const now = new Date();
+        const isExpired = expires < now;
+        const status = isExpired ? 'Expired' : 'Active';
+        csv += (lic.storeName || 'Unnamed') + ',' + (lic.ownerName || 'Unknown') + ',' + (lic.machineId || '') + ',' + (lic.storePhone || '') + ',' + lic.key + ',' + (lic.type || '') + ',' + new Date(lic.generated).toLocaleDateString() + ',' + expires.toLocaleDateString() + ',' + status + '\n';
+    });
+    
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'stores_export_' + new Date().toISOString().slice(0, 10) + '.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+    alert('✅ Stores exported!');
+}
+
 function renderLicenseList() {
     const container = document.getElementById('licenseList');
+    const countEl = document.getElementById('storeCount');
+    if (countEl) countEl.textContent = 'Total: ' + generatedKeys.length + ' stores';
+    
     if (generatedKeys.length === 0) {
-        container.innerHTML = '<p style="color:#94a3b8;">No licenses generated yet.</p>';
+        container.innerHTML = '<p style="color:#94a3b8;">No stores registered yet.</p>';
         return;
     }
     
@@ -317,14 +372,23 @@ function renderLicenseList() {
             statusText = '⚠️ ' + daysLeft + ' days left';
         }
         
-        html += `<div class="license-item">
-            <div>
-                <div class="key-text">${lic.key}</div>
-                <div class="info">${typeLabels[lic.type] || lic.type} | Expires: ${expires.toLocaleDateString()} ${isExpired ? '❌' : ''}</div>
+        html += `<div class="license-item" style="border-left: 4px solid ${isExpired ? '#ef4444' : '#22c55e'}; padding-left: 12px;">
+            <div style="flex:1;">
+                <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:4px;">
+                    <strong style="font-size:14px;color:#0f172a;">${lic.storeName || 'Unnamed Store'}</strong>
+                    <span style="font-size:11px;color:#94a3b8;">${lic.ownerName || 'Unknown Owner'}</span>
+                </div>
+                <div style="font-size:12px;color:#64748b;margin-top:2px;">
+                    Machine: ${lic.machineId ? lic.machineId.slice(0, 12) + '...' : 'N/A'} 
+                    ${lic.storePhone ? '| 📞 ' + lic.storePhone : ''}
+                </div>
+                <div style="font-size:11px;color:#94a3b8;margin-top:2px;">
+                    🔑 ${lic.key} | ${typeLabels[lic.type] || lic.type} | Expires: ${expires.toLocaleDateString()}
+                </div>
             </div>
-            <div style="display:flex;align-items:center;gap:8px;">
+            <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
                 <span class="${statusClass}">${statusText}</span>
-                <button onclick="deleteLicense(${originalIndex})" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:14px;">✕</button>
+                <button onclick="deleteLicense(${originalIndex})" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:14px;padding:4px 8px;" title="Delete License">✕</button>
             </div>
         </div>`;
     });
