@@ -237,7 +237,7 @@
                 </div>
 
                 <div class="payment-buttons">
-                    <button class="cash" id="paymentCash" onclick="processPayment('cash')">💵 Cash</button>
+                    <button class="cash" id="paymentCash" onclick="openCashTender()">💵 Cash</button>
                     <button class="mpesa" id="paymentMpesa" onclick="processPayment('mpesa')">📱 M-Pesa</button>
                     <button class="card" id="paymentCard" onclick="processPayment('card')">💳 Card</button>
                     <button class="credit" id="paymentCredit" onclick="processPayment('credit')">📋 Credit</button>
@@ -252,6 +252,38 @@
             </div>
         </div>
     </main>
+</div>
+
+
+<!-- Cash Tender Modal -->
+<div class="modal" id="cashTenderModal">
+    <div class="modal-content" style="max-width:420px;">
+        <span class="modal-close" onclick="closeCashTender()">&times;</span>
+        <h2>💵 Cash Payment</h2>
+        <div style="margin:8px 0 12px 0;padding:12px;background:#f8fafc;border-radius:8px;">
+            <div style="display:flex;justify-content:space-between;font-size:14px;">
+                <span>Total Amount:</span>
+                <span style="font-weight:700;color:#1a3c34;" id="cashTotalAmount">KES 0.00</span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Amount Received (KES)</label>
+            <input type="number" id="cashReceived" placeholder="0.00" step="0.01" min="0" oninput="calculateCashChange()">
+        </div>
+        <div style="padding:10px;border-radius:8px;margin:8px 0;background:#f0fdf4;border:1px solid #bbf7d0;" id="changeDisplay">
+            <div style="display:flex;justify-content:space-between;font-size:16px;">
+                <span>Change:</span>
+                <span style="font-weight:700;color:#166534;" id="cashChangeAmount">KES 0.00</span>
+            </div>
+        </div>
+        <div style="color:#ef4444;font-size:13px;display:none;margin:8px 0;padding:8px;background:#fef2f2;border-radius:6px;" id="cashError">
+            ❌ Amount received must be equal to or greater than the total.
+        </div>
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeCashTender()">Cancel</button>
+            <button class="btn-save" onclick="confirmCashPayment()">✅ Confirm Payment</button>
+        </div>
+    </div>
 </div>
 
 <!-- Receipt Preview Modal -->
@@ -944,10 +976,99 @@ async function loadReceiptSettings() {
 }
 
 // ===== PROCESS PAYMENT =====
-function processPayment(method) {
+
+// ===== CASH TENDER FUNCTIONS =====
+let cashPendingOrder = null;
+
+function openCashTender() {
     if (cart.length === 0) {
         alert('❌ Cart is empty');
         return;
+    }
+    
+    // Calculate total
+    var subtotal = cart.reduce(function(s, i) { return s + (i.price * i.qty * (1 - (i.discount || 0) / 100)); }, 0);
+    var tax = 0;
+    if (taxEnabled && taxRate > 0) {
+        tax = subtotal * (taxRate / 100);
+    }
+    var total = subtotal + tax;
+    
+    cashPendingOrder = { subtotal: subtotal, tax: tax, total: total };
+    
+    document.getElementById('cashTotalAmount').textContent = 'KES ' + total.toFixed(2);
+    document.getElementById('cashReceived').value = '';
+    document.getElementById('cashChangeAmount').textContent = 'KES 0.00';
+    document.getElementById('cashError').style.display = 'none';
+    document.getElementById('changeDisplay').style.display = 'block';
+    
+    document.getElementById('cashTenderModal').classList.add('show');
+    document.getElementById('cashReceived').focus();
+}
+
+function calculateCashChange() {
+    var received = parseFloat(document.getElementById('cashReceived').value) || 0;
+    var total = cashPendingOrder ? cashPendingOrder.total : 0;
+    var change = received - total;
+    
+    var errorEl = document.getElementById('cashError');
+    var changeEl = document.getElementById('cashChangeAmount');
+    
+    if (change < 0) {
+        errorEl.style.display = 'block';
+        changeEl.textContent = 'KES 0.00';
+        changeEl.style.color = '#991b1b';
+    } else {
+        errorEl.style.display = 'none';
+        changeEl.textContent = 'KES ' + change.toFixed(2);
+        changeEl.style.color = '#166534';
+    }
+}
+
+function confirmCashPayment() {
+    var received = parseFloat(document.getElementById('cashReceived').value) || 0;
+    var total = cashPendingOrder ? cashPendingOrder.total : 0;
+    
+    if (received < total) {
+        alert('❌ Amount received is less than the total amount due.');
+        return;
+    }
+    
+    var change = received - total;
+    var confirmMsg = '💵 Cash Payment
+
+';
+    confirmMsg += 'Total: KES ' + total.toFixed(2) + '
+';
+    confirmMsg += 'Received: KES ' + received.toFixed(2) + '
+';
+    confirmMsg += 'Change: KES ' + change.toFixed(2) + '
+
+';
+    confirmMsg += 'Confirm payment?';
+    
+    if (!confirm(confirmMsg)) return;
+    
+    closeCashTender();
+    processPayment('cash', received);
+}
+
+function closeCashTender() {
+    document.getElementById('cashTenderModal').classList.remove('show');
+    cashPendingOrder = null;
+}
+
+
+function processPayment(method, amountReceived) {
+    if (cart.length === 0) {
+        alert('❌ Cart is empty');
+        return;
+    }
+    
+    // For cash, use the amount received from tender modal
+    if (method === 'cash' && amountReceived) {
+        // Store the amount received for the receipt
+        window.cashReceivedAmount = amountReceived;
     }
 
     var subtotal = cart.reduce(function(s, i) { return s + (i.price * i.qty * (1 - (i.discount || 0) / 100)); }, 0);
@@ -1168,6 +1289,10 @@ function showReceipt(order) {
     receipt += 'TOTAL:       KES ' + total.toFixed(2) + '\n';
     receipt += '================================\n';
     receipt += 'Payment: ' + (order.payment_method || 'Cash') + '\n';
+    if (order.payment_method === 'cash' && order.cash_received) {
+        receipt += 'Received:  KES ' + order.cash_received.toFixed(2) + '\n';
+        receipt += 'Change:    KES ' + (order.cash_received - order.total).toFixed(2) + '\n';
+    }
     receipt += 'Status: ' + (order.status || 'Completed') + '\n';
     receipt += '================================\n';
     receipt += '  ' + (settings.footer || 'Thank you for shopping with us!') + '\n';
