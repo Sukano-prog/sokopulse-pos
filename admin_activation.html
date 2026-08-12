@@ -1,6 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
+<script>
+// ===== PASSWORD PROTECTION =====
+(function() {
+    // Check session
+    if (sessionStorage.getItem('admin_authenticated') === 'true') {
+        return;
+    }
+    
+    // Ask for password
+    var pass = prompt('🔑 Enter System Owner Password:');
+    if (pass === 'SokoPulse2026') {
+        sessionStorage.setItem('admin_authenticated', 'true');
+    } else {
+        alert('❌ Access Denied!');
+        window.location.href = 'pos.html';
+    }
+})();
+</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Activation - SokoPulse</title>
