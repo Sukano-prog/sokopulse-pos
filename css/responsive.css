@@ -52,6 +52,7 @@
         left: -280px;
         width: 280px;
         height: 100vh;
+        overflow-y: auto;
         z-index: 1000;
         transition: left 0.3s ease;
         box-shadow: 0 0 40px rgba(0,0,0,0.2);
