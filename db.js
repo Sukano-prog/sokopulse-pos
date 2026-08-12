@@ -20,7 +20,8 @@ function openDB() {
                 'audit_log': ['user', 'action', 'date'],
                 'stock_movements': ['product_id', 'type', 'date'],
                 'settings': ['key'],
-                'users': ['username', 'role']
+                'users': ['username', 'role'],
+                'revoked_licenses': ['key', 'machine_id']
             };
             
             for (const [name, indexes] of Object.entries(stores)) {
