@@ -1,25 +1,30 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-
 <script>
-// ===== PASSWORD PROTECTION =====
+// ===== SIMPLE PASSWORD PROTECTION =====
 (function() {
-    // Check session
-    if (sessionStorage.getItem('admin_authenticated') === 'true') {
+    // Check if already authenticated
+    if (sessionStorage.getItem('admin_pass') === 'true') {
         return;
     }
     
     // Ask for password
     var pass = prompt('🔑 Enter System Owner Password:');
-    if (pass === 'SokoPulse2026') {
-        sessionStorage.setItem('admin_authenticated', 'true');
+    if (pass === 'Linux@123') {
+        sessionStorage.setItem('admin_pass', 'true');
+        return;
     } else {
         alert('❌ Access Denied!');
         window.location.href = 'pos.html';
     }
 })();
 </script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Activation - SokoPulse</title>
+
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Activation - SokoPulse</title>
@@ -80,49 +85,7 @@
         @media (max-width: 600px) { .container { padding: 20px; } .container::before { margin: -20px -20px 20px -20px; } .grid-2 { grid-template-columns: 1fr; } .row { flex-direction: column; } .row .btn { width: 100%; } }
     </style>
 
-<script>
-// ===== SYSTEM OWNER PASSWORD PROTECTION =====
-function checkSystemOwner() {
-    // Check if already authenticated
-    if (sessionStorage.getItem('admin_authenticated') === 'true') {
-        return true;
-    }
-    
-    // Check for stored user (only system owner should access)
-    const userData = localStorage.getItem('pos_user');
-    if (userData) {
-        try {
-            const user = JSON.parse(userData);
-            // Only allow specific username (system owner)
-            // Change this to your username
-            if (user.username === 'admin' && user.role === 'admin') {
-                // Also check if this is the system owner (you)
-                // You can add a special flag or just use the username
-                if (user.username === 'admin') {
-                    sessionStorage.setItem('admin_authenticated', 'true');
-                    return true;
-                }
-            }
-        } catch(e) {}
-    }
-    
-    // If not authenticated, ask for password
-    const password = prompt('🔑 Enter System Owner Password:');
-    if (password === 'Linux@123') {  // CHANGE THIS PASSWORD
-        sessionStorage.setItem('admin_authenticated', 'true');
-        return true;
-    } else {
-        alert('❌ Access Denied! Redirecting to POS...');
-        window.location.href = 'pos.html';
-        return false;
-    }
-}
 
-// Run check immediately
-if (!checkSystemOwner()) {
-    // Redirect already happens in checkSystemOwner
-}
-</script>
 </head>
 <body>
 
