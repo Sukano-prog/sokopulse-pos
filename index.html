@@ -279,7 +279,7 @@
     <form id="loginForm" onsubmit="handleLogin(event)">
         <div class="form-group">
             <label>Username</label>
-            <input type="text" id="username" value="admin" placeholder="Enter your username" required autofocus>
+            <input type="text" id="username" placeholder="Enter your username" placeholder="Enter your username" required autofocus>
         </div>
         <div class="form-group">
             <label>Password</label>
@@ -288,25 +288,7 @@
         <button type="submit" class="login-btn">🔐 Sign In</button>
     </form>
 
-    <div class="demo-credentials">
-        <p>🔑 Demo Credentials</p>
-        <div class="demo-grid">
-            <div class="demo-item">
-                👤 <strong>admin</strong>
-                <span class="role-badge">Admin</span>
-            </div>
-            <div class="demo-item" style="font-size:11px;color:#94a3b8;">
-                🔒 admin123
-            </div>
-            <div class="demo-item">
-                👤 <strong>cashier</strong>
-                <span class="role-badge cashier">Cashier</span>
-            </div>
-            <div class="demo-item" style="font-size:11px;color:#94a3b8;">
-                🔒 cashier123
-            </div>
-        </div>
-    </div>
+
 </div>
 
 <script>
@@ -315,8 +297,8 @@
         window.location.href = "activation.html";
     }
     const DEFAULT_USERS = [
-        { username: 'admin', password: 'admin123', role: 'admin', name: 'Administrator' },
-        { username: 'cashier', password: 'cashier123', role: 'cashier', name: 'Cashier' }
+        { username: 'admin', password: '********', role: 'admin', name: 'Administrator' },
+        { username: 'cashier', password: '********', role: 'cashier', name: 'Cashier' }
     ];
 
     let db = null;
