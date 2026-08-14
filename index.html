@@ -306,7 +306,7 @@
 
     function openDB() {
         return new Promise((resolve, reject) => {
-            const request = indexedDB.open('SokoPulsePOS', 6);
+            const request = indexedDB.open('SokoPulsePOS', 7);
             request.onupgradeneeded = function(e) {
                 const db = e.target.result;
                 // ALL 8 STORES
