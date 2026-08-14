@@ -348,7 +348,7 @@ function activateSystem() {
     document.querySelector('.btn-primary').disabled = true;
     
     // Simulate validation (in production, this would call your server)
-    setTimeout(() => {
+    setTimeout(function() {
         // Check key format: TYPE-YYYYMMDD-XXXX
         const pattern = /^[A-Z]{4,5}-[0-9]{8}-[A-Z0-9]{4}$/;
         const isValid = pattern.test(key);
@@ -394,11 +394,12 @@ function activateSystem() {
         dbReq.onerror = function() {
             continueActivation(key, status, isValid);
         };
-    }
+    }, 1500);
+}
 
-    // Wrapper function to continue activation after revocation check
-    function continueActivation(key, status, isValid) {
-        if (isValid) {
+// Wrapper function to continue activation after revocation check
+function continueActivation(key, status, isValid) {
+    if (isValid) {
             // Parse expiry from key type
             const parts = key.split('-');
             const type = parts[0];
@@ -455,7 +456,7 @@ function activateSystem() {
             status.textContent = '❌ Invalid activation key format. Use TYPE-YYYYMMDD-XXXX';
             document.querySelector('.btn-primary').disabled = false;
         }
-    }, 1500);
+    }
 }
 
 // ===== GO TO POS =====
