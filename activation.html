@@ -400,62 +400,61 @@ function activateSystem() {
 // Wrapper function to continue activation after revocation check
 function continueActivation(key, status, isValid) {
     if (isValid) {
-            // Parse expiry from key type
-            const parts = key.split('-');
-            const type = parts[0];
-            
-            // Set expiry based on type
-            const now = new Date();
-            let expiryDate = new Date(now);
-            let typeLabel = '';
-            
-            switch(type) {
-                case 'PERM':
-                    expiryDate.setFullYear(now.getFullYear() + 10);
-                    typeLabel = 'Permanent';
-                    break;
-                case 'Y1YR':
-                    expiryDate.setFullYear(now.getFullYear() + 1);
-                    typeLabel = '1 Year';
-                    break;
-                case 'M6MO':
-                    expiryDate.setMonth(now.getMonth() + 6);
-                    typeLabel = '6 Months';
-                    break;
-                case 'M3MO':
-                    expiryDate.setMonth(now.getMonth() + 3);
-                    typeLabel = '3 Months';
-                    break;
-                case 'M1MO':
-                    expiryDate.setMonth(now.getMonth() + 1);
-                    typeLabel = '1 Month';
-                    break;
-                case 'TRIAL':
-                    expiryDate.setDate(now.getDate() + 14);
-                    typeLabel = 'Trial (14 days)';
-                    break;
-                default:
-                    expiryDate.setFullYear(now.getFullYear() + 10);
-                    typeLabel = 'Permanent';
-            }
-            
-            // Store activation
-            localStorage.setItem('activated', 'true');
-            localStorage.setItem('activation_key', key);
-            localStorage.setItem('activation_date', now.toISOString());
-            localStorage.setItem('expiry_date', expiryDate.toISOString());
-            localStorage.setItem('license_type', typeLabel);
-            localStorage.setItem('machine_id', getMachineId());
-            
-            status.className = 'status success show';
-            status.textContent = '✅ Activation successful! License: ' + typeLabel;
-            
-            setTimeout(goToStep3, 1000);
-        } else {
-            status.className = 'status error show';
-            status.textContent = '❌ Invalid activation key format. Use TYPE-YYYYMMDD-XXXX';
-            document.querySelector('.btn-primary').disabled = false;
+        // Parse expiry from key type
+        const parts = key.split('-');
+        const type = parts[0];
+        
+        // Set expiry based on type
+        const now = new Date();
+        let expiryDate = new Date(now);
+        let typeLabel = '';
+        
+        switch(type) {
+            case 'PERM':
+                expiryDate.setFullYear(now.getFullYear() + 10);
+                typeLabel = 'Permanent';
+                break;
+            case 'Y1YR':
+                expiryDate.setFullYear(now.getFullYear() + 1);
+                typeLabel = '1 Year';
+                break;
+            case 'M6MO':
+                expiryDate.setMonth(now.getMonth() + 6);
+                typeLabel = '6 Months';
+                break;
+            case 'M3MO':
+                expiryDate.setMonth(now.getMonth() + 3);
+                typeLabel = '3 Months';
+                break;
+            case 'M1MO':
+                expiryDate.setMonth(now.getMonth() + 1);
+                typeLabel = '1 Month';
+                break;
+            case 'TRIAL':
+                expiryDate.setDate(now.getDate() + 14);
+                typeLabel = 'Trial (14 days)';
+                break;
+            default:
+                expiryDate.setFullYear(now.getFullYear() + 10);
+                typeLabel = 'Permanent';
         }
+        
+        // Store activation
+        localStorage.setItem('activated', 'true');
+        localStorage.setItem('activation_key', key);
+        localStorage.setItem('activation_date', now.toISOString());
+        localStorage.setItem('expiry_date', expiryDate.toISOString());
+        localStorage.setItem('license_type', typeLabel);
+        localStorage.setItem('machine_id', getMachineId());
+        
+        status.className = 'status success show';
+        status.textContent = '✅ Activation successful! License: ' + typeLabel;
+        
+        setTimeout(goToStep3, 1000);
+    } else {
+        status.className = 'status error show';
+        status.textContent = '❌ Invalid activation key format. Use TYPE-YYYYMMDD-XXXX';
+        document.querySelector('.btn-primary').disabled = false;
     }
 }
 
