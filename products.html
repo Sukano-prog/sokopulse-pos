@@ -720,6 +720,7 @@ function openEditModal(id) {
     document.getElementById('productBarcode').value = p.barcode || '';
     document.getElementById('productRetail').value = p.retail_price || p.selling_price || '';
     document.getElementById('productWholesale').value = p.wholesale_price || '';
+    document.getElementById('productCost').value = p.cost_price || '';
     document.getElementById('productStock').value = p.current_stock || 0;
     document.getElementById('productMinStock').value = p.min_stock_alert || 5;
     document.getElementById('productExpiry').value = p.expiry_date || '';
@@ -746,6 +747,7 @@ async function saveProduct(e) {
     const sku = document.getElementById('productSku').value.trim();
     const barcode = document.getElementById('productBarcode').value.trim();
     const retailPrice = parseFloat(document.getElementById('productRetail').value) || 0;
+    const costPrice = parseFloat(document.getElementById('productCost').value) || 0;
     const wholesalePrice = parseFloat(document.getElementById('productWholesale').value) || 0;
     const stock = parseInt(document.getElementById('productStock').value) || 0;
     const minStock = parseInt(document.getElementById('productMinStock').value) || 5;
@@ -795,6 +797,7 @@ async function saveProduct(e) {
         sku: sku || '',
         barcode: barcode || '',
         retail_price: retailPrice,
+        cost_price: costPrice,
         wholesale_price: wholesalePrice || 0,
         selling_price: retailPrice,
         current_stock: stock,
