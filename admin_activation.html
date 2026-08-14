@@ -148,6 +148,24 @@
     <hr style="margin:20px 0;border-color:#e2e8f0;">
 
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;align-items:center;">
+        <div style="flex:1;min-width:150px;">
+            <input type="text" id="licenseSearch" placeholder="🔍 Search store or key..." oninput="renderLicenseList()" style="width:100%;padding:8px 12px;border:2px solid #e2e8f0;border-radius:8px;font-family:'Inter',sans-serif;font-size:13px;">
+        </div>
+        <div>
+            <select id="licenseFilter" onchange="renderLicenseList()" style="padding:8px 12px;border:2px solid #e2e8f0;border-radius:8px;font-family:'Inter',sans-serif;font-size:13px;background:white;">
+                <option value="all">📋 All Licenses</option>
+                <option value="active">✅ Active</option>
+                <option value="expired">❌ Expired</option>
+                <option value="expiring">⚠️ Expiring Soon (30 days)</option>
+                <option value="trial">🧪 Trial</option>
+                <option value="permanent">♾️ Permanent</option>
+            </select>
+        </div>
+        <div>
+            <span style="font-size:13px;color:#94a3b8;" id="licenseCount">0 licenses</span>
+        </div>
+    </div>
         <div>
             <h3>📋 Store Licenses</h3>
             <span style="font-size:12px;color:#94a3b8;" id="storeCount">Total: 0 stores</span>
@@ -338,10 +356,46 @@ function exportStores() {
 function renderLicenseList() {
     const container = document.getElementById('licenseList');
     const countEl = document.getElementById('storeCount');
+    
+    // Get search and filter
+    const search = document.getElementById('licenseSearch')?.value?.toLowerCase() || '';
+    const filter = document.getElementById('licenseFilter')?.value || 'all';
+    const now = new Date();
+    
+    let filtered = generatedKeys.filter(function(lic) {
+        // Search
+        if (search) {
+            const matchStore = (lic.storeName || '').toLowerCase().includes(search);
+            const matchKey = (lic.key || '').toLowerCase().includes(search);
+            const matchOwner = (lic.ownerName || '').toLowerCase().includes(search);
+            const matchMachine = (lic.machineId || '').toLowerCase().includes(search);
+            if (!matchStore && !matchKey && !matchOwner && !matchMachine) return false;
+        }
+        
+        // Filter by status
+        const expires = new Date(lic.expires);
+        const isExpired = expires < now;
+        const daysLeft = Math.ceil((expires - now) / (1000 * 60 * 60 * 24));
+        const isExpiring = !isExpired && daysLeft <= 30;
+        const isTrial = lic.type === 'trial';
+        const isPermanent = lic.type === 'permanent' || lic.type === 'PERM';
+        
+        switch(filter) {
+            case 'active': return !isExpired;
+            case 'expired': return isExpired;
+            case 'expiring': return isExpiring;
+            case 'trial': return isTrial;
+            case 'permanent': return isPermanent;
+            default: return true;
+        }
+    });
+    
+    const countEl2 = document.getElementById('licenseCount');
+    if (countEl2) countEl2.textContent = filtered.length + ' licenses';
     if (countEl) countEl.textContent = 'Total: ' + generatedKeys.length + ' stores';
     
-    if (generatedKeys.length === 0) {
-        container.innerHTML = '<p style="color:#94a3b8;">No stores registered yet.</p>';
+    if (filtered.length === 0) {
+        container.innerHTML = '<p style="color:#94a3b8;">No stores match your search.</p>';
         return;
     }
     
