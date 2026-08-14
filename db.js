@@ -2,7 +2,7 @@
 // MASTER DATABASE - ONE FILE FOR ALL PAGES
 // ============================================
 const DB_NAME = 'SokoPulsePOS';
-const DB_VERSION = 6;
+const DB_VERSION = 7;
 
 // ===== AUTO-CREATE DATABASE ON LOAD =====
 (function() {
