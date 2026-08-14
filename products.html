@@ -650,6 +650,7 @@ function renderProducts() {
             '<td><strong>' + (p.name || 'Unnamed') + '</strong></td>' +
             '<td>' + (p.sku || '-') + '</td>' +
             '<td>' + categoryName + '</td>' +
+            '<td>KES ' + (p.cost_price || 0).toFixed(2) + '</td>' + 
             '<td>KES ' + (p.retail_price || p.selling_price || 0).toFixed(2) + '</td>' +
             '<td>KES ' + (p.wholesale_price || 0).toFixed(2) + '</td>' +
             '<td>' + (p.current_stock || 0) + '</td>' +
