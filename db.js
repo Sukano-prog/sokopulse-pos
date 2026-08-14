@@ -21,7 +21,8 @@ function openDB() {
                 'stock_movements': ['product_id', 'type', 'date'],
                 'settings': ['key'],
                 'users': ['username', 'role'],
-                'revoked_licenses': ['key', 'machine_id']
+                'revoked_licenses': ['key', 'machine_id'],
+                'categories': ['name', 'parent_id']
             };
             
             for (const [name, indexes] of Object.entries(stores)) {
