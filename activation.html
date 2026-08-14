@@ -363,7 +363,6 @@ function activateSystem() {
         }
         
         // Check if key is REVOKED
-        const dbReq = indexedDB.open('SokoPulsePOS', 6);
         dbReq.onsuccess = function(e) {
             const db = e.target.result;
             if (db.objectStoreNames.contains('revoked_licenses')) {
