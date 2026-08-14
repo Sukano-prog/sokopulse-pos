@@ -18,6 +18,7 @@ function setupDatabase() {
     
     const req = indexedDB.open(DB_NAME, DB_VERSION);
     
+    req.onupgradeneeded = function(e) {
         const db = e.target.result;
         let created = [];
         
@@ -29,21 +30,20 @@ function setupDatabase() {
             'audit_log': ['user', 'action', 'date'],
             'stock_movements': ['product_id', 'type', 'date'],
             'settings': ['key'],
-            'users': ['username', 'role']
+            'users': ['username', 'role'],
+            'categories': ['name', 'parent_id'],
+            'revoked_licenses': ['key', 'machine_id']
         };
         
         for (const [name, indexes] of Object.entries(stores)) {
             if (!db.objectStoreNames.contains(name)) {
+                const store = db.createObjectStore(name, { keyPath: 'id', autoIncrement: true });
                 for (const idx of indexes) {
                     store.createIndex(idx, idx, { unique: false });
                 }
                 created.push(name);
+                console.log('✅ Created store:', name);
             }
-        }
-        
-        // Add default admin user
-        if (created.includes('users') || !db.objectStoreNames.contains('users')) {
-            // Add default user if users store exists
         }
         
         result.innerHTML = created.length > 0 
