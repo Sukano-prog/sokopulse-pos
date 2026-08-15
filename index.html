@@ -304,24 +304,6 @@
 
     let db = null;
 
-    function openDB() {
-        return new Promise((resolve, reject) => {
-            const request = indexedDB.open('SokoPulsePOS', 7);
-            request.onupgradeneeded = function(e) {
-                const db = e.target.result;
-                // ALL 8 STORES
-                const stores = {
-                    'products': ['name', 'category', 'barcode', 'price'],
-                    'customers': ['name', 'phone', 'email'],
-                    'orders': ['order_number', 'customer_id', 'date', 'status'],
-                    'returns': ['order_number', 'status', 'date'],
-                    'audit_log': ['user', 'action', 'date'],
-                    'stock_movements': ['product_id', 'type', 'date'],
-                    'settings': ['key'],
-                    'users': ['username', 'role'],
-                    'categories': ['name', 'parent_id'],
-                    'revoked_licenses': ['key', 'machine_id']
-                };
                 for (const [name, indexes] of Object.entries(stores)) {
                     if (!db.objectStoreNames.contains(name)) {
                         const store = db.createObjectStore(name, { keyPath: 'id', autoIncrement: true });

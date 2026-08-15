@@ -304,17 +304,6 @@ function refreshCategories() {
 
 async function upgradeDatabase() {
     return new Promise((resolve, reject) => {
-        req.onupgradeneeded = function(e) {
-            const db = e.target.result;
-            if (!db.objectStoreNames.contains('categories')) {
-                const store = db.createObjectStore('categories', { keyPath: 'id', autoIncrement: true });
-                store.createIndex('name', 'name', { unique: true });
-            }
-            // Add category_id to products if not exists
-            if (db.objectStoreNames.contains('products')) {
-                // Products will get category_id field
-            }
-        };
         req.onsuccess = function(e) {
             resolve(e.target.result);
         };
