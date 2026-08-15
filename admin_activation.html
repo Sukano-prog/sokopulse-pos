@@ -1,3 +1,19 @@
+<script>
+// ===== ADMIN PASSWORD PROTECTION =====
+// Set your admin password here (change this to your password)
+const ADMIN_PASSWORD = "admin123";
+
+// Check if already authenticated in this session
+if (sessionStorage.getItem("admin_authenticated") !== "true") {
+    const enteredPassword = prompt("🔒 Admin Access Required\n\nEnter the admin password:");
+    if (enteredPassword === Linux@123) {
+        sessionStorage.setItem("admin_authenticated", "true");
+    } else {
+        alert("❌ Incorrect password! Access denied.");
+        window.location.href = "index.html";
+    }
+}
+</script>
 <!DOCTYPE html>
 <html lang="en">
 <head>
