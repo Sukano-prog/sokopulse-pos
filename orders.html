@@ -194,7 +194,6 @@
             </div>
         </div>
     </main>
-</div>
 
 <!-- Order Detail Modal -->
 <div class="modal" id="orderModal">
@@ -206,7 +205,6 @@
             <button class="btn-cancel" onclick="closeModal()">Close</button>
         </div>
     </div>
-</div>
 
 <!-- Status Change Modal -->
 <div class="modal" id="statusModal">
@@ -228,7 +226,6 @@
             <button class="btn-save" onclick="changeOrderStatus()">💾 Update</button>
         </div>
     </div>
-</div>
 
 <!-- Bulk Print Preview Modal -->
 <div class="modal" id="bulkPrintModal">
@@ -245,7 +242,6 @@
             <button class="btn-save" onclick="printBulkFromPreview()">🖨️ Print All</button>
         </div>
     </div>
-</div>
 
 
 <script src="db.js"></script>
@@ -457,208 +453,10 @@ function reprintReceipt(id) {
     }
    win.document.write('<html><head><title>Receipt</title><style>body{font-family:monospace;padding:20px;white-space:pre;}</style></head><body>' + receipt + '</body></html>');
 
-<!-- License Warning Banner -->
-    <span id="licenseWarningMessage">⚠️ Your license expires soon. Please renew in Settings.</span>
-
-// ===== LICENSE STATUS CHECK =====
-<script>
-function checkLicenseStatus() {
-    const activated = localStorage.getItem('activated');
-    const expiry = localStorage.getItem('expiry_date');
-    const code = localStorage.getItem('activation_code');
-    
-    // CASE 1: NOT ACTIVATED (Inactive)
-    if (!activated || activated !== 'true') {
-        alert('⚠️ Your license is not activated.\nPlease go to Settings to activate your license.');
-        // Redirect to settings after alert
-        window.location.href = 'settings.html';
-        return false;
-    }
-    
-    // CASE 2: Check expiry
-    if (expiry) {
-        const expiryDate = new Date(expiry);
-        const now = new Date();
-        const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
-        const expiryDate = new Date(expiry);
-        const now = new Date();
-        const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
-        
-        // CASE 3: EXPIRED
-        if (expiryDate < now) {
-            alert('⚠️ Your license has expired on ' + expiryDate.toLocaleDateString() + '.\nPlease contact your administrator to renew.');
-            // Clear license data
-            localStorage.removeItem('activated');
-            localStorage.removeItem('activation_code');
-            localStorage.removeItem('expiry_date');
-    document.addEventListener('DOMContentLoaded', function() {
-        checkLicenseStatus();
-    }
-    var csv = 'Order #,Date,Customer,Total,Payment Method,Status,Items\n';
-    orders.forEach(function(o) {
-        var items = [];
-        if (o.items) {
-            if (typeof o.items === 'string') {
-                try { items = JSON.parse(o.items); } catch(e) { items = []; }
-            } else if (Array.isArray(o.items)) {
-                items = o.items;
-            }
-        }
-        var itemNames = items.map(function(i) { return i.name + ' x' + (i.qty || 1); }).join('; ');
-        csv += (o.order_number || '#' + o.id) + ',' + new Date(o.date).toLocaleDateString() + ',' + (o.customer_name || 'Walk-in') + ',' + (o.total || 0).toFixed(2) + ',' + (o.payment_method || 'cash') + ',' + (o.status || 'completed') + ',"' + itemNames + '"\n';
-    });
-    var blob = new Blob([csv], { type: 'text/csv' });
-    var url = URL.createObjectURL(blob);
-    var a = document.createElement('a');
-    a.href = url;
-    a.download = 'orders_' + new Date().toISOString().slice(0, 10) + '.csv';
-    a.click();
-    URL.revokeObjectURL(url);
-    alert('Orders exported!');
-}
-
-// ===== BULK PRINT =====
-var bulkPrintData = [];
-
-function openBulkPrintPreview() {
-    var filtered = getFilteredOrders();
-    if (filtered.length === 0) {
-        alert('No orders to print');
-        return;
-    }
-
-    bulkPrintData = filtered;
-    var html = '';
-    var grandTotal = 0;
-
-    filtered.forEach(function(o, index) {
-        var items = [];
-        if (o.items) {
-            if (typeof o.items === 'string') {
-                try { items = JSON.parse(o.items); } catch(e) { items = []; }
-            } else if (Array.isArray(o.items)) {
-                items = o.items;
-            }
-        }
-
-        var orderTotal = o.total || 0;
-        grandTotal += orderTotal;
-
-        html += '================================\n';
-        html += '        SOKOPULSE POS\n';
-        html += '================================\n';
-        html += 'Order: ' + (o.order_number || '#' + o.id) + '\n';
-        html += 'Date: ' + new Date(o.date).toLocaleString() + '\n';
-        html += 'Customer: ' + (o.customer_name || 'Walk-in') + '\n';
-        html += 'Payment: ' + (o.payment_method || 'Cash') + '\n';
-        html += 'Status: ' + (o.status || 'Completed') + '\n';
-        html += '--------------------------------\n';
-
-        if (items.length === 0) {
-            html += 'No items\n';
-        } else {
-            items.forEach(function(item) {
-                var qty = item.qty || 1;
-                var price = item.price || 0;
-                var total = price * qty;
-                var name = (item.name || 'Unknown').slice(0, 25);
-                html += name.padEnd(25) + ' x' + qty + '  KES ' + total.toFixed(2) + '\n';
-            });
-        }
-
-        html += '--------------------------------\n';
-        html += 'Subtotal:    KES ' + (orderTotal || 0).toFixed(2) + '\n';
-        html += 'Tax (16%):   KES ' + ((orderTotal || 0) * 0.16).toFixed(2) + '\n';
-        html += 'TOTAL:       KES ' + (orderTotal || 0).toFixed(2) + '\n';
-        html += '================================\n';
-
-        if (index < filtered.length - 1) {
-            html += '\n\n';
-        }
-    });
-
-    html += '\n\n';
-    html += '================================\n';
-    html += '          SUMMARY\n';
-    html += '================================\n';
-    html += 'Total Orders: ' + filtered.length + '\n';
-    html += 'Grand Total:  KES ' + grandTotal.toFixed(2) + '\n';
-    html += '================================\n';
-
-    document.getElementById('bulkPrintContent').textContent = html;
-    document.getElementById('bulkOrderCount').textContent = filtered.length + ' orders selected';
-    document.getElementById('bulkTotalAmount').textContent = 'Total: KES ' + grandTotal.toFixed(2);
-    document.getElementById('bulkPrintModal').classList.add('show');
-}
-
-function closeBulkPrint() {
-    document.getElementById('bulkPrintModal').classList.remove('show');
-}
-
-function printBulkFromPreview() {
-    var content = document.getElementById('bulkPrintContent');
-    if (!content) return;
-    var receipt = content.textContent;
-    var win = window.open('', '_blank', 'width=450,height=700');
-    if (!win) {
-        alert('Please allow popups for printing');
-        return;
-    }
-    win.document.write('<html><head><title>Bulk Receipts</title><style>body{font-family:"Courier New",monospace;padding:20px;white-space:pre;font-size:12px;background:white;margin:0;}@media print{body{padding:10px;}@page{margin:0.5cm;}}</style></head><body>' + receipt + '
-<script>
-// ===== LICENSE CHECK =====
-
-// Run checks
-// License check removed);
-</script>
-
-<!-- License Warning Banner -->
-    <span id="licenseWarningMessage">⚠️ Your license expires soon. Please renew in Settings.</span>
-</div>
 
 <script>
 // ===== LICENSE STATUS CHECK =====
 function checkLicenseStatus() {
-    const code = localStorage.getItem('activation_code');
-    const expiry = localStorage.getItem('expiry_date');
-    const activated = localStorage.getItem('activated');
-    
-    // Check if activated
-    if (!activated || activated !== 'true') {
-        return false;
-    }
-    
-    // Check expiry
-    if (expiry) {
-        const expiryDate = new Date(expiry);
-        const now = new Date();
-        const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
-        const expiryDate = new Date(expiry);
-        const now = new Date();
-        if (expiryDate < now) {
-            // Expired - clear and redirect
-            localStorage.removeItem('activated');
-            localStorage.removeItem('activation_code');
-            localStorage.removeItem('expiry_date');
-            // License alert removed
-            window.location.href = 'settings.html';
-            return false;
-        }
-    }
-    
-    return true;
-}
-
-function checkAndRedirect() {
-    if (!checkLicenseStatus()) {
-        // If not on settings page, redirect to settings
-        if (!window.location.pathname.includes('settings.html') &&
-            !window.location.pathname.includes('activation.html') &&
-            !window.location.pathname.includes('index.html')) {
-            window.location.href = 'settings.html';
-        }
-    }
-}
 
 // Run check on page load
 document.addEventListener('DOMContentLoaded', function() {
@@ -683,11 +481,7 @@ function checkLicenseStatus() {
     
     // CASE 2: Check expiry
     if (expiry) {
-        const expiryDate = new Date(expiry);
-        const now = new Date();
         const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
-        const expiryDate = new Date(expiry);
-        const now = new Date();
         const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
         
         // CASE 3: EXPIRED
@@ -709,46 +503,6 @@ function checkLicenseStatus() {
     }
     
     // License is ACTIVE - everything works
-    return true;
-}
-
-// Run on page load
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function() {
-        checkLicenseStatus();
-    });
-} else {
-});
-
-// Close modal on click outside
-document.addEventListener('click', function(e) {
-    if (e.target.classList.contains('modal')) {
-        e.target.classList.remove('show');
-    }
-});
-
-// Close modal on Escape
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        document.querySelectorAll('.modal.show').forEach(function(m) {
-            m.classList.remove('show');
-    }
-});
-</script>
-
-
-<script>
-// ===== LICENSE CHECK =====
-
-// Run checks
-// License check removed);
-</script>
-
-<!-- License Warning Banner -->
-    <span id="licenseWarningMessage">⚠️ Your license expires soon. Please renew in Settings.</span>
-</div>
-
-<script>
 // ===== LICENSE STATUS CHECK =====
 function checkLicenseStatus() {
     const code = localStorage.getItem('activation_code');
@@ -762,8 +516,6 @@ function checkLicenseStatus() {
     
     // Check expiry
     if (expiry) {
-        const expiryDate = new Date(expiry);
-        const now = new Date();
         const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
         if (daysRemaining <= 7) {
             alert('⚠️ Your license will expire in ' + daysRemaining + ' days (' + expiryDate.toLocaleDateString() + ').\nPlease renew your license soon.');
