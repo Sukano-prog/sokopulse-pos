@@ -161,6 +161,53 @@ function getLicenseStatus() {
         code: code
     };
 }
+
+
+// ===== ACTIVATION CODE VERIFICATION =====
+function checkActivationCode(inputCode, machineId) {
+    const codes = JSON.parse(localStorage.getItem('activation_codes') || '[]');
+    const now = new Date();
+    
+    const match = codes.find(function(item) {
+        return item.code === inputCode && 
+               item.machineId === machineId && 
+               item.active === true &&
+               item.revoked !== true &&
+               new Date(item.expires) > now;
+    });
+    
+    if (match) {
+        // Mark as used
+        match.used = true;
+        match.usedBy = machineId;
+        match.usedDate = new Date().toISOString();
+        localStorage.setItem('activation_codes', JSON.stringify(codes));
+        return { valid: true, storeName: match.storeName };
+    }
+    
+    return { valid: false };
+}
+
+function getCodeStatus() {
+    const code = localStorage.getItem('activation_code');
+    const expiry = localStorage.getItem('code_expiry');
+    const machineId = localStorage.getItem('machine_id');
+    
+    if (!code || !expiry) {
+        return { active: false, daysLeft: 0 };
+    }
+    
+    const expiryDate = new Date(expiry);
+    const now = new Date();
+    const daysLeft = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
+    
+    return {
+        active: daysLeft > 0,
+        daysLeft: Math.max(0, daysLeft),
+        code: code,
+        expires: expiryDate.toLocaleDateString()
+    };
+}
 function openDB() {
     return new Promise((resolve, reject) => {
         const req = indexedDB.open(DB_NAME, DB_VERSION);

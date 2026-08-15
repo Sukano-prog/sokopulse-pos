@@ -1,30 +1,6 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<script>
-// ===== SIMPLE PASSWORD PROTECTION =====
-(function() {
-    // Check if already authenticated
-    if (sessionStorage.getItem('admin_pass') === 'true') {
-        return;
-    }
-    
-    // Ask for password
-    var pass = prompt('🔑 Enter System Owner Password:');
-    if (pass === 'Linux@123') {
-        sessionStorage.setItem('admin_pass', 'true');
-        return;
-    } else {
-        alert('❌ Access Denied!');
-        window.location.href = 'pos.html';
-    }
-})();
-</script>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Activation - SokoPulse</title>
-
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Activation - SokoPulse</title>
@@ -32,7 +8,7 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Inter', sans-serif; min-height: 100vh; background: #f8fafc; padding: 20px; display: flex; align-items: center; justify-content: center; }
-        .container { background: white; border-radius: 24px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15); padding: 40px; max-width: 650px; width: 100%; }
+        .container { background: white; border-radius: 24px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15); padding: 40px; max-width: 750px; width: 100%; }
         .container::before { content: ''; display: block; height: 4px; background: linear-gradient(90deg, #1a3c34, #f5a623); border-radius: 24px 24px 0 0; margin: -40px -40px 20px -40px; }
         h1 { font-size: 24px; color: #1a3c34; margin-bottom: 4px; }
         .subtitle { color: #64748b; font-size: 14px; margin-bottom: 20px; }
@@ -58,498 +34,200 @@
         .btn-primary:hover { background: #2a5c54; transform: translateY(-2px); }
         .btn-secondary { background: #f1f5f9; color: #0f172a; }
         .btn-secondary:hover { background: #e2e8f0; }
-        .btn-success { background: #22c55e; color: white; }
-        .btn-success:hover { background: #16a34a; transform: translateY(-2px); }
         .btn-danger { background: #ef4444; color: white; }
         .btn-danger:hover { background: #dc2626; }
-        .key-box { background: #f8fafc; padding: 16px; border-radius: 10px; border: 1px dashed #e2e8f0; text-align: center; margin: 12px 0; }
-        .key-box .key { font-family: monospace; font-size: 24px; font-weight: 700; color: #1a3c34; letter-spacing: 2px; word-break: break-all; }
-        .key-box .label { font-size: 12px; color: #94a3b8; }
-        .key-box .expiry-info { font-size: 13px; color: #64748b; margin-top: 4px; }
+        .btn-success { background: #22c55e; color: white; }
+        .btn-success:hover { background: #16a34a; }
+        .row { display: flex; gap: 10px; flex-wrap: wrap; }
+        .row .btn { flex: 1; text-align: center; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .status { padding: 10px 14px; border-radius: 8px; font-size: 13px; margin: 10px 0; display: none; }
         .status.show { display: block; }
         .status.success { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
         .status.error { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
         .status.info { background: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
-        .row { display: flex; gap: 10px; flex-wrap: wrap; }
-        .row .btn { flex: 1; text-align: center; }
-        .license-list { max-height: 300px; overflow-y: auto; font-size: 13px; }
+        .code-box { background: #f8fafc; padding: 16px; border-radius: 10px; border: 1px dashed #e2e8f0; text-align: center; margin: 12px 0; }
+        .code-box .code { font-family: monospace; font-size: 22px; font-weight: 700; color: #1a3c34; letter-spacing: 2px; word-break: break-all; }
+        .code-box .label { font-size: 12px; color: #94a3b8; }
         .license-item { padding: 10px 0; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
         .license-item .key-text { font-family: monospace; font-size: 13px; font-weight: 600; color: #0f172a; }
         .license-item .info { font-size: 12px; color: #94a3b8; }
-        .license-item .status-badge { font-size: 10px; padding: 2px 10px; border-radius: 20px; background: #dcfce7; color: #166534; }
-        .license-item .status-badge.expired { background: #fee2e2; color: #991b1b; }
-        .license-item .status-badge.expiring { background: #fef3c7; color: #92400e; }
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .auto-expiry-info { background: #f8fafc; padding: 8px 12px; border-radius: 6px; font-size: 12px; color: #64748b; margin-top: 4px; }
-        @media (max-width: 600px) { .container { padding: 20px; } .container::before { margin: -20px -20px 20px -20px; } .grid-2 { grid-template-columns: 1fr; } .row { flex-direction: column; } .row .btn { width: 100%; } }
+        .status-badge { font-size: 10px; padding: 2px 10px; border-radius: 20px; background: #dcfce7; color: #166534; }
+        .status-badge.expired { background: #fee2e2; color: #991b1b; }
+        .status-badge.revoked { background: #fef3c7; color: #92400e; }
+        .license-list { max-height: 300px; overflow-y: auto; font-size: 13px; }
+        .form-row { display: flex; gap: 12px; }
+        .form-row .form-group { flex: 1; }
+        @media (max-width: 600px) { .container { padding: 20px; } .container::before { margin: -20px -20px 20px -20px; } .grid-2 { grid-template-columns: 1fr; } .row { flex-direction: column; } .row .btn { width: 100%; } .form-row { flex-direction: column; } }
     </style>
-
-
 </head>
 <body>
 
 <div class="container">
-    <h1>🔑 License Key Generator</h1>
-    <p class="subtitle">Generate activation keys with auto-expiry dates.</p>
-
-    <div style="background:#e8f4f8;padding:16px;border-radius:8px;margin-bottom:16px;border:1px solid #b8d4e3;">
-        <h3 style="margin-bottom:8px;color:#1a3c34;">📅 Monthly Activation Code</h3>
-        <p style="font-size:13px;color:#64748b;margin-bottom:12px;">Generate monthly codes for users to enter in Settings → License Management</p>
-        <div class="form-row">
-            <div class="form-group">
-                <label>Month</label>
-                <select id="codeMonth" style="width:100%;padding:8px;border:2px solid #e2e8f0;border-radius:8px;">
-                    <option value="JAN">January</option>
-                    <option value="FEB">February</option>
-                    <option value="MAR">March</option>
-                    <option value="APR">April</option>
-                    <option value="MAY">May</option>
-                    <option value="JUN">June</option>
-                    <option value="JUL">July</option>
-                    <option value="AUG" selected>August</option>
-                    <option value="SEP">September</option>
-                    <option value="OCT">October</option>
-                    <option value="NOV">November</option>
-                    <option value="DEC">December</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>Year</label>
-                <select id="codeYear" style="width:100%;padding:8px;border:2px solid #e2e8f0;border-radius:8px;">
-                    <option value="2024">2024</option>
-                    <option value="2025">2025</option>
-                    <option value="2026" selected>2026</option>
-                    <option value="2027">2027</option>
-                    <option value="2028">2028</option>
-                </select>
-            </div>
-        </div>
-        <div class="form-group">
-            <label>Prefix (Optional)</label>
-            <input type="text" id="codePrefix" placeholder="SP" value="SP" style="width:100%;padding:8px;border:2px solid #e2e8f0;border-radius:8px;font-family:monospace;text-transform:uppercase;">
-            <div style="font-size:11px;color:#94a3b8;margin-top:4px;">Default: SP (SokoPulse)</div>
-        </div>
-        <button class="btn btn-primary" onclick="generateActivationCode()" style="margin-top:8px;">🔑 Generate Code</button>
-        <div id="codeDisplay" style="display:none;margin-top:12px;padding:12px;background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0;">
-            <div style="font-size:12px;color:#94a3b8;">Generated Code:</div>
-            <div id="generatedCode" style="font-family:monospace;font-size:24px;font-weight:700;color:#1a3c34;letter-spacing:2px;">XXXX</div>
-            <button class="btn btn-secondary" onclick="copyCode()" style="margin-top:8px;padding:6px 12px;font-size:12px;">📋 Copy Code</button>
-        </div>
-        <div class="status" id="codeStatus"></div>
-    </div>
-    <div class="form-group">
-        <label>Store Name / Business Name</label>
-        <input type="text" id="storeNameInput" placeholder="e.g. Mama's Grocery, John's Hardware..." style="font-family:'Inter',sans-serif;font-size:14px;">
-    </div>
-    <div class="form-group">
-        <label>Machine ID (from user)</label>
-        <input type="text" id="machineIdInput" placeholder="Paste the user's Machine ID here..." style="font-family:monospace;font-size:14px;">
-    </div>
-    <div class="form-group">
-        <label>Store Owner Name</label>
-        <input type="text" id="ownerNameInput" placeholder="e.g. John Doe" style="font-family:'Inter',sans-serif;font-size:14px;">
-    </div>
-    <div class="form-group">
-        <label>Store Phone</label>
-        <input type="text" id="storePhoneInput" placeholder="0712345678" style="font-family:'Inter',sans-serif;font-size:14px;">
-    </div>
+    <h1>🔑 Activation Code Generator</h1>
+    <p class="subtitle">Generate store-specific activation codes with expiry and revocation control.</p>
 
     <div class="grid-2">
         <div class="form-group">
-            <label>License Type</label>
-            <select id="licenseType" onchange="updateExpiryDate()">
-                <option value="permanent">♾️ Permanent</option>
-                <option value="1year">📅 1 Year</option>
-                <option value="6months">📅 6 Months</option>
-                <option value="3months">📅 3 Months</option>
-                <option value="1month">📅 1 Month</option>
-                <option value="trial">🧪 Trial (14 days)</option>
+            <label>Month</label>
+            <select id="codeMonth">
+                <option value="JAN">January</option>
+                <option value="FEB">February</option>
+                <option value="MAR">March</option>
+                <option value="APR">April</option>
+                <option value="MAY">May</option>
+                <option value="JUN">June</option>
+                <option value="JUL">July</option>
+                <option value="AUG" selected>August</option>
+                <option value="SEP">September</option>
+                <option value="OCT">October</option>
+                <option value="NOV">November</option>
+                <option value="DEC">December</option>
             </select>
         </div>
         <div class="form-group">
-            <label>Expiry Date (auto-set)</label>
-            <input type="date" id="customExpiry" readonly style="background:#f1f5f9;cursor:not-allowed;">
-            <div class="auto-expiry-info" id="expiryInfo">Auto-set based on license type</div>
+            <label>Year</label>
+            <select id="codeYear">
+                <option value="2024">2024</option>
+                <option value="2025">2025</option>
+                <option value="2026" selected>2026</option>
+                <option value="2027">2027</option>
+                <option value="2028">2028</option>
+            </select>
         </div>
     </div>
 
-    <div class="row">
-        <button class="btn btn-primary" onclick="generateKey()">🔑 Generate Key</button>
-        <button class="btn btn-secondary" onclick="copyKey()">📋 Copy Key</button>
+    <div class="form-group">
+        <label>Store Name / Business Name *</label>
+        <input type="text" id="storeNameInput" placeholder="e.g. Mama's Grocery, John's Hardware...">
     </div>
+
+    <div class="form-group">
+        <label>Machine ID (from user) *</label>
+        <input type="text" id="machineIdInput" placeholder="Paste the user's Machine ID here..." style="font-family:monospace;font-size:14px;">
+        <div style="font-size:11px;color:#94a3b8;margin-top:4px;">This code will only work for this specific Machine ID.</div>
+    </div>
+
+    <div class="form-group">
+        <label>Store Owner Name</label>
+        <input type="text" id="ownerNameInput" placeholder="e.g. John Doe">
+    </div>
+
+    <div class="form-group">
+        <label>Store Phone</label>
+        <input type="text" id="storePhoneInput" placeholder="0712345678">
+    </div>
+
+    <button class="btn btn-primary" onclick="generateCode()" style="width:100%;">🔑 Generate Activation Code</button>
 
     <div class="status" id="status"></div>
 
-    <div id="generatedKey" style="display:none;">
-        <div class="key-box">
-            <div class="label">Generated Activation Key</div>
-            <div class="key" id="activationKey">XXXX-XXXX-XXXX-XXXX</div>
-            <div class="expiry-info" id="expiryDisplay"></div>
+    <div id="codeDisplay" style="display:none;">
+        <div class="code-box">
+            <div class="label">Activation Code (Send to Store Owner)</div>
+            <div class="code" id="generatedCode">XXXX-XXXX-XXXX-XXXX</div>
+            <div style="margin-top:8px;font-size:12px;color:#64748b;">
+                Valid for: <span id="codeExpiry">30 days</span>
+            </div>
         </div>
-        <button class="btn btn-success" onclick="copyKey()">📋 Copy Key</button>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="btn btn-secondary" onclick="copyCode()" style="flex:1;">📋 Copy Code</button>
+        </div>
     </div>
 
     <hr style="margin:20px 0;border-color:#e2e8f0;">
 
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
-    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;align-items:center;">
-        <div style="flex:1;min-width:150px;">
-            <input type="text" id="licenseSearch" placeholder="🔍 Search store or key..." oninput="renderLicenseList()" style="width:100%;padding:8px 12px;border:2px solid #e2e8f0;border-radius:8px;font-family:'Inter',sans-serif;font-size:13px;">
-        </div>
         <div>
-            <select id="licenseFilter" onchange="renderLicenseList()" style="padding:8px 12px;border:2px solid #e2e8f0;border-radius:8px;font-family:'Inter',sans-serif;font-size:13px;background:white;">
-                <option value="all">📋 All Licenses</option>
-                <option value="active">✅ Active</option>
-                <option value="expired">❌ Expired</option>
-                <option value="expiring">⚠️ Expiring Soon (30 days)</option>
-                <option value="trial">🧪 Trial</option>
-                <option value="permanent">♾️ Permanent</option>
-            </select>
-        </div>
-        <div>
-            <span style="font-size:13px;color:#94a3b8;" id="licenseCount">0 licenses</span>
-        </div>
-    </div>
-        <div>
-            <h3>📋 Store Licenses</h3>
-            <span style="font-size:12px;color:#94a3b8;" id="storeCount">Total: 0 stores</span>
+            <h3>📋 Active Codes</h3>
+            <span style="font-size:12px;color:#94a3b8;" id="codeCount">Total: 0</span>
         </div>
         <div style="display:flex;gap:8px;">
-            <button class="btn btn-secondary" onclick="exportStores()" style="padding:6px 14px;font-size:12px;">📤 Export</button>
-            <button class="btn btn-danger" onclick="clearAllKeys()" style="padding:6px 14px;font-size:12px;">🗑️ Clear All</button>
+            <button class="btn btn-secondary" onclick="exportCodes()" style="padding:6px 14px;font-size:12px;">📤 Export</button>
+            <button class="btn btn-danger" onclick="revokeAll()" style="padding:6px 14px;font-size:12px;">🗑️ Revoke All</button>
         </div>
-    
-        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;">
-            <button class="btn btn-secondary" onclick="exportKeys()" style="padding:6px 14px;font-size:12px;">📤 Export Keys</button>
-            <button class="btn btn-secondary" onclick="document.getElementById('importKeysInput').click()" style="padding:6px 14px;font-size:12px;">📥 Import Keys</button>
-            <input type="file" id="importKeysInput" accept=".json" style="display:none;" onchange="importKeys(event)">
-            <span style="font-size:11px;color:#94a3b8;display:flex;align-items:center;">💡 Export keys to backup or transfer to another device</span>
-        </div>
-    
-    <hr style="margin:20px 0;border-color:#e2e8f0;">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-        <h3>📋 Generated Codes</h3>
     </div>
+
     <div class="license-list" id="codeList">
-        <p style="color:#94a3b8;">No codes generated yet.</p>
-    </div>
-    <div class="license-list" id="licenseList">
-        <p style="color:#94a3b8;">No licenses generated yet.</p>
+        <p style="color:#94a3b8;text-align:center;padding:20px;">No codes generated yet.</p>
     </div>
 </div>
 
-
 <script src="db.js"></script>
 <script>
-// ============================================================
-// ADMIN ACTIVATION TOOL - WITH AUTO-EXPIRY
-// ============================================================
+// ===== STATE =====
+let generatedCodes = JSON.parse(localStorage.getItem('activation_codes') || '[]');
 
-let generatedKeys = JSON.parse(localStorage.getItem('generated_keys') || '[]');
-
-// ===== UPDATE EXPIRY DATE =====
-function updateExpiryDate() {
-    const type = document.getElementById('licenseType').value;
-    const expiryInput = document.getElementById('customExpiry');
-    const info = document.getElementById('expiryInfo');
-    const now = new Date();
-    
-    let expiryDate = new Date(now);
-    let label = '';
-    
-    switch(type) {
-        case 'permanent':
-            expiryDate.setFullYear(now.getFullYear() + 10);
-            label = '♾️ Never expires';
-            break;
-        case '1year':
-            expiryDate.setFullYear(now.getFullYear() + 1);
-            label = '📅 Expires in 1 year';
-            break;
-        case '6months':
-            expiryDate.setMonth(now.getMonth() + 6);
-            label = '📅 Expires in 6 months';
-            break;
-        case '3months':
-            expiryDate.setMonth(now.getMonth() + 3);
-            label = '📅 Expires in 3 months';
-            break;
-        case '1month':
-            expiryDate.setMonth(now.getMonth() + 1);
-            label = '📅 Expires in 1 month';
-            break;
-        case 'trial':
-            expiryDate.setDate(now.getDate() + 14);
-            label = '🧪 Expires in 14 days (trial)';
-            break;
-        default:
-            expiryDate.setFullYear(now.getFullYear() + 10);
-            label = '♾️ Never expires';
-    }
-    
-    expiryInput.value = expiryDate.toISOString().slice(0, 10);
-    info.textContent = label;
-}
-
-// ===== GENERATE KEY =====
-function generateKey() {
-    const storeName = document.getElementById('storeNameInput').value.trim() || 'Unnamed Store';
+// ===== GENERATE COMPLEX CODE =====
+function generateCode() {
+    const storeName = document.getElementById('storeNameInput').value.trim();
     const machineId = document.getElementById('machineIdInput').value.trim();
-    const ownerName = document.getElementById('ownerNameInput').value.trim() || 'Unknown';
-    const storePhone = document.getElementById('storePhoneInput').value.trim() || '';
-    const type = document.getElementById('licenseType').value;
-    const expiryDateStr = document.getElementById('customExpiry').value;
+    const month = document.getElementById('codeMonth').value;
+    const year = document.getElementById('codeYear').value;
+    const owner = document.getElementById('ownerNameInput').value.trim();
+    const phone = document.getElementById('storePhoneInput').value.trim();
     const status = document.getElementById('status');
-    const keyDisplay = document.getElementById('generatedKey');
-    const keyEl = document.getElementById('activationKey');
-    const expiryDisplay = document.getElementById('expiryDisplay');
+    const codeDisplay = document.getElementById('codeDisplay');
+    
+    if (!storeName) {
+        status.className = 'status error show';
+        status.textContent = '❌ Please enter store name.';
+        return;
+    }
     
     if (!machineId || machineId.length < 10) {
         status.className = 'status error show';
-        status.textContent = '❌ Please enter a valid Machine ID';
-        return;
-    }
-    
-    // Generate key
-    const today = new Date();
-    const date = today.getFullYear() + 
-                 String(today.getMonth() + 1).padStart(2, '0') + 
-                 String(today.getDate()).padStart(2, '0');
-    
-    let hash = '';
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    for (let i = 0; i < 4; i++) {
-        hash += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    
-    const typeMap = {
-        'permanent': 'PERM',
-        '1year': 'Y1YR',
-        '6months': 'M6MO',
-        '3months': 'M3MO',
-        '1month': 'M1MO',
-        'trial': 'TRIAL'
-    };
-    
-    const key = typeMap[type] + '-' + date + '-' + hash;
-    
-    // Save the license with expiry
-    const license = {
-        id: 'STORE-' + Date.now().toString().slice(-6),
-        storeName: storeName,
-        machineId: machineId,
-        ownerName: ownerName,
-        storePhone: storePhone,
-        key: key,
-        type: type,
-        generated: new Date().toISOString(),
-        expires: new Date(expiryDateStr).toISOString(),
-        isActive: true
-    };
-    
-    generatedKeys.push(license);
-    localStorage.setItem('generated_keys', JSON.stringify(generatedKeys));
-    
-    // Display the key
-    keyEl.textContent = key;
-    const expiryDisplayStr = new Date(expiryDateStr).toLocaleDateString();
-    const typeLabels = {
-        'permanent': '♾️ Permanent',
-        '1year': '📅 1 Year',
-        '6months': '📅 6 Months',
-        '3months': '📅 3 Months',
-        '1month': '📅 1 Month',
-        'trial': '🧪 Trial'
-    };
-    expiryDisplay.textContent = typeLabels[type] + ' | Expires: ' + expiryDisplayStr;
-    keyDisplay.style.display = 'block';
-    status.className = 'status success show';
-    status.textContent = '✅ Key generated successfully!';
-    
-    renderLicenseList();
-}
-
-function copyKey() {
-    const key = document.getElementById('activationKey').textContent;
-    navigator.clipboard.writeText(key).then(() => {
-        alert('✅ Key copied to clipboard!');
-    }).catch(() => {
-        const input = document.createElement('input');
-        input.value = key;
-        document.body.appendChild(input);
-        input.select();
-        document.execCommand('copy');
-        document.body.removeChild(input);
-        alert('✅ Key copied!');
-    });
-}
-
-
-
-function exportStores() {
-    if (generatedKeys.length === 0) {
-        alert('❌ No stores to export');
-        return;
-    }
-    
-    let csv = 'Store Name,Owner,Machine ID,Phone,License Key,Type,Generated,Expires,Status\n';
-    generatedKeys.forEach(function(lic) {
-        const expires = new Date(lic.expires);
-        const now = new Date();
-        const isExpired = expires < now;
-        const status = isExpired ? 'Expired' : 'Active';
-        csv += (lic.storeName || 'Unnamed') + ',' + (lic.ownerName || 'Unknown') + ',' + (lic.machineId || '') + ',' + (lic.storePhone || '') + ',' + lic.key + ',' + (lic.type || '') + ',' + new Date(lic.generated).toLocaleDateString() + ',' + expires.toLocaleDateString() + ',' + status + '\n';
-    });
-    
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'stores_export_' + new Date().toISOString().slice(0, 10) + '.csv';
-    a.click();
-    URL.revokeObjectURL(url);
-    alert('✅ Stores exported!');
-}
-
-
-
-// ===== EXPORT KEYS =====
-function exportKeys() {
-    if (generatedKeys.length === 0) {
-        alert('❌ No keys to export');
-        return;
-    }
-    
-    const data = {
-        exported: new Date().toISOString(),
-        version: '1.0',
-        keys: generatedKeys
-    };
-    
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'sokopulse_licenses_' + new Date().toISOString().slice(0,10) + '.json';
-    a.click();
-    URL.revokeObjectURL(url);
-    alert('✅ Keys exported successfully!');
-}
-
-// ===== IMPORT KEYS =====
-function importKeys(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-    
-    const reader = new FileReader();
-    reader.onload = function(e) {
-        try {
-            const data = JSON.parse(e.target.result);
-            if (!data.keys || !Array.isArray(data.keys)) {
-                alert('❌ Invalid file format');
-                return;
-            }
-            
-            // Merge with existing keys (avoid duplicates by key)
-            const existingKeys = generatedKeys.map(function(k) { return k.key; });
-            let imported = 0;
-            let skipped = 0;
-            
-            data.keys.forEach(function(lic) {
-                if (!existingKeys.includes(lic.key)) {
-                    generatedKeys.push(lic);
-                    imported++;
-                } else {
-                    skipped++;
-                }
-            });
-            
-            localStorage.setItem('generated_keys', JSON.stringify(generatedKeys));
-            renderLicenseList();
-            
-            alert('✅ Import complete!\n' + 
-                  '   Imported: ' + imported + ' new keys\n' + 
-                  '   Skipped: ' + skipped + ' duplicates');
-        } catch(err) {
-            alert('❌ Error importing: ' + err.message);
-        }
-    };
-    reader.readAsText(file);
-    event.target.value = '';
-}
-
-
-
-// ===== GENERATE COMPLEX ACTIVATION CODE =====
-function generateActivationCode() {
-    const month = document.getElementById('codeMonth').value;
-    const year = document.getElementById('codeYear').value;
-    const prefix = document.getElementById('codePrefix').value.trim().toUpperCase() || 'SP';
-    
-    if (!month || !year) {
-        alert('❌ Please select month and year');
+        status.textContent = '❌ Please enter a valid Machine ID (min 10 characters).';
         return;
     }
     
     // Generate random parts
     const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-    const nums = '23456789';
-    
-    // Part 1: 4 random chars (e.g., X7K9)
-    let part1 = '';
+    let parts = [];
     for (let i = 0; i < 4; i++) {
-        part1 += chars.charAt(Math.floor(Math.random() * chars.length));
+        let part = '';
+        for (let j = 0; j < 4; j++) {
+            part += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        parts.push(part);
     }
     
-    // Part 2: 2 random numbers (e.g., 73)
-    let part2 = '';
-    for (let i = 0; i < 2; i++) {
-        part2 += nums.charAt(Math.floor(Math.random() * nums.length));
-    }
+    const code = parts.join('-');
+    const expiryDate = new Date();
+    expiryDate.setDate(expiryDate.getDate() + 30);
     
-    // Part 3: 3 random chars (e.g., B2M)
-    let part3 = '';
-    for (let i = 0; i < 3; i++) {
-        part3 += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    
-    // Part 4: 2 random numbers (e.g., 89)
-    let part4 = '';
-    for (let i = 0; i < 2; i++) {
-        part4 += nums.charAt(Math.floor(Math.random() * nums.length));
-    }
-    
-    // Part 5: 3 random chars (e.g., K4P)
-    let part5 = '';
-    for (let i = 0; i < 3; i++) {
-        part5 += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    
-    // Final code: PREFIX-MONTHYEAR-PART1PART2-PART3PART4PART5
-    // Example: SP-AUG2026-X7K973-B2M89K4P
-    const code = prefix + '-' + month + year + '-' + part1 + part2 + '-' + part3 + part4 + part5;
-    
-    // Display the code
-    document.getElementById('generatedCode').textContent = code;
-    document.getElementById('codeDisplay').style.display = 'block';
-    document.getElementById('codeStatus').className = 'status success show';
-    document.getElementById('codeStatus').textContent = '✅ Complex code generated! Copy and send to user.';
-    
-    // Add to list
-    const codes = JSON.parse(localStorage.getItem('activation_codes') || '[]');
-    codes.push({
+    // Save code
+    const codeData = {
         code: code,
+        storeName: storeName,
+        machineId: machineId,
+        ownerName: owner || 'Unknown',
+        phone: phone || '',
         month: month,
         year: year,
-        prefix: prefix,
         generated: new Date().toISOString(),
-        parts: { part1: part1, part2: part2, part3: part3, part4: part4, part5: part5 }
-    });
-    localStorage.setItem('activation_codes', JSON.stringify(codes));
+        expires: expiryDate.toISOString(),
+        active: true,
+        revoked: false,
+        used: false,
+        usedBy: null,
+        usedDate: null
+    };
+    
+    generatedCodes.push(codeData);
+    localStorage.setItem('activation_codes', JSON.stringify(generatedCodes));
+    
+    // Display
+    document.getElementById('generatedCode').textContent = code;
+    document.getElementById('codeExpiry').textContent = expiryDate.toLocaleDateString() + ' (30 days)';
+    codeDisplay.style.display = 'block';
+    status.className = 'status success show';
+    status.textContent = '✅ Code generated successfully! Copy and send to store owner.';
+    
     renderCodeList();
 }
 
+// ===== COPY CODE =====
 function copyCode() {
     const code = document.getElementById('generatedCode').textContent;
     navigator.clipboard.writeText(code).then(() => {
@@ -565,193 +243,158 @@ function copyCode() {
     });
 }
 
+// ===== RENDER CODE LIST =====
 function renderCodeList() {
-    const codes = JSON.parse(localStorage.getItem('activation_codes') || '[]');
     const container = document.getElementById('codeList');
-    if (codes.length === 0) {
-        container.innerHTML = '<p style="color:#94a3b8;">No codes generated yet.</p>';
-        return;
-    }
-    let html = '';
-    codes.slice().reverse().forEach(function(c, index) {
-        const originalIndex = codes.length - 1 - index;
-        html += `<div class="license-item">
-            <div>
-                <div class="key-text">${c.code}</div>
-                <div class="info">${c.month} ${c.year}</div>
-            </div>
-            <div style="display:flex;align-items:center;gap:8px;">
-                <span class="status-badge active">✅ Active</span>
-                <button onclick="deleteCode(${originalIndex})" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:14px;">✕</button>
-            </div>
-        </div>`;
-    });
-    container.innerHTML = html;
-}
-
-function deleteCode(index) {
-    if (!confirm('Delete this code?')) return;
-    const codes = JSON.parse(localStorage.getItem('activation_codes') || '[]');
-    codes.splice(index, 1);
-    localStorage.setItem('activation_codes', JSON.stringify(codes));
-    renderCodeList();
-}
-
-function renderLicenseList() {
-    const container = document.getElementById('licenseList');
-    const countEl = document.getElementById('storeCount');
-    
-    // Get search and filter
-    const search = document.getElementById('licenseSearch')?.value?.toLowerCase() || '';
-    const filter = document.getElementById('licenseFilter')?.value || 'all';
+    const countEl = document.getElementById('codeCount');
     const now = new Date();
     
-    let filtered = generatedKeys.filter(function(lic) {
-        // Search
-        if (search) {
-            const matchStore = (lic.storeName || '').toLowerCase().includes(search);
-            const matchKey = (lic.key || '').toLowerCase().includes(search);
-            const matchOwner = (lic.ownerName || '').toLowerCase().includes(search);
-            const matchMachine = (lic.machineId || '').toLowerCase().includes(search);
-            if (!matchStore && !matchKey && !matchOwner && !matchMachine) return false;
-        }
-        
-        // Filter by status
-        const expires = new Date(lic.expires);
-        const isExpired = expires < now;
-        const daysLeft = Math.ceil((expires - now) / (1000 * 60 * 60 * 24));
-        const isExpiring = !isExpired && daysLeft <= 30;
-        const isTrial = lic.type === 'trial';
-        const isPermanent = lic.type === 'permanent' || lic.type === 'PERM';
-        
-        switch(filter) {
-            case 'active': return !isExpired;
-            case 'expired': return isExpired;
-            case 'expiring': return isExpiring;
-            case 'trial': return isTrial;
-            case 'permanent': return isPermanent;
-            default: return true;
-        }
-    });
+    if (countEl) countEl.textContent = 'Total: ' + generatedCodes.length;
     
-    const countEl2 = document.getElementById('licenseCount');
-    if (countEl2) countEl2.textContent = filtered.length + ' licenses';
-    if (countEl) countEl.textContent = 'Total: ' + generatedKeys.length + ' stores';
-    
-    if (filtered.length === 0) {
-        container.innerHTML = '<p style="color:#94a3b8;">No stores match your search.</p>';
+    if (generatedCodes.length === 0) {
+        container.innerHTML = '<p style="color:#94a3b8;text-align:center;padding:20px;">No codes generated yet.</p>';
         return;
     }
     
-    const typeLabels = {
-        'permanent': '♾️',
-        '1year': '📅 1Y',
-        '6months': '📅 6M',
-        '3months': '📅 3M',
-        '1month': '📅 1M',
-        'trial': '🧪'
-    };
-    
     let html = '';
-    generatedKeys.slice().reverse().forEach((lic, index) => {
-        const expires = new Date(lic.expires);
-        const now = new Date();
+    generatedCodes.slice().reverse().forEach(function(item, index) {
+        const originalIndex = generatedCodes.length - 1 - index;
+        const expires = new Date(item.expires);
         const isExpired = expires < now;
-        const daysLeft = Math.ceil((expires - now) / (1000 * 60 * 60 * 24));
-        const originalIndex = generatedKeys.length - 1 - index;
+        const isRevoked = item.revoked === true;
+        const isUsed = item.used === true;
         
         let statusClass = 'status-badge';
         let statusText = '✅ Active';
-        if (isExpired) {
+        
+        if (isRevoked) {
+            statusClass += ' revoked';
+            statusText = '⛔ Revoked';
+        } else if (isExpired) {
             statusClass += ' expired';
-            statusText = '⚠️ Expired';
-        } else if (daysLeft < 30) {
-            statusClass += ' expiring';
-            statusText = '⚠️ ' + daysLeft + ' days left';
+            statusText = '❌ Expired';
+        } else if (isUsed) {
+            statusClass += ' expired';
+            statusText = '🔒 Used';
         }
         
-        html += `<div class="license-item" style="border-left: 4px solid ${isExpired ? '#ef4444' : '#22c55e'}; padding-left: 12px;">
+        html += `<div class="license-item" style="border-left: 4px solid ${isRevoked || isExpired ? '#ef4444' : '#22c55e'}; padding-left: 12px;">
             <div style="flex:1;">
                 <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:4px;">
-                    <strong style="font-size:14px;color:#0f172a;">${lic.storeName || 'Unnamed Store'}</strong>
-                    <span style="font-size:11px;color:#94a3b8;">${lic.ownerName || 'Unknown Owner'}</span>
+                    <strong style="font-size:14px;color:#0f172a;">${item.storeName || 'Unnamed Store'}</strong>
+                    <span style="font-size:11px;color:#94a3b8;">${item.ownerName || 'Unknown Owner'}</span>
                 </div>
                 <div style="font-size:12px;color:#64748b;margin-top:2px;">
-                    Machine: ${lic.machineId ? lic.machineId.slice(0, 12) + '...' : 'N/A'} 
-                    ${lic.storePhone ? '| 📞 ' + lic.storePhone : ''}
+                    🔑 ${item.code}
                 </div>
                 <div style="font-size:11px;color:#94a3b8;margin-top:2px;">
-                    🔑 ${lic.key} | ${typeLabels[lic.type] || lic.type} | Expires: ${expires.toLocaleDateString()}
+                    Machine: ${item.machineId ? item.machineId.slice(0, 12) + '...' : 'N/A'}
+                    ${item.phone ? '| 📞 ' + item.phone : ''}
+                    ${isUsed ? '| ✅ Used by: ' + item.usedBy : ''}
+                </div>
+                <div style="font-size:10px;color:#94a3b8;margin-top:2px;">
+                    Generated: ${new Date(item.generated).toLocaleDateString()}
+                    | Expires: ${expires.toLocaleDateString()}
                 </div>
             </div>
-            <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+            <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
                 <span class="${statusClass}">${statusText}</span>
-                <button onclick="deleteLicense(${originalIndex})" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:14px;padding:4px 8px;" title="Delete License">✕</button>
+                <button onclick="revokeCode(${originalIndex})" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:14px;padding:4px 8px;" title="Revoke Code">⛔</button>
+                <button onclick="deleteCode(${originalIndex})" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:14px;padding:4px 8px;" title="Delete">✕</button>
             </div>
         </div>`;
     });
+    
     container.innerHTML = html;
 }
 
-function deleteLicense(index) {
-    if (!confirm('⚠️ DELETE LICENSE?\n\nThis will IMMEDIATELY lock out the store!')) return;
+// ===== REVOKE CODE =====
+function revokeCode(index) {
+    if (!confirm('⛔ Revoke this code?
+
+This will immediately lock out the store!
+Store: ' + generatedCodes[index].storeName)) return;
     if (!confirm('⚠️ FINAL WARNING: This cannot be undone!')) return;
     
-    const license = generatedKeys[index];
-    if (!license) return;
+    generatedCodes[index].revoked = true;
+    generatedCodes[index].active = false;
+    localStorage.setItem('activation_codes', JSON.stringify(generatedCodes));
+    renderCodeList();
+    alert('✅ Code revoked! Store is now locked out.');
+}
+
+// ===== DELETE CODE =====
+function deleteCode(index) {
+    if (!confirm('Delete this code?')) return;
+    generatedCodes.splice(index, 1);
+    localStorage.setItem('activation_codes', JSON.stringify(generatedCodes));
+    renderCodeList();
+}
+
+// ===== REVOKE ALL =====
+function revokeAll() {
+    if (!confirm('⚠️ REVOKE ALL CODES?
+
+This will lock out ALL stores!')) return;
+    if (!confirm('⚠️ FINAL WARNING: This cannot be undone!')) return;
     
-    try {
-        // Add to revoked licenses
-        const db = openDB();
-        db.then(function(db) {
-            if (db.objectStoreNames.contains('revoked_licenses')) {
-                const tx = db.transaction('revoked_licenses', 'readwrite');
-                const store = tx.objectStore('revoked_licenses');
-                store.add({
-                    key: license.key,
-                    machine_id: license.machineId || '',
-                    store_name: license.storeName || 'Unknown',
-                    revoked_at: new Date().toISOString()
-                }).onsuccess = function() {
-                    console.log('✅ License revoked:', license.key);
-                };
-            }
-            db.close();
-        });
-    } catch(e) {
-        console.error('Error revoking license:', e);
+    generatedCodes.forEach(function(item) {
+        item.revoked = true;
+        item.active = false;
+    });
+    localStorage.setItem('activation_codes', JSON.stringify(generatedCodes));
+    renderCodeList();
+    alert('✅ All codes revoked! All stores locked out.');
+}
+
+// ===== EXPORT CODES =====
+function exportCodes() {
+    if (generatedCodes.length === 0) {
+        alert('❌ No codes to export');
+        return;
     }
     
-    // Remove from list
-    generatedKeys.splice(index, 1);
-    localStorage.setItem('generated_keys', JSON.stringify(generatedKeys));
-    renderLicenseList();
-    alert('✅ License revoked! Store is now locked out.');
-}
-
-function clearAllKeys() {
-    if (!confirm('Delete ALL licenses?')) return;
-    generatedKeys = [];
-    localStorage.setItem('generated_keys', JSON.stringify(generatedKeys));
-    renderLicenseList();
-}
-
-// Init
-updateExpiryDate();
-renderLicenseList();
-</script>
-
-<script>
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/sw.js')
-            .then(function(reg) {
-                console.log('✅ Service Worker registered');
-            })
-            .catch(function(err) {
-                console.log('❌ Service Worker registration failed:', err);
-            });
+    let csv = 'Store Name,Owner,Machine ID,Code,Generated,Expires,Status
+';
+    const now = new Date();
+    generatedCodes.forEach(function(item) {
+        const expires = new Date(item.expires);
+        const isExpired = expires < now;
+        let status = 'Active';
+        if (item.revoked) status = 'Revoked';
+        else if (isExpired) status = 'Expired';
+        else if (item.used) status = 'Used';
+        csv += (item.storeName || '') + ',' + (item.ownerName || '') + ',' + (item.machineId || '') + ',' + item.code + ',' + new Date(item.generated).toLocaleDateString() + ',' + expires.toLocaleDateString() + ',' + status + '
+';
     });
+    
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'activation_codes_' + new Date().toISOString().slice(0,10) + '.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+    alert('✅ Codes exported!');
+}
+
+// ===== INIT =====
+renderCodeList();
+
+// Format machine ID input
+document.getElementById('machineIdInput').addEventListener('input', function() {
+    this.value = this.value.toUpperCase();
+});
+
+// Check for password protection
+if (sessionStorage.getItem('admin_authenticated') !== 'true') {
+    const pass = prompt('🔑 Enter System Owner Password:');
+    if (pass === 'Linux@123') {
+        sessionStorage.setItem('admin_authenticated', 'true');
+    } else {
+        alert('❌ Access Denied!');
+        window.location.href = 'pos.html';
+    }
 }
 </script>
 </body>
