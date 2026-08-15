@@ -508,7 +508,6 @@
 </div>
 
 <script src="db.js"></script>
-<script>
 // ============================================================
 // PRODUCTS PAGE - COMPLETE SCRIPT
 // ============================================================
@@ -1029,9 +1028,7 @@ document.addEventListener('keydown', function(e) {
         document.querySelectorAll('.modal.show').forEach(m => m.classList.remove('show'));
     }
 });
-</script>
 
-<script>
 // ===== LOAD STORE NAME =====
 async function loadStoreName() {
     try {
@@ -1051,9 +1048,7 @@ async function loadStoreName() {
 document.addEventListener("DOMContentLoaded", function() {
     setTimeout(loadStoreName, 300);
 });
-</script>
 
-<script>
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
         navigator.serviceWorker.register('/sw.js')
@@ -1065,40 +1060,9 @@ if ('serviceWorker' in navigator) {
             });
     });
 }
-</script>
-
-<script>
 
 
-<script>
-// ===== LICENSE STATUS CHECK =====
-function checkLicenseStatus() {
-    const code = localStorage.getItem('activation_code');
-    const expiry = localStorage.getItem('expiry_date');
-    const activated = localStorage.getItem('activated');
-    
-    // Check if activated
-    if (!activated || activated !== 'true') {
-        return false;
-    }
-    
-    // Check expiry
-    if (expiry) {
-        const expiryDate = new Date(expiry);
-        const now = new Date();
-        if (expiryDate < now) {
-            // Expired - clear and redirect
-            localStorage.removeItem('activated');
-            localStorage.removeItem('activation_code');
-            localStorage.removeItem('expiry_date');
-            // License alert removed
-            window.location.href = 'settings.html';
-            return false;
-        }
-    }
-    
-    return true;
-}
+
 
 function checkAndRedirect() {
     if (!checkLicenseStatus()) {
@@ -1115,9 +1079,7 @@ function checkAndRedirect() {
 document.addEventListener('DOMContentLoaded', function() {
     checkAndRedirect();
 });
-</script>
 
-<script>
 // ===== LICENSE CHECK WITH ALERTS AND BLOCKING =====
 function checkLicenseStatus() {
     const activated = localStorage.getItem('activated');
@@ -1168,119 +1130,6 @@ if (document.readyState === 'loading') {
 } else {
     checkLicenseStatus();
 }
-</script>
 
 </body>
 </html>
-<style>
-/* ===== TOPBAR - STORE NAME ALWAYS VISIBLE ===== */
-.topbar {
-    display: flex !important;
-    justify-content: space-between !important;
-    align-items: center !important;
-    padding: 10px 20px !important;
-    background: white !important;
-    border-bottom: 1px solid #e2e8f0 !important;
-    flex-shrink: 0 !important;
-    min-height: 56px !important;
-}
-.topbar .left {
-    display: flex !important;
-    align-items: center !important;
-    gap: 12px !important;
-    flex: 1 !important;
-}
-.topbar .right {
-    display: flex !important;
-    align-items: center !important;
-    gap: 12px !important;
-    flex-shrink: 0 !important;
-}
-.topbar .right .store-badge {
-    display: inline-block !important;
-    font-size: 13px !important;
-    padding: 4px 14px !important;
-    background: #f1f5f9 !important;
-    border-radius: 20px !important;
-    color: #0f172a !important;
-    font-weight: 600 !important;
-    white-space: nowrap !important;
-}
-.topbar .right .time {
-    font-size: 13px !important;
-    color: #64748b !important;
-    font-weight: 500 !important;
-}
-@media (max-width: 768px) {
-    .topbar {
-        padding: 6px 10px !important;
-        min-height: 48px !important;
-        flex-wrap: nowrap !important;
-    }
-    .topbar .left {
-        gap: 6px !important;
-        flex: 0 0 auto !important;
-    }
-    .topbar .left .hamburger {
-        font-size: 18px !important;
-        padding: 2px 6px !important;
-        display: block !important;
-        background: none !important;
-        border: none !important;
-        cursor: pointer !important;
-    }
-    .topbar .left h1 {
-        font-size: 13px !important;
-        white-space: nowrap !important;
-    }
-    .topbar .right {
-        flex: 1 !important;
-        justify-content: flex-end !important;
-        gap: 6px !important;
-    }
-    .topbar .right .store-badge {
-        display: inline-block !important;
-        font-size: 11px !important;
-        padding: 3px 12px !important;
-        background: #1a3c34 !important;
-        color: white !important;
-        border-radius: 16px !important;
-        max-width: 120px !important;
-        overflow: hidden !important;
-        text-overflow: ellipsis !important;
-        white-space: nowrap !important;
-        font-weight: 600 !important;
-    }
-    .topbar .right .time {
-        font-size: 10px !important;
-        color: #64748b !important;
-        display: inline-block !important;
-    }
-}
-@media (max-width: 480px) {
-    .topbar {
-        padding: 4px 8px !important;
-        min-height: 42px !important;
-    }
-    .topbar .left .hamburger {
-        font-size: 16px !important;
-        padding: 2px 4px !important;
-    }
-    .topbar .left h1 {
-        font-size: 12px !important;
-    }
-    .topbar .right .store-badge {
-        font-size: 10px !important;
-        padding: 2px 8px !important;
-        max-width: 80px !important;
-    }
-    .topbar .right .time {
-        font-size: 9px !important;
-    }
-}
-</style>
-
-<script>
-// ===== ACTIVATION CHECK =====
-
-</script>
