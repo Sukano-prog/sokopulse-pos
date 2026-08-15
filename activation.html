@@ -402,23 +402,28 @@ function goToPOS() {
 
 // ===== CHECK IF ALREADY ACTIVATED =====
 function checkActivation() {
-    if (localStorage.getItem('activated') === 'true') {
-        const expiryDate = localStorage.getItem('expiry_date');
+    if (localStorage.getItem("activated") === "true") {
+        const expiryDate = localStorage.getItem("expiry_date");
         if (expiryDate) {
             const expiry = new Date(expiryDate);
             const now = new Date();
             if (expiry < now) {
-                localStorage.removeItem('activated');
-                localStorage.removeItem('activation_code');
-                localStorage.removeItem('expiry_date');
-                localStorage.removeItem('pos_user');
-                localStorage.removeItem('pos_logged_in');
-                // License alert removed
+                localStorage.removeItem("activated");
+                localStorage.removeItem("activation_code");
+                localStorage.removeItem("expiry_date");
+                localStorage.removeItem("pos_user");
+                localStorage.removeItem("pos_logged_in");
+            } else {
+                window.location.href = "index.html";
                 return;
             }
         }
-        window.location.href = 'index.html';
     }
+    // Show step 1 (Machine ID) by default on new device
+    document.getElementById("step1").classList.add("active");
+    document.getElementById("step2").classList.remove("active");
+    document.getElementById("step3").classList.remove("active");
+    updateDots(0);
 }
 
 // ===== FORMAT CODE INPUT =====
