@@ -257,26 +257,21 @@
             window.location.href = "activation.html";
         }
     </script>
-
 <div class="login-container">
     <div class="logo-section">
         <div class="logo-icon">🏪</div>
         <div class="logo-text"><span>Soko</span>Pulse</div>
         <div class="logo-sub">Point of Sale System</div>
     </div>
-
     <div class="welcome-text">
         <h2>Welcome back 👋</h2>
         <p>Sign in to continue to your dashboard</p>
     </div>
-
     <div class="status-bar">
         <span class="status-dot"></span>
         <span id="dbStatus">Initializing database...</span>
     </div>
-
     <div class="error-msg" id="errorMsg">Invalid username or password</div>
-
     <form id="loginForm" onsubmit="handleLogin(event)">
         <div class="form-group">
             <label>Username</label>
@@ -288,10 +283,7 @@
         </div>
         <button type="submit" class="login-btn">🔐 Sign In</button>
     </form>
-
-
 </div>
-
 <script>
     // ===== CHECK ACTIVATION =====
     if (localStorage.getItem("activated") !== "true") {
@@ -301,9 +293,7 @@
         { username: 'admin', password: '********', role: 'admin', name: 'Administrator' },
         { username: 'cashier', password: '********', role: 'cashier', name: 'Cashier' }
     ];
-
     let db = null;
-
                 for (const [name, indexes] of Object.entries(stores)) {
                     if (!db.objectStoreNames.contains(name)) {
                         const store = db.createObjectStore(name, { keyPath: 'id', autoIncrement: true });
@@ -323,17 +313,12 @@
             };
         });
     }
-
-    function dbAdd(storeName, data) {
-        return new Promise((resolve, reject) => {
-            const tx = db.transaction(storeName, 'readwrite');
             const store = tx.objectStore(storeName);
             const request = store.add(data);
             request.onsuccess = () => resolve(request.result);
             request.onerror = () => reject(request.error);
         });
     }
-
     function dbGetAll(storeName) {
         return new Promise((resolve, reject) => {
             const tx = db.transaction(storeName, 'readonly');
@@ -343,7 +328,6 @@
             request.onerror = () => reject(request.error);
         });
     }
-
     async function initDB() {
         try {
             await openDB();
@@ -360,7 +344,6 @@
             document.getElementById('dbStatus').style.color = '#ef4444';
         }
     }
-
     async function handleLogin(e) {
         e.preventDefault();
         const username = document.getElementById('username').value.trim();
@@ -395,7 +378,6 @@
             errorMsg.classList.add('show');
         }
     }
-
     document.addEventListener('DOMContentLoaded', function() {
         initDB();
         if (localStorage.getItem('pos_user')) {
@@ -405,9 +387,7 @@
 function toggleSidebar() {
     document.querySelector(".sidebar").classList.toggle("open");
     document.querySelector(".sidebar-overlay").classList.toggle("show");
-}
 </script>
-
 </body>
 </html>
 <script>
@@ -424,7 +404,6 @@ function checkSession() {
             window.location.href = 'index.html';
         }
     }
-}
 </script>
 <script>
 // ===== ACTIVATION CHECK =====
@@ -465,8 +444,6 @@ function checkLicenseExpiry() {
     }
     
     return true;
-}
-
 // Check on page load
 document.addEventListener('DOMContentLoaded', function() {
     checkLicenseExpiry();
