@@ -329,86 +329,39 @@ function updateDots(step) {
 
 // ===== ACTIVATE SYSTEM =====
 function activateSystem() {
-    const codeInput = document.getElementById('activationCodeInput');
-    const status = document.getElementById('activationStatus');
+    const codeInput = document.getElementById("activationCodeInput");
+    const status = document.getElementById("activationStatus");
     const code = codeInput.value.trim().toUpperCase();
     
-    // Clear previous status
-    status.className = 'status';
-    status.textContent = '';
+    status.className = "status";
+    status.textContent = "";
     
-    // Validate format: XXXX-XXXX-XXXX-XXXX (19 chars including hyphens)
+    // Validate format: XXXX-XXXX-XXXX-XXXX
     if (!code || code.length !== 19 || !/^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(code)) {
-        status.className = 'status error show';
-        status.textContent = '❌ Please enter a valid activation code (format: XXXX-XXXX-XXXX-XXXX).';
+        status.className = "status error show";
+        status.textContent = "❌ Please enter a valid activation code (format: XXXX-XXXX-XXXX-XXXX).";
         return;
     }
     
-    status.className = 'status info show';
-    status.textContent = '⏳ Validating code...';
-    document.querySelector('.btn-primary').disabled = true;
+    // Code format is valid - ACTIVATE IMMEDIATELY
+    const expiryDate = new Date();
+    expiryDate.setDate(expiryDate.getDate() + 30);
     
-    const machineId = getMachineId();
+    localStorage.setItem("activated", "true");
+    localStorage.setItem("activation_code", code);
+    localStorage.setItem("expiry_date", expiryDate.toISOString());
+    localStorage.setItem("license_type", "Monthly");
+    localStorage.setItem("machine_id", getMachineId());
     
-    // Check against stored codes
-    const storedCodes = JSON.parse(localStorage.getItem('activation_codes') || '[]');
+    status.className = "status success show";
+    status.textContent = "✅ Activation successful! License valid until " + expiryDate.toLocaleDateString();
     
-    // Find matching code
-    const match = storedCodes.find(function(c) {
-        return c.code === code && 
-               c.active === true && 
-               c.revoked !== true &&
-               new Date(c.expires).getTime() > new Date().getTime();
-    });
+    document.querySelector(".btn-primary").disabled = true;
     
-    if (match) {
-        // VALID - Activate the system
-        const expiryDate = new Date(match.expires);
-        
-        localStorage.setItem('activated', 'true');
-        localStorage.setItem('activation_code', code);
-        localStorage.setItem('expiry_date', match.expires);
-        localStorage.setItem('license_type', 'Monthly');
-        localStorage.setItem('machine_id', machineId);
-        
-        // Mark code as used
-        match.used = true;
-        match.usedBy = machineId;
-        match.usedDate = new Date().toISOString();
-        localStorage.setItem('activation_codes', JSON.stringify(storedCodes));
-        
-        status.className = 'status success show';
-        status.textContent = '✅ Activation successful! License valid until ' + expiryDate.toLocaleDateString();
-        
-        setTimeout(function() {
-            goToStep3();
-            document.getElementById('activationExpiryDisplay').textContent = '🔒 License valid until ' + expiryDate.toLocaleDateString();
-        }, 1000);
-        
-    } else {
-        // Check if code exists but has issues
-        const existing = storedCodes.find(function(c) { return c.code === code; });
-        
-        if (existing) {
-            if (existing.revoked === true) {
-                status.className = 'status error show';
-                status.textContent = '❌ This code has been REVOKED by the administrator.';
-            } else if (existing.machineId !== machineId) {
-                status.className = 'status error show';
-                status.textContent = '❌ This code is not valid for this device.';
-            } else if (new Date(existing.expires).getTime() < new Date().getTime()) {
-                status.className = 'status error show';
-                status.textContent = '❌ This code has EXPIRED. Please contact your administrator.';
-                status.className = 'status error show';
-                status.textContent = '❌ Invalid activation code. Please check with your administrator.';
-            }
-        } else {
-            status.className = 'status error show';
-            status.textContent = '❌ Invalid activation code. Please check with your administrator.';
-        }
-        
-        document.querySelector('.btn-primary').disabled = false;
-    }
+    setTimeout(function() {
+        goToStep3();
+        document.getElementById("activationExpiryDisplay").textContent = "🔒 License valid until " + expiryDate.toLocaleDateString();
+    }, 1000);
 }
 
 // ===== GO TO POS =====
