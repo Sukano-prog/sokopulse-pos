@@ -336,71 +336,32 @@ function activateSystem() {
     status.className = "status";
     status.textContent = "";
     
-    // Validate format
+    // Validate format: XXXX-XXXX-XXXX-XXXX
     if (!code || code.length !== 19 || !/^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(code)) {
         status.className = "status error show";
         status.textContent = "❌ Please enter a valid activation code (format: XXXX-XXXX-XXXX-XXXX).";
         return;
     }
     
-    // Check if code exists in activation_codes
-    const storedCodes = JSON.parse(localStorage.getItem("activation_codes") || "[]");
-    const codeEntry = storedCodes.find(function(c) { return c.code === code; });
+    // Code format is valid - ACTIVATE IMMEDIATELY
+    const expiryDate = new Date();
+    expiryDate.setDate(expiryDate.getDate() + 30);
     
-    if (codeEntry) {
-        // Check if revoked
-        if (codeEntry.revoked === true) {
-            status.className = "status error show";
-            status.textContent = "❌ This code has been REVOKED by the administrator.";
-            return;
-        }
-        // Check if already used
-        if (codeEntry.used === true) {
-            status.className = "status error show";
-            status.textContent = "❌ This code has already been used.";
-            return;
-        }
-        // Valid code - activate
-        const expiryDate = new Date(codeEntry.expires);
-        localStorage.setItem("activated", "true");
-        localStorage.setItem("activation_code", code);
-        localStorage.setItem("expiry_date", codeEntry.expires);
-        localStorage.setItem("license_type", "Monthly");
-        localStorage.setItem("machine_id", getMachineId());
-        
-        // Mark as used
-        codeEntry.used = true;
-        codeEntry.usedBy = getMachineId();
-        codeEntry.usedDate = new Date().toISOString();
-        localStorage.setItem("activation_codes", JSON.stringify(storedCodes));
-        
-        status.className = "status success show";
-        status.textContent = "✅ Activation successful! License valid until " + expiryDate.toLocaleDateString();
-        document.querySelector(".btn-primary").disabled = true;
-        setTimeout(function() {
-            goToStep3();
-            document.getElementById("activationExpiryDisplay").textContent = "🔒 License valid until " + expiryDate.toLocaleDateString();
-        }, 1000);
-    } else {
-        // Code not found - allow it anyway (or reject)
-        // Option: Reject if code not found
-        status.className = "status error show";
-        status.textContent = "❌ Invalid activation code. Please contact your administrator.";
-        return;
-        
-        // Option: Allow if not found (less secure)
-        /*
-        const expiryDate = new Date();
-        expiryDate.setDate(expiryDate.getDate() + 30);
-        localStorage.setItem("activated", "true");
-        localStorage.setItem("activation_code", code);
-        localStorage.setItem("expiry_date", expiryDate.toISOString());
-        localStorage.setItem("license_type", "Monthly");
-        localStorage.setItem("machine_id", getMachineId());
-        status.className = "status success show";
-        status.textContent = "✅ Activation successful! License valid until " + expiryDate.toLocaleDateString();
-        */
-    }
+    localStorage.setItem("activated", "true");
+    localStorage.setItem("activation_code", code);
+    localStorage.setItem("expiry_date", expiryDate.toISOString());
+    localStorage.setItem("license_type", "Monthly");
+    localStorage.setItem("machine_id", getMachineId());
+    
+    status.className = "status success show";
+    status.textContent = "✅ Activation successful! License valid until " + expiryDate.toLocaleDateString();
+    
+    document.querySelector(".btn-primary").disabled = true;
+    
+    setTimeout(function() {
+        goToStep3();
+        document.getElementById("activationExpiryDisplay").textContent = "🔒 License valid until " + expiryDate.toLocaleDateString();
+    }, 1000);
 }
 
 // ===== GO TO POS =====
