@@ -374,9 +374,10 @@ function exportCodes() {
 // ===== INIT =====
 renderCodeList();
 
-// Format machine ID input
+// Format machine ID input - preserve case
 document.getElementById('machineIdInput').addEventListener('input', function() {
-    this.value = this.value.toUpperCase();
+    // Remove spaces but keep original case
+    this.value = this.value.trim();
 });
 
 // Check for password protection
