@@ -543,7 +543,7 @@
     </div>
 </div>
 <script src="db.js"></script>
-
+<script>
 // ===== STOCK PAGE - UNIFIED SCRIPT =====
 
 // ===== STATE =====
@@ -553,7 +553,22 @@ let currentUser = null;
 let bulkStockSelected = new Set();
 
 // ===== DB HELPERS =====
-
+function openDB() {
+    return new Promise((resolve, reject) => {
+        const req = indexedDB.open('SokoPulsePOS', 6);
+        req.onupgradeneeded = function(e) {
+            const db = e.target.result;
+            if (!db.objectStoreNames.contains('stock_movements')) {
+                const store = db.createObjectStore('stock_movements', { keyPath: 'id', autoIncrement: true });
+                store.createIndex('product_id', 'product_id', { unique: false });
+                store.createIndex('type', 'type', { unique: false });
+                store.createIndex('date', 'date', { unique: false });
+            }
+        };
+        req.onsuccess = e => resolve(e.target.result);
+        req.onerror = e => reject(e.target.error);
+    });
+}
 
 function dbGetAll(db, storeName) {
     return new Promise((resolve, reject) => {
@@ -1185,10 +1200,208 @@ document.addEventListener('keydown', function(e) {
         loadStockData();
     }
 });
-
 </script>
-<button onclick="loadStockData()" style="padding:10px 18px;background:#1a3c34;color:white;border:none;border-radius:10px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;">🔄 Refresh</button>
 
+<!-- Bulk Adjust Modal -->
+<div class="modal" id="bulkAdjustModal">
+    <div class="modal-content" style="max-width:500px;">
+        <span class="modal-close" onclick="closeModal('bulkAdjustModal')">&times;</span>
+        <h2>📊 Bulk Stock Adjust</h2>
+        <p style="color:#94a3b8;font-size:13px;margin-bottom:12px;">
+            Adjust stock for multiple products at once.
+        </p>
+
+        <div id="bulkStockList" style="max-height:300px;overflow-y:auto;border:1px solid #e2e8f0;border-radius:8px;padding:8px;margin-bottom:12px;">
+            <div style="text-align:center;padding:20px;color:#94a3b8;">Loading products...</div>
+        </div>
+
+        <div class="form-group">
+            <label>Adjustment Type</label>
+            <select id="bulkAdjustType">
+                <option value="increase">➕ Increase Stock</option>
+                <option value="decrease">➖ Decrease Stock</option>
+                <option value="set">📊 Set Stock Level</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Quantity</label>
+            <input type="number" id="bulkAdjustQty" placeholder="Enter quantity" min="0">
+        </div>
+
+        <div class="form-group">
+            <label>Reason</label>
+            <select id="bulkAdjustReason">
+                <option value="bulk">Bulk Adjustment</option>
+                <option value="damaged">Damaged</option>
+                <option value="expired">Expired</option>
+                <option value="theft">Theft</option>
+                <option value="correction">Stock Take Correction</option>
+            </select>
+        </div>
+
+        <div style="color:#94a3b8;font-size:12px;margin-bottom:12px;">
+            Selected: <span id="bulkStockCount">0</span> products
+        </div>
+
+        <div class="modal-actions">
+            <button type="button" class="btn-cancel" onclick="closeModal('bulkAdjustModal')">Cancel</button>
+            <button type="button" class="btn-save" onclick="bulkAdjustStock()">📊 Apply to Selected</button>
+        </div>
+    </div>
+</div>
+
+<style>
+/* ===== TOPBAR - STORE NAME ALWAYS VISIBLE ===== */
+.topbar {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 10px 20px !important;
+    background: white !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    flex-shrink: 0 !important;
+    min-height: 56px !important;
+}
+.topbar .left {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    flex: 1 !important;
+}
+.topbar .right {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    flex-shrink: 0 !important;
+}
+.topbar .right .store-badge {
+    display: inline-block !important;
+    font-size: 13px !important;
+    padding: 4px 14px !important;
+    background: #f1f5f9 !important;
+    border-radius: 20px !important;
+    color: #0f172a !important;
+    font-weight: 600 !important;
+    white-space: nowrap !important;
+}
+.topbar .right .time {
+    font-size: 13px !important;
+    color: #64748b !important;
+    font-weight: 500 !important;
+}
+
+@media (max-width: 768px) {
+    .topbar {
+        padding: 6px 10px !important;
+        min-height: 48px !important;
+        flex-wrap: nowrap !important;
+    }
+    .topbar .left {
+        gap: 6px !important;
+        flex: 0 0 auto !important;
+    }
+    .topbar .left .hamburger {
+        font-size: 18px !important;
+        padding: 2px 6px !important;
+        display: block !important;
+        background: none !important;
+        border: none !important;
+        cursor: pointer !important;
+    }
+    .topbar .left h1 {
+        font-size: 13px !important;
+        white-space: nowrap !important;
+    }
+    .topbar .right {
+        flex: 1 !important;
+        justify-content: flex-end !important;
+        gap: 6px !important;
+    }
+    .topbar .right .store-badge {
+        display: inline-block !important;
+        font-size: 11px !important;
+        padding: 3px 12px !important;
+        background: #1a3c34 !important;
+        color: white !important;
+        border-radius: 16px !important;
+        max-width: 120px !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        white-space: nowrap !important;
+        font-weight: 600 !important;
+    }
+    .topbar .right .time {
+        font-size: 10px !important;
+        color: #64748b !important;
+        display: inline-block !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .topbar {
+        padding: 4px 8px !important;
+        min-height: 42px !important;
+    }
+    .topbar .left .hamburger {
+        font-size: 16px !important;
+        padding: 2px 4px !important;
+    }
+    .topbar .left h1 {
+        font-size: 12px !important;
+    }
+    .topbar .right .store-badge {
+        font-size: 10px !important;
+        padding: 2px 8px !important;
+        max-width: 80px !important;
+    }
+    .topbar .right .time {
+        font-size: 9px !important;
+    }
+}
+</style>
+<script src="db.js"></script>
+<script>
+// ===== CHECK FOR STOCK UPDATES =====
+function checkForStockUpdates() {
+    const lastUpdate = sessionStorage.getItem('stock_updated');
+    if (lastUpdate) {
+        const lastCheck = sessionStorage.getItem('stock_checked') || '0';
+        if (parseInt(lastUpdate) > parseInt(lastCheck)) {
+            console.log('🔄 Stock update detected, refreshing...');
+            sessionStorage.setItem('stock_checked', lastUpdate);
+            loadStockData();
+            return true;
+        }
+    }
+    return false;
+}
+
+// Override loadStockData to check for updates
+const originalLoadStock = loadStockData;
+loadStockData = async function() {
+    await originalLoadStock();
+    // Clear the notification after loading
+    sessionStorage.removeItem('stock_updated');
+};
+
+// Check for updates on page load
+document.addEventListener('DOMContentLoaded', function() {
+    // ... existing code ...
+    setTimeout(checkForStockUpdates, 500);
+});
+
+// Also check when page becomes visible again
+document.addEventListener('visibilitychange', function() {
+    if (!document.hidden) {
+        checkForStockUpdates();
+    }
+});
+</script>
+<!-- Add refresh button to toolbar -->
+<button onclick="loadStockData()" style="padding:10px 18px;background:#1a3c34;color:white;border:none;border-radius:10px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;">🔄 Refresh</button>
+<script src="db.js"></script>
+<script>
 // ===== BULK EXPORT STOCK =====
 function exportStock() {
     if (products.length === 0) {
@@ -1211,9 +1424,86 @@ function exportStock() {
     URL.revokeObjectURL(url);
     alert('✅ Stock exported!');
 }
-
+</script>
+<script src="db.js"></script>
+<script>
+// ===== ACTIVATION CHECK =====
+if (localStorage.getItem('activated') !== 'true') {
+    window.location.href = 'activation.html';
+}
+</script>
+<style>
+/* Add Total Value column style */
+td .value-amount {
+    font-weight: 600;
+    color: #1a3c34;
+}
+</style>
+<script src="db.js"></script>
+<script>
 // ===== STOCK WITH TOTAL VALUE =====
-
+const originalRender = renderProducts;
+renderProducts = function() {
+    const tbody = document.getElementById('stockBody');
+    if (!tbody) return;
+    
+    const search = document.getElementById('searchInput')?.value?.toLowerCase() || '';
+    let filtered = products || [];
+    if (search) {
+        filtered = filtered.filter(p => 
+            (p.name || '').toLowerCase().includes(search) || 
+            (p.sku || '').toLowerCase().includes(search)
+        );
+    }
+    
+    if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;padding:40px;color:#94a3b8;">No products found</td></tr>`;
+        return;
+    }
+    
+    tbody.innerHTML = filtered.map(p => {
+        const productMovements = movements ? movements.filter(m => m.product_id === p.id) : [];
+        const received = productMovements.filter(m => m.type === 'receive').reduce((s, m) => s + m.quantity, 0);
+        const sold = productMovements.filter(m => m.type === 'sold').reduce((s, m) => s + Math.abs(m.quantity), 0);
+        const adjusted = productMovements.filter(m => m.type === 'adjust').reduce((s, m) => s + Math.abs(m.quantity), 0);
+        const netChange = (p.current_stock || 0) - (p.initial_stock || 0);
+        
+        // Calculate total value
+        const costPrice = p.cost_price || 0;
+        const stock = p.current_stock || 0;
+        const totalValue = costPrice * stock;
+        
+        let status = 'in-stock';
+        let statusLabel = '✅ In Stock';
+        if (p.current_stock <= 0) { status = 'out-of-stock'; statusLabel = '❌ Out of Stock'; }
+        else if (p.current_stock < (p.min_stock_alert || 5)) { status = 'low-stock'; statusLabel = '⚠️ Low Stock'; }
+        
+        const stockClass = p.current_stock <= 0 ? 'red' : p.current_stock < (p.min_stock_alert || 5) ? 'orange' : 'green';
+        
+        return `
+            <tr>
+                <td><strong>${p.name || 'Unnamed'}</strong></td>
+                <td>${p.sku || '-'}</td>
+                <td><span class="stock-number ${stockClass}">${p.current_stock || 0}</span></td>
+                <td><span class="stock-number" style="font-weight:600;color:#1a3c34;">KES ${totalValue.toFixed(2)}</span></td>
+                <td>${p.min_stock_alert || 5}</td>
+                <td><span class="stock-number green">${received}</span></td>
+                <td><span class="stock-number red">${sold}</span></td>
+                <td><span class="stock-number orange">${adjusted}</span></td>
+                <td><span class="stock-number ${netChange >= 0 ? 'green' : 'red'}">${netChange >= 0 ? '+' : ''}${netChange}</span></td>
+                <td><span class="status-badge ${status}">${statusLabel}</span></td>
+                <td>
+                    <button class="btn-action receive" onclick="openReceiveModal(${p.id})">📥</button>
+                    <button class="btn-action adjust" onclick="openAdjustModal(${p.id})">📊</button>
+                    <button class="btn-action history" onclick="showProductHistory(${p.id})">📋</button>
+                </td>
+            </tr>
+        `;
+    }).join('');
+};
+</script>
+<script src="db.js"></script>
+<script>
 // Update stats to include total stock value
 const originalRenderStats = renderStats;
 renderStats = function() {
@@ -1239,24 +1529,100 @@ renderStats = function() {
     const totalValue = products ? products.reduce((s, p) => s + ((p.cost_price || 0) * (p.current_stock || 0)), 0) : 0;
     document.getElementById('stockValue').textContent = `KES ${totalValue.toFixed(0)}`;
 };
-
+</script>
+<script src="db.js"></script>
+<script>
 // ===== FIXED RENDER PRODUCTS WITH VALUE =====
+const renderProductsWithValue = renderProducts;
+renderProducts = function() {
+    const tbody = document.getElementById('stockBody');
+    if (!tbody) return;
+    
+    const search = document.getElementById('searchInput')?.value?.toLowerCase() || '';
+    
+    let filtered = products || [];
+    if (search) {
+        filtered = filtered.filter(p => 
+            (p.name || '').toLowerCase().includes(search) || 
+            (p.sku || '').toLowerCase().includes(search)
+        );
+    }
+    
+    if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="10" style="text-align:center;padding:40px;color:#94a3b8;">No products found</td></tr>`;
+        return;
+    }
+    
+    tbody.innerHTML = filtered.map(p => {
+        const productMovements = movements ? movements.filter(m => m.product_id === p.id) : [];
+        const received = productMovements.filter(m => m.type === 'receive').reduce((s, m) => s + m.quantity, 0);
+        const sold = productMovements.filter(m => m.type === 'sold').reduce((s, m) => s + Math.abs(m.quantity), 0);
+        const adjusted = productMovements.filter(m => m.type === 'adjust').reduce((s, m) => s + Math.abs(m.quantity), 0);
+        const netChange = (p.current_stock || 0) - (p.initial_stock || 0);
+        
+        // Calculate total value
+        const costPrice = p.cost_price || 0;
+        const stock = p.current_stock || 0;
+        const totalValue = costPrice * stock;
+        
+        let status = 'in-stock';
+        let statusLabel = '✅ In Stock';
+        if (p.current_stock <= 0) { status = 'out-of-stock'; statusLabel = '❌ Out of Stock'; }
+        else if (p.current_stock < (p.min_stock_alert || 5)) { status = 'low-stock'; statusLabel = '⚠️ Low Stock'; }
+        
+        const stockClass = p.current_stock <= 0 ? 'red' : p.current_stock < (p.min_stock_alert || 5) ? 'orange' : 'green';
+        
+        return `
+            <tr>
+                <td>
+                    <div class="product-name">${p.name || 'Unnamed'}</div>
+                    <div class="product-sku">${p.sku || '-'}</div>
+                </td>
+                <td><span class="stock-number ${stockClass}">${p.current_stock || 0}</span></td>
+                <td><span style="font-weight:700;color:#1a3c34;">KES ${totalValue.toFixed(2)}</span></td>
+                <td>${p.min_stock_alert || 5}</td>
+                <td><span class="stock-number green">${received}</span></td>
+                <td><span class="stock-number red">${sold}</span></td>
+                <td><span class="stock-number orange">${adjusted}</span></td>
+                <td><span class="stock-number ${netChange >= 0 ? 'green' : 'red'}">${netChange >= 0 ? '+' : ''}${netChange}</span></td>
+                <td><span class="status-badge ${status}">${statusLabel}</span></td>
+                <td>
+                    <button class="btn-action receive" onclick="openReceiveModal(${p.id})">📥</button>
+                    <button class="btn-action adjust" onclick="openAdjustModal(${p.id})">📊</button>
+                    <button class="btn-action history" onclick="showProductHistory(${p.id})">📋</button>
+                </td>
+            </tr>
+        `;
+    }).join('');
+    const lowStock = products ? products.filter(function(p) {
+        const minAlert = p.min_stock_alert || 5;
+        const stock = p.current_stock || 0;
+        return stock < minAlert;  // Includes 0 stock
+    }).length : 0;
+    
+    const total = products ? products.length : 0;
+    const outStock = products ? products.filter(function(p) {
+        return (p.current_stock || 0) <= 0;
+    }).length : 0;
+    
+    const inStock = total - lowStock;
 
-// Run on page load
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', checkLicenseStatus);
-} else {
-    checkLicenseStatus();
-}
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/sw.js')
-            .then(function(reg) {
-                console.log('✅ Service Worker registered for stock.html');
-            })
-            .catch(function(err) {
-                console.log('❌ Service Worker registration failed:', err);
-            });
-    });
-}
+    document.getElementById('totalItems').textContent = total;
+    document.getElementById('inStock').textContent = inStock;
+    document.getElementById('lowStock').textContent = lowStock;
+    document.getElementById('outStock').textContent = outStock;
+
+    const received = movements ? movements.filter(m => m.type === 'receive').reduce((s, m) => s + m.quantity, 0) : 0;
+    const sold = movements ? movements.filter(m => m.type === 'sold').reduce((s, m) => s + Math.abs(m.quantity), 0) : 0;
+    const adjusted = movements ? movements.filter(m => m.type === 'adjust').reduce((s, m) => s + Math.abs(m.quantity), 0) : 0;
+
+    document.getElementById('totalReceived').textContent = received;
+    document.getElementById('totalSold').textContent = sold;
+    document.getElementById('totalAdjusted').textContent = adjusted;
+
+    const totalValue = products ? products.reduce((s, p) => s + ((p.cost_price || 0) * (p.current_stock || 0)), 0) : 0;
+    document.getElementById('stockValue').textContent = `KES ${totalValue.toFixed(0)}`;
+    
+    console.log('📊 Stock stats:', { total, inStock, lowStock, outStock });
+};
 </script>

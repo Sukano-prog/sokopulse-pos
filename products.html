@@ -320,9 +320,9 @@
         </nav>
         <div class="user-section">
             <div class="name" id="userName">Administrator</div>
-        <button class="logout-btn" onclick="logout()">🚪 Logout</button>
             <div class="role" id="userRole">Admin</div>
         </div>
+        <button class="logout-btn" onclick="logout()">🚪 Logout</button>
     </aside>
     <main class="main-content">
         <header class="topbar">
@@ -365,7 +365,6 @@
                             <th>Name</th>
                             <th>SKU</th>
                             <th>Category</th>
-                            <th>Cost Price</th>
                             <th>Retail Price</th>
                             <th>Wholesale Price</th>
                             <th>Stock</th>
@@ -404,24 +403,12 @@
             </div>
             <div class="form-row">
                 <div class="form-group">
-                    <label>Cost Price (KES)</label>
-                    <input type="number" id="productCost" placeholder="0.00" step="0.01">
-                    <div style="font-size:11px;color:#94a3b8;margin-top:4px;">What you paid for this product</div>
-                </div>
-                <div class="form-group">
                     <label>Retail Price (KES) *</label>
                     <input type="number" id="productRetail" placeholder="0.00" step="0.01" required>
                 </div>
-            </div>
-            <div class="form-row">
                 <div class="form-group">
                     <label>Wholesale Price (KES)</label>
                     <input type="number" id="productWholesale" placeholder="0.00" step="0.01">
-                </div>
-                <div class="form-group">
-                    <label>Discount (%)</label>
-                    <input type="number" id="productDiscount" placeholder="0" min="0" max="100" step="0.5">
-                    <div style="font-size:11px;color:#94a3b8;margin-top:4px;">Discount applied automatically when added to cart</div>
                 </div>
             </div>
             <div class="form-row">
@@ -506,8 +493,8 @@
         </div>
     </div>
 </div>
-
 <script src="db.js"></script>
+<script>
 // ============================================================
 // PRODUCTS PAGE - COMPLETE SCRIPT
 // ============================================================
@@ -518,6 +505,26 @@ let imageDataStore = null;
 let selectedProducts = new Set();
 let categories = [];
 // ===== DB HELPERS =====
+function openDB() {
+    return new Promise((resolve, reject) => {
+        const req = indexedDB.open('SokoPulsePOS', 6);
+        req.onsuccess = e => resolve(e.target.result);
+        req.onerror = e => reject(e.target.error);
+    });
+}
+function dbGetAll(db, storeName) {
+    return new Promise((resolve, reject) => {
+        if (!db.objectStoreNames.contains(storeName)) {
+            resolve([]);
+            return;
+        }
+        const tx = db.transaction(storeName, 'readonly');
+        const store = tx.objectStore(storeName);
+        const req = store.getAll();
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+    });
+}
 // ===== TOGGLE SIDEBAR =====
 function toggleSidebar() {
     document.querySelector('.sidebar').classList.toggle('open');
@@ -655,7 +662,6 @@ function renderProducts() {
             '<td><strong>' + (p.name || 'Unnamed') + '</strong></td>' +
             '<td>' + (p.sku || '-') + '</td>' +
             '<td>' + categoryName + '</td>' +
-            '<td>KES ' + (p.cost_price || 0).toFixed(2) + '</td>' + 
             '<td>KES ' + (p.retail_price || p.selling_price || 0).toFixed(2) + '</td>' +
             '<td>KES ' + (p.wholesale_price || 0).toFixed(2) + '</td>' +
             '<td>' + (p.current_stock || 0) + '</td>' +
@@ -733,8 +739,6 @@ function openEditModal(id) {
     document.getElementById('productBarcode').value = p.barcode || '';
     document.getElementById('productRetail').value = p.retail_price || p.selling_price || '';
     document.getElementById('productWholesale').value = p.wholesale_price || '';
-    document.getElementById('productDiscount').value = p.discount || '';
-    document.getElementById('productCost').value = p.cost_price || '';
     document.getElementById('productStock').value = p.current_stock || 0;
     document.getElementById('productMinStock').value = p.min_stock_alert || 5;
     document.getElementById('productExpiry').value = p.expiry_date || '';
@@ -749,7 +753,7 @@ function openEditModal(id) {
             status.style.color = '#22c55e';
         }
     } else {
-                    // console.log("✅ Admin user lowering price - showing confirmation");
+                    console.log("✅ Admin user lowering price - showing confirmation");
         removeImageData();
     }
     document.getElementById('productModal').classList.add('show');
@@ -761,9 +765,7 @@ async function saveProduct(e) {
     const sku = document.getElementById('productSku').value.trim();
     const barcode = document.getElementById('productBarcode').value.trim();
     const retailPrice = parseFloat(document.getElementById('productRetail').value) || 0;
-    const costPrice = parseFloat(document.getElementById('productCost').value) || 0;
     const wholesalePrice = parseFloat(document.getElementById('productWholesale').value) || 0;
-    const discount = parseFloat(document.getElementById('productDiscount').value) || 0;
     const stock = parseInt(document.getElementById('productStock').value) || 0;
     const minStock = parseInt(document.getElementById('productMinStock').value) || 5;
     const category = document.getElementById('productCategory').value || null;
@@ -812,10 +814,8 @@ async function saveProduct(e) {
         sku: sku || '',
         barcode: barcode || '',
         retail_price: retailPrice,
-        cost_price: costPrice,
         wholesale_price: wholesalePrice || 0,
         selling_price: retailPrice,
-        discount: discount,
         current_stock: stock,
         min_stock_alert: minStock,
         category_id: category,
@@ -1028,7 +1028,9 @@ document.addEventListener('keydown', function(e) {
         document.querySelectorAll('.modal.show').forEach(m => m.classList.remove('show'));
     }
 });
-
+</script>
+<script src="db.js"></script>
+<script>
 // ===== LOAD STORE NAME =====
 async function loadStoreName() {
     try {
@@ -1048,88 +1050,120 @@ async function loadStoreName() {
 document.addEventListener("DOMContentLoaded", function() {
     setTimeout(loadStoreName, 300);
 });
-
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/sw.js')
-            .then(function(reg) {
-                console.log('✅ Service Worker registered');
-            })
-            .catch(function(err) {
-                console.log('❌ Service Worker registration failed:', err);
-            });
-    });
-}
-
-
-
-
-function checkAndRedirect() {
-    if (!checkLicenseStatus()) {
-        // If not on settings page, redirect to settings
-        if (!window.location.pathname.includes('settings.html') &&
-            !window.location.pathname.includes('activation.html') &&
-            !window.location.pathname.includes('index.html')) {
-            window.location.href = 'settings.html';
-        }
-    }
-}
-
-// Run check on page load
-document.addEventListener('DOMContentLoaded', function() {
-    checkAndRedirect();
-});
-
-// ===== LICENSE CHECK WITH ALERTS AND BLOCKING =====
-function checkLicenseStatus() {
-    const activated = localStorage.getItem('activated');
-    const expiry = localStorage.getItem('expiry_date');
-    const code = localStorage.getItem('activation_code');
-    
-    // CASE 1: NOT ACTIVATED (Inactive)
-    if (!activated || activated !== 'true') {
-        alert('⚠️ Your license is not activated.\nPlease go to Settings to activate your license.');
-        // Redirect to settings after alert
-        window.location.href = 'settings.html';
-        return false;
-    }
-    
-    // CASE 2: Check expiry
-    if (expiry) {
-        const expiryDate = new Date(expiry);
-        const now = new Date();
-        const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
-        
-        // CASE 3: EXPIRED
-        if (expiryDate < now) {
-            alert('⚠️ Your license has expired on ' + expiryDate.toLocaleDateString() + '.\nPlease contact your administrator to renew.');
-            // Clear license data
-            localStorage.removeItem('activated');
-            localStorage.removeItem('activation_code');
-            localStorage.removeItem('expiry_date');
-            window.location.href = 'settings.html';
-            return false;
-        }
-        
-        // CASE 4: Few days to expire (show warning but allow access)
-        if (daysRemaining <= 7) {
-            alert('⚠️ Your license will expire in ' + daysRemaining + ' days (' + expiryDate.toLocaleDateString() + ').\nPlease renew your license soon.');
-            // System still works - no redirect
-        }
-    }
-    
-    // License is ACTIVE - everything works
-    return true;
-}
-
-// Run on page load
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function() {
-        checkLicenseStatus();
-    });
-} else {
-    checkLicenseStatus();
-}
-
+</script>
 </body>
 </html>
+<style>
+/* ===== TOPBAR - STORE NAME ALWAYS VISIBLE ===== */
+.topbar {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 10px 20px !important;
+    background: white !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    flex-shrink: 0 !important;
+    min-height: 56px !important;
+}
+.topbar .left {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    flex: 1 !important;
+}
+.topbar .right {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    flex-shrink: 0 !important;
+}
+.topbar .right .store-badge {
+    display: inline-block !important;
+    font-size: 13px !important;
+    padding: 4px 14px !important;
+    background: #f1f5f9 !important;
+    border-radius: 20px !important;
+    color: #0f172a !important;
+    font-weight: 600 !important;
+    white-space: nowrap !important;
+}
+.topbar .right .time {
+    font-size: 13px !important;
+    color: #64748b !important;
+    font-weight: 500 !important;
+}
+@media (max-width: 768px) {
+    .topbar {
+        padding: 6px 10px !important;
+        min-height: 48px !important;
+        flex-wrap: nowrap !important;
+    }
+    .topbar .left {
+        gap: 6px !important;
+        flex: 0 0 auto !important;
+    }
+    .topbar .left .hamburger {
+        font-size: 18px !important;
+        padding: 2px 6px !important;
+        display: block !important;
+        background: none !important;
+        border: none !important;
+        cursor: pointer !important;
+    }
+    .topbar .left h1 {
+        font-size: 13px !important;
+        white-space: nowrap !important;
+    }
+    .topbar .right {
+        flex: 1 !important;
+        justify-content: flex-end !important;
+        gap: 6px !important;
+    }
+    .topbar .right .store-badge {
+        display: inline-block !important;
+        font-size: 11px !important;
+        padding: 3px 12px !important;
+        background: #1a3c34 !important;
+        color: white !important;
+        border-radius: 16px !important;
+        max-width: 120px !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        white-space: nowrap !important;
+        font-weight: 600 !important;
+    }
+    .topbar .right .time {
+        font-size: 10px !important;
+        color: #64748b !important;
+        display: inline-block !important;
+    }
+}
+@media (max-width: 480px) {
+    .topbar {
+        padding: 4px 8px !important;
+        min-height: 42px !important;
+    }
+    .topbar .left .hamburger {
+        font-size: 16px !important;
+        padding: 2px 4px !important;
+    }
+    .topbar .left h1 {
+        font-size: 12px !important;
+    }
+    .topbar .right .store-badge {
+        font-size: 10px !important;
+        padding: 2px 8px !important;
+        max-width: 80px !important;
+    }
+    .topbar .right .time {
+        font-size: 9px !important;
+    }
+}
+</style>
+<script src="db.js"></script>
+<script>
+// ===== ACTIVATION CHECK =====
+if (localStorage.getItem('activated') !== 'true') {
+    window.location.href = 'activation.html';
+}
+</script>
