@@ -341,7 +341,7 @@ function activateSystem() {
                    c.machineId === machineId && 
                    c.active === true && 
                    c.revoked !== true &&
-                   new Date(c.expires) > new Date();
+                   new Date(c.expires).getTime() > new Date().getTime();
         });
         
         if (match) {
