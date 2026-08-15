@@ -221,6 +221,16 @@
                                 <span style="font-size:11px;color:#94a3b8;" id="licenseExpiryDisplay"></span>
                             </div>
                         </div>
+                        <div style="background:#f0fdf4;padding:12px;border-radius:8px;margin-bottom:12px;border:1px solid #bbf7d0;">
+                            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+                                <div>
+                                    <div style="font-size:11px;font-weight:600;color:#166534;">🖥️ Your Machine ID</div>
+                                    <div id="machineIdDisplay" style="font-family:monospace;font-size:14px;font-weight:700;color:#1a3c34;letter-spacing:1px;margin-top:2px;">Loading...</div>
+                                </div>
+                                <button onclick="copyMachineId()" style="padding:4px 12px;background:#1a3c34;color:white;border:none;border-radius:4px;cursor:pointer;font-size:11px;font-weight:600;">📋 Copy</button>
+                            </div>
+                            <div style="font-size:10px;color:#166534;margin-top:4px;">Send this Machine ID to your administrator to get an activation code.</div>
+                        </div>
                         <div class="form-group">
                             <label>Activation Code</label>
                             <input type="text" id="activationCodeInput" placeholder="Enter activation code" style="font-family:monospace;font-size:16px;letter-spacing:1px;text-transform:uppercase;">
@@ -304,6 +314,48 @@
 <script src="db.js">
 
 // ===== ACTIVATION CODE VERIFICATION =====
+
+
+// ===== MACHINE ID FUNCTIONS =====
+function getMachineId() {
+    let machineId = localStorage.getItem('machine_id');
+    if (!machineId) {
+        const components = [
+            navigator.userAgent,
+            navigator.language,
+            screen.width,
+            screen.height,
+            navigator.hardwareConcurrency || 0,
+            navigator.platform,
+            navigator.deviceMemory || 0
+        ];
+        machineId = btoa(components.join('|')).slice(0, 24);
+        localStorage.setItem('machine_id', machineId);
+    }
+    return machineId;
+}
+
+function displayMachineId() {
+    const el = document.getElementById('machineIdDisplay');
+    if (el) {
+        el.textContent = getMachineId();
+    }
+}
+
+function copyMachineId() {
+    const id = getMachineId();
+    navigator.clipboard.writeText(id).then(() => {
+        alert('✅ Machine ID copied to clipboard!');
+    }).catch(() => {
+        const input = document.createElement('input');
+        input.value = id;
+        document.body.appendChild(input);
+        input.select();
+        document.execCommand('copy');
+        document.body.removeChild(input);
+        alert('✅ Machine ID copied!');
+    });
+}
 function verifyActivationCode() {
     const code = document.getElementById('activationCodeInput').value.trim().toUpperCase();
     const status = document.getElementById('activationStatus');
@@ -418,6 +470,7 @@ function checkLicenseStatus() {
 
 // Run on load
 document.addEventListener('DOMContentLoaded', function() {
+    displayMachineId();
     checkLicenseStatus();
 });
 
@@ -769,6 +822,48 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 // ===== ACTIVATION CODE VERIFICATION =====
+
+
+// ===== MACHINE ID FUNCTIONS =====
+function getMachineId() {
+    let machineId = localStorage.getItem('machine_id');
+    if (!machineId) {
+        const components = [
+            navigator.userAgent,
+            navigator.language,
+            screen.width,
+            screen.height,
+            navigator.hardwareConcurrency || 0,
+            navigator.platform,
+            navigator.deviceMemory || 0
+        ];
+        machineId = btoa(components.join('|')).slice(0, 24);
+        localStorage.setItem('machine_id', machineId);
+    }
+    return machineId;
+}
+
+function displayMachineId() {
+    const el = document.getElementById('machineIdDisplay');
+    if (el) {
+        el.textContent = getMachineId();
+    }
+}
+
+function copyMachineId() {
+    const id = getMachineId();
+    navigator.clipboard.writeText(id).then(() => {
+        alert('✅ Machine ID copied to clipboard!');
+    }).catch(() => {
+        const input = document.createElement('input');
+        input.value = id;
+        document.body.appendChild(input);
+        input.select();
+        document.execCommand('copy');
+        document.body.removeChild(input);
+        alert('✅ Machine ID copied!');
+    });
+}
 function verifyActivationCode() {
     const code = document.getElementById('activationCodeInput').value.trim().toUpperCase();
     const status = document.getElementById('activationStatus');
@@ -883,6 +978,7 @@ function checkLicenseStatus() {
 
 // Run on load
 document.addEventListener('DOMContentLoaded', function() {
+    displayMachineId();
     checkLicenseStatus();
 });
 
@@ -904,6 +1000,48 @@ if ('serviceWorker' in navigator) {
 
 
 // ===== ACTIVATION CODE VERIFICATION =====
+
+
+// ===== MACHINE ID FUNCTIONS =====
+function getMachineId() {
+    let machineId = localStorage.getItem('machine_id');
+    if (!machineId) {
+        const components = [
+            navigator.userAgent,
+            navigator.language,
+            screen.width,
+            screen.height,
+            navigator.hardwareConcurrency || 0,
+            navigator.platform,
+            navigator.deviceMemory || 0
+        ];
+        machineId = btoa(components.join('|')).slice(0, 24);
+        localStorage.setItem('machine_id', machineId);
+    }
+    return machineId;
+}
+
+function displayMachineId() {
+    const el = document.getElementById('machineIdDisplay');
+    if (el) {
+        el.textContent = getMachineId();
+    }
+}
+
+function copyMachineId() {
+    const id = getMachineId();
+    navigator.clipboard.writeText(id).then(() => {
+        alert('✅ Machine ID copied to clipboard!');
+    }).catch(() => {
+        const input = document.createElement('input');
+        input.value = id;
+        document.body.appendChild(input);
+        input.select();
+        document.execCommand('copy');
+        document.body.removeChild(input);
+        alert('✅ Machine ID copied!');
+    });
+}
 function verifyActivationCode() {
     const code = document.getElementById('activationCodeInput').value.trim().toUpperCase();
     const status = document.getElementById('activationStatus');
@@ -1018,6 +1156,7 @@ function checkLicenseStatus() {
 
 // Run on load
 document.addEventListener('DOMContentLoaded', function() {
+    displayMachineId();
     checkLicenseStatus();
 });
 
