@@ -249,7 +249,6 @@
 
 
 <script src="db.js"></script>
-<script>
 function isAdmin() {
     try {
         const user = JSON.parse(localStorage.getItem("pos_user") || "{}");
@@ -456,106 +455,17 @@ function reprintReceipt(id) {
         return;
     }
     win.document.write('<html><head><title>Receipt</title><style>body{font-family:monospace;padding:20px;white-space:pre;}</style></head><body>' + receipt + '</body></html>'
-<script>
-// ===== LICENSE CHECK =====
 
-// Run checks
-// License check removed);
-</script>
 
-<!-- License Warning Banner -->
-    <span id="licenseWarningMessage">⚠️ Your license expires soon. Please renew in Settings.</span>
-</div>
-
-<script>
 // ===== LICENSE STATUS CHECK =====
-function checkLicenseStatus() {
-    const code = localStorage.getItem('activation_code');
-    const expiry = localStorage.getItem('expiry_date');
-    const activated = localStorage.getItem('activated');
-    
-    // Check if activated
-    if (!activated || activated !== 'true') {
-        return false;
-    }
-    
-    // Check expiry
-    if (expiry) {
-        const expiryDate = new Date(expiry);
-        const now = new Date();
-        if (expiryDate < now) {
-            // Expired - clear and redirect
-            localStorage.removeItem('activated');
-            localStorage.removeItem('activation_code');
-            localStorage.removeItem('expiry_date');
-            // License alert removed
-            window.location.href = 'settings.html';
-            return false;
-        }
-    }
-    
-    return true;
-}
 
-function checkAndRedirect() {
-    if (!checkLicenseStatus()) {
-        // If not on settings page, redirect to settings
-        if (!window.location.pathname.includes('settings.html') &&
-            !window.location.pathname.includes('activation.html') &&
-            !window.location.pathname.includes('index.html')) {
-            window.location.href = 'settings.html';
-        }
-    }
-}
 
 // Run check on page load
 document.addEventListener('DOMContentLoaded', function() {
     checkAndRedirect();
 });
-</script>
 
-<script>
 // ===== LICENSE CHECK WITH ALERTS AND BLOCKING =====
-function checkLicenseStatus() {
-    const activated = localStorage.getItem('activated');
-    const expiry = localStorage.getItem('expiry_date');
-    const code = localStorage.getItem('activation_code');
-    
-    // CASE 1: NOT ACTIVATED (Inactive)
-    if (!activated || activated !== 'true') {
-        alert('⚠️ Your license is not activated.\nPlease go to Settings to activate your license.');
-        // Redirect to settings after alert
-        window.location.href = 'settings.html';
-        return false;
-    }
-    
-    // CASE 2: Check expiry
-    if (expiry) {
-        const expiryDate = new Date(expiry);
-        const now = new Date();
-        const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
-        
-        // CASE 3: EXPIRED
-        if (expiryDate < now) {
-            alert('⚠️ Your license has expired on ' + expiryDate.toLocaleDateString() + '.\nPlease contact your administrator to renew.');
-            // Clear license data
-            localStorage.removeItem('activated');
-            localStorage.removeItem('activation_code');
-            localStorage.removeItem('expiry_date');
-            window.location.href = 'settings.html';
-            return false;
-        }
-        
-        // CASE 4: Few days to expire (show warning but allow access)
-        if (daysRemaining <= 7) {
-            alert('⚠️ Your license will expire in ' + daysRemaining + ' days (' + expiryDate.toLocaleDateString() + ').\nPlease renew your license soon.');
-            // System still works - no redirect
-        }
-    }
-    
-    // License is ACTIVE - everything works
-    return true;
-}
 
 // Run on page load
 if (document.readyState === 'loading') {
@@ -565,7 +475,6 @@ if (document.readyState === 'loading') {
 } else {
     checkLicenseStatus();
 }
-</script>
 
 </body></html>');
     win.document.close();
@@ -722,106 +631,17 @@ function printBulkFromPreview() {
         return;
     }
     win.document.write('<html><head><title>Bulk Receipts</title><style>body{font-family:"Courier New",monospace;padding:20px;white-space:pre;font-size:12px;background:white;margin:0;}@media print{body{padding:10px;}@page{margin:0.5cm;}}</style></head><body>' + receipt + '
-<script>
-// ===== LICENSE CHECK =====
 
-// Run checks
-// License check removed);
-</script>
 
-<!-- License Warning Banner -->
-    <span id="licenseWarningMessage">⚠️ Your license expires soon. Please renew in Settings.</span>
-</div>
-
-<script>
 // ===== LICENSE STATUS CHECK =====
-function checkLicenseStatus() {
-    const code = localStorage.getItem('activation_code');
-    const expiry = localStorage.getItem('expiry_date');
-    const activated = localStorage.getItem('activated');
-    
-    // Check if activated
-    if (!activated || activated !== 'true') {
-        return false;
-    }
-    
-    // Check expiry
-    if (expiry) {
-        const expiryDate = new Date(expiry);
-        const now = new Date();
-        if (expiryDate < now) {
-            // Expired - clear and redirect
-            localStorage.removeItem('activated');
-            localStorage.removeItem('activation_code');
-            localStorage.removeItem('expiry_date');
-            // License alert removed
-            window.location.href = 'settings.html';
-            return false;
-        }
-    }
-    
-    return true;
-}
 
-function checkAndRedirect() {
-    if (!checkLicenseStatus()) {
-        // If not on settings page, redirect to settings
-        if (!window.location.pathname.includes('settings.html') &&
-            !window.location.pathname.includes('activation.html') &&
-            !window.location.pathname.includes('index.html')) {
-            window.location.href = 'settings.html';
-        }
-    }
-}
 
 // Run check on page load
 document.addEventListener('DOMContentLoaded', function() {
     checkAndRedirect();
 });
-</script>
 
-<script>
 // ===== LICENSE CHECK WITH ALERTS AND BLOCKING =====
-function checkLicenseStatus() {
-    const activated = localStorage.getItem('activated');
-    const expiry = localStorage.getItem('expiry_date');
-    const code = localStorage.getItem('activation_code');
-    
-    // CASE 1: NOT ACTIVATED (Inactive)
-    if (!activated || activated !== 'true') {
-        alert('⚠️ Your license is not activated.\nPlease go to Settings to activate your license.');
-        // Redirect to settings after alert
-        window.location.href = 'settings.html';
-        return false;
-    }
-    
-    // CASE 2: Check expiry
-    if (expiry) {
-        const expiryDate = new Date(expiry);
-        const now = new Date();
-        const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
-        
-        // CASE 3: EXPIRED
-        if (expiryDate < now) {
-            alert('⚠️ Your license has expired on ' + expiryDate.toLocaleDateString() + '.\nPlease contact your administrator to renew.');
-            // Clear license data
-            localStorage.removeItem('activated');
-            localStorage.removeItem('activation_code');
-            localStorage.removeItem('expiry_date');
-            window.location.href = 'settings.html';
-            return false;
-        }
-        
-        // CASE 4: Few days to expire (show warning but allow access)
-        if (daysRemaining <= 7) {
-            alert('⚠️ Your license will expire in ' + daysRemaining + ' days (' + expiryDate.toLocaleDateString() + ').\nPlease renew your license soon.');
-            // System still works - no redirect
-        }
-    }
-    
-    // License is ACTIVE - everything works
-    return true;
-}
 
 // Run on page load
 if (document.readyState === 'loading') {
@@ -831,7 +651,6 @@ if (document.readyState === 'loading') {
 } else {
     checkLicenseStatus();
 }
-</script>
 
 </body></html>');
     win.document.close();
@@ -891,109 +710,19 @@ document.addEventListener('keydown', function(e) {
         });
     }
 });
-</script>
 
 
-<script>
-// ===== LICENSE CHECK =====
 
-// Run checks
-// License check removed);
-</script>
 
-<!-- License Warning Banner -->
-    <span id="licenseWarningMessage">⚠️ Your license expires soon. Please renew in Settings.</span>
-</div>
-
-<script>
 // ===== LICENSE STATUS CHECK =====
-function checkLicenseStatus() {
-    const code = localStorage.getItem('activation_code');
-    const expiry = localStorage.getItem('expiry_date');
-    const activated = localStorage.getItem('activated');
-    
-    // Check if activated
-    if (!activated || activated !== 'true') {
-        return false;
-    }
-    
-    // Check expiry
-    if (expiry) {
-        const expiryDate = new Date(expiry);
-        const now = new Date();
-        if (expiryDate < now) {
-            // Expired - clear and redirect
-            localStorage.removeItem('activated');
-            localStorage.removeItem('activation_code');
-            localStorage.removeItem('expiry_date');
-            // License alert removed
-            window.location.href = 'settings.html';
-            return false;
-        }
-    }
-    
-    return true;
-}
 
-function checkAndRedirect() {
-    if (!checkLicenseStatus()) {
-        // If not on settings page, redirect to settings
-        if (!window.location.pathname.includes('settings.html') &&
-            !window.location.pathname.includes('activation.html') &&
-            !window.location.pathname.includes('index.html')) {
-            window.location.href = 'settings.html';
-        }
-    }
-}
 
 // Run check on page load
 document.addEventListener('DOMContentLoaded', function() {
     checkAndRedirect();
 });
-</script>
 
-<script>
 // ===== LICENSE CHECK WITH ALERTS AND BLOCKING =====
-function checkLicenseStatus() {
-    const activated = localStorage.getItem('activated');
-    const expiry = localStorage.getItem('expiry_date');
-    const code = localStorage.getItem('activation_code');
-    
-    // CASE 1: NOT ACTIVATED (Inactive)
-    if (!activated || activated !== 'true') {
-        alert('⚠️ Your license is not activated.\nPlease go to Settings to activate your license.');
-        // Redirect to settings after alert
-        window.location.href = 'settings.html';
-        return false;
-    }
-    
-    // CASE 2: Check expiry
-    if (expiry) {
-        const expiryDate = new Date(expiry);
-        const now = new Date();
-        const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
-        
-        // CASE 3: EXPIRED
-        if (expiryDate < now) {
-            alert('⚠️ Your license has expired on ' + expiryDate.toLocaleDateString() + '.\nPlease contact your administrator to renew.');
-            // Clear license data
-            localStorage.removeItem('activated');
-            localStorage.removeItem('activation_code');
-            localStorage.removeItem('expiry_date');
-            window.location.href = 'settings.html';
-            return false;
-        }
-        
-        // CASE 4: Few days to expire (show warning but allow access)
-        if (daysRemaining <= 7) {
-            alert('⚠️ Your license will expire in ' + daysRemaining + ' days (' + expiryDate.toLocaleDateString() + ').\nPlease renew your license soon.');
-            // System still works - no redirect
-        }
-    }
-    
-    // License is ACTIVE - everything works
-    return true;
-}
 
 // Run on page load
 if (document.readyState === 'loading') {
@@ -1003,12 +732,10 @@ if (document.readyState === 'loading') {
 } else {
     checkLicenseStatus();
 }
-</script>
 
 </body>
 </html>
 
-<script>
 function isAdmin() {
     try {
         const user = JSON.parse(localStorage.getItem("pos_user") || "{}");
@@ -1020,16 +747,4 @@ function isAdmin() {
 if (!isAdmin()) {
     window.location.href = "pos.html";
 }
-if ("serviceWorker" in navigator) {
-    window.addEventListener("load", function() {
-        navigator.serviceWorker.register("/sw.js")
-            .then(function(reg) {
-                console.log("✅ Service Worker registered");
-            })
-            .catch(function(err) {
-                console.log("❌ Service Worker registration failed:", err);
-            });
-    });
-}
-</script>
 
