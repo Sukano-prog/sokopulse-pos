@@ -107,9 +107,7 @@
                     <thead>
                         <tr><th>Order</th><th>Customer</th><th>Date</th><th>Total</th><th>Status</th><th>Actions</th></tr>
                     </thead>
-                    <tbody id="ordersBody">
-                        <tr><td colspan="6" style="text-align:center;padding:40px;color:#94a3b8;">Loading orders...</td></tr>
-                    </tbody>
+                    <tbody id="ordersBody"><tr><td colspan="6" style="text-align:center;padding:40px;color:#94a3b8;">Loading orders...</td></tr></tbody>
                 </table>
             </div>
         </div>
@@ -324,19 +322,6 @@ function reprintReceipt(id) {
     receipt += '================================\n';
     var win = window.open('', '_blank', 'width=400,height=600');
     if (!win) { alert('Please allow popups for printing'); return; }
-<script>
-if ("serviceWorker" in navigator) {
-    window.addEventListener("load", function() {
-        navigator.serviceWorker.register("/sw.js")
-            .then(function(reg) {
-                console.log("✅ Service Worker registered");
-            })
-            .catch(function(err) {
-                console.log("❌ Service Worker registration failed:", err);
-            });
-    });
-}
-</script>
     win.document.write('<html><head><title>Receipt</title><style>body{font-family:monospace;padding:20px;white-space:pre;}</style></head><body><pre>' + receipt + '</pre></body></html>');
     win.document.close();
     win.print();
@@ -459,19 +444,6 @@ function printBulkFromPreview() {
     var receipt = content.textContent;
     var win = window.open('', '_blank', 'width=450,height=700');
     if (!win) { alert('Please allow popups for printing'); return; }
-<script>
-if ("serviceWorker" in navigator) {
-    window.addEventListener("load", function() {
-        navigator.serviceWorker.register("/sw.js")
-            .then(function(reg) {
-                console.log("✅ Service Worker registered");
-            })
-            .catch(function(err) {
-                console.log("❌ Service Worker registration failed:", err);
-            });
-    });
-}
-</script>
     win.document.write('<html><head><title>Bulk Receipts</title><style>body{font-family:"Courier New",monospace;padding:20px;white-space:pre;font-size:12px;background:white;margin:0;}@media print{body{padding:10px;}@page{margin:0.5cm;}}</style></head><body><pre>' + receipt + '</pre></body></html>');
     win.document.close();
     win.print();
@@ -529,6 +501,19 @@ function checkLicenseStatus() {
     return true;
 }
 
+// ===== SERVICE WORKER =====
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/sw.js')
+            .then(function(reg) {
+                console.log('✅ Service Worker registered');
+            })
+            .catch(function(err) {
+                console.log('❌ Service Worker registration failed:', err);
+            });
+    });
+}
+
 // ===== INIT =====
 document.addEventListener('DOMContentLoaded', function() {
     var userData = localStorage.getItem('pos_user');
@@ -554,19 +539,6 @@ document.addEventListener('keydown', function(e) {
         document.querySelectorAll('.modal.show').forEach(function(m) { m.classList.remove('show'); });
     }
 });
-</script>
-<script>
-if ("serviceWorker" in navigator) {
-    window.addEventListener("load", function() {
-        navigator.serviceWorker.register("/sw.js")
-            .then(function(reg) {
-                console.log("✅ Service Worker registered");
-            })
-            .catch(function(err) {
-                console.log("❌ Service Worker registration failed:", err);
-            });
-    });
-}
 </script>
 </body>
 </html>
