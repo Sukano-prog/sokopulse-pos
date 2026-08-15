@@ -207,11 +207,11 @@
         
         <div class="form-group">
             <label>Activation Code</label>
-            <input type="text" id="activationCodeInput" placeholder="Enter your activation code">
+            <input type="text" id="activationCodeInput" placeholder="Enter your activation code (e.g. XXXX-XXXX-XXXX-XXXX)">
         </div>
         
         <div class="code-format">
-            Code format: <code>SP-AUG2026-X7K973-B2M89K4P</code>
+            Code format: <code>XXXX-XXXX-XXXX-XXXX</code> (4 parts of 4 characters each)
         </div>
         
         <div class="status" id="activationStatus"></div>
@@ -319,9 +319,9 @@ function activateSystem() {
     const code = document.getElementById('activationCodeInput').value.trim().toUpperCase();
     const status = document.getElementById('activationStatus');
     
-    if (!code || code.length < 10) {
+    if (!code || code.length < 19) {
         status.className = 'status error show';
-        status.textContent = '❌ Please enter a valid activation code.';
+        status.textContent = '❌ Please enter a valid activation code (format: XXXX-XXXX-XXXX-XXXX).';
         return;
     }
     
