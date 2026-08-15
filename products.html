@@ -1070,7 +1070,6 @@ if ('serviceWorker' in navigator) {
     if (!activated || activated !== "true") {
         alert("⚠️ Your license is not activated.\nPlease go to Settings to activate your license.");
         window.location.href = "settings.html";
-        return false;
     }
     
     if (expiry) {
