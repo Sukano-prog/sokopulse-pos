@@ -545,29 +545,6 @@
 <script src="db.js"></script>
 <script>
 // ===== ACTIVATION CHECK =====
-function checkActivation() {
-    const activationKey = localStorage.getItem('activation_key');
-    const activationExpiry = localStorage.getItem('activation_expiry');
-    
-    if (!activationKey) {
-        window.location.href = 'activation.html';
-        return false;
-    }
-    
-    // Check if expired
-    if (activationExpiry && activationExpiry !== 'permanent') {
-        const expiryDate = new Date(activationExpiry);
-        const now = new Date();
-        if (now > expiryDate) {
-            localStorage.removeItem('activation_key');
-            localStorage.removeItem('activation_expiry');
-            window.location.href = 'activation.html';
-            return false;
-        }
-    }
-    
-    return true;
-}
 
 // Run check immediately
 if (!checkActivation()) {
@@ -1377,29 +1354,6 @@ document.addEventListener('keydown', function(e) {
 </style>
 <script>
 // ===== ACTIVATION CHECK =====
-function checkActivation() {
-    const activationKey = localStorage.getItem('activation_key');
-    const activationExpiry = localStorage.getItem('activation_expiry');
-    
-    if (!activationKey) {
-        window.location.href = 'activation.html';
-        return false;
-    }
-    
-    // Check if expired
-    if (activationExpiry && activationExpiry !== 'permanent') {
-        const expiryDate = new Date(activationExpiry);
-        const now = new Date();
-        if (now > expiryDate) {
-            localStorage.removeItem('activation_key');
-            localStorage.removeItem('activation_expiry');
-            window.location.href = 'activation.html';
-            return false;
-        }
-    }
-    
-    return true;
-}
 
 // Run check immediately
 if (!checkActivation()) {
@@ -1446,29 +1400,6 @@ document.addEventListener('visibilitychange', function() {
 <button onclick="loadStockData()" style="padding:10px 18px;background:#1a3c34;color:white;border:none;border-radius:10px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;">🔄 Refresh</button>
 <script>
 // ===== ACTIVATION CHECK =====
-function checkActivation() {
-    const activationKey = localStorage.getItem('activation_key');
-    const activationExpiry = localStorage.getItem('activation_expiry');
-    
-    if (!activationKey) {
-        window.location.href = 'activation.html';
-        return false;
-    }
-    
-    // Check if expired
-    if (activationExpiry && activationExpiry !== 'permanent') {
-        const expiryDate = new Date(activationExpiry);
-        const now = new Date();
-        if (now > expiryDate) {
-            localStorage.removeItem('activation_key');
-            localStorage.removeItem('activation_expiry');
-            window.location.href = 'activation.html';
-            return false;
-        }
-    }
-    
-    return true;
-}
 
 // Run check immediately
 if (!checkActivation()) {
@@ -1500,29 +1431,6 @@ function exportStock() {
 </script>
 <script>
 // ===== ACTIVATION CHECK =====
-function checkActivation() {
-    const activationKey = localStorage.getItem('activation_key');
-    const activationExpiry = localStorage.getItem('activation_expiry');
-    
-    if (!activationKey) {
-        window.location.href = 'activation.html';
-        return false;
-    }
-    
-    // Check if expired
-    if (activationExpiry && activationExpiry !== 'permanent') {
-        const expiryDate = new Date(activationExpiry);
-        const now = new Date();
-        if (now > expiryDate) {
-            localStorage.removeItem('activation_key');
-            localStorage.removeItem('activation_expiry');
-            window.location.href = 'activation.html';
-            return false;
-        }
-    }
-    
-    return true;
-}
 
 // Run check immediately
 if (!checkActivation()) {
@@ -1541,29 +1449,6 @@ td .value-amount {
 </style>
 <script>
 // ===== ACTIVATION CHECK =====
-function checkActivation() {
-    const activationKey = localStorage.getItem('activation_key');
-    const activationExpiry = localStorage.getItem('activation_expiry');
-    
-    if (!activationKey) {
-        window.location.href = 'activation.html';
-        return false;
-    }
-    
-    // Check if expired
-    if (activationExpiry && activationExpiry !== 'permanent') {
-        const expiryDate = new Date(activationExpiry);
-        const now = new Date();
-        if (now > expiryDate) {
-            localStorage.removeItem('activation_key');
-            localStorage.removeItem('activation_expiry');
-            window.location.href = 'activation.html';
-            return false;
-        }
-    }
-    
-    return true;
-}
 
 // Run check immediately
 if (!checkActivation()) {
@@ -1633,29 +1518,6 @@ renderProducts = function() {
 </script>
 <script>
 // ===== ACTIVATION CHECK =====
-function checkActivation() {
-    const activationKey = localStorage.getItem('activation_key');
-    const activationExpiry = localStorage.getItem('activation_expiry');
-    
-    if (!activationKey) {
-        window.location.href = 'activation.html';
-        return false;
-    }
-    
-    // Check if expired
-    if (activationExpiry && activationExpiry !== 'permanent') {
-        const expiryDate = new Date(activationExpiry);
-        const now = new Date();
-        if (now > expiryDate) {
-            localStorage.removeItem('activation_key');
-            localStorage.removeItem('activation_expiry');
-            window.location.href = 'activation.html';
-            return false;
-        }
-    }
-    
-    return true;
-}
 
 // Run check immediately
 if (!checkActivation()) {
@@ -1690,29 +1552,6 @@ renderStats = function() {
 </script>
 <script>
 // ===== ACTIVATION CHECK =====
-function checkActivation() {
-    const activationKey = localStorage.getItem('activation_key');
-    const activationExpiry = localStorage.getItem('activation_expiry');
-    
-    if (!activationKey) {
-        window.location.href = 'activation.html';
-        return false;
-    }
-    
-    // Check if expired
-    if (activationExpiry && activationExpiry !== 'permanent') {
-        const expiryDate = new Date(activationExpiry);
-        const now = new Date();
-        if (now > expiryDate) {
-            localStorage.removeItem('activation_key');
-            localStorage.removeItem('activation_expiry');
-            window.location.href = 'activation.html';
-            return false;
-        }
-    }
-    
-    return true;
-}
 
 // Run check immediately
 if (!checkActivation()) {
@@ -1812,4 +1651,58 @@ renderProducts = function() {
     
     console.log('📊 Stock stats:', { total, inStock, lowStock, outStock });
 };
+</script>
+<script>
+// ===== LICENSE CHECK =====
+function checkLicenseStatus() {
+    const activated = localStorage.getItem('activated');
+    const expiry = localStorage.getItem('expiry_date');
+    
+    if (!activated || activated !== 'true') {
+        alert('⚠️ Your license is not activated.\nPlease go to Settings to activate your license.');
+        window.location.href = 'settings.html';
+        return false;
+    }
+    
+    if (expiry) {
+        const expiryDate = new Date(expiry);
+        const now = new Date();
+        const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
+        
+        if (expiryDate < now) {
+            alert('⚠️ Your license has expired on ' + expiryDate.toLocaleDateString() + '.\nPlease contact your administrator to renew.');
+            localStorage.removeItem('activated');
+            localStorage.removeItem('activation_code');
+            localStorage.removeItem('expiry_date');
+            window.location.href = 'settings.html';
+            return false;
+        }
+        
+        if (daysRemaining <= 7) {
+            alert('⚠️ Your license will expire in ' + daysRemaining + ' days (' + expiryDate.toLocaleDateString() + ').\nPlease renew your license soon.');
+        }
+    }
+    
+    return true;
+}
+
+// Run on page load
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', checkLicenseStatus);
+} else {
+    checkLicenseStatus();
+}
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/sw.js')
+            .then(function(reg) {
+                console.log('✅ Service Worker registered for stock.html');
+            })
+            .catch(function(err) {
+                console.log('❌ Service Worker registration failed:', err);
+            });
+    });
+}
 </script>
