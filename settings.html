@@ -477,7 +477,6 @@ function checkActivationCode(code, machineId) {
     const storedCodes = JSON.parse(localStorage.getItem("activation_codes") || "[]");
     const match = storedCodes.find(function(c) {
         return c.code === code && 
-               c.machineId === machineId && 
                c.active === true && 
                c.revoked !== true &&
                new Date(c.expires).getTime() > new Date().getTime();
@@ -502,7 +501,6 @@ function activateLicense() {
     const storedCodes = JSON.parse(localStorage.getItem("activation_codes") || "[]");
     const match = storedCodes.find(function(c) {
         return c.code === code && 
-               c.machineId === machineId && 
                c.active === true && 
                c.revoked !== true &&
                new Date(c.expires).getTime() > new Date().getTime();
@@ -1045,7 +1043,6 @@ function checkActivationCode(code, machineId) {
     const storedCodes = JSON.parse(localStorage.getItem("activation_codes") || "[]");
     const match = storedCodes.find(function(c) {
         return c.code === code && 
-               c.machineId === machineId && 
                c.active === true && 
                c.revoked !== true &&
                new Date(c.expires).getTime() > new Date().getTime();
@@ -1070,7 +1067,6 @@ function activateLicense() {
     const storedCodes = JSON.parse(localStorage.getItem("activation_codes") || "[]");
     const match = storedCodes.find(function(c) {
         return c.code === code && 
-               c.machineId === machineId && 
                c.active === true && 
                c.revoked !== true &&
                new Date(c.expires).getTime() > new Date().getTime();
@@ -1283,7 +1279,6 @@ function checkActivationCode(code, machineId) {
     const storedCodes = JSON.parse(localStorage.getItem("activation_codes") || "[]");
     const match = storedCodes.find(function(c) {
         return c.code === code && 
-               c.machineId === machineId && 
                c.active === true && 
                c.revoked !== true &&
                new Date(c.expires).getTime() > new Date().getTime();
@@ -1308,7 +1303,6 @@ function activateLicense() {
     const storedCodes = JSON.parse(localStorage.getItem("activation_codes") || "[]");
     const match = storedCodes.find(function(c) {
         return c.code === code && 
-               c.machineId === machineId && 
                c.active === true && 
                c.revoked !== true &&
                new Date(c.expires).getTime() > new Date().getTime();

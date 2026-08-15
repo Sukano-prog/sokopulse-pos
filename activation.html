@@ -356,7 +356,6 @@ function activateSystem() {
     // Find matching code
     const match = storedCodes.find(function(c) {
         return c.code === code && 
-               c.machineId === machineId && 
                c.active === true && 
                c.revoked !== true &&
                new Date(c.expires).getTime() > new Date().getTime();
@@ -400,10 +399,6 @@ function activateSystem() {
             } else if (new Date(existing.expires).getTime() < new Date().getTime()) {
                 status.className = 'status error show';
                 status.textContent = '❌ This code has EXPIRED. Please contact your administrator.';
-            } else if (existing.used === true) {
-                status.className = 'status error show';
-                status.textContent = '❌ This code has already been used.';
-            } else {
                 status.className = 'status error show';
                 status.textContent = '❌ Invalid activation code. Please check with your administrator.';
             }
