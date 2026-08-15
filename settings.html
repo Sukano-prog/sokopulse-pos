@@ -471,6 +471,69 @@ function checkLicenseStatus() {
 // Run on load
 // License check removed);
 
+<script>
+// ===== UNIFIED ACTIVATION SYSTEM =====
+function checkActivationCode(code, machineId) {
+    const storedCodes = JSON.parse(localStorage.getItem("activation_codes") || "[]");
+    const match = storedCodes.find(function(c) {
+        return c.code === code && 
+               c.machineId === machineId && 
+               c.active === true && 
+               c.revoked !== true &&
+               new Date(c.expires).getTime() > new Date().getTime();
+    });
+    return match || null;
+}
+
+function activateLicense() {
+    const codeInput = document.getElementById("activationCodeInput");
+    const statusDisplay = document.getElementById("activationStatus");
+    const code = codeInput ? codeInput.value.trim().toUpperCase() : "";
+    
+    if (!code || code.length !== 19) {
+        if (statusDisplay) {
+            statusDisplay.className = "status error show";
+            statusDisplay.textContent = "❌ Please enter a valid activation code (XXXX-XXXX-XXXX-XXXX).";
+        }
+        return false;
+    }
+    
+    const machineId = localStorage.getItem("machine_id");
+    const storedCodes = JSON.parse(localStorage.getItem("activation_codes") || "[]");
+    const match = storedCodes.find(function(c) {
+        return c.code === code && 
+               c.machineId === machineId && 
+               c.active === true && 
+               c.revoked !== true &&
+               new Date(c.expires).getTime() > new Date().getTime();
+    });
+    
+    if (match) {
+        localStorage.setItem("activated", "true");
+        localStorage.setItem("activation_code", code);
+        localStorage.setItem("expiry_date", match.expires);
+        localStorage.setItem("machine_id", machineId);
+        localStorage.setItem("license_type", "Monthly");
+        
+        match.used = true;
+        match.usedBy = machineId;
+        match.usedDate = new Date().toISOString();
+        localStorage.setItem("activation_codes", JSON.stringify(storedCodes));
+        
+        if (statusDisplay) {
+            statusDisplay.className = "status success show";
+            statusDisplay.textContent = "✅ License activated successfully!";
+        }
+        return true;
+    } else {
+        if (statusDisplay) {
+            statusDisplay.className = "status error show";
+            statusDisplay.textContent = "❌ Invalid activation code. Please check with your administrator.";
+        }
+        return false;
+    }
+}
+</script>
 </script>
 <script>
 
@@ -976,6 +1039,69 @@ function checkLicenseStatus() {
 // Run on load
 // License check removed);
 
+<script>
+// ===== UNIFIED ACTIVATION SYSTEM =====
+function checkActivationCode(code, machineId) {
+    const storedCodes = JSON.parse(localStorage.getItem("activation_codes") || "[]");
+    const match = storedCodes.find(function(c) {
+        return c.code === code && 
+               c.machineId === machineId && 
+               c.active === true && 
+               c.revoked !== true &&
+               new Date(c.expires).getTime() > new Date().getTime();
+    });
+    return match || null;
+}
+
+function activateLicense() {
+    const codeInput = document.getElementById("activationCodeInput");
+    const statusDisplay = document.getElementById("activationStatus");
+    const code = codeInput ? codeInput.value.trim().toUpperCase() : "";
+    
+    if (!code || code.length !== 19) {
+        if (statusDisplay) {
+            statusDisplay.className = "status error show";
+            statusDisplay.textContent = "❌ Please enter a valid activation code (XXXX-XXXX-XXXX-XXXX).";
+        }
+        return false;
+    }
+    
+    const machineId = localStorage.getItem("machine_id");
+    const storedCodes = JSON.parse(localStorage.getItem("activation_codes") || "[]");
+    const match = storedCodes.find(function(c) {
+        return c.code === code && 
+               c.machineId === machineId && 
+               c.active === true && 
+               c.revoked !== true &&
+               new Date(c.expires).getTime() > new Date().getTime();
+    });
+    
+    if (match) {
+        localStorage.setItem("activated", "true");
+        localStorage.setItem("activation_code", code);
+        localStorage.setItem("expiry_date", match.expires);
+        localStorage.setItem("machine_id", machineId);
+        localStorage.setItem("license_type", "Monthly");
+        
+        match.used = true;
+        match.usedBy = machineId;
+        match.usedDate = new Date().toISOString();
+        localStorage.setItem("activation_codes", JSON.stringify(storedCodes));
+        
+        if (statusDisplay) {
+            statusDisplay.className = "status success show";
+            statusDisplay.textContent = "✅ License activated successfully!";
+        }
+        return true;
+    } else {
+        if (statusDisplay) {
+            statusDisplay.className = "status error show";
+            statusDisplay.textContent = "❌ Invalid activation code. Please check with your administrator.";
+        }
+        return false;
+    }
+}
+</script>
 </script>
 
 
@@ -1151,6 +1277,69 @@ function checkLicenseStatus() {
 // Run on load
 // License check removed);
 
+<script>
+// ===== UNIFIED ACTIVATION SYSTEM =====
+function checkActivationCode(code, machineId) {
+    const storedCodes = JSON.parse(localStorage.getItem("activation_codes") || "[]");
+    const match = storedCodes.find(function(c) {
+        return c.code === code && 
+               c.machineId === machineId && 
+               c.active === true && 
+               c.revoked !== true &&
+               new Date(c.expires).getTime() > new Date().getTime();
+    });
+    return match || null;
+}
+
+function activateLicense() {
+    const codeInput = document.getElementById("activationCodeInput");
+    const statusDisplay = document.getElementById("activationStatus");
+    const code = codeInput ? codeInput.value.trim().toUpperCase() : "";
+    
+    if (!code || code.length !== 19) {
+        if (statusDisplay) {
+            statusDisplay.className = "status error show";
+            statusDisplay.textContent = "❌ Please enter a valid activation code (XXXX-XXXX-XXXX-XXXX).";
+        }
+        return false;
+    }
+    
+    const machineId = localStorage.getItem("machine_id");
+    const storedCodes = JSON.parse(localStorage.getItem("activation_codes") || "[]");
+    const match = storedCodes.find(function(c) {
+        return c.code === code && 
+               c.machineId === machineId && 
+               c.active === true && 
+               c.revoked !== true &&
+               new Date(c.expires).getTime() > new Date().getTime();
+    });
+    
+    if (match) {
+        localStorage.setItem("activated", "true");
+        localStorage.setItem("activation_code", code);
+        localStorage.setItem("expiry_date", match.expires);
+        localStorage.setItem("machine_id", machineId);
+        localStorage.setItem("license_type", "Monthly");
+        
+        match.used = true;
+        match.usedBy = machineId;
+        match.usedDate = new Date().toISOString();
+        localStorage.setItem("activation_codes", JSON.stringify(storedCodes));
+        
+        if (statusDisplay) {
+            statusDisplay.className = "status success show";
+            statusDisplay.textContent = "✅ License activated successfully!";
+        }
+        return true;
+    } else {
+        if (statusDisplay) {
+            statusDisplay.className = "status error show";
+            statusDisplay.textContent = "❌ Invalid activation code. Please check with your administrator.";
+        }
+        return false;
+    }
+}
+</script>
 </script>
 </body>
 </html>
