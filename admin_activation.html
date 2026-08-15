@@ -310,10 +310,7 @@ function renderCodeList() {
 
 // ===== REVOKE CODE =====
 function revokeCode(index) {
-    if (!confirm('⛔ Revoke this code?
-
-This will immediately lock out the store!
-Store: ' + generatedCodes[index].storeName)) return;
+    if (!confirm('⛔ Revoke this code?\n\nThis will immediately lock out the store!\nStore: ' + generatedCodes[index].storeName)) return;
     if (!confirm('⚠️ FINAL WARNING: This cannot be undone!')) return;
     
     generatedCodes[index].revoked = true;
@@ -333,9 +330,7 @@ function deleteCode(index) {
 
 // ===== REVOKE ALL =====
 function revokeAll() {
-    if (!confirm('⚠️ REVOKE ALL CODES?
-
-This will lock out ALL stores!')) return;
+    if (!confirm('⚠️ REVOKE ALL CODES?\n\nThis will lock out ALL stores!')) return;
     if (!confirm('⚠️ FINAL WARNING: This cannot be undone!')) return;
     
     generatedCodes.forEach(function(item) {
@@ -354,8 +349,7 @@ function exportCodes() {
         return;
     }
     
-    let csv = 'Store Name,Owner,Machine ID,Code,Generated,Expires,Status
-';
+    let csv = 'Store Name,Owner,Machine ID,Code,Generated,Expires,Status\n';
     const now = new Date();
     generatedCodes.forEach(function(item) {
         const expires = new Date(item.expires);
@@ -364,8 +358,7 @@ function exportCodes() {
         if (item.revoked) status = 'Revoked';
         else if (isExpired) status = 'Expired';
         else if (item.used) status = 'Used';
-        csv += (item.storeName || '') + ',' + (item.ownerName || '') + ',' + (item.machineId || '') + ',' + item.code + ',' + new Date(item.generated).toLocaleDateString() + ',' + expires.toLocaleDateString() + ',' + status + '
-';
+        csv += (item.storeName || '') + ',' + (item.ownerName || '') + ',' + (item.machineId || '') + ',' + item.code + ',' + new Date(item.generated).toLocaleDateString() + ',' + expires.toLocaleDateString() + ',' + status + '\n';
     });
     
     const blob = new Blob([csv], { type: 'text/csv' });
