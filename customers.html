@@ -513,6 +513,53 @@ document.addEventListener('DOMContentLoaded', function() {
     <span id="licenseWarningMessage">⚠️ Your license expires soon. Please renew in Settings.</span>
     <button onclick="document.getElementById('licenseWarningBanner').style.display='none'" style="background:none;border:none;color:#92400e;cursor:pointer;font-size:16px;">✕</button>
 </div>
+
+<script>
+// ===== LICENSE STATUS CHECK =====
+function checkLicenseStatus() {
+    const code = localStorage.getItem('activation_code');
+    const expiry = localStorage.getItem('expiry_date');
+    const activated = localStorage.getItem('activated');
+    
+    // Check if activated
+    if (!activated || activated !== 'true') {
+        return false;
+    }
+    
+    // Check expiry
+    if (expiry) {
+        const expiryDate = new Date(expiry);
+        const now = new Date();
+        if (expiryDate < now) {
+            // Expired - clear and redirect
+            localStorage.removeItem('activated');
+            localStorage.removeItem('activation_code');
+            localStorage.removeItem('expiry_date');
+            alert('⚠️ Your license has expired. Please contact your administrator.');
+            window.location.href = 'settings.html';
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+function checkAndRedirect() {
+    if (!checkLicenseStatus()) {
+        // If not on settings page, redirect to settings
+        if (!window.location.pathname.includes('settings.html') &&
+            !window.location.pathname.includes('activation.html') &&
+            !window.location.pathname.includes('index.html')) {
+            window.location.href = 'settings.html';
+        }
+    }
+}
+
+// Run check on page load
+document.addEventListener('DOMContentLoaded', function() {
+    checkAndRedirect();
+});
+</script>
 </body>
 </html>
 <style>
@@ -666,9 +713,7 @@ function exportCustomers() {
 
 <script>
 // ===== ACTIVATION CHECK =====
-if (localStorage.getItem('activated') !== 'true') {
-    window.location.href = 'activation.html';
-}
+
 </script>
 
 
