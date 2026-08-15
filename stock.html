@@ -1620,3 +1620,51 @@ renderProducts = function() {
     console.log('📊 Stock stats:', { total, inStock, lowStock, outStock });
 };
 </script>
+<script>
+function checkLicenseStatus() {
+    const activated = localStorage.getItem("activated");
+    const expiry = localStorage.getItem("expiry_date");
+    if (!activated || activated !== "true") {
+        alert("⚠️ Your license is not activated.\nPlease go to Settings to activate your license.");
+        window.location.href = "settings.html";
+        return false;
+    }
+    if (expiry) {
+        const expiryDate = new Date(expiry);
+        const now = new Date();
+        const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
+        if (expiryDate < now) {
+            alert("⚠️ Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
+            localStorage.removeItem("activated");
+            localStorage.removeItem("activation_code");
+            localStorage.removeItem("expiry_date");
+            window.location.href = "settings.html";
+            return false;
+        }
+        if (daysRemaining <= 7) {
+            alert("⚠️ Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease renew your license soon.");
+        }
+    }
+    return true;
+}
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", checkLicenseStatus);
+} else {
+    checkLicenseStatus();
+}
+</script>
+<script>
+if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function() {
+        navigator.serviceWorker.register("/sw.js")
+            .then(function(reg) {
+                console.log("✅ Service Worker registered for stock.html");
+            })
+            .catch(function(err) {
+                console.log("❌ Service Worker registration failed:", err);
+            });
+    });
+}
+</script>
+</body>
+</html>
