@@ -481,7 +481,7 @@ function importKeys(event) {
 
 
 
-// ===== GENERATE MONTHLY ACTIVATION CODE =====
+// ===== GENERATE COMPLEX ACTIVATION CODE =====
 function generateActivationCode() {
     const month = document.getElementById('codeMonth').value;
     const year = document.getElementById('codeYear').value;
@@ -492,13 +492,49 @@ function generateActivationCode() {
         return;
     }
     
-    const code = month + year + '-' + prefix;
+    // Generate random parts
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    const nums = '23456789';
+    
+    // Part 1: 4 random chars (e.g., X7K9)
+    let part1 = '';
+    for (let i = 0; i < 4; i++) {
+        part1 += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    
+    // Part 2: 2 random numbers (e.g., 73)
+    let part2 = '';
+    for (let i = 0; i < 2; i++) {
+        part2 += nums.charAt(Math.floor(Math.random() * nums.length));
+    }
+    
+    // Part 3: 3 random chars (e.g., B2M)
+    let part3 = '';
+    for (let i = 0; i < 3; i++) {
+        part3 += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    
+    // Part 4: 2 random numbers (e.g., 89)
+    let part4 = '';
+    for (let i = 0; i < 2; i++) {
+        part4 += nums.charAt(Math.floor(Math.random() * nums.length));
+    }
+    
+    // Part 5: 3 random chars (e.g., K4P)
+    let part5 = '';
+    for (let i = 0; i < 3; i++) {
+        part5 += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    
+    // Final code: PREFIX-MONTHYEAR-PART1PART2-PART3PART4PART5
+    // Example: SP-AUG2026-X7K973-B2M89K4P
+    const code = prefix + '-' + month + year + '-' + part1 + part2 + '-' + part3 + part4 + part5;
     
     // Display the code
     document.getElementById('generatedCode').textContent = code;
     document.getElementById('codeDisplay').style.display = 'block';
     document.getElementById('codeStatus').className = 'status success show';
-    document.getElementById('codeStatus').textContent = '✅ Code generated! Copy and send to user.';
+    document.getElementById('codeStatus').textContent = '✅ Complex code generated! Copy and send to user.';
     
     // Add to list
     const codes = JSON.parse(localStorage.getItem('activation_codes') || '[]');
@@ -506,7 +542,9 @@ function generateActivationCode() {
         code: code,
         month: month,
         year: year,
-        generated: new Date().toISOString()
+        prefix: prefix,
+        generated: new Date().toISOString(),
+        parts: { part1: part1, part2: part2, part3: part3, part4: part4, part5: part5 }
     });
     localStorage.setItem('activation_codes', JSON.stringify(codes));
     renderCodeList();

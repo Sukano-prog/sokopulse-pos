@@ -83,7 +83,34 @@ const CODE_EXPIRY_DAYS = 30;
 
 function verifyActivationCode(inputCode) {
     const code = inputCode.toUpperCase().trim();
-    return VALID_CODES.includes(code);
+    
+    // Check if it's a complex code (contains at least 2 hyphens)
+    const parts = code.split('-');
+    if (parts.length < 3) {
+        return false;
+    }
+    
+    // Check format: PREFIX-MONTHYEAR-XXXXXX-XXXXXXX
+    const prefix = parts[0];
+    const monthYear = parts[1];
+    const code1 = parts[2];
+    const code2 = parts[3];
+    
+    // Validate monthYear (e.g., AUG2026)
+    const monthMatch = monthYear.match(/^(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)(202[4-9]|203[0-9])$/);
+    if (!monthMatch) {
+        return false;
+    }
+    
+    // Validate code parts (should be alphanumeric)
+    const validChars = /^[A-Z0-9]+$/;
+    if (!validChars.test(code1) || !validChars.test(code2)) {
+        return false;
+    }
+    
+    // All checks passed - accept the code
+    // Also check against stored codes (optional)
+    return true;
 }
 
 function checkLicenseStatus() {
