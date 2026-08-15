@@ -209,35 +209,27 @@
                     </div>
                 </div>
                 
-                <!-- License Management -->
-                <div class="settings-card">
-                    <div class="card-header"><span class="icon">🔑</span> License Management</div>
-                    <div class="card-body">
-                        <div class="form-group">
-                            <label>Current License Password</label>
-                            <input type="text" id="licensePassword" placeholder="Enter current license password" style="font-family:monospace;font-size:16px;letter-spacing:2px;">
-                            <div style="font-size:11px;color:#94a3b8;margin-top:4px;">This password changes monthly. Contact admin for the current password.</div>
-                        </div>
-                        <button class="btn-save-setting" onclick="verifyLicensePassword()">🔓 Verify License</button>
-                        <div id="licenseStatus" style="margin-top:8px;padding:8px;border-radius:6px;display:none;"></div>
-                    </div>
-                </div>
+
                 
                 <!-- License Management -->
                 <div class="settings-card">
                     <div class="card-header"><span class="icon">🔑</span> License Management</div>
                     <div class="card-body">
+                        <div id="licenseStatusDisplay" style="padding:8px;border-radius:6px;margin-bottom:12px;background:#f8fafc;border:1px solid #e2e8f0;">
+                            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+                                <span style="font-size:13px;font-weight:600;" id="licenseStatusText">🔒 Not Activated</span>
+                                <span style="font-size:11px;color:#94a3b8;" id="licenseExpiryDisplay"></span>
+                            </div>
+                        </div>
                         <div class="form-group">
-                            <label>Monthly Activation Code</label>
-                            <input type="text" id="activationCode" placeholder="e.g. AUG2026-SP" style="font-family:monospace;font-size:16px;letter-spacing:2px;text-transform:uppercase;">
-                            <div style="font-size:11px;color:#94a3b8;margin-top:4px;">Enter the monthly activation code provided by your administrator.</div>
-                            <div style="font-size:11px;color:#94a3b8;margin-top:2px;">💡 Code format: MTHYYYY-XX (e.g., AUG2026-SP)</div>
+                            <label>Activation Code</label>
+                            <input type="text" id="activationCodeInput" placeholder="Enter activation code" style="font-family:monospace;font-size:16px;letter-spacing:1px;text-transform:uppercase;">
+                            <div style="font-size:11px;color:#94a3b8;margin-top:4px;">
+                                Enter the activation code provided by your administrator.
+                            </div>
                         </div>
-                        <button class="btn-save-setting" onclick="verifyActivationCode()">🔓 Activate</button>
-                        <div id="licenseStatus" style="margin-top:8px;padding:8px;border-radius:6px;display:none;"></div>
-                        <div style="margin-top:8px;font-size:11px;color:#94a3b8;border-top:1px solid #e2e8f0;padding-top:8px;">
-                            <span id="licenseExpiryDisplay">Status: Not activated</span>
-                        </div>
+                        <button class="btn-save-setting" onclick="verifyActivationCode()" style="width:100%;">🔓 Activate License</button>
+                        <div id="activationStatus" style="margin-top:8px;padding:8px;border-radius:6px;display:none;"></div>
                     </div>
                 </div>
                 <!-- Payment Methods -->
@@ -309,7 +301,127 @@
 </div>
 
 
-<script src="db.js"></script>
+<script src="db.js">
+
+// ===== ACTIVATION CODE VERIFICATION =====
+function verifyActivationCode() {
+    const code = document.getElementById('activationCodeInput').value.trim().toUpperCase();
+    const status = document.getElementById('activationStatus');
+    const statusDisplay = document.getElementById('licenseStatusText');
+    const expiryDisplay = document.getElementById('licenseExpiryDisplay');
+    
+    if (!code) {
+        status.style.display = 'block';
+        status.className = 'error';
+        status.textContent = '❌ Please enter an activation code.';
+        return;
+    }
+    
+    status.style.display = 'block';
+    status.className = 'info';
+    status.textContent = '⏳ Verifying code...';
+    
+    // Check the code
+    const machineId = localStorage.getItem('machine_id');
+    if (!machineId) {
+        status.style.display = 'block';
+        status.className = 'error';
+        status.textContent = '❌ Machine ID not found. Please refresh and try again.';
+        return;
+    }
+    
+    // Check against stored codes (via db.js functions)
+    if (typeof checkActivationCode === 'function') {
+        const result = checkActivationCode(code, machineId);
+        if (result.valid) {
+            // Save activation
+            const expiryDate = new Date();
+            expiryDate.setDate(expiryDate.getDate() + 30);
+            localStorage.setItem('activation_code', code);
+            localStorage.setItem('code_expiry', expiryDate.toISOString());
+            
+            status.style.display = 'block';
+            status.className = 'success';
+            status.textContent = '✅ Activation successful! License valid for 30 days.';
+            statusDisplay.textContent = '✅ Activated - ' + result.storeName;
+            expiryDisplay.textContent = 'Expires: ' + expiryDate.toLocaleDateString();
+            
+            // Reload to apply changes
+            setTimeout(function() {
+                alert('✅ License activated successfully!');
+                location.reload();
+            }, 1000);
+        } else {
+            status.style.display = 'block';
+            status.className = 'error';
+            status.textContent = '❌ Invalid activation code. Please check with your administrator.';
+            statusDisplay.textContent = '🔒 Invalid Code';
+        }
+    } else {
+        // Fallback - check locally
+        const validCodes = JSON.parse(localStorage.getItem('activation_codes') || '[]');
+        const match = validCodes.find(function(c) { 
+            return c.code === code && c.active === true && c.revoked !== true;
+        });
+        
+        if (match) {
+            const expiryDate = new Date();
+            expiryDate.setDate(expiryDate.getDate() + 30);
+            localStorage.setItem('activation_code', code);
+            localStorage.setItem('code_expiry', expiryDate.toISOString());
+            
+            status.style.display = 'block';
+            status.className = 'success';
+            status.textContent = '✅ Activation successful! License valid for 30 days.';
+            statusDisplay.textContent = '✅ Activated';
+            expiryDisplay.textContent = 'Expires: ' + expiryDate.toLocaleDateString();
+            
+            setTimeout(function() {
+                alert('✅ License activated successfully!');
+                location.reload();
+            }, 1000);
+        } else {
+            status.style.display = 'block';
+            status.className = 'error';
+            status.textContent = '❌ Invalid activation code. Please check with your administrator.';
+        }
+    }
+}
+
+// ===== CHECK LICENSE STATUS ON LOAD =====
+function checkLicenseStatus() {
+    const code = localStorage.getItem('activation_code');
+    const expiry = localStorage.getItem('code_expiry');
+    const statusDisplay = document.getElementById('licenseStatusText');
+    const expiryDisplay = document.getElementById('licenseExpiryDisplay');
+    
+    if (!statusDisplay) return;
+    
+    if (!code || !expiry) {
+        statusDisplay.textContent = '🔒 Not Activated';
+        if (expiryDisplay) expiryDisplay.textContent = '';
+        return;
+    }
+    
+    const expiryDate = new Date(expiry);
+    const now = new Date();
+    const daysLeft = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
+    
+    if (daysLeft > 0) {
+        statusDisplay.textContent = '✅ Active';
+        if (expiryDisplay) expiryDisplay.textContent = 'Expires in ' + daysLeft + ' days';
+    } else {
+        statusDisplay.textContent = '🔴 Expired';
+        if (expiryDisplay) expiryDisplay.textContent = 'Expired ' + Math.abs(daysLeft) + ' days ago';
+    }
+}
+
+// Run on load
+document.addEventListener('DOMContentLoaded', function() {
+    checkLicenseStatus();
+});
+
+</script>
 <script>
 
 function isAdmin() {
@@ -654,6 +766,126 @@ document.addEventListener('DOMContentLoaded', function() {
     loadSettings();
     loadStoreName();
 });
+
+
+// ===== ACTIVATION CODE VERIFICATION =====
+function verifyActivationCode() {
+    const code = document.getElementById('activationCodeInput').value.trim().toUpperCase();
+    const status = document.getElementById('activationStatus');
+    const statusDisplay = document.getElementById('licenseStatusText');
+    const expiryDisplay = document.getElementById('licenseExpiryDisplay');
+    
+    if (!code) {
+        status.style.display = 'block';
+        status.className = 'error';
+        status.textContent = '❌ Please enter an activation code.';
+        return;
+    }
+    
+    status.style.display = 'block';
+    status.className = 'info';
+    status.textContent = '⏳ Verifying code...';
+    
+    // Check the code
+    const machineId = localStorage.getItem('machine_id');
+    if (!machineId) {
+        status.style.display = 'block';
+        status.className = 'error';
+        status.textContent = '❌ Machine ID not found. Please refresh and try again.';
+        return;
+    }
+    
+    // Check against stored codes (via db.js functions)
+    if (typeof checkActivationCode === 'function') {
+        const result = checkActivationCode(code, machineId);
+        if (result.valid) {
+            // Save activation
+            const expiryDate = new Date();
+            expiryDate.setDate(expiryDate.getDate() + 30);
+            localStorage.setItem('activation_code', code);
+            localStorage.setItem('code_expiry', expiryDate.toISOString());
+            
+            status.style.display = 'block';
+            status.className = 'success';
+            status.textContent = '✅ Activation successful! License valid for 30 days.';
+            statusDisplay.textContent = '✅ Activated - ' + result.storeName;
+            expiryDisplay.textContent = 'Expires: ' + expiryDate.toLocaleDateString();
+            
+            // Reload to apply changes
+            setTimeout(function() {
+                alert('✅ License activated successfully!');
+                location.reload();
+            }, 1000);
+        } else {
+            status.style.display = 'block';
+            status.className = 'error';
+            status.textContent = '❌ Invalid activation code. Please check with your administrator.';
+            statusDisplay.textContent = '🔒 Invalid Code';
+        }
+    } else {
+        // Fallback - check locally
+        const validCodes = JSON.parse(localStorage.getItem('activation_codes') || '[]');
+        const match = validCodes.find(function(c) { 
+            return c.code === code && c.active === true && c.revoked !== true;
+        });
+        
+        if (match) {
+            const expiryDate = new Date();
+            expiryDate.setDate(expiryDate.getDate() + 30);
+            localStorage.setItem('activation_code', code);
+            localStorage.setItem('code_expiry', expiryDate.toISOString());
+            
+            status.style.display = 'block';
+            status.className = 'success';
+            status.textContent = '✅ Activation successful! License valid for 30 days.';
+            statusDisplay.textContent = '✅ Activated';
+            expiryDisplay.textContent = 'Expires: ' + expiryDate.toLocaleDateString();
+            
+            setTimeout(function() {
+                alert('✅ License activated successfully!');
+                location.reload();
+            }, 1000);
+        } else {
+            status.style.display = 'block';
+            status.className = 'error';
+            status.textContent = '❌ Invalid activation code. Please check with your administrator.';
+        }
+    }
+}
+
+// ===== CHECK LICENSE STATUS ON LOAD =====
+function checkLicenseStatus() {
+    const code = localStorage.getItem('activation_code');
+    const expiry = localStorage.getItem('code_expiry');
+    const statusDisplay = document.getElementById('licenseStatusText');
+    const expiryDisplay = document.getElementById('licenseExpiryDisplay');
+    
+    if (!statusDisplay) return;
+    
+    if (!code || !expiry) {
+        statusDisplay.textContent = '🔒 Not Activated';
+        if (expiryDisplay) expiryDisplay.textContent = '';
+        return;
+    }
+    
+    const expiryDate = new Date(expiry);
+    const now = new Date();
+    const daysLeft = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
+    
+    if (daysLeft > 0) {
+        statusDisplay.textContent = '✅ Active';
+        if (expiryDisplay) expiryDisplay.textContent = 'Expires in ' + daysLeft + ' days';
+    } else {
+        statusDisplay.textContent = '🔴 Expired';
+        if (expiryDisplay) expiryDisplay.textContent = 'Expired ' + Math.abs(daysLeft) + ' days ago';
+    }
+}
+
+// Run on load
+document.addEventListener('DOMContentLoaded', function() {
+    checkLicenseStatus();
+});
+
 </script>
 
 
@@ -669,6 +901,126 @@ if ('serviceWorker' in navigator) {
             });
     });
 }
+
+
+// ===== ACTIVATION CODE VERIFICATION =====
+function verifyActivationCode() {
+    const code = document.getElementById('activationCodeInput').value.trim().toUpperCase();
+    const status = document.getElementById('activationStatus');
+    const statusDisplay = document.getElementById('licenseStatusText');
+    const expiryDisplay = document.getElementById('licenseExpiryDisplay');
+    
+    if (!code) {
+        status.style.display = 'block';
+        status.className = 'error';
+        status.textContent = '❌ Please enter an activation code.';
+        return;
+    }
+    
+    status.style.display = 'block';
+    status.className = 'info';
+    status.textContent = '⏳ Verifying code...';
+    
+    // Check the code
+    const machineId = localStorage.getItem('machine_id');
+    if (!machineId) {
+        status.style.display = 'block';
+        status.className = 'error';
+        status.textContent = '❌ Machine ID not found. Please refresh and try again.';
+        return;
+    }
+    
+    // Check against stored codes (via db.js functions)
+    if (typeof checkActivationCode === 'function') {
+        const result = checkActivationCode(code, machineId);
+        if (result.valid) {
+            // Save activation
+            const expiryDate = new Date();
+            expiryDate.setDate(expiryDate.getDate() + 30);
+            localStorage.setItem('activation_code', code);
+            localStorage.setItem('code_expiry', expiryDate.toISOString());
+            
+            status.style.display = 'block';
+            status.className = 'success';
+            status.textContent = '✅ Activation successful! License valid for 30 days.';
+            statusDisplay.textContent = '✅ Activated - ' + result.storeName;
+            expiryDisplay.textContent = 'Expires: ' + expiryDate.toLocaleDateString();
+            
+            // Reload to apply changes
+            setTimeout(function() {
+                alert('✅ License activated successfully!');
+                location.reload();
+            }, 1000);
+        } else {
+            status.style.display = 'block';
+            status.className = 'error';
+            status.textContent = '❌ Invalid activation code. Please check with your administrator.';
+            statusDisplay.textContent = '🔒 Invalid Code';
+        }
+    } else {
+        // Fallback - check locally
+        const validCodes = JSON.parse(localStorage.getItem('activation_codes') || '[]');
+        const match = validCodes.find(function(c) { 
+            return c.code === code && c.active === true && c.revoked !== true;
+        });
+        
+        if (match) {
+            const expiryDate = new Date();
+            expiryDate.setDate(expiryDate.getDate() + 30);
+            localStorage.setItem('activation_code', code);
+            localStorage.setItem('code_expiry', expiryDate.toISOString());
+            
+            status.style.display = 'block';
+            status.className = 'success';
+            status.textContent = '✅ Activation successful! License valid for 30 days.';
+            statusDisplay.textContent = '✅ Activated';
+            expiryDisplay.textContent = 'Expires: ' + expiryDate.toLocaleDateString();
+            
+            setTimeout(function() {
+                alert('✅ License activated successfully!');
+                location.reload();
+            }, 1000);
+        } else {
+            status.style.display = 'block';
+            status.className = 'error';
+            status.textContent = '❌ Invalid activation code. Please check with your administrator.';
+        }
+    }
+}
+
+// ===== CHECK LICENSE STATUS ON LOAD =====
+function checkLicenseStatus() {
+    const code = localStorage.getItem('activation_code');
+    const expiry = localStorage.getItem('code_expiry');
+    const statusDisplay = document.getElementById('licenseStatusText');
+    const expiryDisplay = document.getElementById('licenseExpiryDisplay');
+    
+    if (!statusDisplay) return;
+    
+    if (!code || !expiry) {
+        statusDisplay.textContent = '🔒 Not Activated';
+        if (expiryDisplay) expiryDisplay.textContent = '';
+        return;
+    }
+    
+    const expiryDate = new Date(expiry);
+    const now = new Date();
+    const daysLeft = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
+    
+    if (daysLeft > 0) {
+        statusDisplay.textContent = '✅ Active';
+        if (expiryDisplay) expiryDisplay.textContent = 'Expires in ' + daysLeft + ' days';
+    } else {
+        statusDisplay.textContent = '🔴 Expired';
+        if (expiryDisplay) expiryDisplay.textContent = 'Expired ' + Math.abs(daysLeft) + ' days ago';
+    }
+}
+
+// Run on load
+document.addEventListener('DOMContentLoaded', function() {
+    checkLicenseStatus();
+});
+
 </script>
 </body>
 </html>
