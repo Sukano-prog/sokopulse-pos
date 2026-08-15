@@ -601,7 +601,7 @@ function addToCart(productId) {
             price: price,
             qty: 1,
             maxStock: product.current_stock,
-            discount: 0
+            discount: product.discount || 0
         });
     }
     renderCart();
