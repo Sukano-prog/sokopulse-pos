@@ -458,22 +458,6 @@ function reprintReceipt(id) {
     win.document.write('<html><head><title>Receipt</title><style>body{font-family:monospace;padding:20px;white-space:pre;}</style></head><body>' + receipt + '
 <script>
 // ===== LICENSE CHECK =====
-function // checkLicense removed{
-    const status = getLicenseStatus ? getLicenseStatus() : { active: true };
-    if (!status.active) {
-        // Redirect to settings if not activated
-        if (!window.location.pathname.includes('settings.html') && 
-            !window.location.pathname.includes('activation.html') &&
-            !window.location.pathname.includes('index.html') &&
-            !window.location.pathname.includes('admin_activation.html')) {
-            // License alert removed
-            window.location.href = 'settings.html';
-        }
-    }
-}
-
-// Show warning if license is expiring soon
-function checkLicenseWarning() {
     const status = getLicenseStatus ? getLicenseStatus() : { active: true, daysLeft: 30 };
     if (status.active && status.daysLeft <= 3 && status.daysLeft > 0) {
         // Show warning banner
@@ -753,22 +737,6 @@ function printBulkFromPreview() {
     win.document.write('<html><head><title>Bulk Receipts</title><style>body{font-family:"Courier New",monospace;padding:20px;white-space:pre;font-size:12px;background:white;margin:0;}@media print{body{padding:10px;}@page{margin:0.5cm;}}</style></head><body>' + receipt + '
 <script>
 // ===== LICENSE CHECK =====
-function // checkLicense removed{
-    const status = getLicenseStatus ? getLicenseStatus() : { active: true };
-    if (!status.active) {
-        // Redirect to settings if not activated
-        if (!window.location.pathname.includes('settings.html') && 
-            !window.location.pathname.includes('activation.html') &&
-            !window.location.pathname.includes('index.html') &&
-            !window.location.pathname.includes('admin_activation.html')) {
-            // License alert removed
-            window.location.href = 'settings.html';
-        }
-    }
-}
-
-// Show warning if license is expiring soon
-function checkLicenseWarning() {
     const status = getLicenseStatus ? getLicenseStatus() : { active: true, daysLeft: 30 };
     if (status.active && status.daysLeft <= 3 && status.daysLeft > 0) {
         // Show warning banner
@@ -954,22 +922,6 @@ document.addEventListener('keydown', function(e) {
 
 <script>
 // ===== LICENSE CHECK =====
-function // checkLicense removed{
-    const status = getLicenseStatus ? getLicenseStatus() : { active: true };
-    if (!status.active) {
-        // Redirect to settings if not activated
-        if (!window.location.pathname.includes('settings.html') && 
-            !window.location.pathname.includes('activation.html') &&
-            !window.location.pathname.includes('index.html') &&
-            !window.location.pathname.includes('admin_activation.html')) {
-            // License alert removed
-            window.location.href = 'settings.html';
-        }
-    }
-}
-
-// Show warning if license is expiring soon
-function checkLicenseWarning() {
     const status = getLicenseStatus ? getLicenseStatus() : { active: true, daysLeft: 30 };
     if (status.active && status.daysLeft <= 3 && status.daysLeft > 0) {
         // Show warning banner

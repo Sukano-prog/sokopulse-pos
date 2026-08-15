@@ -473,22 +473,6 @@ if ('serviceWorker' in navigator) {
 
 <script>
 // ===== LICENSE CHECK =====
-function // checkLicense removed{
-    const status = getLicenseStatus ? getLicenseStatus() : { active: true };
-    if (!status.active) {
-        // Redirect to settings if not activated
-        if (!window.location.pathname.includes('settings.html') && 
-            !window.location.pathname.includes('activation.html') &&
-            !window.location.pathname.includes('index.html') &&
-            !window.location.pathname.includes('admin_activation.html')) {
-            // License alert removed
-            window.location.href = 'settings.html';
-        }
-    }
-}
-
-// Show warning if license is expiring soon
-function checkLicenseWarning() {
     const status = getLicenseStatus ? getLicenseStatus() : { active: true, daysLeft: 30 };
     if (status.active && status.daysLeft <= 3 && status.daysLeft > 0) {
         // Show warning banner
