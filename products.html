@@ -508,7 +508,6 @@
 </div>
 
 <script src="db.js"></script>
-<script>
 // ============================================================
 // PRODUCTS PAGE - COMPLETE SCRIPT
 // ============================================================
@@ -1029,9 +1028,7 @@ document.addEventListener('keydown', function(e) {
         document.querySelectorAll('.modal.show').forEach(m => m.classList.remove('show'));
     }
 });
-</script>
 
-<script>
 // ===== LOAD STORE NAME =====
 async function loadStoreName() {
     try {
@@ -1052,9 +1049,7 @@ document.addEventListener("DOMContentLoaded", function() {
     setTimeout(loadStoreName, 300);
     loadProducts();
 });
-</script>
 
-<script>
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
         navigator.serviceWorker.register('/sw.js')
@@ -1066,22 +1061,9 @@ if ('serviceWorker' in navigator) {
             });
     });
 }
-</script>
 
-<script>
-// ===== LICENSE CHECK =====
 
-// Run checks
-// License check removed);
-</script>
 
-<!-- License Warning Banner -->
-    <span id="licenseWarningMessage">⚠️ Your license expires soon. Please renew in Settings.</span>
-</div>
-
-<script>
-// ===== LICENSE STATUS CHECK =====
-function checkLicenseStatus() {
     const activated = localStorage.getItem("activated");
     const expiry = localStorage.getItem("expiry_date");
     
@@ -1130,9 +1112,7 @@ function checkAndRedirect() {
 document.addEventListener('DOMContentLoaded', function() {
     checkAndRedirect();
 });
-</script>
 
-<script>
 // ===== LICENSE CHECK WITH ALERTS AND BLOCKING =====
 function checkLicenseStatus() {
     const activated = localStorage.getItem("activated");
@@ -1176,7 +1156,6 @@ if (document.readyState === 'loading') {
 } else {
     checkLicenseStatus();
 }
-</script>
 
 </body>
 </html>
@@ -1288,7 +1267,5 @@ if (document.readyState === 'loading') {
 }
 </style>
 
-<script>
 // ===== ACTIVATION CHECK =====
 
-</script>
