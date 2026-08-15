@@ -402,28 +402,35 @@ function goToPOS() {
 
 // ===== CHECK IF ALREADY ACTIVATED =====
 function checkActivation() {
+    // Check if already activated and not expired
     if (localStorage.getItem("activated") === "true") {
         const expiryDate = localStorage.getItem("expiry_date");
         if (expiryDate) {
             const expiry = new Date(expiryDate);
             const now = new Date();
             if (expiry < now) {
+                // Expired - clear and show activation form
                 localStorage.removeItem("activated");
                 localStorage.removeItem("activation_code");
                 localStorage.removeItem("expiry_date");
                 localStorage.removeItem("pos_user");
                 localStorage.removeItem("pos_logged_in");
             } else {
+                // Already activated and valid - go to POS
                 window.location.href = "index.html";
                 return;
             }
         }
     }
-    // Show step 1 (Machine ID) by default on new device
+    
+    // NOT activated OR expired - SHOW THE FORM (no redirect to settings!)
+    // Show step 1 (Machine ID)
     document.getElementById("step1").classList.add("active");
     document.getElementById("step2").classList.remove("active");
     document.getElementById("step3").classList.remove("active");
     updateDots(0);
+    // Make sure the Machine ID is displayed
+    displayMachineId();
 }
 
 // ===== FORMAT CODE INPUT =====
