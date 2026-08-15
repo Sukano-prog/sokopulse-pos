@@ -475,7 +475,7 @@ function checkLicenseStatus() {
     
     if (!activated || activated !== 'true') {
         alert('⚠️ Your license is not activated.\nPlease go to Settings to activate your license.');
-        window.location.href = 'settings.html';
+        window.location.href = 'activation.html';
         return false;
     }
     
@@ -489,7 +489,7 @@ function checkLicenseStatus() {
             localStorage.removeItem('activated');
             localStorage.removeItem('activation_code');
             localStorage.removeItem('expiry_date');
-            window.location.href = 'settings.html';
+            window.location.href = 'activation.html';
             return false;
         }
         
