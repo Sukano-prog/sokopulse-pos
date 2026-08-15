@@ -458,15 +458,6 @@ function reprintReceipt(id) {
     win.document.write('<html><head><title>Receipt</title><style>body{font-family:monospace;padding:20px;white-space:pre;}</style></head><body>' + receipt + '
 <script>
 // ===== LICENSE CHECK =====
-    if (status.active && status.daysLeft <= 3 && status.daysLeft > 0) {
-        // Show warning banner
-        if (banner) {
-            banner.style.display = 'flex';
-            document.getElementById('licenseWarningMessage').textContent = 
-                '⚠️ Your license expires in ' + status.daysLeft + ' days. Please renew in Settings.';
-        }
-    }
-}
 
 // Run checks
 // License check removed);
@@ -733,15 +724,6 @@ function printBulkFromPreview() {
     win.document.write('<html><head><title>Bulk Receipts</title><style>body{font-family:"Courier New",monospace;padding:20px;white-space:pre;font-size:12px;background:white;margin:0;}@media print{body{padding:10px;}@page{margin:0.5cm;}}</style></head><body>' + receipt + '
 <script>
 // ===== LICENSE CHECK =====
-    if (status.active && status.daysLeft <= 3 && status.daysLeft > 0) {
-        // Show warning banner
-        if (banner) {
-            banner.style.display = 'flex';
-            document.getElementById('licenseWarningMessage').textContent = 
-                '⚠️ Your license expires in ' + status.daysLeft + ' days. Please renew in Settings.';
-        }
-    }
-}
 
 // Run checks
 // License check removed);
@@ -914,15 +896,6 @@ document.addEventListener('keydown', function(e) {
 
 <script>
 // ===== LICENSE CHECK =====
-    if (status.active && status.daysLeft <= 3 && status.daysLeft > 0) {
-        // Show warning banner
-        if (banner) {
-            banner.style.display = 'flex';
-            document.getElementById('licenseWarningMessage').textContent = 
-                '⚠️ Your license expires in ' + status.daysLeft + ' days. Please renew in Settings.';
-        }
-    }
-}
 
 // Run checks
 // License check removed);
