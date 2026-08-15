@@ -3,71 +3,191 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Activation - SokoPulse</title>
+    <title>Admin - Activation Code Generator</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', sans-serif; min-height: 100vh; background: #f8fafc; padding: 20px; display: flex; align-items: center; justify-content: center; }
-        .container { background: white; border-radius: 24px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15); padding: 40px; max-width: 750px; width: 100%; }
-        .container::before { content: ''; display: block; height: 4px; background: linear-gradient(90deg, #1a3c34, #f5a623); border-radius: 24px 24px 0 0; margin: -40px -40px 20px -40px; }
-        h1 { font-size: 24px; color: #1a3c34; margin-bottom: 4px; }
-        .subtitle { color: #64748b; font-size: 14px; margin-bottom: 20px; }
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            background: #f8fafc;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15);
+            padding: 40px;
+            width: 700px;
+            max-width: 100%;
+            position: relative;
+        }
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #1a3c34, #f5a623);
+        }
+        .logo { text-align: center; margin-bottom: 24px; }
+        .logo h1 { font-size: 28px; font-weight: 800; color: #1a3c34; }
+        .logo h1 span { color: #f5a623; }
+        .logo p { color: #94a3b8; font-size: 14px; margin-top: 4px; }
+        
         .form-group { margin-bottom: 16px; }
         .form-group label { display: block; font-size: 13px; font-weight: 600; color: #334155; margin-bottom: 6px; }
         .form-group input, .form-group select {
             width: 100%;
-            padding: 10px 14px;
+            padding: 12px 16px;
             border: 2px solid #e2e8f0;
-            border-radius: 10px;
+            border-radius: 12px;
             font-size: 14px;
             font-family: 'Inter', sans-serif;
             transition: all 0.2s;
-            background: white;
+            background: #f8fafc;
         }
         .form-group input:focus, .form-group select:focus {
             outline: none;
             border-color: #1a3c34;
+            background: white;
             box-shadow: 0 0 0 4px rgba(26,60,52,0.1);
         }
-        .btn { padding: 12px 24px; border: none; border-radius: 10px; font-size: 14px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; transition: all 0.2s; }
-        .btn-primary { background: #1a3c34; color: white; }
-        .btn-primary:hover { background: #2a5c54; transform: translateY(-2px); }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #1a3c34, #2a5c54);
+            color: white;
+            width: 100%;
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(26,60,52,0.3); }
         .btn-secondary { background: #f1f5f9; color: #0f172a; }
         .btn-secondary:hover { background: #e2e8f0; }
         .btn-danger { background: #ef4444; color: white; }
         .btn-danger:hover { background: #dc2626; }
-        .btn-success { background: #22c55e; color: white; }
-        .btn-success:hover { background: #16a34a; }
-        .row { display: flex; gap: 10px; flex-wrap: wrap; }
-        .row .btn { flex: 1; text-align: center; }
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .status { padding: 10px 14px; border-radius: 8px; font-size: 13px; margin: 10px 0; display: none; }
+        .btn-sm { padding: 6px 12px; font-size: 12px; }
+        
+        .status {
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: 13px;
+            margin: 12px 0;
+            display: none;
+        }
         .status.show { display: block; }
-        .status.success { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
         .status.error { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+        .status.success { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
         .status.info { background: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
-        .code-box { background: #f8fafc; padding: 16px; border-radius: 10px; border: 1px dashed #e2e8f0; text-align: center; margin: 12px 0; }
-        .code-box .code { font-family: monospace; font-size: 22px; font-weight: 700; color: #1a3c34; letter-spacing: 2px; word-break: break-all; }
+        
+        .code-box {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            margin: 16px 0;
+            border: 2px dashed #1a3c34;
+        }
         .code-box .label { font-size: 12px; color: #94a3b8; }
-        .license-item { padding: 10px 0; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
-        .license-item .key-text { font-family: monospace; font-size: 13px; font-weight: 600; color: #0f172a; }
-        .license-item .info { font-size: 12px; color: #94a3b8; }
-        .status-badge { font-size: 10px; padding: 2px 10px; border-radius: 20px; background: #dcfce7; color: #166534; }
-        .status-badge.expired { background: #fee2e2; color: #991b1b; }
-        .status-badge.revoked { background: #fef3c7; color: #92400e; }
-        .license-list { max-height: 300px; overflow-y: auto; font-size: 13px; }
-        .form-row { display: flex; gap: 12px; }
-        .form-row .form-group { flex: 1; }
-        @media (max-width: 600px) { .container { padding: 20px; } .container::before { margin: -20px -20px 20px -20px; } .grid-2 { grid-template-columns: 1fr; } .row { flex-direction: column; } .row .btn { width: 100%; } .form-row { flex-direction: column; } }
+        .code-box .code {
+            font-family: monospace;
+            font-size: 28px;
+            font-weight: 700;
+            color: #1a3c34;
+            letter-spacing: 3px;
+            word-break: break-all;
+            padding: 10px 0;
+        }
+        
+        .code-list {
+            margin-top: 20px;
+            border-top: 2px solid #e2e8f0;
+            padding-top: 20px;
+        }
+        .code-list h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #0f172a;
+            margin-bottom: 12px;
+        }
+        .code-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 14px;
+            background: #f8fafc;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            border: 1px solid #e2e8f0;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .code-item .info { flex: 1; min-width: 200px; }
+        .code-item .info .code-text {
+            font-family: monospace;
+            font-weight: 600;
+            font-size: 14px;
+            color: #1a3c34;
+        }
+        .code-item .info .details {
+            font-size: 11px;
+            color: #94a3b8;
+        }
+        .code-item .badge {
+            font-size: 10px;
+            font-weight: 600;
+            padding: 2px 10px;
+            border-radius: 20px;
+        }
+        .code-item .badge.active { background: #dcfce7; color: #166534; }
+        .code-item .badge.used { background: #fef3c7; color: #92400e; }
+        .code-item .badge.revoked { background: #fee2e2; color: #991b1b; }
+        .code-item .actions { display: flex; gap: 6px; flex-wrap: wrap; }
+        
+        .toolbar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; align-items: center; }
+        
+        @media (max-width: 600px) {
+            .container { padding: 20px; }
+            .form-row { grid-template-columns: 1fr; }
+            .code-item { flex-direction: column; align-items: stretch; }
+            .code-item .actions { justify-content: center; }
+        }
     </style>
 </head>
 <body>
-
 <div class="container">
-    <h1>🔑 Activation Code Generator</h1>
-    <p class="subtitle">Generate store-specific activation codes with expiry and revocation control.</p>
-
-    <div class="grid-2">
+    <div class="logo">
+        <h1>🏪 <span>Soko</span>Pulse</h1>
+        <p>Admin - Activation Code Generator</p>
+    </div>
+    
+    <div class="status" id="status"></div>
+    
+    <!-- Code Generation Form -->
+    <div class="form-row">
+        <div class="form-group">
+            <label>Store Name *</label>
+            <input type="text" id="storeNameInput" placeholder="Store name">
+        </div>
+        <div class="form-group">
+            <label>Machine ID *</label>
+            <input type="text" id="machineIdInput" placeholder="Paste Machine ID here" style="font-family:monospace;font-size:13px;">
+        </div>
+    </div>
+    
+    <div class="form-row">
         <div class="form-group">
             <label>Month</label>
             <select id="codeMonth">
@@ -88,7 +208,6 @@
         <div class="form-group">
             <label>Year</label>
             <select id="codeYear">
-                <option value="2024">2024</option>
                 <option value="2025">2025</option>
                 <option value="2026" selected>2026</option>
                 <option value="2027">2027</option>
@@ -96,69 +215,51 @@
             </select>
         </div>
     </div>
-
-    <div class="form-group">
-        <label>Store Name / Business Name *</label>
-        <input type="text" id="storeNameInput" placeholder="e.g. Mama's Grocery, John's Hardware...">
+    
+    <div class="form-row">
+        <div class="form-group">
+            <label>Owner Name</label>
+            <input type="text" id="ownerNameInput" placeholder="Store owner">
+        </div>
+        <div class="form-group">
+            <label>Phone</label>
+            <input type="text" id="storePhoneInput" placeholder="Phone number">
+        </div>
     </div>
-
-    <div class="form-group">
-        <label>Machine ID (from user) *</label>
-        <input type="text" id="machineIdInput" placeholder="Paste the user's Machine ID here..." style="font-family:monospace;font-size:14px;">
-        <div style="font-size:11px;color:#94a3b8;margin-top:4px;">This code will only work for this specific Machine ID.</div>
-    </div>
-
-    <div class="form-group">
-        <label>Store Owner Name</label>
-        <input type="text" id="ownerNameInput" placeholder="e.g. John Doe">
-    </div>
-
-    <div class="form-group">
-        <label>Store Phone</label>
-        <input type="text" id="storePhoneInput" placeholder="0712345678">
-    </div>
-
-    <button class="btn btn-primary" onclick="generateCode()" style="width:100%;">🔑 Generate Activation Code</button>
-
-    <div class="status" id="status"></div>
-
+    
+    <button class="btn btn-primary" onclick="generateCode()">🔑 Generate Activation Code</button>
+    
+    <!-- Code Display -->
     <div id="codeDisplay" style="display:none;">
         <div class="code-box">
             <div class="label">Activation Code (Send to Store Owner)</div>
             <div class="code" id="generatedCode">XXXX-XXXX-XXXX-XXXX</div>
-            <div style="margin-top:8px;font-size:12px;color:#64748b;">
+            <div style="font-size:12px;color:#64748b;margin-top:4px;">
                 Valid for: <span id="codeExpiry">30 days</span>
             </div>
         </div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <button class="btn btn-secondary" onclick="copyCode()" style="flex:1;">📋 Copy Code</button>
-        </div>
+        <button class="btn btn-secondary" onclick="copyCode()" style="width:100%;">📋 Copy Code</button>
     </div>
-
-    <hr style="margin:20px 0;border-color:#e2e8f0;">
-
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
-        <div>
+    
+    <!-- Code List -->
+    <div class="code-list">
+        <div class="toolbar">
             <h3>📋 Active Codes</h3>
             <span style="font-size:12px;color:#94a3b8;" id="codeCount">Total: 0</span>
+            <button class="btn btn-secondary btn-sm" onclick="exportCodes()">📤 Export</button>
+            <button class="btn btn-danger btn-sm" onclick="revokeAll()">🗑️ Revoke All</button>
         </div>
-        <div style="display:flex;gap:8px;">
-            <button class="btn btn-secondary" onclick="exportCodes()" style="padding:6px 14px;font-size:12px;">📤 Export</button>
-            <button class="btn btn-danger" onclick="revokeAll()" style="padding:6px 14px;font-size:12px;">🗑️ Revoke All</button>
+        <div id="codeListContainer">
+            <p style="color:#94a3b8;font-size:13px;">No codes generated yet.</p>
         </div>
-    </div>
-
-    <div class="license-list" id="codeList">
-        <p style="color:#94a3b8;text-align:center;padding:20px;">No codes generated yet.</p>
     </div>
 </div>
 
-<script src="db.js"></script>
 <script>
 // ===== STATE =====
 let generatedCodes = JSON.parse(localStorage.getItem('activation_codes') || '[]');
 
-// ===== GENERATE COMPLEX CODE =====
+// ===== GENERATE CODE =====
 function generateCode() {
     const storeName = document.getElementById('storeNameInput').value.trim();
     const machineId = document.getElementById('machineIdInput').value.trim();
@@ -174,14 +275,13 @@ function generateCode() {
         status.textContent = '❌ Please enter store name.';
         return;
     }
-    
     if (!machineId || machineId.length < 10) {
         status.className = 'status error show';
-        status.textContent = '❌ Please enter a valid Machine ID (min 10 characters).';
+        status.textContent = '❌ Please enter a valid Machine ID.';
         return;
     }
     
-    // Generate random parts
+    // Generate code: XXXX-XXXX-XXXX-XXXX
     const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
     let parts = [];
     for (let i = 0; i < 4; i++) {
@@ -190,47 +290,12 @@ function generateCode() {
             part += chars.charAt(Math.floor(Math.random() * chars.length));
         }
         parts.push(part);
-    
-    const code = parts.join("-");
-    const expiryDate = new Date();
-    expiryDate.setDate(expiryDate.getDate() + 30);
-    
-    // Save code to localStorage
-    const codeData = {
-        code: code,
-        storeName: storeName,
-        machineId: machineId,
-        ownerName: owner || "Unknown",
-        phone: phone || "",
-        month: month,
-        year: year,
-        generated: new Date().toISOString(),
-        expires: expiryDate.toISOString(),
-        active: true,
-        revoked: false,
-        used: false,
-        usedBy: null,
-        usedDate: null
-    };
-    
-    generatedCodes.push(codeData);
-    localStorage.setItem("activation_codes", JSON.stringify(generatedCodes));
-    
-    // Display the code
-    document.getElementById("generatedCode").textContent = code;
-    document.getElementById("codeExpiry").textContent = expiryDate.toLocaleDateString() + " (30 days)";
-    codeDisplay.style.display = "block";
-    status.className = "status success show";
-    status.textContent = "✅ Code generated successfully! Copy and send to store owner.";
-    
-    renderCodeList();
     }
-    
     const code = parts.join('-');
     const expiryDate = new Date();
     expiryDate.setDate(expiryDate.getDate() + 30);
     
-    // Save code
+    // Save to localStorage
     const codeData = {
         code: code,
         storeName: storeName,
@@ -256,16 +321,98 @@ function generateCode() {
     document.getElementById('codeExpiry').textContent = expiryDate.toLocaleDateString() + ' (30 days)';
     codeDisplay.style.display = 'block';
     status.className = 'status success show';
-    status.textContent = '✅ Code generated successfully! Copy and send to store owner.';
+    status.textContent = '✅ Code generated and saved!';
     
     renderCodeList();
+}
+
+// ===== RENDER CODE LIST =====
+function renderCodeList() {
+    const container = document.getElementById('codeListContainer');
+    const count = document.getElementById('codeCount');
+    
+    if (generatedCodes.length === 0) {
+        container.innerHTML = '<p style="color:#94a3b8;font-size:13px;">No codes generated yet.</p>';
+        count.textContent = 'Total: 0';
+        return;
+    }
+    
+    count.textContent = 'Total: ' + generatedCodes.length;
+    
+    // Show only the latest 50 codes, sorted by newest first
+    const sorted = [...generatedCodes].reverse().slice(0, 50);
+    
+    let html = '';
+    sorted.forEach(function(c, index) {
+        const originalIndex = generatedCodes.length - 1 - index;
+        const isActive = c.active && !c.revoked && !c.used;
+        const statusClass = c.revoked ? 'revoked' : (c.used ? 'used' : 'active');
+        const statusLabel = c.revoked ? '⛔ Revoked' : (c.used ? '🔒 Used' : '✅ Active');
+        
+        html += '<div class="code-item">';
+        html += '<div class="info">';
+        html += '<div class="code-text">🔑 ' + c.code + '</div>';
+        html += '<div class="details">';
+        html += 'Machine: ' + (c.machineId ? c.machineId.slice(0, 16) + '...' : 'N/A');
+        if (c.phone) html += ' | 📞 ' + c.phone;
+        html += ' | ' + c.storeName;
+        if (c.ownerName && c.ownerName !== 'Unknown') html += ' (' + c.ownerName + ')';
+        html += '<br>Generated: ' + new Date(c.generated).toLocaleDateString() + ' | Expires: ' + new Date(c.expires).toLocaleDateString();
+        html += '</div>';
+        html += '</div>';
+        html += '<span class="badge ' + statusClass + '">' + statusLabel + '</span>';
+        html += '<div class="actions">';
+        if (c.active && !c.revoked) {
+            html += '<button class="btn btn-danger btn-sm" onclick="revokeCode(' + originalIndex + ')">⛔ Revoke</button>';
+        }
+        html += '<button class="btn btn-secondary btn-sm" onclick="deleteCode(' + originalIndex + ')">✕</button>';
+        html += '</div>';
+        html += '</div>';
+    });
+    container.innerHTML = html;
+}
+
+// ===== REVOKE CODE =====
+function revokeCode(index) {
+    if (!confirm('Revoke this code?')) return;
+    generatedCodes[index].revoked = true;
+    generatedCodes[index].active = false;
+    localStorage.setItem('activation_codes', JSON.stringify(generatedCodes));
+    renderCodeList();
+    document.getElementById('status').className = 'status info show';
+    document.getElementById('status').textContent = '⛔ Code revoked.';
+}
+
+// ===== DELETE CODE =====
+function deleteCode(index) {
+    if (!confirm('Delete this code permanently?')) return;
+    generatedCodes.splice(index, 1);
+    localStorage.setItem('activation_codes', JSON.stringify(generatedCodes));
+    renderCodeList();
+    document.getElementById('status').className = 'status info show';
+    document.getElementById('status').textContent = '🗑️ Code deleted.';
+}
+
+// ===== REVOKE ALL =====
+function revokeAll() {
+    if (!confirm('Revoke ALL active codes?')) return;
+    generatedCodes.forEach(function(c) {
+        if (c.active && !c.revoked) {
+            c.revoked = true;
+            c.active = false;
+        }
+    });
+    localStorage.setItem('activation_codes', JSON.stringify(generatedCodes));
+    renderCodeList();
+    document.getElementById('status').className = 'status info show';
+    document.getElementById('status').textContent = '⛔ All codes revoked.';
 }
 
 // ===== COPY CODE =====
 function copyCode() {
     const code = document.getElementById('generatedCode').textContent;
     navigator.clipboard.writeText(code).then(() => {
-        alert('✅ Code copied to clipboard!');
+        alert('✅ Code copied: ' + code);
     }).catch(() => {
         const input = document.createElement('input');
         input.value = code;
@@ -273,128 +420,21 @@ function copyCode() {
         input.select();
         document.execCommand('copy');
         document.body.removeChild(input);
-        alert('✅ Code copied!');
+        alert('✅ Code copied: ' + code);
     });
-}
-
-// ===== RENDER CODE LIST =====
-function renderCodeList() {
-    const container = document.getElementById('codeList');
-    const countEl = document.getElementById('codeCount');
-    const now = new Date();
-    
-    if (countEl) countEl.textContent = 'Total: ' + generatedCodes.length;
-    
-    if (generatedCodes.length === 0) {
-        container.innerHTML = '<p style="color:#94a3b8;text-align:center;padding:20px;">No codes generated yet.</p>';
-        return;
-    }
-    
-    let html = '';
-    generatedCodes.slice().reverse().forEach(function(item, index) {
-        const originalIndex = generatedCodes.length - 1 - index;
-        const expires = new Date(item.expires);
-        const isExpired = expires < now;
-        const isRevoked = item.revoked === true;
-        const isUsed = item.used === true;
-        
-        let statusClass = 'status-badge';
-        let statusText = '✅ Active';
-        
-        if (isRevoked) {
-            statusClass += ' revoked';
-            statusText = '⛔ Revoked';
-        } else if (isExpired) {
-            statusClass += ' expired';
-            statusText = '❌ Expired';
-        } else if (isUsed) {
-            statusClass += ' expired';
-            statusText = '🔒 Used';
-        }
-        
-        html += `<div class="license-item" style="border-left: 4px solid ${isRevoked || isExpired ? '#ef4444' : '#22c55e'}; padding-left: 12px;">
-            <div style="flex:1;">
-                <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:4px;">
-                    <strong style="font-size:14px;color:#0f172a;">${item.storeName || 'Unnamed Store'}</strong>
-                    <span style="font-size:11px;color:#94a3b8;">${item.ownerName || 'Unknown Owner'}</span>
-                </div>
-                <div style="font-size:12px;color:#64748b;margin-top:2px;">
-                    🔑 ${item.code}
-                </div>
-                <div style="font-size:11px;color:#94a3b8;margin-top:2px;">
-                    Machine: ${item.machineId ? item.machineId.slice(0, 12) + '...' : 'N/A'}
-                    ${item.phone ? '| 📞 ' + item.phone : ''}
-                    ${isUsed ? '| ✅ Used by: ' + item.usedBy : ''}
-                </div>
-                <div style="font-size:10px;color:#94a3b8;margin-top:2px;">
-                    Generated: ${new Date(item.generated).toLocaleDateString()}
-                    | Expires: ${expires.toLocaleDateString()}
-                </div>
-            </div>
-            <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
-                <span class="${statusClass}">${statusText}</span>
-                <button onclick="revokeCode(${originalIndex})" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:14px;padding:4px 8px;" title="Revoke Code">⛔</button>
-                <button onclick="deleteCode(${originalIndex})" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:14px;padding:4px 8px;" title="Delete">✕</button>
-            </div>
-        </div>`;
-    });
-    
-    container.innerHTML = html;
-}
-
-// ===== REVOKE CODE =====
-function revokeCode(index) {
-    if (!confirm('⛔ Revoke this code?\n\nThis will immediately lock out the store!\nStore: ' + generatedCodes[index].storeName)) return;
-    if (!confirm('⚠️ FINAL WARNING: This cannot be undone!')) return;
-    
-    generatedCodes[index].revoked = true;
-    generatedCodes[index].active = false;
-    localStorage.setItem('activation_codes', JSON.stringify(generatedCodes));
-    renderCodeList();
-    alert('✅ Code revoked! Store is now locked out.');
-}
-
-// ===== DELETE CODE =====
-function deleteCode(index) {
-    if (!confirm('Delete this code?')) return;
-    generatedCodes.splice(index, 1);
-    localStorage.setItem('activation_codes', JSON.stringify(generatedCodes));
-    renderCodeList();
-}
-
-// ===== REVOKE ALL =====
-function revokeAll() {
-    if (!confirm('⚠️ REVOKE ALL CODES?\n\nThis will lock out ALL stores!')) return;
-    if (!confirm('⚠️ FINAL WARNING: This cannot be undone!')) return;
-    
-    generatedCodes.forEach(function(item) {
-        item.revoked = true;
-        item.active = false;
-    });
-    localStorage.setItem('activation_codes', JSON.stringify(generatedCodes));
-    renderCodeList();
-    alert('✅ All codes revoked! All stores locked out.');
 }
 
 // ===== EXPORT CODES =====
 function exportCodes() {
     if (generatedCodes.length === 0) {
-        alert('❌ No codes to export');
+        alert('No codes to export.');
         return;
     }
-    
-    let csv = 'Store Name,Owner,Machine ID,Code,Generated,Expires,Status\n';
-    const now = new Date();
-    generatedCodes.forEach(function(item) {
-        const expires = new Date(item.expires);
-        const isExpired = expires < now;
-        let status = 'Active';
-        if (item.revoked) status = 'Revoked';
-        else if (isExpired) status = 'Expired';
-        else if (item.used) status = 'Used';
-        csv += (item.storeName || '') + ',' + (item.ownerName || '') + ',' + (item.machineId || '') + ',' + item.code + ',' + new Date(item.generated).toLocaleDateString() + ',' + expires.toLocaleDateString() + ',' + status + '\n';
+    let csv = 'Code,Store,Machine ID,Owner,Phone,Generated,Expires,Status\n';
+    generatedCodes.forEach(function(c) {
+        const status = c.revoked ? 'Revoked' : (c.used ? 'Used' : 'Active');
+        csv += c.code + ',' + c.storeName + ',' + c.machineId + ',' + c.ownerName + ',' + c.phone + ',' + c.generated + ',' + c.expires + ',' + status + '\n';
     });
-    
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -402,100 +442,15 @@ function exportCodes() {
     a.download = 'activation_codes_' + new Date().toISOString().slice(0,10) + '.csv';
     a.click();
     URL.revokeObjectURL(url);
-    alert('✅ Codes exported!');
 }
 
 // ===== INIT =====
 renderCodeList();
 
-// Format machine ID input - preserve case
+// Auto-format Machine ID input (remove spaces, keep case)
 document.getElementById('machineIdInput').addEventListener('input', function() {
-    // Remove spaces but keep original case
     this.value = this.value.trim();
 });
-
-// Check for password protection
-if (sessionStorage.getItem('admin_authenticated') !== 'true') {
-    const pass = prompt('🔑 Enter System Owner Password:');
-    if (pass === 'Linux@123') {
-        sessionStorage.setItem('admin_authenticated', 'true');
-    } else {
-        alert('❌ Access Denied!');
-        window.location.href = 'pos.html';
-    }
-}
 </script>
 </body>
-// ===== FORCE GENERATED CODES TO BE INITIALIZED =====
-
-// Log for debugging
-console.log('📦 Generated codes loaded:', generatedCodes.length);
-
-// Override the generateCode function to ensure save
-const originalGenerate = window.generateCode;
-window.generateCode = function() {
-    console.log('🔑 Generating code...');
-    
-    // Get values
-    const storeName = document.getElementById('storeNameInput').value.trim();
-    const machineId = document.getElementById('machineIdInput').value.trim();
-    const month = document.getElementById('codeMonth').value;
-    const year = document.getElementById('codeYear').value;
-    const owner = document.getElementById('ownerNameInput').value.trim();
-    const phone = document.getElementById('storePhoneInput').value.trim();
-    const status = document.getElementById('status');
-    const codeDisplay = document.getElementById('codeDisplay');
-    
-    if (!storeName || !machineId) {
-        status.className = 'status error show';
-        status.textContent = '❌ Please enter store name and Machine ID.';
-        return;
-    }
-    
-    // Generate code
-    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-    let parts = [];
-    for (let i = 0; i < 4; i++) {
-        let part = '';
-        for (let j = 0; j < 4; j++) {
-            part += chars.charAt(Math.floor(Math.random() * chars.length));
-        }
-        parts.push(part);
-    }
-    const code = parts.join('-');
-    const expiryDate = new Date();
-    expiryDate.setDate(expiryDate.getDate() + 30);
-    
-    // Save code
-    const codeData = {
-        code: code,
-        storeName: storeName,
-        machineId: machineId,
-        ownerName: owner || 'Unknown',
-        phone: phone || '',
-        month: month,
-        year: year,
-        generated: new Date().toISOString(),
-        expires: expiryDate.toISOString(),
-        active: true,
-        revoked: false,
-        used: false,
-        usedBy: null,
-        usedDate: null
-    };
-    
-    generatedCodes.push(codeData);
-    localStorage.setItem('activation_codes', JSON.stringify(generatedCodes));
-    
-    // Display
-    document.getElementById('generatedCode').textContent = code;
-    document.getElementById('codeExpiry').textContent = expiryDate.toLocaleDateString() + ' (30 days)';
-    codeDisplay.style.display = 'block';
-    status.className = 'status success show';
-    status.textContent = '✅ Code generated and SAVED! (' + generatedCodes.length + ' total codes)';
-    
-    renderCodeList();
-    console.log('✅ Code saved:', code);
-    console.log('📦 Total codes now:', generatedCodes.length);
-};
-</script>
+</html>
