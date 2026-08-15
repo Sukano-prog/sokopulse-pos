@@ -39,6 +39,42 @@ const DB_VERSION = 7;
 })();
 
 
+
+
+// ===== LICENSE PASSWORD SYSTEM =====
+const LICENSE_PASSWORD = 'SokoPulse2026'; // Change this monthly
+
+function verifyLicensePassword(password) {
+    return password === LICENSE_PASSWORD;
+}
+
+function checkLicenseStatus() {
+    const stored = localStorage.getItem('license_verified');
+    const verifiedDate = localStorage.getItem('license_verified_date');
+    
+    if (!stored || !verifiedDate) {
+        return false;
+    }
+    
+    // Check if password was verified in the last 30 days
+    const verified = new Date(verifiedDate);
+    const now = new Date();
+    const daysDiff = (now - verified) / (1000 * 60 * 60 * 24);
+    
+    // Force re-verification after 30 days
+    if (daysDiff > 30) {
+        localStorage.removeItem('license_verified');
+        localStorage.removeItem('license_verified_date');
+        return false;
+    }
+    
+    return stored === 'true';
+}
+
+function setLicenseVerified() {
+    localStorage.setItem('license_verified', 'true');
+    localStorage.setItem('license_verified_date', new Date().toISOString());
+}
 function openDB() {
     return new Promise((resolve, reject) => {
         const req = indexedDB.open(DB_NAME, DB_VERSION);
