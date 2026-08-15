@@ -1069,7 +1069,7 @@ if ('serviceWorker' in navigator) {
 
 <script>
 // ===== LICENSE CHECK =====
-function checkLicense() {
+function // checkLicense removed{
     const status = getLicenseStatus ? getLicenseStatus() : { active: true };
     if (!status.active) {
         // Redirect to settings if not activated
@@ -1077,7 +1077,7 @@ function checkLicense() {
             !window.location.pathname.includes('activation.html') &&
             !window.location.pathname.includes('index.html') &&
             !window.location.pathname.includes('admin_activation.html')) {
-            alert('⚠️ Your license has expired or is not activated.\nPlease go to Settings to enter your monthly activation code.');
+            // License alert removed
             window.location.href = 'settings.html';
         }
     }
@@ -1098,10 +1098,7 @@ function checkLicenseWarning() {
 }
 
 // Run checks
-document.addEventListener('DOMContentLoaded', function() {
-    checkLicense();
-    setTimeout(checkLicenseWarning, 500);
-});
+// License check removed);
 </script>
 
 <!-- License Warning Banner -->
@@ -1131,7 +1128,7 @@ function checkLicenseStatus() {
             localStorage.removeItem('activated');
             localStorage.removeItem('activation_code');
             localStorage.removeItem('expiry_date');
-            alert('⚠️ Your license has expired. Please contact your administrator.');
+            // License alert removed
             window.location.href = 'settings.html';
             return false;
         }

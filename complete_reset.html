@@ -127,7 +127,7 @@ function createFreshDatabase() {
             const userStore = e.target.transaction.objectStore('users');
             userStore.add({
                 username: 'admin',
-                password: 'admin123',
+                password: '********',
                 role: 'admin',
                 name: 'Administrator',
                 created_at: new Date().toISOString()

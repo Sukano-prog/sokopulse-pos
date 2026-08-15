@@ -392,7 +392,7 @@ function checkLicenseStatus() {
             localStorage.removeItem('activated');
             localStorage.removeItem('activation_code');
             localStorage.removeItem('expiry_date');
-            alert('⚠️ Your license has expired. Please contact your administrator.');
+            // License alert removed
             window.location.href = 'settings.html';
             return false;
         }
