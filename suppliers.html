@@ -542,6 +542,60 @@ document.addEventListener('DOMContentLoaded', function() {
     checkAndRedirect();
 });
 </script>
+
+<script>
+// ===== LICENSE CHECK WITH ALERTS AND BLOCKING =====
+function checkLicenseStatus() {
+    const activated = localStorage.getItem('activated');
+    const expiry = localStorage.getItem('expiry_date');
+    const code = localStorage.getItem('activation_code');
+    
+    // CASE 1: NOT ACTIVATED (Inactive)
+    if (!activated || activated !== 'true') {
+        alert('⚠️ Your license is not activated.\nPlease go to Settings to activate your license.');
+        // Redirect to settings after alert
+        window.location.href = 'settings.html';
+        return false;
+    }
+    
+    // CASE 2: Check expiry
+    if (expiry) {
+        const expiryDate = new Date(expiry);
+        const now = new Date();
+        const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
+        
+        // CASE 3: EXPIRED
+        if (expiryDate < now) {
+            alert('⚠️ Your license has expired on ' + expiryDate.toLocaleDateString() + '.\nPlease contact your administrator to renew.');
+            // Clear license data
+            localStorage.removeItem('activated');
+            localStorage.removeItem('activation_code');
+            localStorage.removeItem('expiry_date');
+            window.location.href = 'settings.html';
+            return false;
+        }
+        
+        // CASE 4: Few days to expire (show warning but allow access)
+        if (daysRemaining <= 7) {
+            alert('⚠️ Your license will expire in ' + daysRemaining + ' days (' + expiryDate.toLocaleDateString() + ').\nPlease renew your license soon.');
+            // System still works - no redirect
+        }
+    }
+    
+    // License is ACTIVE - everything works
+    return true;
+}
+
+// Run on page load
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
+        checkLicenseStatus();
+    });
+} else {
+    checkLicenseStatus();
+}
+</script>
+
 </body>
 </html>
 
