@@ -397,21 +397,13 @@ function toggleSidebar() {
     }
 // ===== SESSION CHECK =====
 function checkSession() {
-    const user = localStorage.getItem('pos_user');
+    const user = localStorage.getItem("pos_user");
     if (!user) {
-        // If on a protected page, redirect to login
-        if (!window.location.pathname.includes('index.html')) {
-            window.location.href = 'index.html';
+        if (!window.location.pathname.includes("index.html")) {
+            window.location.href = "index.html";
         }
     }
-</script>
-<script>
-// ===== ACTIVATION CHECK =====
-(function() {
-    if (localStorage.getItem('activated') !== 'true') {
-        window.location.href = 'activation.html';
-    }
-})();
+}
 </script>
 <script>
 // ===== LICENSE EXPIRY CHECK =====
