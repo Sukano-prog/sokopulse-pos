@@ -1069,15 +1069,6 @@ if ('serviceWorker' in navigator) {
 
 <script>
 // ===== LICENSE CHECK =====
-    if (status.active && status.daysLeft <= 3 && status.daysLeft > 0) {
-        // Show warning banner
-        if (banner) {
-            banner.style.display = 'flex';
-            document.getElementById('licenseWarningMessage').textContent = 
-                '⚠️ Your license expires in ' + status.daysLeft + ' days. Please renew in Settings.';
-        }
-    }
-}
 
 // Run checks
 // License check removed);
