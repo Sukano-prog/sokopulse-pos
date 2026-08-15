@@ -4,7 +4,8 @@
 const ADMIN_PASSWORD = "admin123";
 
 // Check if already authenticated in this session
-if (sessionStorage.getItem("admin_authenticated") !== "true") {
+// Always ask for password
+if (true) {
     const enteredPassword = prompt("🔒 Admin Access Required\n\nEnter the admin password:");
     if (enteredPassword === "Linux@123") {
         sessionStorage.setItem("admin_authenticated", "true");
