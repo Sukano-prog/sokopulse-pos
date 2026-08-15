@@ -163,6 +163,7 @@
         ];
 
         let db = null;
+        let dbReady = false;
 
         function openDB() {
             return new Promise((resolve, reject) => {
@@ -178,7 +179,8 @@
                         'stock_movements': ['product_id', 'type', 'date'],
                         'settings': ['key'],
                         'users': ['username', 'role'],
-                        'categories': ['name', 'parent_id']
+                        'categories': ['name', 'parent_id'],
+                        'revoked_licenses': ['key', 'machine_id']
                     };
                     for (const [name, indexes] of Object.entries(stores)) {
                         if (!db.objectStoreNames.contains(name)) {
@@ -190,8 +192,7 @@
                     }
                 };
                 request.onsuccess = function(e) {
-                    db = e.target.result;
-                    resolve(db);
+                    resolve(e.target.result);
                 };
                 request.onerror = function(e) {
                     reject(e.target.error);
@@ -200,8 +201,10 @@
         }
 
         function dbAdd(storeName, data) {
+            if (!db) {
+                return Promise.reject(new Error('Database not ready'));
+            }
             return new Promise((resolve, reject) => {
-                if (!db) { throw new Error("Database not initialized"); }
                 const tx = db.transaction(storeName, 'readwrite');
                 const store = tx.objectStore(storeName);
                 const request = store.add(data);
@@ -211,8 +214,10 @@
         }
 
         function dbGetAll(storeName) {
+            if (!db) {
+                return Promise.reject(new Error('Database not ready'));
+            }
             return new Promise((resolve, reject) => {
-                if (!db) { throw new Error("Database not initialized"); }
                 const tx = db.transaction(storeName, 'readonly');
                 const store = tx.objectStore(storeName);
                 const request = store.getAll();
@@ -223,7 +228,8 @@
 
         async function initDB() {
             try {
-                db = db = await openDB();
+                db = await openDB();
+                dbReady = true;
                 const users = await dbGetAll('users');
                 if (users.length === 0) {
                     for (const user of DEFAULT_USERS) {
@@ -233,7 +239,7 @@
                 document.getElementById('dbStatus').textContent = '✅ Database ready';
                 document.getElementById('dbStatus').style.color = '#22c55e';
             } catch(e) {
-                document.getElementById('dbStatus').textContent = '⚠️ Database error';
+                document.getElementById('dbStatus').textContent = '⚠️ Database error: ' + e.message;
                 document.getElementById('dbStatus').style.color = '#ef4444';
             }
         }
@@ -248,6 +254,12 @@
 
             if (!username || !password) {
                 errorMsg.textContent = 'Please enter username and password';
+                errorMsg.classList.add('show');
+                return;
+            }
+
+            if (!dbReady) {
+                errorMsg.textContent = 'Database is still loading. Please wait...';
                 errorMsg.classList.add('show');
                 return;
             }
