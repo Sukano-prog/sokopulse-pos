@@ -576,10 +576,8 @@ if ('serviceWorker' in navigator) {
 
 <script>
 // ===== LICENSE CHECK =====
-    const status = getLicenseStatus ? getLicenseStatus() : { active: true, daysLeft: 30 };
     if (status.active && status.daysLeft <= 3 && status.daysLeft > 0) {
         // Show warning banner
-        const banner = document.getElementById('licenseWarningBanner');
         if (banner) {
             banner.style.display = 'flex';
             document.getElementById('licenseWarningMessage').textContent = 
@@ -593,9 +591,7 @@ if ('serviceWorker' in navigator) {
 </script>
 
 <!-- License Warning Banner -->
-<div id="licenseWarningBanner" style="display:none;background:#fef3c7;border-bottom:2px solid #f59e0b;padding:6px 20px;font-size:13px;color:#92400e;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
     <span id="licenseWarningMessage">⚠️ Your license expires soon. Please renew in Settings.</span>
-    <button onclick="document.getElementById('licenseWarningBanner').style.display='none'" style="background:none;border:none;color:#92400e;cursor:pointer;font-size:16px;">✕</button>
 </div>
 
 <script>

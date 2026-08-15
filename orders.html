@@ -458,10 +458,8 @@ function reprintReceipt(id) {
     win.document.write('<html><head><title>Receipt</title><style>body{font-family:monospace;padding:20px;white-space:pre;}</style></head><body>' + receipt + '
 <script>
 // ===== LICENSE CHECK =====
-    const status = getLicenseStatus ? getLicenseStatus() : { active: true, daysLeft: 30 };
     if (status.active && status.daysLeft <= 3 && status.daysLeft > 0) {
         // Show warning banner
-        const banner = document.getElementById('licenseWarningBanner');
         if (banner) {
             banner.style.display = 'flex';
             document.getElementById('licenseWarningMessage').textContent = 
@@ -475,9 +473,7 @@ function reprintReceipt(id) {
 </script>
 
 <!-- License Warning Banner -->
-<div id="licenseWarningBanner" style="display:none;background:#fef3c7;border-bottom:2px solid #f59e0b;padding:6px 20px;font-size:13px;color:#92400e;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
     <span id="licenseWarningMessage">⚠️ Your license expires soon. Please renew in Settings.</span>
-    <button onclick="document.getElementById('licenseWarningBanner').style.display='none'" style="background:none;border:none;color:#92400e;cursor:pointer;font-size:16px;">✕</button>
 </div>
 
 <script>
@@ -737,10 +733,8 @@ function printBulkFromPreview() {
     win.document.write('<html><head><title>Bulk Receipts</title><style>body{font-family:"Courier New",monospace;padding:20px;white-space:pre;font-size:12px;background:white;margin:0;}@media print{body{padding:10px;}@page{margin:0.5cm;}}</style></head><body>' + receipt + '
 <script>
 // ===== LICENSE CHECK =====
-    const status = getLicenseStatus ? getLicenseStatus() : { active: true, daysLeft: 30 };
     if (status.active && status.daysLeft <= 3 && status.daysLeft > 0) {
         // Show warning banner
-        const banner = document.getElementById('licenseWarningBanner');
         if (banner) {
             banner.style.display = 'flex';
             document.getElementById('licenseWarningMessage').textContent = 
@@ -754,9 +748,7 @@ function printBulkFromPreview() {
 </script>
 
 <!-- License Warning Banner -->
-<div id="licenseWarningBanner" style="display:none;background:#fef3c7;border-bottom:2px solid #f59e0b;padding:6px 20px;font-size:13px;color:#92400e;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
     <span id="licenseWarningMessage">⚠️ Your license expires soon. Please renew in Settings.</span>
-    <button onclick="document.getElementById('licenseWarningBanner').style.display='none'" style="background:none;border:none;color:#92400e;cursor:pointer;font-size:16px;">✕</button>
 </div>
 
 <script>
@@ -922,10 +914,8 @@ document.addEventListener('keydown', function(e) {
 
 <script>
 // ===== LICENSE CHECK =====
-    const status = getLicenseStatus ? getLicenseStatus() : { active: true, daysLeft: 30 };
     if (status.active && status.daysLeft <= 3 && status.daysLeft > 0) {
         // Show warning banner
-        const banner = document.getElementById('licenseWarningBanner');
         if (banner) {
             banner.style.display = 'flex';
             document.getElementById('licenseWarningMessage').textContent = 
@@ -939,9 +929,7 @@ document.addEventListener('keydown', function(e) {
 </script>
 
 <!-- License Warning Banner -->
-<div id="licenseWarningBanner" style="display:none;background:#fef3c7;border-bottom:2px solid #f59e0b;padding:6px 20px;font-size:13px;color:#92400e;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
     <span id="licenseWarningMessage">⚠️ Your license expires soon. Please renew in Settings.</span>
-    <button onclick="document.getElementById('licenseWarningBanner').style.display='none'" style="background:none;border:none;color:#92400e;cursor:pointer;font-size:16px;">✕</button>
 </div>
 
 <script>
