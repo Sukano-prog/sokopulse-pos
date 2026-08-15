@@ -182,27 +182,33 @@ if ('serviceWorker' in navigator) {
 <script>
 // ===== LICENSE STATUS CHECK =====
 function checkLicenseStatus() {
-    const code = localStorage.getItem('activation_code');
-    const expiry = localStorage.getItem('expiry_date');
-    const activated = localStorage.getItem('activated');
+    const activated = localStorage.getItem("activated");
+    const expiry = localStorage.getItem("expiry_date");
     
-    // Check if activated
-    if (!activated || activated !== 'true') {
+    if (!activated || activated !== "true") {
+        alert("⚠️ Your license is not activated.\nPlease go to Settings to activate your license.");
+        window.location.href = "settings.html";
         return false;
     }
     
-    // Check expiry
     if (expiry) {
         const expiryDate = new Date(expiry);
         const now = new Date();
+        const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
+        
         if (expiryDate < now) {
-            // Expired - clear and redirect
-            localStorage.removeItem('activated');
-            localStorage.removeItem('activation_code');
-            localStorage.removeItem('expiry_date');
-            // License alert removed
-            window.location.href = 'activation.html';
+            alert("⚠️ Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
+            localStorage.removeItem("activated");
+            localStorage.removeItem("activation_code");
+            localStorage.removeItem("expiry_date");
+            window.location.href = "settings.html";
             return false;
+        }
+        
+        // Show warning 7 days before expiry
+        if (daysRemaining <= 7 && daysRemaining > 0) {
+            const message = "⚠️ Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
+            alert(message);
         }
     }
     
@@ -229,43 +235,36 @@ document.addEventListener('DOMContentLoaded', function() {
 <script>
 // ===== LICENSE CHECK WITH ALERTS AND BLOCKING =====
 function checkLicenseStatus() {
-    const activated = localStorage.getItem('activated');
-    const expiry = localStorage.getItem('expiry_date');
-    const code = localStorage.getItem('activation_code');
+    const activated = localStorage.getItem("activated");
+    const expiry = localStorage.getItem("expiry_date");
     
-    // CASE 1: NOT ACTIVATED (Inactive)
-    if (!activated || activated !== 'true') {
-        alert('⚠️ Your license is not activated.\nPlease go to Settings to activate your license.');
-        // Redirect to settings after alert
-        window.location.href = 'activation.html';
+    if (!activated || activated !== "true") {
+        alert("⚠️ Your license is not activated.\nPlease go to Settings to activate your license.");
+        window.location.href = "settings.html";
         return false;
     }
     
-    // CASE 2: Check expiry
     if (expiry) {
         const expiryDate = new Date(expiry);
         const now = new Date();
         const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
         
-        // CASE 3: EXPIRED
         if (expiryDate < now) {
-            alert('⚠️ Your license has expired on ' + expiryDate.toLocaleDateString() + '.\nPlease contact your administrator to renew.');
-            // Clear license data
-            localStorage.removeItem('activated');
-            localStorage.removeItem('activation_code');
-            localStorage.removeItem('expiry_date');
-            window.location.href = 'activation.html';
+            alert("⚠️ Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
+            localStorage.removeItem("activated");
+            localStorage.removeItem("activation_code");
+            localStorage.removeItem("expiry_date");
+            window.location.href = "settings.html";
             return false;
         }
         
-        // CASE 4: Few days to expire (show warning but allow access)
-        if (daysRemaining <= 7) {
-            alert('⚠️ Your license will expire in ' + daysRemaining + ' days (' + expiryDate.toLocaleDateString() + ').\nPlease renew your license soon.');
-            // System still works - no redirect
+        // Show warning 7 days before expiry
+        if (daysRemaining <= 7 && daysRemaining > 0) {
+            const message = "⚠️ Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
+            alert(message);
         }
     }
     
-    // License is ACTIVE - everything works
     return true;
 }
 

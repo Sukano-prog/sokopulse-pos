@@ -1655,12 +1655,12 @@ renderProducts = function() {
 <script>
 // ===== LICENSE CHECK =====
 function checkLicenseStatus() {
-    const activated = localStorage.getItem('activated');
-    const expiry = localStorage.getItem('expiry_date');
+    const activated = localStorage.getItem("activated");
+    const expiry = localStorage.getItem("expiry_date");
     
-    if (!activated || activated !== 'true') {
-        alert('⚠️ Your license is not activated.\nPlease go to Settings to activate your license.');
-        window.location.href = 'settings.html';
+    if (!activated || activated !== "true") {
+        alert("⚠️ Your license is not activated.\nPlease go to Settings to activate your license.");
+        window.location.href = "settings.html";
         return false;
     }
     
@@ -1670,16 +1670,18 @@ function checkLicenseStatus() {
         const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
         
         if (expiryDate < now) {
-            alert('⚠️ Your license has expired on ' + expiryDate.toLocaleDateString() + '.\nPlease contact your administrator to renew.');
-            localStorage.removeItem('activated');
-            localStorage.removeItem('activation_code');
-            localStorage.removeItem('expiry_date');
-            window.location.href = 'settings.html';
+            alert("⚠️ Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
+            localStorage.removeItem("activated");
+            localStorage.removeItem("activation_code");
+            localStorage.removeItem("expiry_date");
+            window.location.href = "settings.html";
             return false;
         }
         
-        if (daysRemaining <= 7) {
-            alert('⚠️ Your license will expire in ' + daysRemaining + ' days (' + expiryDate.toLocaleDateString() + ').\nPlease renew your license soon.');
+        // Show warning 7 days before expiry
+        if (daysRemaining <= 7 && daysRemaining > 0) {
+            const message = "⚠️ Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
+            alert(message);
         }
     }
     

@@ -442,30 +442,37 @@ function verifyActivationCode() {
 
 // ===== CHECK LICENSE STATUS ON LOAD =====
 function checkLicenseStatus() {
-    const code = localStorage.getItem('activation_code');
-    const expiry = localStorage.getItem('code_expiry');
-    const statusDisplay = document.getElementById('licenseStatusText');
-    const expiryDisplay = document.getElementById('licenseExpiryDisplay');
+    const activated = localStorage.getItem("activated");
+    const expiry = localStorage.getItem("expiry_date");
     
-    if (!statusDisplay) return;
-    
-    if (!code || !expiry) {
-        statusDisplay.textContent = '🔒 Not Activated';
-        if (expiryDisplay) expiryDisplay.textContent = '';
-        return;
+    if (!activated || activated !== "true") {
+        alert("⚠️ Your license is not activated.\nPlease go to Settings to activate your license.");
+        window.location.href = "settings.html";
+        return false;
     }
     
-    const expiryDate = new Date(expiry);
-    const now = new Date();
-    const daysLeft = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
-    
-    if (daysLeft > 0) {
-        statusDisplay.textContent = '✅ Active';
-        if (expiryDisplay) expiryDisplay.textContent = 'Expires in ' + daysLeft + ' days';
-    } else {
-        statusDisplay.textContent = '🔴 Expired';
-        if (expiryDisplay) expiryDisplay.textContent = 'Expired ' + Math.abs(daysLeft) + ' days ago';
+    if (expiry) {
+        const expiryDate = new Date(expiry);
+        const now = new Date();
+        const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
+        
+        if (expiryDate < now) {
+            alert("⚠️ Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
+            localStorage.removeItem("activated");
+            localStorage.removeItem("activation_code");
+            localStorage.removeItem("expiry_date");
+            window.location.href = "settings.html";
+            return false;
+        }
+        
+        // Show warning 7 days before expiry
+        if (daysRemaining <= 7 && daysRemaining > 0) {
+            const message = "⚠️ Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
+            alert(message);
+        }
     }
+    
+    return true;
 }
 
 // Run on load
@@ -1008,30 +1015,37 @@ function verifyActivationCode() {
 
 // ===== CHECK LICENSE STATUS ON LOAD =====
 function checkLicenseStatus() {
-    const code = localStorage.getItem('activation_code');
-    const expiry = localStorage.getItem('code_expiry');
-    const statusDisplay = document.getElementById('licenseStatusText');
-    const expiryDisplay = document.getElementById('licenseExpiryDisplay');
+    const activated = localStorage.getItem("activated");
+    const expiry = localStorage.getItem("expiry_date");
     
-    if (!statusDisplay) return;
-    
-    if (!code || !expiry) {
-        statusDisplay.textContent = '🔒 Not Activated';
-        if (expiryDisplay) expiryDisplay.textContent = '';
-        return;
+    if (!activated || activated !== "true") {
+        alert("⚠️ Your license is not activated.\nPlease go to Settings to activate your license.");
+        window.location.href = "settings.html";
+        return false;
     }
     
-    const expiryDate = new Date(expiry);
-    const now = new Date();
-    const daysLeft = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
-    
-    if (daysLeft > 0) {
-        statusDisplay.textContent = '✅ Active';
-        if (expiryDisplay) expiryDisplay.textContent = 'Expires in ' + daysLeft + ' days';
-    } else {
-        statusDisplay.textContent = '🔴 Expired';
-        if (expiryDisplay) expiryDisplay.textContent = 'Expired ' + Math.abs(daysLeft) + ' days ago';
+    if (expiry) {
+        const expiryDate = new Date(expiry);
+        const now = new Date();
+        const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
+        
+        if (expiryDate < now) {
+            alert("⚠️ Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
+            localStorage.removeItem("activated");
+            localStorage.removeItem("activation_code");
+            localStorage.removeItem("expiry_date");
+            window.location.href = "settings.html";
+            return false;
+        }
+        
+        // Show warning 7 days before expiry
+        if (daysRemaining <= 7 && daysRemaining > 0) {
+            const message = "⚠️ Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
+            alert(message);
+        }
     }
+    
+    return true;
 }
 
 // Run on load
@@ -1244,30 +1258,37 @@ function verifyActivationCode() {
 
 // ===== CHECK LICENSE STATUS ON LOAD =====
 function checkLicenseStatus() {
-    const code = localStorage.getItem('activation_code');
-    const expiry = localStorage.getItem('code_expiry');
-    const statusDisplay = document.getElementById('licenseStatusText');
-    const expiryDisplay = document.getElementById('licenseExpiryDisplay');
+    const activated = localStorage.getItem("activated");
+    const expiry = localStorage.getItem("expiry_date");
     
-    if (!statusDisplay) return;
-    
-    if (!code || !expiry) {
-        statusDisplay.textContent = '🔒 Not Activated';
-        if (expiryDisplay) expiryDisplay.textContent = '';
-        return;
+    if (!activated || activated !== "true") {
+        alert("⚠️ Your license is not activated.\nPlease go to Settings to activate your license.");
+        window.location.href = "settings.html";
+        return false;
     }
     
-    const expiryDate = new Date(expiry);
-    const now = new Date();
-    const daysLeft = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
-    
-    if (daysLeft > 0) {
-        statusDisplay.textContent = '✅ Active';
-        if (expiryDisplay) expiryDisplay.textContent = 'Expires in ' + daysLeft + ' days';
-    } else {
-        statusDisplay.textContent = '🔴 Expired';
-        if (expiryDisplay) expiryDisplay.textContent = 'Expired ' + Math.abs(daysLeft) + ' days ago';
+    if (expiry) {
+        const expiryDate = new Date(expiry);
+        const now = new Date();
+        const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
+        
+        if (expiryDate < now) {
+            alert("⚠️ Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
+            localStorage.removeItem("activated");
+            localStorage.removeItem("activation_code");
+            localStorage.removeItem("expiry_date");
+            window.location.href = "settings.html";
+            return false;
+        }
+        
+        // Show warning 7 days before expiry
+        if (daysRemaining <= 7 && daysRemaining > 0) {
+            const message = "⚠️ Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
+            alert(message);
+        }
     }
+    
+    return true;
 }
 
 // Run on load
