@@ -1062,61 +1062,6 @@ if ('serviceWorker' in navigator) {
     });
 }
 
-        // If not on settings page, redirect to settings
-        if (!window.location.pathname.includes('settings.html') &&
-            !window.location.pathname.includes('activation.html') &&
-            !window.location.pathname.includes('index.html')) {
-            window.location.href = 'activation.html';
-    }
-
-// Run check on page load
-document.addEventListener('DOMContentLoaded', function() {
-    checkAndRedirect();
-});
-
-// ===== LICENSE CHECK WITH ALERTS AND BLOCKING =====
-function checkLicenseStatus() {
-    const activated = localStorage.getItem("activated");
-    const expiry = localStorage.getItem("expiry_date");
-    
-    if (!activated || activated !== "true") {
-        alert("⚠️ Your license is not activated.\nPlease go to Settings to activate your license.");
-        window.location.href = "settings.html";
-        return false;
-    }
-    
-    if (expiry) {
-        const expiryDate = new Date(expiry);
-        const now = new Date();
-        const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
-        
-        if (expiryDate < now) {
-            alert("⚠️ Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
-            localStorage.removeItem("activated");
-            localStorage.removeItem("activation_code");
-            localStorage.removeItem("expiry_date");
-            window.location.href = "settings.html";
-            return false;
-        }
-        
-        // Show warning 7 days before expiry
-        if (daysRemaining <= 7 && daysRemaining > 0) {
-            const message = "⚠️ Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
-            alert(message);
-        }
-    }
-    
-    return true;
-}
-
-// Run on page load
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function() {
-        checkLicenseStatus();
-    });
-} else {
-    checkLicenseStatus();
-}
-
+</script>
 </body>
 </html>
