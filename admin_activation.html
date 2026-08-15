@@ -93,6 +93,51 @@
     <h1>🔑 License Key Generator</h1>
     <p class="subtitle">Generate activation keys with auto-expiry dates.</p>
 
+    <div style="background:#e8f4f8;padding:16px;border-radius:8px;margin-bottom:16px;border:1px solid #b8d4e3;">
+        <h3 style="margin-bottom:8px;color:#1a3c34;">📅 Monthly Activation Code</h3>
+        <p style="font-size:13px;color:#64748b;margin-bottom:12px;">Generate monthly codes for users to enter in Settings → License Management</p>
+        <div class="form-row">
+            <div class="form-group">
+                <label>Month</label>
+                <select id="codeMonth" style="width:100%;padding:8px;border:2px solid #e2e8f0;border-radius:8px;">
+                    <option value="JAN">January</option>
+                    <option value="FEB">February</option>
+                    <option value="MAR">March</option>
+                    <option value="APR">April</option>
+                    <option value="MAY">May</option>
+                    <option value="JUN">June</option>
+                    <option value="JUL">July</option>
+                    <option value="AUG" selected>August</option>
+                    <option value="SEP">September</option>
+                    <option value="OCT">October</option>
+                    <option value="NOV">November</option>
+                    <option value="DEC">December</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Year</label>
+                <select id="codeYear" style="width:100%;padding:8px;border:2px solid #e2e8f0;border-radius:8px;">
+                    <option value="2024">2024</option>
+                    <option value="2025">2025</option>
+                    <option value="2026" selected>2026</option>
+                    <option value="2027">2027</option>
+                    <option value="2028">2028</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Prefix (Optional)</label>
+            <input type="text" id="codePrefix" placeholder="SP" value="SP" style="width:100%;padding:8px;border:2px solid #e2e8f0;border-radius:8px;font-family:monospace;text-transform:uppercase;">
+            <div style="font-size:11px;color:#94a3b8;margin-top:4px;">Default: SP (SokoPulse)</div>
+        </div>
+        <button class="btn btn-primary" onclick="generateActivationCode()" style="margin-top:8px;">🔑 Generate Code</button>
+        <div id="codeDisplay" style="display:none;margin-top:12px;padding:12px;background:#f8fafc;border-radius:8px;border:1px solid #e2e8f0;">
+            <div style="font-size:12px;color:#94a3b8;">Generated Code:</div>
+            <div id="generatedCode" style="font-family:monospace;font-size:24px;font-weight:700;color:#1a3c34;letter-spacing:2px;">XXXX</div>
+            <button class="btn btn-secondary" onclick="copyCode()" style="margin-top:8px;padding:6px 12px;font-size:12px;">📋 Copy Code</button>
+        </div>
+        <div class="status" id="codeStatus"></div>
+    </div>
     <div class="form-group">
         <label>Store Name / Business Name</label>
         <input type="text" id="storeNameInput" placeholder="e.g. Mama's Grocery, John's Hardware..." style="font-family:'Inter',sans-serif;font-size:14px;">
@@ -181,6 +226,13 @@
             <input type="file" id="importKeysInput" accept=".json" style="display:none;" onchange="importKeys(event)">
             <span style="font-size:11px;color:#94a3b8;display:flex;align-items:center;">💡 Export keys to backup or transfer to another device</span>
         </div>
+    
+    <hr style="margin:20px 0;border-color:#e2e8f0;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <h3>📋 Generated Codes</h3>
+    </div>
+    <div class="license-list" id="codeList">
+        <p style="color:#94a3b8;">No codes generated yet.</p>
     </div>
     <div class="license-list" id="licenseList">
         <p style="color:#94a3b8;">No licenses generated yet.</p>
@@ -425,6 +477,86 @@ function importKeys(event) {
     };
     reader.readAsText(file);
     event.target.value = '';
+}
+
+
+
+// ===== GENERATE MONTHLY ACTIVATION CODE =====
+function generateActivationCode() {
+    const month = document.getElementById('codeMonth').value;
+    const year = document.getElementById('codeYear').value;
+    const prefix = document.getElementById('codePrefix').value.trim().toUpperCase() || 'SP';
+    
+    if (!month || !year) {
+        alert('❌ Please select month and year');
+        return;
+    }
+    
+    const code = month + year + '-' + prefix;
+    
+    // Display the code
+    document.getElementById('generatedCode').textContent = code;
+    document.getElementById('codeDisplay').style.display = 'block';
+    document.getElementById('codeStatus').className = 'status success show';
+    document.getElementById('codeStatus').textContent = '✅ Code generated! Copy and send to user.';
+    
+    // Add to list
+    const codes = JSON.parse(localStorage.getItem('activation_codes') || '[]');
+    codes.push({
+        code: code,
+        month: month,
+        year: year,
+        generated: new Date().toISOString()
+    });
+    localStorage.setItem('activation_codes', JSON.stringify(codes));
+    renderCodeList();
+}
+
+function copyCode() {
+    const code = document.getElementById('generatedCode').textContent;
+    navigator.clipboard.writeText(code).then(() => {
+        alert('✅ Code copied to clipboard!');
+    }).catch(() => {
+        const input = document.createElement('input');
+        input.value = code;
+        document.body.appendChild(input);
+        input.select();
+        document.execCommand('copy');
+        document.body.removeChild(input);
+        alert('✅ Code copied!');
+    });
+}
+
+function renderCodeList() {
+    const codes = JSON.parse(localStorage.getItem('activation_codes') || '[]');
+    const container = document.getElementById('codeList');
+    if (codes.length === 0) {
+        container.innerHTML = '<p style="color:#94a3b8;">No codes generated yet.</p>';
+        return;
+    }
+    let html = '';
+    codes.slice().reverse().forEach(function(c, index) {
+        const originalIndex = codes.length - 1 - index;
+        html += `<div class="license-item">
+            <div>
+                <div class="key-text">${c.code}</div>
+                <div class="info">${c.month} ${c.year}</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+                <span class="status-badge active">✅ Active</span>
+                <button onclick="deleteCode(${originalIndex})" style="background:none;border:none;color:#ef4444;cursor:pointer;font-size:14px;">✕</button>
+            </div>
+        </div>`;
+    });
+    container.innerHTML = html;
+}
+
+function deleteCode(index) {
+    if (!confirm('Delete this code?')) return;
+    const codes = JSON.parse(localStorage.getItem('activation_codes') || '[]');
+    codes.splice(index, 1);
+    localStorage.setItem('activation_codes', JSON.stringify(codes));
+    renderCodeList();
 }
 
 function renderLicenseList() {
