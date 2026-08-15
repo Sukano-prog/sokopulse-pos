@@ -460,10 +460,8 @@ function reprintReceipt(id) {
 <!-- License Warning Banner -->
     <span id="licenseWarningMessage">⚠️ Your license expires soon. Please renew in Settings.</span>
 
-<script>
 // ===== LICENSE STATUS CHECK =====
 <script>
-// ===== LICENSE CHECK WITH ALERTS AND BLOCKING =====
 function checkLicenseStatus() {
     const activated = localStorage.getItem('activated');
     const expiry = localStorage.getItem('expiry_date');
@@ -479,6 +477,9 @@ function checkLicenseStatus() {
     
     // CASE 2: Check expiry
     if (expiry) {
+        const expiryDate = new Date(expiry);
+        const now = new Date();
+        const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
         const expiryDate = new Date(expiry);
         const now = new Date();
         const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
@@ -631,6 +632,9 @@ function checkLicenseStatus() {
     if (expiry) {
         const expiryDate = new Date(expiry);
         const now = new Date();
+        const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
+        const expiryDate = new Date(expiry);
+        const now = new Date();
         if (expiryDate < now) {
             // Expired - clear and redirect
             localStorage.removeItem('activated');
@@ -679,6 +683,9 @@ function checkLicenseStatus() {
     
     // CASE 2: Check expiry
     if (expiry) {
+        const expiryDate = new Date(expiry);
+        const now = new Date();
+        const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
         const expiryDate = new Date(expiry);
         const now = new Date();
         const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
@@ -755,6 +762,9 @@ function checkLicenseStatus() {
     
     // Check expiry
     if (expiry) {
+        const expiryDate = new Date(expiry);
+        const now = new Date();
+        const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
         if (daysRemaining <= 7) {
             alert('⚠️ Your license will expire in ' + daysRemaining + ' days (' + expiryDate.toLocaleDateString() + ').\nPlease renew your license soon.');
             // System still works - no redirect
