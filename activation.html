@@ -14,6 +14,7 @@
             align-items: center;
             justify-content: center;
             background: #f8fafc;
+            padding: 20px;
         }
         .container {
             background: white;
@@ -21,9 +22,8 @@
             box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15);
             padding: 40px;
             width: 420px;
-            max-width: 95%;
+            max-width: 100%;
             position: relative;
-            overflow: hidden;
         }
         .container::before {
             content: '';
@@ -38,6 +38,9 @@
         .logo h1 { font-size: 28px; font-weight: 800; color: #1a3c34; }
         .logo h1 span { color: #f5a623; }
         .logo p { color: #94a3b8; font-size: 14px; margin-top: 4px; }
+        
+        .step { display: none; }
+        .step.active { display: block; }
         
         .machine-id-box {
             background: #f8fafc;
@@ -160,6 +163,16 @@
             font-weight: 600;
             color: #1a3c34;
         }
+        
+        h3 { font-size: 18px; font-weight: 600; color: #0f172a; }
+        .mb-8 { margin-bottom: 8px; }
+        .mb-12 { margin-bottom: 12px; }
+        .text-center { text-align: center; }
+        .text-muted { color: #94a3b8; font-size: 14px; }
+        
+        @media (max-width: 480px) {
+            .container { padding: 24px 20px; }
+        }
     </style>
 </head>
 <body>
@@ -179,8 +192,8 @@
 
     <!-- Step 1: Machine ID -->
     <div class="step active" id="step1">
-        <h3 style="margin-bottom:8px;">📋 Step 1: Get Machine ID</h3>
-        <p style="color:#94a3b8;font-size:13px;margin-bottom:12px;">
+        <h3 class="mb-8">📋 Step 1: Get Machine ID</h3>
+        <p class="text-muted mb-12">
             Copy this Machine ID and send it to your administrator to get an activation code.
         </p>
         
@@ -200,14 +213,14 @@
 
     <!-- Step 2: Enter Code -->
     <div class="step" id="step2">
-        <h3 style="margin-bottom:8px;">🔑 Step 2: Enter Activation Code</h3>
-        <p style="color:#94a3b8;font-size:13px;margin-bottom:16px;">
+        <h3 class="mb-8">🔑 Step 2: Enter Activation Code</h3>
+        <p class="text-muted mb-12">
             Enter the activation code provided by your administrator.
         </p>
         
         <div class="form-group">
             <label>Activation Code</label>
-            <input type="text" id="activationCodeInput" placeholder="Enter your activation code (e.g. XXXX-XXXX-XXXX-XXXX)">
+            <input type="text" id="activationCodeInput" placeholder="XXXX-XXXX-XXXX-XXXX">
         </div>
         
         <div class="code-format">
@@ -223,11 +236,11 @@
     <!-- Step 3: Success -->
     <div class="step" id="step3">
         <div class="success-icon">🎉</div>
-        <h3 style="text-align:center;margin-bottom:8px;">Activation Successful!</h3>
-        <p style="text-align:center;color:#94a3b8;font-size:14px;margin-bottom:16px;">
+        <h3 class="text-center mb-8">Activation Successful!</h3>
+        <p class="text-center text-muted mb-12">
             Your POS system is now activated. You can use it fully offline.
         </p>
-        <div style="text-align:center;font-size:12px;color:#94a3b8;margin-bottom:16px;" id="activationExpiryDisplay">
+        <div class="text-center text-muted mb-12" id="activationExpiryDisplay">
             🔒 License valid for 30 days
         </div>
         <button class="btn btn-primary" onclick="goToPOS()">🚀 Go to POS</button>
@@ -237,7 +250,7 @@
 <script src="db.js"></script>
 <script>
 // ============================================================
-// ACTIVATION SYSTEM - NEW CODE SYSTEM
+// ACTIVATION SYSTEM - COMPLETE
 // ============================================================
 
 // ===== GENERATE MACHINE ID =====
@@ -314,12 +327,18 @@ function updateDots(step) {
     }
 }
 
-// ===== ACTIVATE =====
+// ===== ACTIVATE SYSTEM =====
 function activateSystem() {
-    const code = document.getElementById('activationCodeInput').value.trim().toUpperCase();
+    const codeInput = document.getElementById('activationCodeInput');
     const status = document.getElementById('activationStatus');
+    const code = codeInput.value.trim().toUpperCase();
     
-    if (!code || code.length < 19) {
+    // Clear previous status
+    status.className = 'status';
+    status.textContent = '';
+    
+    // Validate format: XXXX-XXXX-XXXX-XXXX (19 chars including hyphens)
+    if (!code || code.length !== 19 || !/^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(code)) {
         status.className = 'status error show';
         status.textContent = '❌ Please enter a valid activation code (format: XXXX-XXXX-XXXX-XXXX).';
         return;
@@ -329,70 +348,72 @@ function activateSystem() {
     status.textContent = '⏳ Validating code...';
     document.querySelector('.btn-primary').disabled = true;
     
-    // Get Machine ID
     const machineId = getMachineId();
     
-    // Check activation code
-    setTimeout(function() {
-        // Check against stored codes in localStorage
-        const storedCodes = JSON.parse(localStorage.getItem('activation_codes') || '[]');
-        const match = storedCodes.find(function(c) {
-            return c.code === code && 
-                   c.machineId === machineId && 
-                   c.active === true && 
-                   c.revoked !== true &&
-                   new Date(c.expires).getTime() > new Date().getTime();
-        });
+    // Check against stored codes
+    const storedCodes = JSON.parse(localStorage.getItem('activation_codes') || '[]');
+    
+    // Find matching code
+    const match = storedCodes.find(function(c) {
+        return c.code === code && 
+               c.machineId === machineId && 
+               c.active === true && 
+               c.revoked !== true &&
+               new Date(c.expires).getTime() > new Date().getTime();
+    });
+    
+    if (match) {
+        // VALID - Activate the system
+        const expiryDate = new Date(match.expires);
         
-        if (match) {
-            // Valid code - activate
-            const expiryDate = new Date(match.expires);
-            localStorage.setItem('activated', 'true');
-            localStorage.setItem('activation_code', code);
-            localStorage.setItem('expiry_date', match.expires);
-            localStorage.setItem('license_type', 'Monthly');
-            localStorage.setItem('machine_id', machineId);
-            
-            // Mark as used
-            match.used = true;
-            match.usedBy = machineId;
-            match.usedDate = new Date().toISOString();
-            localStorage.setItem('activation_codes', JSON.stringify(storedCodes));
-            
-            status.className = 'status success show';
-            status.textContent = '✅ Activation successful! License valid until ' + expiryDate.toLocaleDateString();
-            
-            setTimeout(function() {
-                goToStep3();
-                document.getElementById('activationExpiryDisplay').textContent = '🔒 License valid until ' + expiryDate.toLocaleDateString();
-            }, 1000);
-        } else {
-            // Check if code exists but is expired/revoked
-            const existing = storedCodes.find(function(c) { return c.code === code; });
-            if (existing) {
-                if (existing.revoked === true) {
-                    status.className = 'status error show';
-                    status.textContent = '❌ This code has been REVOKED by the administrator.';
-                } else if (existing.machineId !== machineId) {
-                    status.className = 'status error show';
-                    status.textContent = '❌ This code is not valid for this device.';
-                } else if (new Date(existing.expires) < new Date()) {
-                    status.className = 'status error show';
-                    status.textContent = '❌ This code has EXPIRED. Please contact your administrator.';
-                } else if (existing.used === true) {
-                    status.className = 'status error show';
-                    status.textContent = '❌ This code has already been used.';
-                } else {
-                    status.className = 'status error show';
-                    status.textContent = '❌ Invalid activation code. Please check with your administrator.';
-                }
+        localStorage.setItem('activated', 'true');
+        localStorage.setItem('activation_code', code);
+        localStorage.setItem('expiry_date', match.expires);
+        localStorage.setItem('license_type', 'Monthly');
+        localStorage.setItem('machine_id', machineId);
+        
+        // Mark code as used
+        match.used = true;
+        match.usedBy = machineId;
+        match.usedDate = new Date().toISOString();
+        localStorage.setItem('activation_codes', JSON.stringify(storedCodes));
+        
+        status.className = 'status success show';
+        status.textContent = '✅ Activation successful! License valid until ' + expiryDate.toLocaleDateString();
+        
+        setTimeout(function() {
+            goToStep3();
+            document.getElementById('activationExpiryDisplay').textContent = '🔒 License valid until ' + expiryDate.toLocaleDateString();
+        }, 1000);
+        
+    } else {
+        // Check if code exists but has issues
+        const existing = storedCodes.find(function(c) { return c.code === code; });
+        
+        if (existing) {
+            if (existing.revoked === true) {
+                status.className = 'status error show';
+                status.textContent = '❌ This code has been REVOKED by the administrator.';
+            } else if (existing.machineId !== machineId) {
+                status.className = 'status error show';
+                status.textContent = '❌ This code is not valid for this device.';
+            } else if (new Date(existing.expires).getTime() < new Date().getTime()) {
+                status.className = 'status error show';
+                status.textContent = '❌ This code has EXPIRED. Please contact your administrator.';
+            } else if (existing.used === true) {
+                status.className = 'status error show';
+                status.textContent = '❌ This code has already been used.';
             } else {
                 status.className = 'status error show';
                 status.textContent = '❌ Invalid activation code. Please check with your administrator.';
             }
-            document.querySelector('.btn-primary').disabled = false;
+        } else {
+            status.className = 'status error show';
+            status.textContent = '❌ Invalid activation code. Please check with your administrator.';
         }
-    }, 1500);
+        
+        document.querySelector('.btn-primary').disabled = false;
+    }
 }
 
 // ===== GO TO POS =====
@@ -402,14 +423,13 @@ function goToPOS() {
 
 // ===== CHECK IF ALREADY ACTIVATED =====
 function checkActivation() {
-    // Check if already activated and not expired
     if (localStorage.getItem("activated") === "true") {
         const expiryDate = localStorage.getItem("expiry_date");
         if (expiryDate) {
             const expiry = new Date(expiryDate);
             const now = new Date();
             if (expiry < now) {
-                // Expired - clear and show activation form
+                // Expired - clear and show activation
                 localStorage.removeItem("activated");
                 localStorage.removeItem("activation_code");
                 localStorage.removeItem("expiry_date");
@@ -423,25 +443,29 @@ function checkActivation() {
         }
     }
     
-    // NOT activated OR expired - SHOW THE FORM (no redirect to settings!)
-    // Show step 1 (Machine ID)
+    // Show step 1
     document.getElementById("step1").classList.add("active");
     document.getElementById("step2").classList.remove("active");
     document.getElementById("step3").classList.remove("active");
     updateDots(0);
-    // Make sure the Machine ID is displayed
     displayMachineId();
 }
 
 // ===== FORMAT CODE INPUT =====
 document.getElementById('activationCodeInput').addEventListener('input', function(e) {
     let value = this.value.toUpperCase().replace(/[^A-Z0-9-]/g, '');
+    // Auto-insert hyphens after 4 characters
+    if (value.length === 4 || value.length === 9 || value.length === 14) {
+        value += '-';
+    }
     this.value = value;
 });
 
 // ===== INIT =====
-displayMachineId();
-checkActivation();
+document.addEventListener('DOMContentLoaded', function() {
+    displayMachineId();
+    checkActivation();
+});
 </script>
 
 <script>
