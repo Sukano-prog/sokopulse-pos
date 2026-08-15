@@ -221,7 +221,7 @@
 
         async function initDB() {
             try {
-                await openDB();
+                db = await openDB();
                 const users = await dbGetAll('users');
                 if (users.length === 0) {
                     for (const user of DEFAULT_USERS) {
