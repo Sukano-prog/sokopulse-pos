@@ -39,9 +39,6 @@
         .logo h1 span { color: #f5a623; }
         .logo p { color: #94a3b8; font-size: 14px; margin-top: 4px; }
         
-        .step { display: none; }
-        .step.active { display: block; }
-        
         .machine-id-box {
             background: #f8fafc;
             padding: 16px;
@@ -71,10 +68,10 @@
             font-family: 'Inter', sans-serif;
             transition: all 0.2s;
             background: #f8fafc;
-            text-transform: uppercase;
             font-family: monospace;
             font-size: 18px;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
         }
         .form-group input:focus {
             outline: none;
@@ -136,7 +133,6 @@
         .steps-indicator .dot.done { background: #22c55e; }
         
         .success-icon { font-size: 48px; text-align: center; margin: 16px 0; }
-        
         .offline-badge {
             display: inline-block;
             background: #dcfce7;
@@ -147,7 +143,7 @@
             border-radius: 20px;
             margin-top: 4px;
         }
-        .valid-keys {
+        .code-format {
             font-size: 11px;
             color: #94a3b8;
             margin-top: 8px;
@@ -155,16 +151,7 @@
             background: #f8fafc;
             border-radius: 6px;
         }
-        .demo-keys {
-            margin-top: 12px;
-            padding: 10px;
-            background: #fef3c7;
-            border-radius: 8px;
-            font-size: 12px;
-            color: #92400e;
-            text-align: center;
-        }
-        .demo-keys code {
+        .code-format code {
             background: white;
             padding: 2px 8px;
             border-radius: 4px;
@@ -194,7 +181,7 @@
     <div class="step active" id="step1">
         <h3 style="margin-bottom:8px;">📋 Step 1: Get Machine ID</h3>
         <p style="color:#94a3b8;font-size:13px;margin-bottom:12px;">
-            Copy this Machine ID and send it to your administrator to get an activation key.
+            Copy this Machine ID and send it to your administrator to get an activation code.
         </p>
         
         <div class="machine-id-box">
@@ -205,30 +192,26 @@
         <button class="btn btn-secondary" onclick="copyMachineId()">📋 Copy Machine ID</button>
         
         <div class="status info show" id="nextStepInfo">
-            ℹ️ After getting your activation key, click "Next" to continue.
+            ℹ️ After getting your activation code, click "Next" to continue.
         </div>
         
         <button class="btn btn-primary" onclick="goToStep2()">Next →</button>
     </div>
 
-    <!-- Step 2: Enter Key -->
+    <!-- Step 2: Enter Code -->
     <div class="step" id="step2">
-        <h3 style="margin-bottom:8px;">🔑 Step 2: Enter Activation Key</h3>
+        <h3 style="margin-bottom:8px;">🔑 Step 2: Enter Activation Code</h3>
         <p style="color:#94a3b8;font-size:13px;margin-bottom:16px;">
-            Enter the activation key provided by your administrator.
+            Enter the activation code provided by your administrator.
         </p>
         
         <div class="form-group">
-            <label>Activation Key</label>
-            <input type="text" id="activationKey" placeholder="Enter your activation key">
+            <label>Activation Code</label>
+            <input type="text" id="activationCodeInput" placeholder="Enter your activation code">
         </div>
         
-        <div class="valid-keys">
-            Valid key format: PERM-YYYYMMDD-XXXX, TRIAL-YYYYMMDD-XXXX, etc.
-        </div>
-        
-        <div class="demo-keys">
-            🔑 Demo keys: <code>PERM-20260101-A1B2</code> <code>PERM-20260101-C3D4</code> <code>TRIAL-20260101-G7H8</code>
+        <div class="code-format">
+            Code format: <code>SP-AUG2026-X7K973-B2M89K4P</code>
         </div>
         
         <div class="status" id="activationStatus"></div>
@@ -244,18 +227,17 @@
         <p style="text-align:center;color:#94a3b8;font-size:14px;margin-bottom:16px;">
             Your POS system is now activated. You can use it fully offline.
         </p>
-        <div style="text-align:center;font-size:12px;color:#94a3b8;margin-bottom:16px;">
-            🔒 This machine is permanently activated
+        <div style="text-align:center;font-size:12px;color:#94a3b8;margin-bottom:16px;" id="activationExpiryDisplay">
+            🔒 License valid for 30 days
         </div>
         <button class="btn btn-primary" onclick="goToPOS()">🚀 Go to POS</button>
     </div>
 </div>
 
-
 <script src="db.js"></script>
 <script>
 // ============================================================
-// ONE-TIME ACTIVATION SYSTEM
+// ACTIVATION SYSTEM - NEW CODE SYSTEM
 // ============================================================
 
 // ===== GENERATE MACHINE ID =====
@@ -313,7 +295,7 @@ function goToStep2() {
     document.getElementById('step2').classList.add('active');
     document.getElementById('step3').classList.remove('active');
     updateDots(1);
-    document.getElementById('activationKey').focus();
+    document.getElementById('activationCodeInput').focus();
 }
 
 function goToStep3() {
@@ -334,127 +316,83 @@ function updateDots(step) {
 
 // ===== ACTIVATE =====
 function activateSystem() {
-    const key = document.getElementById('activationKey').value.trim().toUpperCase();
+    const code = document.getElementById('activationCodeInput').value.trim().toUpperCase();
     const status = document.getElementById('activationStatus');
     
-    if (!key || key.length < 8) {
+    if (!code || code.length < 10) {
         status.className = 'status error show';
-        status.textContent = '❌ Please enter a valid activation key.';
+        status.textContent = '❌ Please enter a valid activation code.';
         return;
     }
     
     status.className = 'status info show';
-    status.textContent = '⏳ Validating...';
+    status.textContent = '⏳ Validating code...';
     document.querySelector('.btn-primary').disabled = true;
     
-    // Simulate validation (in production, this would call your server)
+    // Get Machine ID
+    const machineId = getMachineId();
+    
+    // Check activation code
     setTimeout(function() {
-        // Check key format: TYPE-YYYYMMDD-XXXX
-        const pattern = /^[A-Z]{4,5}-[0-9]{8}-[A-Z0-9]{4}$/;
-        const isValid = pattern.test(key);
+        // Check against stored codes in localStorage
+        const storedCodes = JSON.parse(localStorage.getItem('activation_codes') || '[]');
+        const match = storedCodes.find(function(c) {
+            return c.code === code && 
+                   c.machineId === machineId && 
+                   c.active === true && 
+                   c.revoked !== true &&
+                   new Date(c.expires) > new Date();
+        });
         
-        // REJECT DEMO KEYS (for production)
-        const demoKeys = ['PERM-20260101-A1B2', 'PERM-20260101-C3D4', 'TRIAL-20260101-G7H8'];
-        if (demoKeys.includes(key)) {
-            status.className = 'status error show';
-            status.textContent = '❌ Demo keys are not valid for production. Please contact your administrator.';
-            document.querySelector('.btn-primary').disabled = false;
-            return;
-        }
-        
-        // Check if key is REVOKED
-        dbReq.onsuccess = function(e) {
-            const db = e.target.result;
-            if (db.objectStoreNames.contains('revoked_licenses')) {
-                const tx = db.transaction('revoked_licenses', 'readonly');
-                const store = tx.objectStore('revoked_licenses');
-                const getAll = store.getAll();
-                getAll.onsuccess = function() {
-                    const revoked = getAll.result.find(function(r) { return r.key === key; });
-                    db.close();
-                    if (revoked) {
-                        status.className = 'status error show';
-                        status.textContent = '❌ This license has been REVOKED! Please contact your administrator.';
-                        document.querySelector('.btn-primary').disabled = false;
-                        return;
-                    }
-                    // Continue with activation
-                    continueActivation(key, status, isValid);
-                };
-                getAll.onerror = function() {
-                    db.close();
-                    continueActivation(key, status, isValid);
-                };
+        if (match) {
+            // Valid code - activate
+            const expiryDate = new Date(match.expires);
+            localStorage.setItem('activated', 'true');
+            localStorage.setItem('activation_code', code);
+            localStorage.setItem('expiry_date', match.expires);
+            localStorage.setItem('license_type', 'Monthly');
+            localStorage.setItem('machine_id', machineId);
+            
+            // Mark as used
+            match.used = true;
+            match.usedBy = machineId;
+            match.usedDate = new Date().toISOString();
+            localStorage.setItem('activation_codes', JSON.stringify(storedCodes));
+            
+            status.className = 'status success show';
+            status.textContent = '✅ Activation successful! License valid until ' + expiryDate.toLocaleDateString();
+            
+            setTimeout(function() {
+                goToStep3();
+                document.getElementById('activationExpiryDisplay').textContent = '🔒 License valid until ' + expiryDate.toLocaleDateString();
+            }, 1000);
+        } else {
+            // Check if code exists but is expired/revoked
+            const existing = storedCodes.find(function(c) { return c.code === code; });
+            if (existing) {
+                if (existing.revoked === true) {
+                    status.className = 'status error show';
+                    status.textContent = '❌ This code has been REVOKED by the administrator.';
+                } else if (existing.machineId !== machineId) {
+                    status.className = 'status error show';
+                    status.textContent = '❌ This code is not valid for this device.';
+                } else if (new Date(existing.expires) < new Date()) {
+                    status.className = 'status error show';
+                    status.textContent = '❌ This code has EXPIRED. Please contact your administrator.';
+                } else if (existing.used === true) {
+                    status.className = 'status error show';
+                    status.textContent = '❌ This code has already been used.';
+                } else {
+                    status.className = 'status error show';
+                    status.textContent = '❌ Invalid activation code. Please check with your administrator.';
+                }
             } else {
-                db.close();
-                continueActivation(key, status, isValid);
+                status.className = 'status error show';
+                status.textContent = '❌ Invalid activation code. Please check with your administrator.';
             }
-        };
-        dbReq.onerror = function() {
-            continueActivation(key, status, isValid);
-        };
-    }, 1500);
-}
-
-// Wrapper function to continue activation after revocation check
-function continueActivation(key, status, isValid) {
-    if (isValid) {
-        // Parse expiry from key type
-        const parts = key.split('-');
-        const type = parts[0];
-        
-        // Set expiry based on type
-        const now = new Date();
-        let expiryDate = new Date(now);
-        let typeLabel = '';
-        
-        switch(type) {
-            case 'PERM':
-                expiryDate.setFullYear(now.getFullYear() + 10);
-                typeLabel = 'Permanent';
-                break;
-            case 'Y1YR':
-                expiryDate.setFullYear(now.getFullYear() + 1);
-                typeLabel = '1 Year';
-                break;
-            case 'M6MO':
-                expiryDate.setMonth(now.getMonth() + 6);
-                typeLabel = '6 Months';
-                break;
-            case 'M3MO':
-                expiryDate.setMonth(now.getMonth() + 3);
-                typeLabel = '3 Months';
-                break;
-            case 'M1MO':
-                expiryDate.setMonth(now.getMonth() + 1);
-                typeLabel = '1 Month';
-                break;
-            case 'TRIAL':
-                expiryDate.setDate(now.getDate() + 14);
-                typeLabel = 'Trial (14 days)';
-                break;
-            default:
-                expiryDate.setFullYear(now.getFullYear() + 10);
-                typeLabel = 'Permanent';
+            document.querySelector('.btn-primary').disabled = false;
         }
-        
-        // Store activation
-        localStorage.setItem('activated', 'true');
-        localStorage.setItem('activation_key', key);
-        localStorage.setItem('activation_date', now.toISOString());
-        localStorage.setItem('expiry_date', expiryDate.toISOString());
-        localStorage.setItem('license_type', typeLabel);
-        localStorage.setItem('machine_id', getMachineId());
-        
-        status.className = 'status success show';
-        status.textContent = '✅ Activation successful! License: ' + typeLabel;
-        
-        setTimeout(goToStep3, 1000);
-    } else {
-        status.className = 'status error show';
-        status.textContent = '❌ Invalid activation key format. Use TYPE-YYYYMMDD-XXXX';
-        document.querySelector('.btn-primary').disabled = false;
-    }
+    }, 1500);
 }
 
 // ===== GO TO POS =====
@@ -465,14 +403,13 @@ function goToPOS() {
 // ===== CHECK IF ALREADY ACTIVATED =====
 function checkActivation() {
     if (localStorage.getItem('activated') === 'true') {
-        // Check if expired
         const expiryDate = localStorage.getItem('expiry_date');
         if (expiryDate) {
             const expiry = new Date(expiryDate);
             const now = new Date();
             if (expiry < now) {
                 localStorage.removeItem('activated');
-                localStorage.removeItem('activation_key');
+                localStorage.removeItem('activation_code');
                 localStorage.removeItem('expiry_date');
                 localStorage.removeItem('pos_user');
                 localStorage.removeItem('pos_logged_in');
@@ -484,8 +421,8 @@ function checkActivation() {
     }
 }
 
-// ===== FORMAT KEY INPUT =====
-document.getElementById('activationKey').addEventListener('input', function(e) {
+// ===== FORMAT CODE INPUT =====
+document.getElementById('activationCodeInput').addEventListener('input', function(e) {
     let value = this.value.toUpperCase().replace(/[^A-Z0-9-]/g, '');
     this.value = value;
 });
