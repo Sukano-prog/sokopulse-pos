@@ -175,6 +175,32 @@
         </header>
         <div class="page-container">
             <div class="settings-grid">
+        <!-- License Activation Card -->
+        <div class="settings-card">
+            <div class="card-header">
+                <span class="icon">🔑</span>
+                License Activation
+            </div>
+            <div class="card-body">
+                <div id="activationStatus" class="status" style="margin-bottom:12px;padding:8px;border-radius:6px;"></div>
+                <div class="form-group">
+                    <label for="activationCodeInput">Activation Code</label>
+                    <input type="text" id="activationCodeInput" placeholder="XXXX-XXXX-XXXX-XXXX" style="text-transform:uppercase;font-family:monospace;font-size:16px;letter-spacing:2px;width:100%;padding:8px 12px;border:2px solid #e2e8f0;border-radius:8px;">
+                </div>
+                <div id="licenseInfo" style="font-size:12px;color:#64748b;margin-bottom:12px;">
+                    <span id="licenseStatusText">Status: Not activated</span><br>
+                    <span id="licenseExpiryDisplay">Expiry: --</span>
+                </div>
+                <button onclick="activateLicense()" style="width:100%;padding:10px;background:#1a3c34;color:white;border:none;border-radius:8px;font-weight:600;cursor:pointer;">
+                    🔑 Activate License
+                </button>
+                <div style="margin-top:12px;text-align:center;font-size:11px;color:#94a3b8;">
+                    <a href="expiry.html" style="color:#1a3c34;">Check expiry status</a> | 
+                    <a href="activation.html" style="color:#1a3c34;">Enter activation code</a>
+                </div>
+            </div>
+        </div>
+        <!-- End License Activation Card -->
                 <!-- Tax Settings -->
                 <div class="settings-card">
                     <div class="card-header"><span class="icon">🧾</span> Tax Settings</div>
