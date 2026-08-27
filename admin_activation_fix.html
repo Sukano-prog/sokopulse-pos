@@ -3,12 +3,12 @@
 let generatedCodes = JSON.parse(localStorage.getItem('activation_codes') || '[]');
 
 // Log for debugging
-console.log('📦 Generated codes loaded:', generatedCodes.length);
+console.log(' Generated codes loaded:', generatedCodes.length);
 
 // Override the generateCode function to ensure save
 const originalGenerate = window.generateCode;
 window.generateCode = function() {
-    console.log('🔑 Generating code...');
+    console.log(' Generating code...');
     
     // Get values
     const storeName = document.getElementById('storeNameInput').value.trim();
@@ -22,7 +22,7 @@ window.generateCode = function() {
     
     if (!storeName || !machineId) {
         status.className = 'status error show';
-        status.textContent = '❌ Please enter store name and Machine ID.';
+        status.textContent = ' Please enter store name and Machine ID.';
         return;
     }
     
@@ -66,10 +66,10 @@ window.generateCode = function() {
     document.getElementById('codeExpiry').textContent = expiryDate.toLocaleDateString() + ' (30 days)';
     codeDisplay.style.display = 'block';
     status.className = 'status success show';
-    status.textContent = '✅ Code generated and SAVED! (' + generatedCodes.length + ' total codes)';
+    status.textContent = ' Code generated and SAVED! (' + generatedCodes.length + ' total codes)';
     
     renderCodeList();
-    console.log('✅ Code saved:', code);
-    console.log('📦 Total codes now:', generatedCodes.length);
+    console.log(' Code saved:', code);
+    console.log(' Total codes now:', generatedCodes.length);
 };
 </script>

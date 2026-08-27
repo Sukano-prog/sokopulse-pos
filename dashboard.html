@@ -226,28 +226,28 @@
     <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
     
     <aside class="sidebar">
-        <div class="logo">🏪 <span>Soko</span>Pulse <button class="close-btn" onclick="toggleSidebar()">✕</button></div>
+        <div class="logo"> <span>Soko</span>Pulse <button class="close-btn" onclick="toggleSidebar()"></button></div>
         <nav>
             <div class="nav-label">Main</div>
-            <a href="pos.html">🛒 POS</a>
-            <a href="dashboard.html" class="active">📊 Dashboard</a>
-            <a href="orders.html">📋 Orders</a>
+            <a href="pos.html"> POS</a>
+            <a href="dashboard.html" class="active"> Dashboard</a>
+            <a href="orders.html"> Orders</a>
             <div class="nav-label">Inventory</div>
-            <a href="products.html">📦 Products</a>
-            <a href="stock.html">📦 Stock</a>
+            <a href="products.html"> Products</a>
+            <a href="stock.html"> Stock</a>
             <a href="expiry.html">⏰ Expiry</a>
-            <a href="categories.html">📂 Categories</a>
-            <a href="suppliers.html">📦 Suppliers</a>
+            <a href="categories.html"> Categories</a>
+            <a href="suppliers.html"> Suppliers</a>
             <div class="nav-label">Management</div>
-            <a href="customers.html">👤 Customers</a>
-            <a href="reports.html">📈 Reports</a>
-            <a href="audit.html">📋 Audit</a>
-            <a href="returns.html">🔄 Returns</a>
-            <a href="settings.html">⚙️ Settings</a>
+            <a href="customers.html"> Customers</a>
+            <a href="reports.html"> Reports</a>
+            <a href="audit.html"> Audit</a>
+            <a href="returns.html"> Returns</a>
+            <a href="settings.html"> Settings</a>
         </nav>
         <div class="user-section">
             <div class="name" id="userName">Administrator</div>
-        <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+        <button class="logout-btn" onclick="logout()"> Logout</button>
             <div class="role" id="userRole">Admin</div>
         </div>
     </aside>
@@ -255,11 +255,11 @@
     <main class="main-content">
         <header class="topbar">
             <div class="left">
-                <button class="hamburger" onclick="toggleSidebar()">☰</button>
-                <h1>📊 Dashboard</h1>
+                <button class="hamburger" onclick="toggleSidebar()"></button>
+                <h1> Dashboard</h1>
             </div>
             <div class="right">
-                <span class="store-badge">🏪 SokoPulse</span>
+                <span class="store-badge"> SokoPulse</span>
                 <span class="time" id="timeDisplay"></span>
             </div>
         </header>
@@ -269,19 +269,19 @@
             <div class="dashboard-stats">
                 <div class="stat-card">
                     <div class="stat-number green" id="todaySales">KES 0</div>
-                    <div class="stat-label">💰 Today's Sales</div>
+                    <div class="stat-label"> Today's Sales</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-number blue" id="todayOrders">0</div>
-                    <div class="stat-label">📋 Orders Today</div>
+                    <div class="stat-label"> Orders Today</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-number" id="totalProducts">0</div>
-                    <div class="stat-label">📦 Total Products</div>
+                    <div class="stat-label"> Total Products</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-number red" id="lowStock">0</div>
-                    <div class="stat-label">⚠️ Low Stock</div>
+                    <div class="stat-label"> Low Stock</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-number orange" id="expiringSoon">0</div>
@@ -289,20 +289,20 @@
                 </div>
                 <div class="stat-card">
                     <div class="stat-number purple" id="totalRevenue">KES 0</div>
-                    <div class="stat-label">📈 Total Revenue</div>
+                    <div class="stat-label"> Total Revenue</div>
                 </div>
             </div>
 
             <!-- Charts + Top Products -->
             <div class="dashboard-grid">
                 <div class="card">
-                    <h3>📊 Daily Sales Trend <span class="badge">Last 7 Days</span></h3>
+                    <h3> Daily Sales Trend <span class="badge">Last 7 Days</span></h3>
                     <div class="chart-container" id="salesChart">
                         <div style="text-align:center;padding:20px;color:#94a3b8;width:100%;">Loading...</div>
                     </div>
                 </div>
                 <div class="card">
-                    <h3>🏆 Top Selling Products <span class="badge">This Week</span></h3>
+                    <h3> Top Selling Products <span class="badge">This Week</span></h3>
                     <div id="topProductsList">
                         <div class="no-data">Loading...</div>
                     </div>
@@ -312,18 +312,18 @@
             <!-- Recent Orders + Quick Actions -->
             <div class="dashboard-grid">
                 <div class="card">
-                    <h3>📋 Recent Orders</h3>
+                    <h3> Recent Orders</h3>
                     <div id="recentOrders">
                         <div class="no-data">No recent orders</div>
                     </div>
                 </div>
                 <div class="card">
-                    <h3>⚡ Quick Actions</h3>
+                    <h3> Quick Actions</h3>
                     <div class="quick-actions">
-                        <button class="btn-pos" onclick="window.location.href='pos.html'">🛒 New Sale</button>
-                        <button class="btn-orders" onclick="window.location.href='orders.html'">📋 View Orders</button>
-                        <button class="btn-products" onclick="window.location.href='products.html'">📦 Manage Products</button>
-                        <button class="btn-stock" onclick="window.location.href='stock.html'">📥 Receive Stock</button>
+                        <button class="btn-pos" onclick="window.location.href='pos.html'"> New Sale</button>
+                        <button class="btn-orders" onclick="window.location.href='orders.html'"> View Orders</button>
+                        <button class="btn-products" onclick="window.location.href='products.html'"> Manage Products</button>
+                        <button class="btn-stock" onclick="window.location.href='stock.html'"> Receive Stock</button>
                     </div>
                 </div>
             </div>
@@ -500,7 +500,7 @@ function renderTopProducts() {
     }
     
     const rankClasses = ['gold', 'silver', 'bronze', '', ''];
-    const rankIcons = ['🥇', '🥈', '🥉', '4️⃣', '5️⃣'];
+    const rankIcons = ['', '', '', '4⃣', '5⃣'];
     
     container.innerHTML = sorted.map(([name, data], i) => `
         <div class="top-product-item">
@@ -565,10 +565,10 @@ if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
         navigator.serviceWorker.register('/sw.js')
             .then(function(reg) {
-                console.log('✅ Service Worker registered');
+                console.log(' Service Worker registered');
             })
             .catch(function(err) {
-                console.log('❌ Service Worker registration failed:', err);
+                console.log(' Service Worker registration failed:', err);
             });
     });
 }
@@ -582,7 +582,7 @@ if ('serviceWorker' in navigator) {
 </script>
 
 <!-- License Warning Banner -->
-    <span id="licenseWarningMessage">⚠️ Your license expires soon. Please renew in Settings.</span>
+    <span id="licenseWarningMessage"> Your license expires soon. Please renew in Settings.</span>
 </div>
 
 <script>
@@ -592,7 +592,7 @@ function checkLicenseStatus() {
     const expiry = localStorage.getItem("expiry_date");
     
     if (!activated || activated !== "true") {
-        alert("⚠️ Your license is not activated.\nPlease go to Settings to activate your license.");
+        alert(" Your license is not activated.\nPlease go to Settings to activate your license.");
         window.location.href = "settings.html";
         return false;
     }
@@ -603,7 +603,7 @@ function checkLicenseStatus() {
         const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
         
         if (expiryDate < now) {
-            alert("⚠️ Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
+            alert(" Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
             localStorage.removeItem("activated");
             localStorage.removeItem("activation_code");
             localStorage.removeItem("expiry_date");
@@ -613,7 +613,7 @@ function checkLicenseStatus() {
         
         // Show warning 7 days before expiry
         if (daysRemaining <= 7 && daysRemaining > 0) {
-            const message = "⚠️ Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
+            const message = " Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
             alert(message);
         }
     }
@@ -645,7 +645,7 @@ function checkLicenseStatus() {
     const expiry = localStorage.getItem("expiry_date");
     
     if (!activated || activated !== "true") {
-        alert("⚠️ Your license is not activated.\nPlease go to Settings to activate your license.");
+        alert(" Your license is not activated.\nPlease go to Settings to activate your license.");
         window.location.href = "settings.html";
         return false;
     }
@@ -656,7 +656,7 @@ function checkLicenseStatus() {
         const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
         
         if (expiryDate < now) {
-            alert("⚠️ Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
+            alert(" Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
             localStorage.removeItem("activated");
             localStorage.removeItem("activation_code");
             localStorage.removeItem("expiry_date");
@@ -666,7 +666,7 @@ function checkLicenseStatus() {
         
         // Show warning 7 days before expiry
         if (daysRemaining <= 7 && daysRemaining > 0) {
-            const message = "⚠️ Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
+            const message = " Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
             alert(message);
         }
     }
@@ -688,11 +688,11 @@ if (document.readyState === 'loading') {
 </html>
 <!-- Date Range Filter -->
 <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;align-items:center;background:white;padding:12px 16px;border-radius:10px;border:1px solid #f1f5f9;">
-    <span style="font-weight:600;color:#0f172a;font-size:13px;">📅 Period:</span>
+    <span style="font-weight:600;color:#0f172a;font-size:13px;"> Period:</span>
     <input type="date" id="startDate" style="padding:8px 12px;border:2px solid #e2e8f0;border-radius:8px;font-size:13px;font-family:'Inter',sans-serif;">
     <span style="color:#94a3b8;">→</span>
     <input type="date" id="endDate" style="padding:8px 12px;border:2px solid #e2e8f0;border-radius:8px;font-size:13px;font-family:'Inter',sans-serif;">
-    <button onclick="applyDateFilter()" style="padding:8px 20px;background:#1a3c34;color:white;border:none;border-radius:8px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;">📊 Apply Filter</button>
+    <button onclick="applyDateFilter()" style="padding:8px 20px;background:#1a3c34;color:white;border:none;border-radius:8px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;"> Apply Filter</button>
     <button onclick="resetDateFilter()" style="padding:8px 16px;background:#f1f5f9;color:#0f172a;border:none;border-radius:8px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;">↺ Reset</button>
     <span id="dateRangeInfo" style="font-size:12px;color:#94a3b8;margin-left:auto;"></span>
 </div>
@@ -753,7 +753,7 @@ function updateDateRangeInfo() {
     if (filterStartDate && filterEndDate) {
         const start = new Date(filterStartDate).toLocaleDateString();
         const end = new Date(filterEndDate).toLocaleDateString();
-        info.textContent = `📆 ${start} → ${end}`;
+        info.textContent = ` ${start} → ${end}`;
     }
 }
 
@@ -762,12 +762,12 @@ function applyDateFilter() {
     const end = document.getElementById('endDate').value;
     
     if (!start || !end) {
-        alert('❌ Please select both start and end dates');
+        alert(' Please select both start and end dates');
         return;
     }
     
     if (start > end) {
-        alert('❌ Start date cannot be after end date');
+        alert(' Start date cannot be after end date');
         return;
     }
     
@@ -823,19 +823,19 @@ function renderFilteredStats() {
     statsContainer.innerHTML = `
         <div class="stat-card">
             <div class="stat-number green">KES ${totalRevenue.toFixed(0)}</div>
-            <div class="stat-label">💰 Revenue (Filtered)</div>
+            <div class="stat-label"> Revenue (Filtered)</div>
         </div>
         <div class="stat-card">
             <div class="stat-number blue">${totalOrders}</div>
-            <div class="stat-label">📋 Total Orders</div>
+            <div class="stat-label"> Total Orders</div>
         </div>
         <div class="stat-card">
             <div class="stat-number">${products.length}</div>
-            <div class="stat-label">📦 Total Products</div>
+            <div class="stat-label"> Total Products</div>
         </div>
         <div class="stat-card">
             <div class="stat-number red">${lowStock.length}</div>
-            <div class="stat-label">⚠️ Low Stock</div>
+            <div class="stat-label"> Low Stock</div>
         </div>
         <div class="stat-card">
             <div class="stat-number orange">${expiringSoon.length}</div>
@@ -843,7 +843,7 @@ function renderFilteredStats() {
         </div>
         <div class="stat-card">
             <div class="stat-number purple">KES ${todayOrders.reduce((s, o) => s + (o.total || 0), 0).toFixed(0)}</div>
-            <div class="stat-label">📊 Today's Sales</div>
+            <div class="stat-label"> Today's Sales</div>
         </div>
     `;
 }
@@ -884,7 +884,7 @@ async function loadStoreName() {
         
         if (map.storeName) {
             const el = document.querySelector('.store-badge');
-            if (el) el.textContent = '🏪 ' + map.storeName;
+            if (el) el.textContent = ' ' + map.storeName;
             document.title = map.storeName + ' - Dashboard';
         }
     } catch(e) {
@@ -1039,7 +1039,7 @@ if (!isAdmin()) {
 <div class="stock-valuation-card" style="background:white;padding:16px 20px;border-radius:10px;border:1px solid #f1f5f9;margin-top:12px;">
     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
         <div>
-            <span style="font-size:13px;color:#64748b;">📦 Total Stock Value</span>
+            <span style="font-size:13px;color:#64748b;"> Total Stock Value</span>
             <div style="font-size:24px;font-weight:700;color:#1a3c34;" id="totalStockValue">KES 0</div>
         </div>
         <div style="display:flex;gap:20px;flex-wrap:wrap;">
@@ -1143,7 +1143,7 @@ async function loadStockValuation() {
         const db = await openDB();
         const products = await dbGetAll(db, 'products');
         
-        console.log('📊 Products loaded:', products.length);
+        console.log(' Products loaded:', products.length);
         
         // LOW STOCK = stock < min_alert (includes 0)
         const lowStockItems = products.filter(function(p) {
@@ -1160,8 +1160,8 @@ async function loadStockValuation() {
             return s + ((p.cost_price || 0) * (p.current_stock || 0));
         }, 0);
         
-        console.log('📊 Low stock items:', lowStockItems.length);
-        console.log('📊 Out of stock items:', outStockItems.length);
+        console.log(' Low stock items:', lowStockItems.length);
+        console.log(' Out of stock items:', outStockItems.length);
         
         // Update DOM
         const stockValueEl = document.getElementById('totalStockValue');
@@ -1180,7 +1180,7 @@ async function loadStockValuation() {
             lowStockEl.textContent = lowStockItems.length;
         }
         
-        console.log('✅ Stock valuation updated');
+        console.log(' Stock valuation updated');
         
     } catch(e) {
         console.error('Error loading stock valuation:', e);

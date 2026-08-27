@@ -49,46 +49,46 @@
 <div class="app">
     <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
     <aside class="sidebar">
-        <div class="logo">🏪 <span>Soko</span>Pulse <button class="close-btn" onclick="toggleSidebar()">✕</button></div>
+        <div class="logo"> <span>Soko</span>Pulse <button class="close-btn" onclick="toggleSidebar()"></button></div>
         <nav>
             <div class="nav-label">Main</div>
-            <a href="pos.html">🛒 POS</a>
-            <a href="dashboard.html">📊 Dashboard</a>
-            <a href="orders.html" class="active">📋 Orders</a>
+            <a href="pos.html"> POS</a>
+            <a href="dashboard.html"> Dashboard</a>
+            <a href="orders.html" class="active"> Orders</a>
             <div class="nav-label">Inventory</div>
-            <a href="products.html">📦 Products</a>
-            <a href="stock.html">📦 Stock</a>
+            <a href="products.html"> Products</a>
+            <a href="stock.html"> Stock</a>
             <a href="expiry.html">⏰ Expiry</a>
-            <a href="categories.html">📂 Categories</a>
-            <a href="suppliers.html">📦 Suppliers</a>
+            <a href="categories.html"> Categories</a>
+            <a href="suppliers.html"> Suppliers</a>
             <div class="nav-label">Management</div>
-            <a href="customers.html">👤 Customers</a>
-            <a href="reports.html">📈 Reports</a>
-            <a href="audit.html">📋 Audit</a>
-            <a href="returns.html">🔄 Returns</a>
-            <a href="settings.html">⚙️ Settings</a>
+            <a href="customers.html"> Customers</a>
+            <a href="reports.html"> Reports</a>
+            <a href="audit.html"> Audit</a>
+            <a href="returns.html"> Returns</a>
+            <a href="settings.html"> Settings</a>
         </nav>
         <div class="user-section">
             <div class="name" id="userName">Administrator</div>
-            <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+            <button class="logout-btn" onclick="logout()"> Logout</button>
             <div class="role" id="userRole">Admin</div>
         </div>
     </aside>
     <main class="main-content">
         <header class="topbar">
             <div class="left">
-                <button class="hamburger" onclick="toggleSidebar()">☰</button>
-                <h1>📋 Orders</h1>
+                <button class="hamburger" onclick="toggleSidebar()"></button>
+                <h1> Orders</h1>
             </div>
             <div class="right">
-                <span class="store-badge">🏪 SokoPulse</span>
+                <span class="store-badge"> SokoPulse</span>
                 <span class="time" id="timeDisplay"></span>
             </div>
         </header>
         <div class="page-container">
             <div class="toolbar">
                 <div class="search-wrapper">
-                    <span class="search-icon">🔍</span>
+                    <span class="search-icon"></span>
                     <input type="text" id="searchInput" placeholder="Search by order or customer..." oninput="renderOrders()">
                 </div>
                 <select class="filter-select" id="statusFilter" onchange="renderOrders()">
@@ -98,9 +98,9 @@
                     <option value="processing">Processing</option>
                     <option value="cancelled">Cancelled</option>
                 </select>
-                <button class="btn-refresh" onclick="loadOrders()">🔄 Refresh</button>
-                <button class="btn-print-bulk" onclick="openBulkPrintPreview()">🖨️ Bulk Print</button>
-                <button class="btn-export" onclick="exportOrders()">📤 Export CSV</button>
+                <button class="btn-refresh" onclick="loadOrders()"> Refresh</button>
+                <button class="btn-print-bulk" onclick="openBulkPrintPreview()"> Bulk Print</button>
+                <button class="btn-export" onclick="exportOrders()"> Export CSV</button>
             </div>
             <div class="table-container">
                 <table>
@@ -130,20 +130,20 @@
 <div class="modal" id="statusModal">
     <div class="modal-content">
         <span class="modal-close" onclick="closeModal()">&times;</span>
-        <h2>🔄 Change Order Status</h2>
+        <h2> Change Order Status</h2>
         <input type="hidden" id="statusOrderId">
         <div class="form-group">
             <label>New Status</label>
             <select id="newStatus" style="width:100%;padding:10px;border:2px solid #e2e8f0;border-radius:8px;font-family:'Inter',sans-serif;font-size:14px;">
                 <option value="pending">⏳ Pending</option>
-                <option value="processing">🔄 Processing</option>
-                <option value="completed">✅ Completed</option>
-                <option value="cancelled">❌ Cancelled</option>
+                <option value="processing"> Processing</option>
+                <option value="completed"> Completed</option>
+                <option value="cancelled"> Cancelled</option>
             </select>
         </div>
         <div class="modal-actions">
             <button class="btn-cancel" onclick="closeModal()">Cancel</button>
-            <button class="btn-save" onclick="changeOrderStatus()">💾 Update</button>
+            <button class="btn-save" onclick="changeOrderStatus()"> Update</button>
         </div>
     </div>
 </div>
@@ -152,15 +152,15 @@
 <div class="modal" id="bulkPrintModal">
     <div class="modal-content" style="max-width:700px;">
         <span class="modal-close" onclick="closeBulkPrint()">&times;</span>
-        <h2>🖨️ Bulk Print Preview</h2>
+        <h2> Bulk Print Preview</h2>
         <div style="display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap;">
             <span style="font-size:13px;color:#64748b;" id="bulkOrderCount">0 orders selected</span>
             <span style="font-size:13px;color:#64748b;" id="bulkTotalAmount">Total: KES 0.00</span>
         </div>
         <div id="bulkPrintContent" style="background:#f8fafc;padding:16px;border-radius:8px;font-family:monospace;font-size:12px;white-space:pre-wrap;max-height:500px;overflow-y:auto;border:1px solid #e2e8f0;"></div>
         <div class="modal-actions">
-            <button class="btn-cancel" onclick="closeBulkPrint()">✕ Close</button>
-            <button class="btn-save" onclick="printBulkFromPreview()">🖨️ Print All</button>
+            <button class="btn-cancel" onclick="closeBulkPrint()"> Close</button>
+            <button class="btn-save" onclick="printBulkFromPreview()"> Print All</button>
         </div>
     </div>
 </div>
@@ -243,9 +243,9 @@ function renderOrders() {
         html += '<td>KES ' + (o.total || 0).toFixed(2) + '</td>';
         html += '<td><span class="status-badge ' + (o.status || 'completed') + '">' + (o.status || 'completed') + '</span></td>';
         html += '<td>';
-        html += '<button class="btn-view" onclick="viewOrder(' + o.id + ')">👁️</button>';
-        html += '<button class="btn-reprint" onclick="reprintReceipt(' + o.id + ')">🖨️</button>';
-        html += '<button class="btn-status" onclick="openStatusModal(' + o.id + ')">📊</button>';
+        html += '<button class="btn-view" onclick="viewOrder(' + o.id + ')"></button>';
+        html += '<button class="btn-reprint" onclick="reprintReceipt(' + o.id + ')"></button>';
+        html += '<button class="btn-status" onclick="openStatusModal(' + o.id + ')"></button>';
         html += '</td>';
         html += '</tr>';
     });
@@ -266,7 +266,7 @@ function viewOrder(id) {
     var modal = document.getElementById('orderModal');
     var title = document.getElementById('orderModalTitle');
     var details = document.getElementById('orderDetails');
-    title.textContent = '📋 Order ' + (order.order_number || '#' + order.id);
+    title.textContent = ' Order ' + (order.order_number || '#' + order.id);
     var html = '<div style="margin:8px 0;">';
     html += '<p><strong>Customer:</strong> ' + (order.customer_name || 'Walk-in') + '</p>';
     html += '<p><strong>Date:</strong> ' + new Date(order.date).toLocaleString() + '</p>';
@@ -275,7 +275,7 @@ function viewOrder(id) {
     html += '<p><strong>Total:</strong> KES ' + (order.total || 0).toFixed(2) + '</p>';
     html += '</div>';
     html += '<div style="border-top:1px solid #e2e8f0;padding-top:10px;margin-top:10px;">';
-    html += '<h4>📦 Items</h4>';
+    html += '<h4> Items</h4>';
     if (items.length === 0) {
         html += '<p style="color:#94a3b8;">No items</p>';
     } else {
@@ -474,7 +474,7 @@ function checkLicenseStatus() {
     const expiry = localStorage.getItem("expiry_date");
     
     if (!activated || activated !== "true") {
-        alert("⚠️ Your license is not activated.\nPlease go to Settings to activate your license.");
+        alert(" Your license is not activated.\nPlease go to Settings to activate your license.");
         window.location.href = "settings.html";
         return false;
     }
@@ -485,7 +485,7 @@ function checkLicenseStatus() {
         const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
         
         if (expiryDate < now) {
-            alert("⚠️ Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
+            alert(" Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
             localStorage.removeItem("activated");
             localStorage.removeItem("activation_code");
             localStorage.removeItem("expiry_date");
@@ -495,7 +495,7 @@ function checkLicenseStatus() {
         
         // Show warning 7 days before expiry
         if (daysRemaining <= 7 && daysRemaining > 0) {
-            const message = "⚠️ Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
+            const message = " Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
             alert(message);
         }
     }
@@ -508,10 +508,10 @@ if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
         navigator.serviceWorker.register('/sw.js')
             .then(function(reg) {
-                console.log('✅ Service Worker registered');
+                console.log(' Service Worker registered');
             })
             .catch(function(err) {
-                console.log('❌ Service Worker registration failed:', err);
+                console.log(' Service Worker registration failed:', err);
             });
     });
 }

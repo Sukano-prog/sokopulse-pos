@@ -179,8 +179,8 @@
 
 <div class="container">
     <div class="logo">
-        <h1>🏪 <span>Soko</span>Pulse</h1>
-        <p>One-Time Activation <span class="offline-badge">🔒 Offline after activation</span></p>
+        <h1> <span>Soko</span>Pulse</h1>
+        <p>One-Time Activation <span class="offline-badge"> Offline after activation</span></p>
     </div>
 
     <!-- Steps Indicator -->
@@ -192,7 +192,7 @@
 
     <!-- Step 1: Machine ID -->
     <div class="step active" id="step1">
-        <h3 class="mb-8">📋 Step 1: Get Machine ID</h3>
+        <h3 class="mb-8"> Step 1: Get Machine ID</h3>
         <p class="text-muted mb-12">
             Copy this Machine ID and send it to your administrator to get an activation code.
         </p>
@@ -202,10 +202,10 @@
             <div class="id" id="machineId">Loading...</div>
         </div>
         
-        <button class="btn btn-secondary" onclick="copyMachineId()">📋 Copy Machine ID</button>
+        <button class="btn btn-secondary" onclick="copyMachineId()"> Copy Machine ID</button>
         
         <div class="status info show" id="nextStepInfo">
-            ℹ️ After getting your activation code, click "Next" to continue.
+            ℹ After getting your activation code, click "Next" to continue.
         </div>
         
         <button class="btn btn-primary" onclick="goToStep2()">Next →</button>
@@ -213,7 +213,7 @@
 
     <!-- Step 2: Enter Code -->
     <div class="step" id="step2">
-        <h3 class="mb-8">🔑 Step 2: Enter Activation Code</h3>
+        <h3 class="mb-8"> Step 2: Enter Activation Code</h3>
         <p class="text-muted mb-12">
             Enter the activation code provided by your administrator.
         </p>
@@ -230,20 +230,20 @@
         <div class="status" id="activationStatus"></div>
         
         <button class="btn btn-secondary" onclick="goToStep1()">← Back</button>
-        <button class="btn btn-primary" onclick="activateSystem()">🔓 Activate Now</button>
+        <button class="btn btn-primary" onclick="activateSystem()"> Activate Now</button>
     </div>
 
     <!-- Step 3: Success -->
     <div class="step" id="step3">
-        <div class="success-icon">🎉</div>
+        <div class="success-icon"></div>
         <h3 class="text-center mb-8">Activation Successful!</h3>
         <p class="text-center text-muted mb-12">
             Your POS system is now activated. You can use it fully offline.
         </p>
         <div class="text-center text-muted mb-12" id="activationExpiryDisplay">
-            🔒 License valid for 30 days
+             License valid for 30 days
         </div>
-        <button class="btn btn-primary" onclick="goToPOS()">🚀 Go to POS</button>
+        <button class="btn btn-primary" onclick="goToPOS()"> Go to POS</button>
     </div>
 </div>
 
@@ -279,7 +279,7 @@ function displayMachineId() {
 function copyMachineId() {
     const id = getMachineId();
     navigator.clipboard.writeText(id).then(() => {
-        alert('✅ Machine ID copied to clipboard!');
+        alert(' Machine ID copied to clipboard!');
     }).catch(() => {
         const input = document.createElement('input');
         input.value = id;
@@ -287,7 +287,7 @@ function copyMachineId() {
         input.select();
         document.execCommand('copy');
         document.body.removeChild(input);
-        alert('✅ Machine ID copied!');
+        alert(' Machine ID copied!');
     });
 }
 
@@ -339,7 +339,7 @@ function activateSystem() {
     // Validate format: XXXX-XXXX-XXXX-XXXX
     if (!code || code.length !== 19 || !/^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(code)) {
         status.className = "status error show";
-        status.textContent = "❌ Please enter a valid activation code (format: XXXX-XXXX-XXXX-XXXX).";
+        status.textContent = " Please enter a valid activation code (format: XXXX-XXXX-XXXX-XXXX).";
         return;
     }
     
@@ -354,13 +354,13 @@ function activateSystem() {
     localStorage.setItem("machine_id", getMachineId());
     
     status.className = "status success show";
-    status.textContent = "✅ Activation successful! License valid until " + expiryDate.toLocaleDateString();
+    status.textContent = " Activation successful! License valid until " + expiryDate.toLocaleDateString();
     
     document.querySelector(".btn-primary").disabled = true;
     
     setTimeout(function() {
         goToStep3();
-        document.getElementById("activationExpiryDisplay").textContent = "🔒 License valid until " + expiryDate.toLocaleDateString();
+        document.getElementById("activationExpiryDisplay").textContent = " License valid until " + expiryDate.toLocaleDateString();
     }, 1000);
 }
 
@@ -421,10 +421,10 @@ if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
         navigator.serviceWorker.register('/sw.js')
             .then(function(reg) {
-                console.log('✅ Service Worker registered');
+                console.log(' Service Worker registered');
             })
             .catch(function(err) {
-                console.log('❌ Service Worker registration failed:', err);
+                console.log(' Service Worker registration failed:', err);
             });
     });
 }

@@ -20,17 +20,17 @@
 </head>
 <body>
 <div class="card">
-    <h1>🗑️ Complete Database Reset</h1>
+    <h1> Complete Database Reset</h1>
     <p>This will delete ALL versions of the database and create a fresh one.</p>
     
     <div class="warning">
-        ⚠️ <strong>Warning:</strong> This will delete ALL data! All products, customers, orders, and settings will be lost.
+         <strong>Warning:</strong> This will delete ALL data! All products, customers, orders, and settings will be lost.
     </div>
     
-    <button class="btn-danger" onclick="deleteAllDatabases()">🗑️ Delete All Databases</button>
-    <button class="btn-success" onclick="createFreshDatabase()">✨ Create Fresh Database</button>
-    <button class="btn-primary" onclick="checkDatabase()">🔍 Check Database</button>
-    <button class="btn-primary" onclick="addSampleData()">📦 Add Sample Data</button>
+    <button class="btn-danger" onclick="deleteAllDatabases()"> Delete All Databases</button>
+    <button class="btn-success" onclick="createFreshDatabase()"> Create Fresh Database</button>
+    <button class="btn-primary" onclick="checkDatabase()"> Check Database</button>
+    <button class="btn-primary" onclick="addSampleData()"> Add Sample Data</button>
     
     <div id="result">Click a button to start...</div>
 </div>
@@ -52,51 +52,51 @@ function clearLog() {
 }
 
 function deleteAllDatabases() {
-    if (!confirm('⚠️⚠️⚠️ ARE YOU ABSOLUTELY SURE?\n\nThis will delete EVERYTHING!\n\nAll products, customers, orders, and settings will be permanently lost.\n\nThis cannot be undone!')) {
+    if (!confirm(' ARE YOU ABSOLUTELY SURE?\n\nThis will delete EVERYTHING!\n\nAll products, customers, orders, and settings will be permanently lost.\n\nThis cannot be undone!')) {
         return;
     }
     
-    if (!confirm('⚠️ FINAL WARNING: Type "DELETE" in the next prompt to confirm.')) {
+    if (!confirm(' FINAL WARNING: Type "DELETE" in the next prompt to confirm.')) {
         return;
     }
     
     const confirmation = prompt('Type "DELETE" to confirm:');
     if (confirmation !== 'DELETE') {
-        log('❌ Cancelled - did not type DELETE');
+        log(' Cancelled - did not type DELETE');
         return;
     }
     
     clearLog();
-    log('🗑️ Deleting database...');
+    log(' Deleting database...');
     
     const req = indexedDB.deleteDatabase(DB_NAME);
     
     req.onsuccess = function() {
-        log('✅ Database deleted successfully!');
-        log('📌 All versions removed.');
-        log('\n💡 Now click "Create Fresh Database" to start fresh.');
+        log(' Database deleted successfully!');
+        log(' All versions removed.');
+        log('\n Now click "Create Fresh Database" to start fresh.');
     };
     
     req.onerror = function(e) {
-        log('❌ Error deleting database: ' + e.target.error);
+        log(' Error deleting database: ' + e.target.error);
     };
     
     req.onblocked = function() {
         log('⏳ Database is blocked. Please close all tabs using this database.');
-        log('📌 Then try again.');
+        log(' Then try again.');
     };
 }
 
 function createFreshDatabase() {
     clearLog();
-    log('✨ Creating fresh database with version ' + DB_VERSION + '...');
+    log(' Creating fresh database with version ' + DB_VERSION + '...');
     
     const req = indexedDB.open(DB_NAME, DB_VERSION);
     
         const db = e.target.result;
         let stores = [];
         
-        log('📊 Creating all stores...');
+        log(' Creating all stores...');
         
         // Define all stores with their indexes
         const storeConfigs = {
@@ -116,11 +116,11 @@ function createFreshDatabase() {
                     store.createIndex(idx, idx, { unique: false });
                 }
                 stores.push(storeName);
-                log('  ✅ Created: ' + storeName);
+                log('   Created: ' + storeName);
             }
         }
         
-        log('✅ Created ' + stores.length + ' stores');
+        log(' Created ' + stores.length + ' stores');
         
         // Add default user
         if (stores.includes('users')) {
@@ -132,7 +132,7 @@ function createFreshDatabase() {
                 name: 'Administrator',
                 created_at: new Date().toISOString()
             });
-            log('  ✅ Added default admin user');
+            log('   Added default admin user');
         }
         
         // Add default settings
@@ -153,33 +153,33 @@ function createFreshDatabase() {
                 value: '16',
                 updated_at: new Date().toISOString()
             });
-            log('  ✅ Added default settings');
+            log('   Added default settings');
         }
     };
     
     req.onsuccess = function(e) {
         const db = e.target.result;
         const stores = Array.from(db.objectStoreNames);
-        log('\n✅ Database created successfully!');
-        log('📌 Version: ' + db.version);
-        log('📋 Stores (' + stores.length + '): ' + stores.join(', '));
-        log('\n🎉 Ready to use!');
-        log('\n💡 Click "Add Sample Data" to populate with test data.');
+        log('\n Database created successfully!');
+        log(' Version: ' + db.version);
+        log(' Stores (' + stores.length + '): ' + stores.join(', '));
+        log('\n Ready to use!');
+        log('\n Click "Add Sample Data" to populate with test data.');
         db.close();
     };
     
     req.onerror = function(e) {
-        log('❌ Error creating database: ' + e.target.error);
+        log(' Error creating database: ' + e.target.error);
         if (e.target.error.name === 'VersionError') {
-            log('💡 There might be an existing database with a different version.');
-            log('💡 Click "Delete All Databases" first, then try again.');
+            log(' There might be an existing database with a different version.');
+            log(' Click "Delete All Databases" first, then try again.');
         }
     };
 }
 
 function checkDatabase() {
     clearLog();
-    log('🔍 Checking database...');
+    log(' Checking database...');
     
     const req = indexedDB.open(DB_NAME);
     
@@ -187,19 +187,19 @@ function checkDatabase() {
         const db = e.target.result;
         const stores = Array.from(db.objectStoreNames);
         
-        log('📊 Database: ' + db.name);
-        log('📌 Version: ' + db.version);
-        log('📋 Stores (' + stores.length + '):');
+        log(' Database: ' + db.name);
+        log(' Version: ' + db.version);
+        log(' Stores (' + stores.length + '):');
         for (const store of stores) {
-            log('  ✅ ' + store);
+            log('   ' + store);
         }
         
         if (stores.length === 0) {
-            log('\n⚠️ No stores found. Database is empty.');
-            log('💡 Click "Create Fresh Database"');
+            log('\n No stores found. Database is empty.');
+            log(' Click "Create Fresh Database"');
         } else {
-            log('\n✅ Database is ready!');
-            log('\n📱 You can now use:');
+            log('\n Database is ready!');
+            log('\n You can now use:');
             log('  - Customers: http://localhost:5000/pos/customers.html');
             log('  - Stock: http://localhost:5000/pos/stock.html');
             log('  - Audit: http://localhost:5000/pos/audit.html');
@@ -209,17 +209,17 @@ function checkDatabase() {
     };
     
     req.onerror = function(e) {
-        log('❌ Error: ' + e.target.error);
+        log(' Error: ' + e.target.error);
         if (e.target.error.name === 'NotFoundError') {
-            log('📌 Database does not exist yet.');
-            log('💡 Click "Create Fresh Database"');
+            log(' Database does not exist yet.');
+            log(' Click "Create Fresh Database"');
         }
     };
 }
 
 function addSampleData() {
     clearLog();
-    log('📦 Adding sample data...');
+    log(' Adding sample data...');
     
     const req = indexedDB.open(DB_NAME, DB_VERSION);
     
@@ -233,7 +233,7 @@ function addSampleData() {
         
         productStore.count().onsuccess = function(countEvent) {
             if (countEvent.target.result > 0) {
-                log('⚠️ Products already exist (' + countEvent.target.result + ' products)');
+                log(' Products already exist (' + countEvent.target.result + ' products)');
                 if (!confirm('Products already exist. Add more sample data anyway?')) {
                     db.close();
                     return;
@@ -264,7 +264,7 @@ function addSampleData() {
                 pStore.add(p);
                 productCount++;
             }
-            log('  ✅ Added ' + productCount + ' products');
+            log('   Added ' + productCount + ' products');
             
             // Add sample customers
             const customers = [
@@ -279,7 +279,7 @@ function addSampleData() {
                 cStore.add(c);
                 customerCount++;
             }
-            log('  ✅ Added ' + customerCount + ' customers');
+            log('   Added ' + customerCount + ' customers');
             
             // Add sample audit entries
             const now = new Date();
@@ -292,30 +292,30 @@ function addSampleData() {
             for (const a of audits) {
                 aStore.add(a);
             }
-            log('  ✅ Added ' + audits.length + ' audit entries');
+            log('   Added ' + audits.length + ' audit entries');
             
             writeTx.oncomplete = function() {
-                log('\n✅ Sample data added successfully!');
-                log('\n📊 Summary:');
-                log('  📦 ' + productCount + ' products');
-                log('  👤 ' + customerCount + ' customers');
-                log('  📋 ' + audits.length + ' audit entries');
-                log('\n🎉 Ready to use!');
-                log('\n📱 Go to: http://localhost:5000/pos/stock.html');
+                log('\n Sample data added successfully!');
+                log('\n Summary:');
+                log('   ' + productCount + ' products');
+                log('   ' + customerCount + ' customers');
+                log('   ' + audits.length + ' audit entries');
+                log('\n Ready to use!');
+                log('\n Go to: http://localhost:5000/pos/stock.html');
                 db.close();
             };
             
             writeTx.onerror = function(err) {
-                log('❌ Error adding data: ' + err.target.error);
+                log(' Error adding data: ' + err.target.error);
                 db.close();
             };
         };
     };
     
     req.onerror = function(e) {
-        log('❌ Error: ' + e.target.error);
+        log(' Error: ' + e.target.error);
         if (e.target.error.name === 'NotFoundError') {
-            log('💡 Database not found. Click "Create Fresh Database" first.');
+            log(' Database not found. Click "Create Fresh Database" first.');
         }
     };
 }
@@ -331,10 +331,10 @@ if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
         navigator.serviceWorker.register('/sw.js')
             .then(function(reg) {
-                console.log('✅ Service Worker registered');
+                console.log(' Service Worker registered');
             })
             .catch(function(err) {
-                console.log('❌ Service Worker registration failed:', err);
+                console.log(' Service Worker registration failed:', err);
             });
     });
 }

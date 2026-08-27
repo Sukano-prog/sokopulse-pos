@@ -146,39 +146,39 @@
 <div class="app">
     <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
     <aside class="sidebar">
-        <div class="logo">🏪 <span>Soko</span>Pulse <button class="close-btn" onclick="toggleSidebar()">✕</button></div>
+        <div class="logo"> <span>Soko</span>Pulse <button class="close-btn" onclick="toggleSidebar()"></button></div>
         <nav>
             <div class="nav-label">Main</div>
-            <a href="pos.html">🛒 POS</a>
-            <a href="dashboard.html">📊 Dashboard</a>
-            <a href="orders.html">📋 Orders</a>
+            <a href="pos.html"> POS</a>
+            <a href="dashboard.html"> Dashboard</a>
+            <a href="orders.html"> Orders</a>
             <div class="nav-label">Inventory</div>
-            <a href="products.html">📦 Products</a>
-            <a href="stock.html">📦 Stock</a>
+            <a href="products.html"> Products</a>
+            <a href="stock.html"> Stock</a>
             <a href="expiry.html">⏰ Expiry</a>
-            <a href="categories.html">📂 Categories</a>
-            <a href="suppliers.html">📦 Suppliers</a>
+            <a href="categories.html"> Categories</a>
+            <a href="suppliers.html"> Suppliers</a>
             <div class="nav-label">Management</div>
-            <a href="customers.html">👤 Customers</a>
-            <a href="reports.html">📈 Reports</a>
-            <a href="audit.html">📋 Audit</a>
-            <a href="returns.html">🔄 Returns</a>
-            <a href="settings.html" class="active">⚙️ Settings</a>
+            <a href="customers.html"> Customers</a>
+            <a href="reports.html"> Reports</a>
+            <a href="audit.html"> Audit</a>
+            <a href="returns.html"> Returns</a>
+            <a href="settings.html" class="active"> Settings</a>
         </nav>
         <div class="user-section"><div class="name" id="userName">Administrator</div><div class="role" id="userRole">Admin</div></div>
-        <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+        <button class="logout-btn" onclick="logout()"> Logout</button>
     </aside>
     <main class="main-content">
         <header class="topbar">
-            <div class="left"><button class="hamburger" onclick="toggleSidebar()">☰</button><h1>⚙️ Settings</h1></div>
-            <div class="right"><span class="store-badge" id="storeBadge">🏪 SokoPulse</span><span class="time" id="timeDisplay"></span></div>
+            <div class="left"><button class="hamburger" onclick="toggleSidebar()"></button><h1> Settings</h1></div>
+            <div class="right"><span class="store-badge" id="storeBadge"> SokoPulse</span><span class="time" id="timeDisplay"></span></div>
         </header>
         <div class="page-container">
             <div class="settings-grid">
         <!-- License Activation Card -->
         <div class="settings-card">
             <div class="card-header">
-                <span class="icon">🔑</span>
+                <span class="icon"></span>
                 License Activation
             </div>
             <div class="card-body">
@@ -192,7 +192,7 @@
                     <span id="licenseExpiryDisplay">Expiry: --</span>
                 </div>
                 <button onclick="activateLicense()" style="width:100%;padding:10px;background:#1a3c34;color:white;border:none;border-radius:8px;font-weight:600;cursor:pointer;">
-                    🔑 Activate License
+                     Activate License
                 </button>
                 <div style="margin-top:12px;text-align:center;font-size:11px;color:#94a3b8;">
                     <a href="expiry.html" style="color:#1a3c34;">Check expiry status</a> | 
@@ -203,13 +203,13 @@
         <!-- End License Activation Card -->
                 <!-- Tax Settings -->
                 <div class="settings-card">
-                    <div class="card-header"><span class="icon">🧾</span> Tax Settings</div>
+                    <div class="card-header"><span class="icon"></span> Tax Settings</div>
                     <div class="card-body">
                         <div class="form-group">
                             <label>Enable Tax</label>
                             <select id="taxEnabled">
-                                <option value="yes">✅ Yes (Charge Tax)</option>
-                                <option value="no">❌ No (No Tax)</option>
+                                <option value="yes"> Yes (Charge Tax)</option>
+                                <option value="no"> No (No Tax)</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -220,35 +220,35 @@
                             <label>Tax Name</label>
                             <input type="text" id="taxName" value="VAT" placeholder="e.g. VAT, GST">
                         </div>
-                        <button class="btn-save-setting" onclick="saveTaxSettings()">💾 Save Tax Settings</button>
+                        <button class="btn-save-setting" onclick="saveTaxSettings()"> Save Tax Settings</button>
                     </div>
                 </div>
                 <!-- Store Information -->
                 <div class="settings-card">
-                    <div class="card-header"><span class="icon">🏪</span> Store Information</div>
+                    <div class="card-header"><span class="icon"></span> Store Information</div>
                     <div class="card-body">
                         <div class="form-group"><label>Store Name</label><input type="text" id="storeName" placeholder="Your store name"></div>
                         <div class="form-group"><label>Address</label><input type="text" id="storeAddress" placeholder="Store address"></div>
                         <div class="form-group"><label>Phone</label><input type="text" id="storePhone" placeholder="0712345678"></div>
                         <div class="form-group"><label>Email</label><input type="email" id="storeEmail" placeholder="store@email.com"></div>
-                        <button class="btn-save-setting" onclick="saveStoreInfo()">💾 Save Store Info</button>
+                        <button class="btn-save-setting" onclick="saveStoreInfo()"> Save Store Info</button>
                     </div>
                 </div>
                 <!-- Payment Methods -->
                 <div class="settings-card">
-                    <div class="card-header"><span class="icon">💳</span> Payment Methods</div>
+                    <div class="card-header"><span class="icon"></span> Payment Methods</div>
                     <div class="card-body">
-                        <div class="toggle-row"><label>💵 Cash</label><div class="toggle-switch active" onclick="togglePayment(this, 'cash')"><div class="slider"></div></div></div>
-                        <div class="toggle-row"><label>📱 M-Pesa</label><div class="toggle-switch active" onclick="togglePayment(this, 'mpesa')"><div class="slider"></div></div></div>
-                        <div class="toggle-row"><label>💳 Card</label><div class="toggle-switch active" onclick="togglePayment(this, 'card')"><div class="slider"></div></div></div>
-                        <div class="toggle-row"><label>📋 Credit</label><div class="toggle-switch active" onclick="togglePayment(this, 'credit')"><div class="slider"></div></div></div>
-                        <div class="toggle-row"><label>🏦 Bank Transfer</label><div class="toggle-switch active" onclick="togglePayment(this, 'bank')"><div class="slider"></div></div></div>
-                        <button class="btn-save-setting" onclick="savePaymentSettings()">💾 Save Payment Settings</button>
+                        <div class="toggle-row"><label> Cash</label><div class="toggle-switch active" onclick="togglePayment(this, 'cash')"><div class="slider"></div></div></div>
+                        <div class="toggle-row"><label> M-Pesa</label><div class="toggle-switch active" onclick="togglePayment(this, 'mpesa')"><div class="slider"></div></div></div>
+                        <div class="toggle-row"><label> Card</label><div class="toggle-switch active" onclick="togglePayment(this, 'card')"><div class="slider"></div></div></div>
+                        <div class="toggle-row"><label> Credit</label><div class="toggle-switch active" onclick="togglePayment(this, 'credit')"><div class="slider"></div></div></div>
+                        <div class="toggle-row"><label> Bank Transfer</label><div class="toggle-switch active" onclick="togglePayment(this, 'bank')"><div class="slider"></div></div></div>
+                        <button class="btn-save-setting" onclick="savePaymentSettings()"> Save Payment Settings</button>
                     </div>
                 </div>
                 <!-- Receipt Customization -->
                 <div class="settings-card">
-                    <div class="card-header"><span class="icon">🧾</span> Receipt Customization</div>
+                    <div class="card-header"><span class="icon"></span> Receipt Customization</div>
                     <div class="card-body">
                         <div class="form-group"><label>Receipt Footer</label><input type="text" id="receiptFooter" value="Thank you for shopping with us!" placeholder="Footer message"></div>
                         <div style="margin:10px 0;">
@@ -257,24 +257,24 @@
                             <label style="display:flex;align-items:center;gap:8px;font-weight:500;font-size:13px;"><input type="checkbox" id="receiptShowCustomer" checked> Show Customer Name</label>
                             <label style="display:flex;align-items:center;gap:8px;font-weight:500;font-size:13px;"><input type="checkbox" id="receiptShowCashier" checked> Show Cashier Name</label>
                         </div>
-                        <button class="btn-save-setting" onclick="saveReceiptSettings()">💾 Save Receipt Settings</button>
-                        <button class="btn-save-setting" onclick="testReceipt()" style="margin-top:8px;background:#f59e0b;color:#0f172a;">🖨️ Test Receipt</button>
+                        <button class="btn-save-setting" onclick="saveReceiptSettings()"> Save Receipt Settings</button>
+                        <button class="btn-save-setting" onclick="testReceipt()" style="margin-top:8px;background:#f59e0b;color:#0f172a;"> Test Receipt</button>
                     </div>
                 </div>
                 <!-- Printer Settings -->
                 <div class="settings-card">
-                    <div class="card-header"><span class="icon">🖨️</span> Printer Settings</div>
+                    <div class="card-header"><span class="icon"></span> Printer Settings</div>
                     <div class="card-body">
-                        <div class="form-group"><label>Enable Printer</label><select id="printerEnabled"><option value="true">✅ Yes</option><option value="false">❌ No</option></select></div>
-                        <div class="form-group"><label>Auto Print</label><select id="autoPrint"><option value="true">✅ Yes</option><option value="false">❌ No</option></select></div>
-                        <div class="form-group"><label>Printer Type</label><select id="printerType"><option value="browser">🌐 Browser</option><option value="usb">🔌 USB</option><option value="bluetooth">📡 Bluetooth</option></select></div>
-                        <button class="btn-save-setting" onclick="savePrinterSettings()">💾 Save Printer Settings</button>
-                        <button class="btn-save-setting" onclick="testPrinter()" style="margin-top:8px;background:#f59e0b;color:#0f172a;">🖨️ Test Print</button>
+                        <div class="form-group"><label>Enable Printer</label><select id="printerEnabled"><option value="true"> Yes</option><option value="false"> No</option></select></div>
+                        <div class="form-group"><label>Auto Print</label><select id="autoPrint"><option value="true"> Yes</option><option value="false"> No</option></select></div>
+                        <div class="form-group"><label>Printer Type</label><select id="printerType"><option value="browser"> Browser</option><option value="usb"> USB</option><option value="bluetooth"> Bluetooth</option></select></div>
+                        <button class="btn-save-setting" onclick="savePrinterSettings()"> Save Printer Settings</button>
+                        <button class="btn-save-setting" onclick="testPrinter()" style="margin-top:8px;background:#f59e0b;color:#0f172a;"> Test Print</button>
                     </div>
                 </div>
                 <!-- Users -->
                 <div class="settings-card">
-                    <div class="card-header"><span class="icon">👤</span> Users</div>
+                    <div class="card-header"><span class="icon"></span> Users</div>
                     <div class="card-body">
                         <div id="usersList"><div style="text-align:center;padding:10px;color:#94a3b8;">Loading users...</div></div>
                         <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;">
@@ -282,19 +282,19 @@
                             <input type="password" id="newPassword" placeholder="Password" style="flex:1;padding:8px 12px;border:2px solid #e2e8f0;border-radius:8px;font-family:'Inter',sans-serif;font-size:13px;min-width:80px;">
                             <select id="newRole" style="padding:8px 12px;border:2px solid #e2e8f0;border-radius:8px;font-family:'Inter',sans-serif;font-size:13px;"><option value="cashier">Cashier</option><option value="admin">Admin</option></select>
                         </div>
-                        <button class="btn-save-setting" onclick="addUser()" style="margin-top:6px;">➕ Add User</button>
+                        <button class="btn-save-setting" onclick="addUser()" style="margin-top:6px;"> Add User</button>
                     </div>
                 </div>
                 <!-- Backup & Restore -->
                 <div class="settings-card">
-                    <div class="card-header"><span class="icon">💾</span> Backup & Restore</div>
+                    <div class="card-header"><span class="icon"></span> Backup & Restore</div>
                     <div class="card-body">
-                        <button class="btn-save-setting" onclick="backupData()" style="width:100%;margin-bottom:6px;">📥 Export Backup</button>
+                        <button class="btn-save-setting" onclick="backupData()" style="width:100%;margin-bottom:6px;"> Export Backup</button>
                         <div style="display:flex;gap:6px;">
                             <input type="file" id="restoreFile" accept=".json" style="flex:1;padding:6px;border:2px solid #e2e8f0;border-radius:8px;font-family:'Inter',sans-serif;font-size:12px;">
-                            <button class="btn-save-setting" onclick="restoreData()">📤 Restore</button>
+                            <button class="btn-save-setting" onclick="restoreData()"> Restore</button>
                         </div>
-                        <button class="btn-save-setting btn-danger" onclick="clearAllData()" style="margin-top:8px;width:100%;">⚠️ Clear All Data</button>
+                        <button class="btn-save-setting btn-danger" onclick="clearAllData()" style="margin-top:8px;width:100%;"> Clear All Data</button>
                     </div>
                 </div>
             </div>
@@ -345,8 +345,8 @@ async function saveTaxSettings() {
         var tx = db.transaction('settings', 'readwrite');
         var store = tx.objectStore('settings');
         for (var key in data) { await store.put({ key: key, value: data[key] }); }
-        alert('✅ Tax settings saved!');
-    } catch(e) { alert('❌ Error: ' + e.message); }
+        alert(' Tax settings saved!');
+    } catch(e) { alert(' Error: ' + e.message); }
 }
 
 // ===== STORE =====
@@ -357,9 +357,9 @@ async function saveStoreInfo() {
         var tx = db.transaction('settings', 'readwrite');
         var store = tx.objectStore('settings');
         for (var key in data) { await store.put({ key: key, value: data[key] }); }
-        alert('✅ Store information saved!');
+        alert(' Store information saved!');
         loadStoreName();
-    } catch(e) { alert('❌ Error: ' + e.message); }
+    } catch(e) { alert(' Error: ' + e.message); }
 }
 
 // ===== PAYMENT =====
@@ -370,7 +370,7 @@ async function savePaymentSettings() {
     document.querySelectorAll('.toggle-row').forEach(function(row) {
         var label = row.querySelector('label').textContent.trim();
         var isActive = row.querySelector('.toggle-switch').classList.contains('active');
-        var key = label.replace('💵 ', '').replace('📱 ', '').replace('💳 ', '').replace('📋 ', '').replace('🏦 ', '').toLowerCase();
+        var key = label.replace(' ', '').replace(' ', '').replace(' ', '').replace(' ', '').replace(' ', '').toLowerCase();
         payments[key] = isActive;
     });
     try {
@@ -378,8 +378,8 @@ async function savePaymentSettings() {
         var tx = db.transaction('settings', 'readwrite');
         var store = tx.objectStore('settings');
         await store.put({ key: 'payments', value: JSON.stringify(payments) });
-        alert('✅ Payment settings saved!');
-    } catch(e) { alert('❌ Error: ' + e.message); }
+        alert(' Payment settings saved!');
+    } catch(e) { alert(' Error: ' + e.message); }
 }
 
 // ===== RECEIPT =====
@@ -390,8 +390,8 @@ async function saveReceiptSettings() {
         var tx = db.transaction('settings', 'readwrite');
         var store = tx.objectStore('settings');
         for (var key in data) { await store.put({ key: key, value: data[key] }); }
-        alert('✅ Receipt settings saved!');
-    } catch(e) { alert('❌ Error: ' + e.message); }
+        alert(' Receipt settings saved!');
+    } catch(e) { alert(' Error: ' + e.message); }
 }
 
 async function testReceipt() {
@@ -432,7 +432,7 @@ async function testReceipt() {
         win.document.write('<html><head><title>Test Receipt</title><style>body{font-family:monospace;padding:20px;white-space:pre;}</style></head><body>' + receipt + '</body></html>');
     } catch(e) {
         console.error('Error in testReceipt:', e);
-        alert('❌ Error testing receipt: ' + e.message);
+        alert(' Error testing receipt: ' + e.message);
     }
 }// ===== USERS =====
 async function loadUsers() {
@@ -446,7 +446,7 @@ async function loadUsers() {
             return;
         }
         container.innerHTML = users.map(function(u) {
-            return '<div class="user-row"><div class="user-info"><div class="name">' + (u.name || u.username) + '</div><div class="role"><span class="role-badge ' + (u.role || 'cashier') + '">' + (u.role || 'cashier') + '</span></div></div><div class="user-actions"><button class="btn-reset-pass" onclick="resetPassword(' + u.id + ')">🔑 Reset</button>' + (u.username !== 'admin' ? '<button class="btn-delete-user" onclick="deleteUser(' + u.id + ')">🗑️</button>' : '') + '</div></div>';
+            return '<div class="user-row"><div class="user-info"><div class="name">' + (u.name || u.username) + '</div><div class="role"><span class="role-badge ' + (u.role || 'cashier') + '">' + (u.role || 'cashier') + '</span></div></div><div class="user-actions"><button class="btn-reset-pass" onclick="resetPassword(' + u.id + ')"> Reset</button>' + (u.username !== 'admin' ? '<button class="btn-delete-user" onclick="deleteUser(' + u.id + ')"></button>' : '') + '</div></div>';
         }).join('');
     } catch(e) {
         console.error('Error loading users:', e);
@@ -457,19 +457,19 @@ async function addUser() {
     var username = document.getElementById('newUsername').value.trim();
     var password = document.getElementById('newPassword').value.trim();
     var role = document.getElementById('newRole').value;
-    if (!username || !password) { alert('❌ Please enter username and password'); return; }
+    if (!username || !password) { alert(' Please enter username and password'); return; }
     try {
         var db = await openDB();
         var users = await dbGetAll(db, 'users');
-        if (users.find(function(u) { return u.username === username; })) { alert('❌ Username already exists'); return; }
+        if (users.find(function(u) { return u.username === username; })) { alert(' Username already exists'); return; }
         var tx = db.transaction('users', 'readwrite');
         var store = tx.objectStore('users');
         await store.add({ username: username, password: password, role: role, name: username, created_at: new Date().toISOString() });
         document.getElementById('newUsername').value = '';
         document.getElementById('newPassword').value = '';
         loadUsers();
-        alert('✅ User added successfully!');
-    } catch(e) { alert('❌ Error: ' + e.message); }
+        alert(' User added successfully!');
+    } catch(e) { alert(' Error: ' + e.message); }
 }
 
 async function deleteUser(id) {
@@ -480,8 +480,8 @@ async function deleteUser(id) {
         var store = tx.objectStore('users');
         await store.delete(id);
         loadUsers();
-        alert('✅ User deleted');
-    } catch(e) { alert('❌ Error: ' + e.message); }
+        alert(' User deleted');
+    } catch(e) { alert(' Error: ' + e.message); }
 }
 
 async function resetPassword(id) {
@@ -496,8 +496,8 @@ async function resetPassword(id) {
         var tx = db.transaction('users', 'readwrite');
         var store = tx.objectStore('users');
         await store.put(user);
-        alert('✅ Password reset successfully!');
-    } catch(e) { alert('❌ Error: ' + e.message); }
+        alert(' Password reset successfully!');
+    } catch(e) { alert(' Error: ' + e.message); }
 }
 
 // ===== BACKUP =====
@@ -516,8 +516,8 @@ async function backupData() {
         a.download = 'backup_' + new Date().toISOString().slice(0, 10) + '.json';
         a.click();
         URL.revokeObjectURL(url);
-        alert('✅ Backup downloaded!');
-    } catch(e) { alert('❌ Error: ' + e.message); }
+        alert(' Backup downloaded!');
+    } catch(e) { alert(' Error: ' + e.message); }
 }
 
 async function restoreData() {
@@ -541,18 +541,18 @@ async function restoreData() {
                     }
                 }
             }
-            alert('✅ Data restored successfully!');
+            alert(' Data restored successfully!');
             location.reload();
         } catch(err) {
-            alert('❌ Error restoring data: ' + err.message);
+            alert(' Error restoring data: ' + err.message);
         }
     };
     reader.readAsText(file);
 }
 
 async function clearAllData() {
-    if (!confirm('⚠️ This will delete ALL data! Are you sure?')) return;
-    if (!confirm('⚠️ FINAL WARNING: This cannot be undone!')) return;
+    if (!confirm(' This will delete ALL data! Are you sure?')) return;
+    if (!confirm(' FINAL WARNING: This cannot be undone!')) return;
     try {
         var db = await openDB();
         var stores = ['products', 'customers', 'orders', 'users', 'settings', 'returns', 'audit_log', 'stock_movements'];
@@ -563,9 +563,9 @@ async function clearAllData() {
                 store.clear();
             }
         }
-        alert('✅ All data cleared!');
+        alert(' All data cleared!');
         location.reload();
-    } catch(e) { alert('❌ Error: ' + e.message); }
+    } catch(e) { alert(' Error: ' + e.message); }
 }
 
 // ===== STORE NAME =====
@@ -577,7 +577,7 @@ async function loadStoreName() {
         settings.forEach(function(s) { map[s.key] = s.value; });
         if (map.storeName) {
             var el = document.querySelector('.store-badge');
-            if (el) el.textContent = '🏪 ' + map.storeName;
+            if (el) el.textContent = ' ' + map.storeName;
         }
     } catch(e) { console.error('Error loading store name:', e); }
 }
@@ -616,21 +616,21 @@ async function savePrinterSettings() {
         var tx = db.transaction('settings', 'readwrite');
         var store = tx.objectStore('settings');
         for (var key in data) { await store.put({ key: key, value: data[key] }); }
-        alert('✅ Printer settings saved!');
-    } catch(e) { alert('❌ Error: ' + e.message); }
+        alert(' Printer settings saved!');
+    } catch(e) { alert(' Error: ' + e.message); }
 }
 
 async function testPrinter() {
-    alert('🖨️ Testing printer... Check console for details.');
+    alert(' Testing printer... Check console for details.');
     try {
         if (typeof posPrinter !== 'undefined') {
             await posPrinter.testPrint();
         } else {
-            alert('⚠️ Printer module not loaded. Using browser print...');
+            alert(' Printer module not loaded. Using browser print...');
             var win = window.open('', '_blank', 'width=400,height=600');
             win.document.write('<html><head><title>Test Print</title><style>body{font-family:monospace;padding:20px;}</style></head><body><h1>Test Print</h1><p>If you see this, printing works!</p><button onclick="window.print()">Print</button></body></html>');
         }
-    } catch(e) { alert('❌ Error: ' + e.message); }
+    } catch(e) { alert(' Error: ' + e.message); }
 }
 
 // ===== INIT =====
@@ -660,7 +660,7 @@ function activateLicense() {
     
     if (!code || code.length < 16) {
         statusDisplay.className = 'status error show';
-        statusDisplay.textContent = '❌ Please enter a valid activation code (XXXX-XXXX-XXXX-XXXX).';
+        statusDisplay.textContent = ' Please enter a valid activation code (XXXX-XXXX-XXXX-XXXX).';
         return;
     }
     
@@ -688,8 +688,8 @@ function activateLicense() {
         localStorage.setItem('activation_codes', JSON.stringify(storedCodes));
         
         statusDisplay.className = 'status success show';
-        statusDisplay.textContent = '✅ License activated successfully!';
-        document.getElementById('licenseStatusText').textContent = '✅ Active';
+        statusDisplay.textContent = ' License activated successfully!';
+        document.getElementById('licenseStatusText').textContent = ' Active';
         document.getElementById('licenseExpiryDisplay').textContent = 'Expires: ' + new Date(match.expires).toLocaleDateString();
         
         // Refresh page after 2 seconds
@@ -698,7 +698,7 @@ function activateLicense() {
         }, 2000);
     } else {
         statusDisplay.className = 'status error show';
-        statusDisplay.textContent = '❌ Invalid activation code. Please check with your administrator.';
+        statusDisplay.textContent = ' Invalid activation code. Please check with your administrator.';
     }
 }
 
@@ -713,17 +713,17 @@ function checkLicenseStatus() {
         const now = new Date();
         
         if (expiryDate > now) {
-            document.getElementById('licenseStatusText').textContent = '✅ Active';
+            document.getElementById('licenseStatusText').textContent = ' Active';
             document.getElementById('licenseExpiryDisplay').textContent = 'Expires: ' + expiryDate.toLocaleDateString();
             return true;
         } else {
             // Expired
             localStorage.removeItem('activated');
-            document.getElementById('licenseStatusText').textContent = '❌ Expired';
+            document.getElementById('licenseStatusText').textContent = ' Expired';
             return false;
         }
     } else {
-        document.getElementById('licenseStatusText').textContent = '⚠️ Not activated';
+        document.getElementById('licenseStatusText').textContent = ' Not activated';
         return false;
     }
 }

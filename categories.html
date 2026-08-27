@@ -63,28 +63,28 @@
     <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
     
     <aside class="sidebar">
-        <div class="logo">🏪 <span>Soko</span>Pulse <button class="close-btn" onclick="toggleSidebar()">✕</button></div>
+        <div class="logo"> <span>Soko</span>Pulse <button class="close-btn" onclick="toggleSidebar()"></button></div>
         <nav>
             <div class="nav-label">Main</div>
-            <a href="pos.html">🛒 POS</a>
-            <a href="dashboard.html">📊 Dashboard</a>
-            <a href="orders.html">📋 Orders</a>
+            <a href="pos.html"> POS</a>
+            <a href="dashboard.html"> Dashboard</a>
+            <a href="orders.html"> Orders</a>
             <div class="nav-label">Inventory</div>
-            <a href="products.html">📦 Products</a>
-            <a href="stock.html">📦 Stock</a>
+            <a href="products.html"> Products</a>
+            <a href="stock.html"> Stock</a>
             <a href="expiry.html">⏰ Expiry</a>
-            <a href="categories.html" class="active">📂 Categories</a>
-            <a href="suppliers.html">📦 Suppliers</a>
+            <a href="categories.html" class="active"> Categories</a>
+            <a href="suppliers.html"> Suppliers</a>
             <div class="nav-label">Management</div>
-            <a href="customers.html">👤 Customers</a>
-            <a href="reports.html">📈 Reports</a>
-            <a href="audit.html">📋 Audit</a>
-            <a href="returns.html">🔄 Returns</a>
-            <a href="settings.html">⚙️ Settings</a>
+            <a href="customers.html"> Customers</a>
+            <a href="reports.html"> Reports</a>
+            <a href="audit.html"> Audit</a>
+            <a href="returns.html"> Returns</a>
+            <a href="settings.html"> Settings</a>
         </nav>
         <div class="user-section">
             <div class="name" id="userName">Administrator</div>
-        <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+        <button class="logout-btn" onclick="logout()"> Logout</button>
             <div class="role" id="userRole">Admin</div>
         </div>
     </aside>
@@ -92,19 +92,19 @@
     <main class="main-content">
         <header class="topbar">
             <div class="left">
-                <button class="hamburger" onclick="toggleSidebar()">☰</button>
-                <h1>📂 Product Categories</h1>
+                <button class="hamburger" onclick="toggleSidebar()"></button>
+                <h1> Product Categories</h1>
             </div>
             <div class="right">
-                <span class="store-badge">🏪 SokoPulse</span>
+                <span class="store-badge"> SokoPulse</span>
                 <span class="time" id="timeDisplay"></span>
             </div>
         </header>
 
         <div class="page-container">
             <div class="toolbar">
-                <button class="btn-add" onclick="openCategoryModal()">➕ Add Category</button>
-                <button class="btn-export" onclick="refreshCategories()">🔄 Refresh</button>
+                <button class="btn-add" onclick="openCategoryModal()"> Add Category</button>
+                <button class="btn-export" onclick="refreshCategories()"> Refresh</button>
             </div>
 
             <div class="category-grid" id="categoryGrid">
@@ -118,7 +118,7 @@
 <div class="modal" id="categoryModal">
     <div class="modal-content">
         <span class="modal-close" onclick="closeCategoryModal()">&times;</span>
-        <h2 id="categoryModalTitle">➕ Add Category</h2>
+        <h2 id="categoryModalTitle"> Add Category</h2>
         <form id="categoryForm" onsubmit="saveCategory(event)">
             <input type="hidden" id="editCategoryId">
             <div class="form-group">
@@ -127,7 +127,7 @@
             </div>
             <div class="form-group">
                 <label>Icon (emoji)</label>
-                <input type="text" id="categoryIcon" placeholder="🛒" value="📦">
+                <input type="text" id="categoryIcon" placeholder="" value="">
             </div>
             <div class="form-group">
                 <label>Color</label>
@@ -139,7 +139,7 @@
             </div>
             <div class="modal-actions">
                 <button type="button" class="btn-cancel" onclick="closeCategoryModal()">Cancel</button>
-                <button type="submit" class="btn-save">💾 Save Category</button>
+                <button type="submit" class="btn-save"> Save Category</button>
             </div>
         </form>
     </div>
@@ -192,7 +192,7 @@ function renderCategories() {
     if (categories.length === 0) {
         grid.innerHTML = `
             <div style="text-align:center;padding:40px;color:#94a3b8;grid-column:1/-1;">
-                <div style="font-size:48px;margin-bottom:12px;">📂</div>
+                <div style="font-size:48px;margin-bottom:12px;"></div>
                 <h3 style="color:#334155;">No categories yet</h3>
                 <p>Add your first category to organize products</p>
             </div>
@@ -205,12 +205,12 @@ function renderCategories() {
         return `
             <div class="category-card">
                 <div class="category-color" style="background:${c.color || '#1a3c34'}"></div>
-                <div class="icon">${c.icon || '📦'}</div>
+                <div class="icon">${c.icon || ''}</div>
                 <div class="name">${c.name}</div>
                 <div class="count">${productCount} products</div>
                 <div class="actions">
-                    <button class="btn-edit-cat" onclick="editCategory(${c.id})">✏️ Edit</button>
-                    <button class="btn-delete-cat" onclick="deleteCategory(${c.id})">🗑️</button>
+                    <button class="btn-edit-cat" onclick="editCategory(${c.id})"> Edit</button>
+                    <button class="btn-delete-cat" onclick="deleteCategory(${c.id})"></button>
                 </div>
             </div>
         `;
@@ -218,10 +218,10 @@ function renderCategories() {
 }
 
 function openCategoryModal() {
-    document.getElementById('categoryModalTitle').textContent = '➕ Add Category';
+    document.getElementById('categoryModalTitle').textContent = ' Add Category';
     document.getElementById('editCategoryId').value = '';
     document.getElementById('categoryName').value = '';
-    document.getElementById('categoryIcon').value = '📦';
+    document.getElementById('categoryIcon').value = '';
     document.getElementById('categoryColor').value = '#1a3c34';
     document.getElementById('categoryDescription').value = '';
     document.getElementById('categoryModal').classList.add('show');
@@ -230,10 +230,10 @@ function openCategoryModal() {
 function editCategory(id) {
     const cat = categories.find(c => c.id === id);
     if (!cat) return;
-    document.getElementById('categoryModalTitle').textContent = '✏️ Edit Category';
+    document.getElementById('categoryModalTitle').textContent = ' Edit Category';
     document.getElementById('editCategoryId').value = id;
     document.getElementById('categoryName').value = cat.name;
-    document.getElementById('categoryIcon').value = cat.icon || '📦';
+    document.getElementById('categoryIcon').value = cat.icon || '';
     document.getElementById('categoryColor').value = cat.color || '#1a3c34';
     document.getElementById('categoryDescription').value = cat.description || '';
     document.getElementById('categoryModal').classList.add('show');
@@ -247,13 +247,13 @@ async function saveCategory(e) {
     e.preventDefault();
     const data = {
         name: document.getElementById('categoryName').value.trim(),
-        icon: document.getElementById('categoryIcon').value || '📦',
+        icon: document.getElementById('categoryIcon').value || '',
         color: document.getElementById('categoryColor').value || '#1a3c34',
         description: document.getElementById('categoryDescription').value.trim()
     };
     
     if (!data.name) {
-        alert('❌ Category name is required');
+        alert(' Category name is required');
         return;
     }
     
@@ -270,9 +270,9 @@ async function saveCategory(e) {
         }
         closeCategoryModal();
         loadCategories();
-        alert('✅ Category saved successfully!');
+        alert(' Category saved successfully!');
     } catch(e) {
-        alert('❌ Error saving category: ' + e.message);
+        alert(' Error saving category: ' + e.message);
     }
 }
 
@@ -281,7 +281,7 @@ async function deleteCategory(id) {
     if (!cat) return;
     const productCount = products.filter(p => p.category_id === id).length;
     if (productCount > 0) {
-        if (!confirm(`⚠️ ${productCount} products belong to this category.\nDelete category anyway? (Products will become uncategorized)`)) return;
+        if (!confirm(` ${productCount} products belong to this category.\nDelete category anyway? (Products will become uncategorized)`)) return;
     } else {
         if (!confirm(`Delete category "${cat.name}"?`)) return;
     }
@@ -292,9 +292,9 @@ async function deleteCategory(id) {
         const store = tx.objectStore('categories');
         await store.delete(id);
         loadCategories();
-        alert('✅ Category deleted');
+        alert(' Category deleted');
     } catch(e) {
-        alert('❌ Error: ' + e.message);
+        alert(' Error: ' + e.message);
     }
 }
 
@@ -333,7 +333,7 @@ async function loadStoreName() {
         settings.forEach(s => { map[s.key] = s.value; });
         if (map.storeName) {
             const el = document.querySelector(".store-badge");
-            if (el) el.textContent = "🏪 " + map.storeName;
+            if (el) el.textContent = " " + map.storeName;
             document.title = map.storeName + " - " + (document.title.split(" - ").pop() || "SokoPulse");
         }
     } catch(e) {
@@ -351,10 +351,10 @@ if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
         navigator.serviceWorker.register('/sw.js')
             .then(function(reg) {
-                console.log('✅ Service Worker registered');
+                console.log(' Service Worker registered');
             })
             .catch(function(err) {
-                console.log('❌ Service Worker registration failed:', err);
+                console.log(' Service Worker registration failed:', err);
             });
     });
 }
@@ -367,7 +367,7 @@ function checkLicenseStatus() {
     const expiry = localStorage.getItem("expiry_date");
     
     if (!activated || activated !== "true") {
-        alert("⚠️ Your license is not activated.\nPlease go to Settings to activate your license.");
+        alert(" Your license is not activated.\nPlease go to Settings to activate your license.");
         window.location.href = "settings.html";
         return false;
     }
@@ -378,7 +378,7 @@ function checkLicenseStatus() {
         const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
         
         if (expiryDate < now) {
-            alert("⚠️ Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
+            alert(" Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
             localStorage.removeItem("activated");
             localStorage.removeItem("activation_code");
             localStorage.removeItem("expiry_date");
@@ -388,7 +388,7 @@ function checkLicenseStatus() {
         
         // Show warning 7 days before expiry
         if (daysRemaining <= 7 && daysRemaining > 0) {
-            const message = "⚠️ Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
+            const message = " Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
             alert(message);
         }
     }
@@ -420,7 +420,7 @@ function checkLicenseStatus() {
     const expiry = localStorage.getItem("expiry_date");
     
     if (!activated || activated !== "true") {
-        alert("⚠️ Your license is not activated.\nPlease go to Settings to activate your license.");
+        alert(" Your license is not activated.\nPlease go to Settings to activate your license.");
         window.location.href = "settings.html";
         return false;
     }
@@ -431,7 +431,7 @@ function checkLicenseStatus() {
         const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
         
         if (expiryDate < now) {
-            alert("⚠️ Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
+            alert(" Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
             localStorage.removeItem("activated");
             localStorage.removeItem("activation_code");
             localStorage.removeItem("expiry_date");
@@ -441,7 +441,7 @@ function checkLicenseStatus() {
         
         // Show warning 7 days before expiry
         if (daysRemaining <= 7 && daysRemaining > 0) {
-            const message = "⚠️ Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
+            const message = " Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
             alert(message);
         }
     }

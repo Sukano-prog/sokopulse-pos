@@ -117,12 +117,12 @@
 <body>
     <div class="login-container">
         <div class="logo-section">
-            <div class="logo-icon">🏪</div>
+            <div class="logo-icon"></div>
             <div class="logo-text"><span>Soko</span>Pulse</div>
             <div class="logo-sub">Point of Sale System</div>
         </div>
         <div class="welcome-text">
-            <h2>Welcome back 👋</h2>
+            <h2>Welcome back </h2>
             <p>Sign in to continue to your dashboard</p>
         </div>
         <div class="status-bar">
@@ -139,10 +139,10 @@
                 <label>Password</label>
                 <input type="password" id="password" placeholder="Enter your password" required>
             </div>
-            <button type="submit" class="login-btn">🔐 Sign In</button>
+            <button type="submit" class="login-btn"> Sign In</button>
         </form>
         <div class="demo-credentials">
-            <p>🔑 Demo Credentials</p>
+            <p> Demo Credentials</p>
             <div class="demo-grid">
                 <div class="demo-item">admin <span class="role-badge">Admin</span></div>
                 <div class="demo-item">cashier <span class="role-badge cashier">Cashier</span></div>
@@ -236,10 +236,10 @@
                         await dbAdd('users', user);
                     }
                 }
-                document.getElementById('dbStatus').textContent = '✅ Database ready';
+                document.getElementById('dbStatus').textContent = ' Database ready';
                 document.getElementById('dbStatus').style.color = '#22c55e';
             } catch(e) {
-                document.getElementById('dbStatus').textContent = '⚠️ Database error: ' + e.message;
+                document.getElementById('dbStatus').textContent = ' Database error: ' + e.message;
                 document.getElementById('dbStatus').style.color = '#ef4444';
             }
         }

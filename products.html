@@ -299,39 +299,39 @@
 <div class="app">
     <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
     <aside class="sidebar">
-        <div class="logo">🏪 <span>Soko</span>Pulse <button class="close-btn" onclick="toggleSidebar()">✕</button></div>
+        <div class="logo"> <span>Soko</span>Pulse <button class="close-btn" onclick="toggleSidebar()"></button></div>
         <nav>
             <div class="nav-label">Main</div>
-            <a href="pos.html">🛒 POS</a>
-            <a href="dashboard.html">📊 Dashboard</a>
-            <a href="orders.html">📋 Orders</a>
+            <a href="pos.html"> POS</a>
+            <a href="dashboard.html"> Dashboard</a>
+            <a href="orders.html"> Orders</a>
             <div class="nav-label">Inventory</div>
-            <a href="products.html" class="active">📦 Products</a>
-            <a href="stock.html">📦 Stock</a>
+            <a href="products.html" class="active"> Products</a>
+            <a href="stock.html"> Stock</a>
             <a href="expiry.html">⏰ Expiry</a>
-            <a href="categories.html">📂 Categories</a>
-            <a href="suppliers.html">📦 Suppliers</a>
+            <a href="categories.html"> Categories</a>
+            <a href="suppliers.html"> Suppliers</a>
             <div class="nav-label">Management</div>
-            <a href="customers.html">👤 Customers</a>
-            <a href="reports.html">📈 Reports</a>
-            <a href="audit.html">📋 Audit</a>
-            <a href="returns.html">🔄 Returns</a>
-            <a href="settings.html">⚙️ Settings</a>
+            <a href="customers.html"> Customers</a>
+            <a href="reports.html"> Reports</a>
+            <a href="audit.html"> Audit</a>
+            <a href="returns.html"> Returns</a>
+            <a href="settings.html"> Settings</a>
         </nav>
         <div class="user-section">
             <div class="name" id="userName">Administrator</div>
             <div class="role" id="userRole">Admin</div>
         </div>
-        <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+        <button class="logout-btn" onclick="logout()"> Logout</button>
     </aside>
     <main class="main-content">
         <header class="topbar">
             <div class="left">
-                <button class="hamburger" onclick="toggleSidebar()">☰</button>
-                <h1>📦 Products</h1>
+                <button class="hamburger" onclick="toggleSidebar()"></button>
+                <h1> Products</h1>
             </div>
             <div class="right">
-                <span class="store-badge">🏪 SokoPulse</span>
+                <span class="store-badge"> SokoPulse</span>
                 <span class="time" id="timeDisplay"></span>
             </div>
         </header>
@@ -339,11 +339,11 @@
             <!-- Toolbar -->
             <div class="toolbar">
                 <div class="search-wrapper">
-                    <span class="search-icon">🔍</span>
+                    <span class="search-icon"></span>
                     <input type="text" id="searchInput" placeholder="Search products..." oninput="renderProducts()">
                 </div>
                 <select class="filter-select" id="filterCategory" onchange="renderProducts()">
-                    <option value="">📂 All Categories</option>
+                    <option value=""> All Categories</option>
                 </select>
                 <select class="filter-select" id="filterStatus" onchange="renderProducts()">
                     <option value="all">All Status</option>
@@ -351,10 +351,10 @@
                     <option value="low-stock">Low Stock</option>
                     <option value="out-of-stock">Out of Stock</option>
                 </select>
-                <button class="btn-add" onclick="openAddModal()">➕ Add Product</button>
-                <button class="btn-bulk" onclick="openBulkAddModal()">📦 Bulk Add</button>
-                <button class="btn-delete-bulk" onclick="openBulkDeleteModal()">🗑️ Bulk Delete</button>
-                <button class="btn-export" onclick="exportProducts()">📤 Export</button>
+                <button class="btn-add" onclick="openAddModal()"> Add Product</button>
+                <button class="btn-bulk" onclick="openBulkAddModal()"> Bulk Add</button>
+                <button class="btn-delete-bulk" onclick="openBulkDeleteModal()"> Bulk Delete</button>
+                <button class="btn-export" onclick="exportProducts()"> Export</button>
             </div>
             <!-- Products Table -->
             <div class="table-container">
@@ -431,21 +431,21 @@
             </div>
             <!-- Image Upload -->
             <div class="form-group" style="border-top:1px solid #e2e8f0;padding-top:15px;margin-top:15px;">
-                <label style="font-weight:600;color:#0f172a;">🖼️ Product Image</label>
+                <label style="font-weight:600;color:#0f172a;"> Product Image</label>
                 <div class="image-preview-container">
                     <div class="image-preview-box" id="imagePreview">
-                        <span style="font-size:30px;color:#94a3b8;">📷</span>
+                        <span style="font-size:30px;color:#94a3b8;"></span>
                     </div>
                     <div class="image-upload-area">
                         <input type="file" id="productImage" accept="image/*" onchange="handleImageSelect(event)">
                         <div class="image-status" id="imageStatus">Recommended: 200x200px, PNG or JPG (Max 5MB)</div>
                     </div>
-                    <button type="button" class="btn-remove-image" onclick="removeImageData()">✕ Remove</button>
+                    <button type="button" class="btn-remove-image" onclick="removeImageData()"> Remove</button>
                 </div>
             </div>
             <div class="modal-actions">
                 <button type="button" class="btn-cancel" onclick="closeModal('productModal')">Cancel</button>
-                <button type="submit" class="btn-save">💾 Save Product</button>
+                <button type="submit" class="btn-save"> Save Product</button>
             </div>
         </form>
     </div>
@@ -454,7 +454,7 @@
 <div class="modal" id="bulkAddModal">
     <div class="modal-content" style="max-width:700px;">
         <span class="modal-close" onclick="closeModal('bulkAddModal')">&times;</span>
-        <h2>📦 Bulk Add Products</h2>
+        <h2> Bulk Add Products</h2>
         <p style="color:#94a3b8;font-size:13px;margin-bottom:16px;">Add multiple products at once.</p>
         <div id="bulkProductFields">
             <div class="bulk-product-row">
@@ -463,14 +463,14 @@
                 <div class="form-group"><label>Retail Price</label><input type="number" class="bulk-retail" placeholder="0.00" step="0.01"></div>
                 <div class="form-group"><label>Wholesale Price</label><input type="number" class="bulk-wholesale" placeholder="0.00" step="0.01"></div>
                 <div class="form-group"><label>Stock</label><input type="number" class="bulk-stock" placeholder="0"></div>
-                <button type="button" onclick="removeBulkRow(this)" style="background:none;border:none;color:#ef4444;font-size:18px;cursor:pointer;padding:4px 8px;">✕</button>
+                <button type="button" onclick="removeBulkRow(this)" style="background:none;border:none;color:#ef4444;font-size:18px;cursor:pointer;padding:4px 8px;"></button>
             </div>
         </div>
-        <button type="button" onclick="addBulkRow()" style="padding:6px 16px;background:#f1f5f9;border:none;border-radius:6px;cursor:pointer;font-weight:600;font-size:13px;margin-bottom:12px;">➕ Add Another Product</button>
+        <button type="button" onclick="addBulkRow()" style="padding:6px 16px;background:#f1f5f9;border:none;border-radius:6px;cursor:pointer;font-weight:600;font-size:13px;margin-bottom:12px;"> Add Another Product</button>
         <div style="color:#94a3b8;font-size:12px;margin-bottom:12px;"><span id="bulkProductCount">0</span> products ready to add</div>
         <div class="modal-actions">
             <button type="button" class="btn-cancel" onclick="closeModal('bulkAddModal')">Cancel</button>
-            <button type="button" class="btn-save" onclick="bulkAddProducts()">📦 Add All Products</button>
+            <button type="button" class="btn-save" onclick="bulkAddProducts()"> Add All Products</button>
         </div>
     </div>
 </div>
@@ -478,8 +478,8 @@
 <div class="modal" id="bulkDeleteModal">
     <div class="modal-content">
         <span class="modal-close" onclick="closeModal('bulkDeleteModal')">&times;</span>
-        <h2>🗑️ Bulk Delete Products</h2>
-        <p style="color:#ef4444;font-weight:600;margin-bottom:12px;">⚠️ This action cannot be undone!</p>
+        <h2> Bulk Delete Products</h2>
+        <p style="color:#ef4444;font-weight:600;margin-bottom:12px;"> This action cannot be undone!</p>
         <div class="bulk-select-all">
             <input type="checkbox" id="selectAllProducts" onchange="toggleAllProducts(this.checked)"> <label for="selectAllProducts">Select All</label>
         </div>
@@ -489,7 +489,7 @@
         <div style="color:#94a3b8;font-size:12px;margin-top:12px;">Selected: <span id="bulkSelectedCount">0</span> products</div>
         <div class="modal-actions">
             <button type="button" class="btn-cancel" onclick="closeModal('bulkDeleteModal')">Cancel</button>
-            <button type="button" class="btn-danger" onclick="bulkDeleteProducts()" style="background:#ef4444;color:white;padding:10px 20px;border:none;border-radius:6px;cursor:pointer;font-weight:600;">🗑️ Delete Selected</button>
+            <button type="button" class="btn-danger" onclick="bulkDeleteProducts()" style="background:#ef4444;color:white;padding:10px 20px;border:none;border-radius:6px;cursor:pointer;font-weight:600;"> Delete Selected</button>
         </div>
     </div>
 </div>
@@ -563,12 +563,12 @@ function handleImageSelect(event) {
     const file = event.target.files[0];
     if (!file) return;
     if (file.size > 5 * 1024 * 1024) {
-        alert('❌ Image too large. Max 5MB allowed.');
+        alert(' Image too large. Max 5MB allowed.');
         event.target.value = '';
         return;
     }
     if (!file.type.startsWith('image/')) {
-        alert('❌ Please select an image file.');
+        alert(' Please select an image file.');
         event.target.value = '';
         return;
     }
@@ -579,7 +579,7 @@ function handleImageSelect(event) {
         if (preview) preview.innerHTML = '<img src="' + imageDataStore + '" style="width:100%;height:100%;object-fit:cover;">';
         const status = document.getElementById('imageStatus');
         if (status) {
-            status.textContent = '✅ Image loaded! (' + (imageDataStore.length / 1024).toFixed(1) + 'KB)';
+            status.textContent = ' Image loaded! (' + (imageDataStore.length / 1024).toFixed(1) + 'KB)';
             status.style.color = '#22c55e';
         }
     };
@@ -589,7 +589,7 @@ function removeImageData() {
     imageDataStore = null;
     document.getElementById('productImage').value = '';
     const preview = document.getElementById('imagePreview');
-    if (preview) preview.innerHTML = '<span style="font-size:30px;color:#94a3b8;">📷</span>';
+    if (preview) preview.innerHTML = '<span style="font-size:30px;color:#94a3b8;"></span>';
     const status = document.getElementById('imageStatus');
     if (status) {
         status.textContent = 'Image removed';
@@ -617,7 +617,7 @@ function populateCategorySelects() {
         const currentValue = select.value;
         select.innerHTML = '<option value="">Select Category...</option>';
         categories.forEach(c => {
-            select.innerHTML += '<option value="' + c.id + '">' + (c.icon || '📂') + ' ' + c.name + '</option>';
+            select.innerHTML += '<option value="' + c.id + '">' + (c.icon || '') + ' ' + c.name + '</option>';
         });
         if (currentValue) select.value = currentValue;
     });
@@ -650,12 +650,12 @@ function renderProducts() {
     const categoryMap = {};
     categories.forEach(c => { categoryMap[c.id] = c.name; });
     tbody.innerHTML = filtered.map(p => {
-        let status = 'in-stock', statusLabel = '✅ In Stock';
-        if (p.current_stock <= 0) { status = 'out-of-stock'; statusLabel = '❌ Out of Stock'; }
-        else if (p.current_stock < (p.min_stock_alert || 5)) { status = 'low-stock'; statusLabel = '⚠️ Low Stock'; }
+        let status = 'in-stock', statusLabel = ' In Stock';
+        if (p.current_stock <= 0) { status = 'out-of-stock'; statusLabel = ' Out of Stock'; }
+        else if (p.current_stock < (p.min_stock_alert || 5)) { status = 'low-stock'; statusLabel = ' Low Stock'; }
         const imageHtml = (p.image && p.image.length > 100) ?
             '<img src="' + p.image + '" style="width:40px;height:40px;object-fit:cover;border-radius:6px;border:1px solid #e2e8f0;">' :
-            '<span style="font-size:20px;color:#94a3b8;">📦</span>';
+            '<span style="font-size:20px;color:#94a3b8;"></span>';
         const categoryName = p.category_id ? (categoryMap[p.category_id] || '-') : '-';
         return '<tr>' +
             '<td>' + imageHtml + '</td>' +
@@ -667,9 +667,9 @@ function renderProducts() {
             '<td>' + (p.current_stock || 0) + '</td>' +
             '<td><span class="status-badge ' + status + '">' + statusLabel + '</span></td>' +
             '<td>' +
-                '<button class="btn-image" onclick="quickAddImage(' + p.id + ')">🖼️</button>' +
-                '<button class="btn-edit" onclick="openEditModal(' + p.id + ')">✏️ Edit</button>' +
-                '<button class="btn-delete" onclick="deleteProduct(' + p.id + ')">🗑️</button>' +
+                '<button class="btn-image" onclick="quickAddImage(' + p.id + ')"></button>' +
+                '<button class="btn-edit" onclick="openEditModal(' + p.id + ')"> Edit</button>' +
+                '<button class="btn-delete" onclick="deleteProduct(' + p.id + ')"></button>' +
             '</td>' +
         '</tr>';
     }).join('');
@@ -677,7 +677,7 @@ function renderProducts() {
 // ===== QUICK IMAGE ADD =====
 function quickAddImage(productId) {
     const product = products.find(p => p.id === productId);
-    if (!product) { alert('❌ Product not found'); return; }
+    if (!product) { alert(' Product not found'); return; }
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = 'image/*';
@@ -687,7 +687,7 @@ function quickAddImage(productId) {
         const file = e.target.files[0];
         if (!file) { document.body.removeChild(input); return; }
         if (file.size > 5 * 1024 * 1024) {
-            alert('❌ Image too large. Max 5MB.');
+            alert(' Image too large. Max 5MB.');
             document.body.removeChild(input);
             return;
         }
@@ -699,11 +699,11 @@ function quickAddImage(productId) {
                 const store = tx.objectStore('products');
                 product.image = e.target.result;
                 await store.put(product);
-                alert('✅ Image added to: ' + product.name);
+                alert(' Image added to: ' + product.name);
                 document.body.removeChild(input);
                 loadProducts();
             } catch(err) {
-                alert('❌ Error: ' + err.message);
+                alert(' Error: ' + err.message);
                 document.body.removeChild(input);
             }
         };
@@ -714,7 +714,7 @@ function quickAddImage(productId) {
 // ===== ADD/EDIT MODAL =====
 function openAddModal() {
     editingId = null;
-    document.getElementById('modalTitle').textContent = '➕ Add Product';
+    document.getElementById('modalTitle').textContent = ' Add Product';
     document.getElementById('editId').value = '';
     document.getElementById('productName').value = '';
     document.getElementById('productSku').value = '';
@@ -732,7 +732,7 @@ function openEditModal(id) {
     const p = products.find(x => x.id === id);
     if (!p) return;
     editingId = id;
-    document.getElementById('modalTitle').textContent = '✏️ Edit Product';
+    document.getElementById('modalTitle').textContent = ' Edit Product';
     document.getElementById('editId').value = id;
     document.getElementById('productName').value = p.name || '';
     document.getElementById('productSku').value = p.sku || '';
@@ -749,11 +749,11 @@ function openEditModal(id) {
         if (preview) preview.innerHTML = '<img src="' + p.image + '" style="width:100%;height:100%;object-fit:cover;">';
         const status = document.getElementById('imageStatus');
         if (status) {
-            status.textContent = '✅ Image loaded from product';
+            status.textContent = ' Image loaded from product';
             status.style.color = '#22c55e';
         }
     } else {
-                    console.log("✅ Admin user lowering price - showing confirmation");
+                    console.log(" Admin user lowering price - showing confirmation");
         removeImageData();
     }
     document.getElementById('productModal').classList.add('show');
@@ -771,7 +771,7 @@ async function saveProduct(e) {
     const category = document.getElementById('productCategory').value || null;
     const expiry = document.getElementById('productExpiry').value || null;
     if (!name || retailPrice <= 0) {
-        alert('❌ Product name and retail price are required');
+        alert(' Product name and retail price are required');
         return;
     }
     // Price Lock Rule - Prevent price decreases
@@ -785,10 +785,10 @@ async function saveProduct(e) {
             if (newRetail < currentRetail) {
                 const user = JSON.parse(localStorage.getItem('pos_user') || '{}');
                 if (user.role !== 'admin') {
-                    alert('❌ Retail price cannot go down!\nCurrent: KES ' + currentRetail.toFixed(2) + '\nNew: KES ' + newRetail.toFixed(2) + '\n\nOnly admin can lower prices.');
+                    alert(' Retail price cannot go down!\nCurrent: KES ' + currentRetail.toFixed(2) + '\nNew: KES ' + newRetail.toFixed(2) + '\n\nOnly admin can lower prices.');
                     return;
                 } else {
-                    if (!confirm('⚠️ You are about to LOWER the retail price from KES ' + currentRetail.toFixed(2) + ' to KES ' + newRetail.toFixed(2) + '\n\nAre you sure?')) {
+                    if (!confirm(' You are about to LOWER the retail price from KES ' + currentRetail.toFixed(2) + ' to KES ' + newRetail.toFixed(2) + '\n\nAre you sure?')) {
                         return;
                     }
                 }
@@ -799,10 +799,10 @@ async function saveProduct(e) {
             if (newWholesale < currentWholesale && currentWholesale > 0) {
                 const user = JSON.parse(localStorage.getItem('pos_user') || '{}');
                 if (user.role !== 'admin') {
-                    alert('❌ Wholesale price cannot go down!\nCurrent: KES ' + currentWholesale.toFixed(2) + '\nNew: KES ' + newWholesale.toFixed(2) + '\n\nOnly admin can lower prices.');
+                    alert(' Wholesale price cannot go down!\nCurrent: KES ' + currentWholesale.toFixed(2) + '\nNew: KES ' + newWholesale.toFixed(2) + '\n\nOnly admin can lower prices.');
                     return;
                 } else {
-                    if (!confirm('⚠️ You are about to LOWER the wholesale price from KES ' + currentWholesale.toFixed(2) + ' to KES ' + newWholesale.toFixed(2) + '\n\nAre you sure?')) {
+                    if (!confirm(' You are about to LOWER the wholesale price from KES ' + currentWholesale.toFixed(2) + ' to KES ' + newWholesale.toFixed(2) + '\n\nAre you sure?')) {
                         return;
                     }
                 }
@@ -834,9 +834,9 @@ async function saveProduct(e) {
         }
         if (typeof closeModal === "function") closeModal();
         loadProducts();
-        alert('✅ Product saved successfully!');
+        alert(' Product saved successfully!');
     } catch(e) {
-        alert('❌ Error saving product: ' + e.message);
+        alert(' Error saving product: ' + e.message);
     }
 }
 async function deleteProduct(id) {
@@ -847,9 +847,9 @@ async function deleteProduct(id) {
         const store = tx.objectStore('products');
         await store.delete(id);
         loadProducts();
-        alert('✅ Product deleted');
+        alert(' Product deleted');
     } catch(e) {
-        alert('❌ Error: ' + e.message);
+        alert(' Error: ' + e.message);
     }
 }
 // ===== EXPORT PRODUCTS =====
@@ -893,7 +893,7 @@ function addBulkRow() {
 function removeBulkRow(btn) {
     const container = document.getElementById('bulkProductFields');
     if (container.querySelectorAll('.bulk-product-row').length <= 1) {
-        alert('❌ Must have at least one product');
+        alert(' Must have at least one product');
         return;
     }
     btn.closest('.bulk-product-row').remove();
@@ -927,8 +927,8 @@ async function bulkAddProducts() {
             expiry_date: null, image: null, category_id: null
         });
     });
-    if (errors.length > 0) { alert('❌ Errors found:\n' + errors.join('\n')); return; }
-    if (productsToAdd.length === 0) { alert('❌ No products to add'); return; }
+    if (errors.length > 0) { alert(' Errors found:\n' + errors.join('\n')); return; }
+    if (productsToAdd.length === 0) { alert(' No products to add'); return; }
     if (!confirm('Add ' + productsToAdd.length + ' products?')) return;
     try {
         const db = await openDB();
@@ -941,9 +941,9 @@ async function bulkAddProducts() {
         }
         closeModal('bulkAddModal');
         loadProducts();
-        alert('✅ ' + added + ' products added successfully!');
+        alert(' ' + added + ' products added successfully!');
     } catch(e) {
-        alert('❌ Error adding products: ' + e.message);
+        alert(' Error adding products: ' + e.message);
     }
 }
 // ===== BULK DELETE =====
@@ -987,8 +987,8 @@ function updateBulkSelectedCount() {
 }
 async function bulkDeleteProducts() {
     const count = selectedProducts.size;
-    if (count === 0) { alert('❌ Select at least one product to delete'); return; }
-    if (!confirm('⚠️ Delete ' + count + ' products? This cannot be undone!')) return;
+    if (count === 0) { alert(' Select at least one product to delete'); return; }
+    if (!confirm(' Delete ' + count + ' products? This cannot be undone!')) return;
     try {
         const db = await openDB();
         const tx = db.transaction('products', 'readwrite');
@@ -1000,9 +1000,9 @@ async function bulkDeleteProducts() {
         }
         closeModal('bulkDeleteModal');
         loadProducts();
-        alert('✅ ' + deleted + ' products deleted successfully!');
+        alert(' ' + deleted + ' products deleted successfully!');
     } catch(e) {
-        alert('❌ Error deleting products: ' + e.message);
+        alert(' Error deleting products: ' + e.message);
     }
 }
 // ===== INIT =====
@@ -1039,7 +1039,7 @@ async function loadStoreName() {
         settings.forEach(s => { map[s.key] = s.value; });
         if (map.storeName) {
             const el = document.querySelector(".store-badge");
-            if (el) el.textContent = "🏪 " + map.storeName;
+            if (el) el.textContent = " " + map.storeName;
             document.title = map.storeName + " - " + (document.title.split(" - ").pop() || "SokoPulse");
         }
     } catch(e) {
@@ -1055,7 +1055,7 @@ function checkLicenseStatus() {
     const activated = localStorage.getItem("activated");
     const expiry = localStorage.getItem("expiry_date");
     if (!activated || activated !== "true") {
-        alert("⚠️ Your license is not activated.\nPlease go to Settings to activate your license.");
+        alert(" Your license is not activated.\nPlease go to Settings to activate your license.");
         window.location.href = "settings.html";
         return false;
     }
@@ -1064,7 +1064,7 @@ function checkLicenseStatus() {
         const now = new Date();
         const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
         if (expiryDate < now) {
-            alert("⚠️ Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
+            alert(" Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
             localStorage.removeItem("activated");
             localStorage.removeItem("activation_code");
             localStorage.removeItem("expiry_date");
@@ -1072,7 +1072,7 @@ function checkLicenseStatus() {
             return false;
         }
         if (daysRemaining <= 7) {
-            alert("⚠️ Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease renew your license soon.");
+            alert(" Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease renew your license soon.");
         }
     }
     return true;
@@ -1088,10 +1088,10 @@ if ("serviceWorker" in navigator) {
     window.addEventListener("load", function() {
         navigator.serviceWorker.register("/sw.js")
             .then(function(reg) {
-                console.log("✅ Service Worker registered for products.html");
+                console.log(" Service Worker registered for products.html");
             })
             .catch(function(err) {
-                console.log("❌ Service Worker registration failed:", err);
+                console.log(" Service Worker registration failed:", err);
             });
     });
 }

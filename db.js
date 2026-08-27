@@ -6,7 +6,7 @@ const DB_VERSION = 8;
 
 // ===== AUTO-CREATE DATABASE ON LOAD =====
 (function() {
-    console.log('🔧 Checking database...');
+    console.log(' Checking database...');
     const req = indexedDB.open(DB_NAME, DB_VERSION);
     req.onupgradeneeded = function(e) {
         const db = e.target.result;
@@ -28,12 +28,12 @@ const DB_VERSION = 8;
                 for (const idx of indexes) {
                     store.createIndex(idx, idx, { unique: false });
                 }
-                console.log('✅ Created store:', name);
+                console.log(' Created store:', name);
             }
         }
     };
     req.onsuccess = function() {
-        console.log('✅ Database ready');
+        console.log(' Database ready');
         req.result.close();
     };
 })();
@@ -236,14 +236,14 @@ function openDB() {
                         store.createIndex(idx, idx, { unique: false });
                     }
                     created.push(name);
-                    console.log('✅ Created store:', name);
+                    console.log(' Created store:', name);
                 }
             }
             
             if (created.length > 0) {
-                console.log('✅ Created stores:', created.join(', '));
+                console.log(' Created stores:', created.join(', '));
             } else {
-                console.log('✅ All stores already exist');
+                console.log(' All stores already exist');
             }
         };
         req.onsuccess = e => resolve(e.target.result);

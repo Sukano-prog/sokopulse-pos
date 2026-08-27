@@ -128,52 +128,52 @@
     <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
 
     <aside class="sidebar">
-        <div class="logo">🏪 <span>Soko</span>Pulse <button class="close-btn" onclick="toggleSidebar()">✕</button></div>
+        <div class="logo"> <span>Soko</span>Pulse <button class="close-btn" onclick="toggleSidebar()"></button></div>
         <nav>
             <div class="nav-label">Main</div>
-            <a href="pos.html" class="active">🛒 POS</a>
-            <a href="dashboard.html">📊 Dashboard</a>
-            <a href="orders.html">📋 Orders</a>
+            <a href="pos.html" class="active"> POS</a>
+            <a href="dashboard.html"> Dashboard</a>
+            <a href="orders.html"> Orders</a>
             <div class="nav-label">Inventory</div>
-            <a href="products.html">📦 Products</a>
-            <a href="stock.html">📦 Stock</a>
+            <a href="products.html"> Products</a>
+            <a href="stock.html"> Stock</a>
             <a href="expiry.html">⏰ Expiry</a>
-            <a href="categories.html">📂 Categories</a>
-            <a href="suppliers.html">📦 Suppliers</a>
+            <a href="categories.html"> Categories</a>
+            <a href="suppliers.html"> Suppliers</a>
             <div class="nav-label">Management</div>
-            <a href="customers.html">👤 Customers</a>
-            <a href="reports.html">📈 Reports</a>
-            <a href="audit.html">📋 Audit</a>
-            <a href="returns.html">🔄 Returns</a>
-            <a href="settings.html">⚙️ Settings</a>
+            <a href="customers.html"> Customers</a>
+            <a href="reports.html"> Reports</a>
+            <a href="audit.html"> Audit</a>
+            <a href="returns.html"> Returns</a>
+            <a href="settings.html"> Settings</a>
         </nav>
         <div class="user-section"><div class="name" id="userName">Administrator</div><div class="role" id="userRole">Admin</div></div>
-        <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+        <button class="logout-btn" onclick="logout()"> Logout</button>
     </aside>
 
     <main class="main-content">
         <header class="topbar">
             <div class="left">
-                <button class="hamburger" onclick="toggleSidebar()">☰</button>
-                <h1>🛒 Point of Sale</h1>
+                <button class="hamburger" onclick="toggleSidebar()"></button>
+                <h1> Point of Sale</h1>
                 <div class="mode-toggle">
-                    <button class="active retail" id="retailToggle" onclick="setMode('retail')">🏪 Retail</button>
-                    <button id="wholesaleToggle" onclick="setMode('wholesale')">🏬 Wholesale</button>
+                    <button class="active retail" id="retailToggle" onclick="setMode('retail')"> Retail</button>
+                    <button id="wholesaleToggle" onclick="setMode('wholesale')"> Wholesale</button>
                 </div>
             </div>
             <div class="right">
-                <span class="store-badge" id="storeName">🏪 SokoPulse</span>
+                <span class="store-badge" id="storeName"> SokoPulse</span>
                 <span class="time" id="timeDisplay"></span>
             </div>
         </header>
 
         <div id="lowStockBanner">
-            <span id="lowStockMessage">⚠️ Low stock alert: Some products are running low!</span>
-            <button class="close-btn" onclick="document.getElementById('lowStockBanner').style.display='none'">✕</button>
+            <span id="lowStockMessage"> Low stock alert: Some products are running low!</span>
+            <button class="close-btn" onclick="document.getElementById('lowStockBanner').style.display='none'"></button>
         </div>
 
         <div id="storeInfoBar" style="display:flex;gap:15px;padding:4px 20px;background:#f8fafc;border-bottom:1px solid #e2e8f0;font-size:12px;color:#64748b;flex-wrap:wrap;align-items:center;min-height:32px;">
-            <span id="storeNameDisplay">🏪 SokoPulse</span>
+            <span id="storeNameDisplay"> SokoPulse</span>
             <span id="storeAddressDisplay"></span>
             <span id="storePhoneDisplay"></span>
             <span id="storeEmailDisplay"></span>
@@ -182,13 +182,13 @@
         <div class="pos-layout">
             <div class="products-panel">
                 <div class="search-row">
-                    <input type="text" id="searchInput" placeholder="🔍 Search products by name or SKU..." oninput="renderProducts()">
+                    <input type="text" id="searchInput" placeholder=" Search products by name or SKU..." oninput="renderProducts()">
                     <select id="categoryFilter" onchange="renderProducts()">
-                        <option value="">📂 All Categories</option>
+                        <option value=""> All Categories</option>
                     </select>
                 </div>
                 <div id="categoryButtons">
-                    <button class="category-btn active" data-category="" onclick="filterByCategory('')">📂 All</button>
+                    <button class="category-btn active" data-category="" onclick="filterByCategory('')"> All</button>
                 </div>
                 <div class="product-grid" id="productGrid">
                     <div class="loading-text">Loading products...</div>
@@ -198,7 +198,7 @@
             <div class="cart-panel">
                 <div class="cart-header">
                     <div>
-                        <h2>🛒 Cart</h2>
+                        <h2> Cart</h2>
                         <span class="cart-count" id="cartCount">0 items</span>
                     </div>
                     <div class="customer-select">
@@ -210,12 +210,12 @@
                 </div>
 
                 <div id="customerCreditInfo">
-                    💳 Credit: <span id="creditAmount">KES 0.00</span> / <span id="creditLimit">KES 0.00</span>
+                     Credit: <span id="creditAmount">KES 0.00</span> / <span id="creditLimit">KES 0.00</span>
                     <span class="status" id="creditStatus"></span>
                 </div>
 
                 <div id="heldOrdersContainer">
-                    <div style="font-size:11px;font-weight:600;color:#64748b;margin-bottom:4px;">📋 Held Orders</div>
+                    <div style="font-size:11px;font-weight:600;color:#64748b;margin-bottom:4px;"> Held Orders</div>
                     <div id="heldOrdersList"></div>
                 </div>
 
@@ -237,17 +237,17 @@
                 </div>
 
                 <div class="payment-buttons">
-                    <button class="cash" id="paymentCash" onclick="openCashTender()">💵 Cash</button>
-                    <button class="mpesa" id="paymentMpesa" onclick="processPayment('mpesa')">📱 M-Pesa</button>
-                    <button class="card" id="paymentCard" onclick="processPayment('card')">💳 Card</button>
-                    <button class="credit" id="paymentCredit" onclick="processPayment('credit')">📋 Credit</button>
-                    <button class="bank" id="paymentBank" onclick="processPayment('bank')">🏦 Bank</button>
+                    <button class="cash" id="paymentCash" onclick="openCashTender()"> Cash</button>
+                    <button class="mpesa" id="paymentMpesa" onclick="processPayment('mpesa')"> M-Pesa</button>
+                    <button class="card" id="paymentCard" onclick="processPayment('card')"> Card</button>
+                    <button class="credit" id="paymentCredit" onclick="processPayment('credit')"> Credit</button>
+                    <button class="bank" id="paymentBank" onclick="processPayment('bank')"> Bank</button>
                 </div>
 
                 <div class="cart-actions">
-                    <button class="hold-btn" onclick="holdOrder()">📋 Hold</button>
-                    <button class="print-btn" onclick="printCartPreview()">🖨️ Print</button>
-                    <button class="void-btn" onclick="voidTransaction()">⛔ Void</button>
+                    <button class="hold-btn" onclick="holdOrder()"> Hold</button>
+                    <button class="print-btn" onclick="printCartPreview()"> Print</button>
+                    <button class="void-btn" onclick="voidTransaction()"> Void</button>
                 </div>
             </div>
         </div>
@@ -259,7 +259,7 @@
 <div class="modal" id="cashTenderModal">
     <div class="modal-content" style="max-width:420px;">
         <span class="modal-close" onclick="closeCashTender()">&times;</span>
-        <h2>💵 Cash Payment</h2>
+        <h2> Cash Payment</h2>
         <div style="margin:8px 0 12px 0;padding:12px;background:#f8fafc;border-radius:8px;">
             <div style="display:flex;justify-content:space-between;font-size:14px;">
                 <span>Total Amount:</span>
@@ -277,11 +277,11 @@
             </div>
         </div>
         <div style="color:#ef4444;font-size:13px;display:none;margin:8px 0;padding:8px;background:#fef2f2;border-radius:6px;" id="cashError">
-            ❌ Amount received must be equal to or greater than the total.
+             Amount received must be equal to or greater than the total.
         </div>
         <div class="modal-actions">
             <button class="btn-cancel" onclick="closeCashTender()">Cancel</button>
-            <button class="btn-save" onclick="confirmCashPayment()">✅ Confirm Payment</button>
+            <button class="btn-save" onclick="confirmCashPayment()"> Confirm Payment</button>
         </div>
     </div>
 </div>
@@ -290,11 +290,11 @@
 <div class="modal" id="receiptPreviewModal">
     <div class="modal-content" style="max-width:500px;">
         <span class="modal-close" onclick="closeReceiptPreview()">&times;</span>
-        <h2>🧾 Receipt Preview</h2>
+        <h2> Receipt Preview</h2>
         <div id="receiptPreviewContent" style="background:#f8fafc;padding:20px;border-radius:8px;font-family:monospace;font-size:13px;white-space:pre-wrap;max-height:400px;overflow-y:auto;margin:12px 0;border:1px solid #e2e8f0;"></div>
         <div class="modal-actions">
-            <button class="btn-cancel" onclick="closeReceiptPreview()">✕ Close</button>
-            <button class="btn-save" onclick="printFromPreview()">🖨️ Print</button>
+            <button class="btn-cancel" onclick="closeReceiptPreview()"> Close</button>
+            <button class="btn-save" onclick="printFromPreview()"> Print</button>
         </div>
     </div>
 </div>
@@ -411,8 +411,8 @@ function renderProducts() {
         var stockDisplay = stock + ' in stock';
         var stockClass = '';
         if (outOfStock) { stockDisplay = 'Out of stock'; stockClass = 'out'; }
-        else if (lowStock) { stockDisplay = '⚠️ ' + stock + ' left'; stockClass = 'low'; }
-        var imageHtml = p.image ? '<img src="' + p.image + '" style="width:50px;height:50px;object-fit:cover;border-radius:8px;margin:0 auto 6px;display:block;">' : '<div style="width:50px;height:50px;background:#f1f5f9;border-radius:8px;margin:0 auto 6px;display:flex;align-items:center;justify-content:center;font-size:20px;color:#94a3b8;">📦</div>';
+        else if (lowStock) { stockDisplay = ' ' + stock + ' left'; stockClass = 'low'; }
+        var imageHtml = p.image ? '<img src="' + p.image + '" style="width:50px;height:50px;object-fit:cover;border-radius:8px;margin:0 auto 6px;display:block;">' : '<div style="width:50px;height:50px;background:#f1f5f9;border-radius:8px;margin:0 auto 6px;display:flex;align-items:center;justify-content:center;font-size:20px;color:#94a3b8;"></div>';
         return '<div class="product-item ' + (outOfStock ? 'out-of-stock' : '') + '" onclick="' + (outOfStock ? '' : 'addToCart(' + p.id + ')') + '">' +
             imageHtml +
             '<div class="product-name">' + (p.name || 'Unnamed') + '</div>' +
@@ -436,7 +436,7 @@ async function loadCustomers() {
                 select.innerHTML += '<option value="' + c.id + '">' + c.name + ' (' + c.phone + ')</option>';
             });
         }
-        console.log('✅ Customers loaded:', allCustomers.length);
+        console.log(' Customers loaded:', allCustomers.length);
         updateCreditButton();
     } catch(e) {
         console.error('Error loading customers:', e);
@@ -448,13 +448,13 @@ function selectCustomer(customerId) {
         var customer = allCustomers.find(function(c) { return c.id == customerId; });
         if (customer) {
             selectedCustomer = customer;
-            console.log('✅ Customer selected:', selectedCustomer.name);
+            console.log(' Customer selected:', selectedCustomer.name);
         } else {
             selectedCustomer = null;
         }
     } else {
         selectedCustomer = null;
-        console.log('👤 Walk-in customer');
+        console.log(' Walk-in customer');
     }
     updateCreditButton();
     updateCustomerCreditInfo();
@@ -486,17 +486,17 @@ function updateCustomerCreditInfo() {
     if (creditLimit > 0) {
         var percent = (currentCredit / creditLimit) * 100;
         if (percent >= 90) {
-            statusEl.textContent = '⚠️ Near Limit!';
+            statusEl.textContent = ' Near Limit!';
             statusEl.style.color = '#ef4444';
         } else if (percent >= 70) {
-            statusEl.textContent = '⚠️ High Usage';
+            statusEl.textContent = ' High Usage';
             statusEl.style.color = '#f59e0b';
         } else {
-            statusEl.textContent = '✅ Good';
+            statusEl.textContent = ' Good';
             statusEl.style.color = '#22c55e';
         }
     } else {
-        statusEl.textContent = '♾️ Unlimited';
+        statusEl.textContent = ' Unlimited';
         statusEl.style.color = '#3b82f6';
     }
     creditDiv.style.display = 'flex';
@@ -509,16 +509,16 @@ async function loadCategories() {
         var categories = await dbGetAll(db, 'categories');
         var select = document.getElementById('categoryFilter');
         if (select) {
-            select.innerHTML = '<option value="">📂 All Categories</option>';
+            select.innerHTML = '<option value=""> All Categories</option>';
             categories.forEach(function(c) {
-                select.innerHTML += '<option value="' + c.id + '">' + (c.icon || '📂') + ' ' + c.name + '</option>';
+                select.innerHTML += '<option value="' + c.id + '">' + (c.icon || '') + ' ' + c.name + '</option>';
             });
         }
         var container = document.getElementById('categoryButtons');
         if (container) {
-            var html = '<button class="category-btn active" data-category="" onclick="filterByCategory(\'\')">📂 All</button>';
+            var html = '<button class="category-btn active" data-category="" onclick="filterByCategory(\'\')"> All</button>';
             categories.forEach(function(c) {
-                html += '<button class="category-btn" data-category="' + c.id + '" onclick="filterByCategory(\'' + c.id + '\')">' + (c.icon || '📂') + ' ' + c.name + '</button>';
+                html += '<button class="category-btn" data-category="' + c.id + '" onclick="filterByCategory(\'' + c.id + '\')">' + (c.icon || '') + ' ' + c.name + '</button>';
             });
             container.innerHTML = html;
         }
@@ -547,7 +547,7 @@ function addToCartBulk(productId) {
     var qty = parseInt(qtyInput.value) || 1;
     if (qty <= 0) { alert('Please enter a valid quantity'); return; }
     if (qty > product.current_stock) {
-        alert('❌ Not enough stock! Available: ' + product.current_stock);
+        alert(' Not enough stock! Available: ' + product.current_stock);
         return;
     }
     // Add the product multiple times or once with quantity
@@ -575,21 +575,21 @@ function addToCart(productId) {
     var product = products.find(function(p) { return p.id === productId; });
     if (!product) return;
     if (product.current_stock <= 0) {
-        alert('❌ Product is out of stock');
+        alert(' Product is out of stock');
         return;
     }
     if (product.expiry_date) {
         var today = new Date();
         var expiry = new Date(product.expiry_date);
         if (expiry < today) {
-            alert('❌ Cannot sell expired product: ' + product.name);
+            alert(' Cannot sell expired product: ' + product.name);
             return;
         }
     }
     var existing = cart.find(function(c) { return c.id === productId; });
     if (existing) {
         if (existing.qty >= product.current_stock) {
-            alert('❌ Not enough stock');
+            alert(' Not enough stock');
             return;
         }
         existing.qty++;
@@ -634,7 +634,7 @@ function renderCart() {
                 (discount > 0 ? '<span style="text-decoration:line-through;color:#94a3b8;font-size:11px;">KES ' + originalTotal.toFixed(2) + '</span><br>' : '') +
                 'KES ' + discountedTotal.toFixed(2) +
             '</span>' +
-            '<button class="remove-btn" onclick="removeFromCart(' + i + ')">✕</button>' +
+            '<button class="remove-btn" onclick="removeFromCart(' + i + ')"></button>' +
         '</div>';
     }).join('');
     updateTotals();
@@ -672,7 +672,7 @@ function updateQty(index, delta) {
     if (newQty <= 0) {
         cart.splice(index, 1);
     } else if (newQty > item.maxStock) {
-        alert('❌ Not enough stock');
+        alert(' Not enough stock');
         return;
     } else {
         item.qty = newQty;
@@ -724,7 +724,7 @@ function loadCart() {
                 setMode(mode);
                 updateCreditButton();
                 updateCustomerCreditInfo();
-                console.log('✅ Cart restored:', cart.length, 'items');
+                console.log(' Cart restored:', cart.length, 'items');
                 return true;
             } else {
                 sessionStorage.removeItem('pos_cart');
@@ -742,7 +742,7 @@ function clearCartSession() { sessionStorage.removeItem('pos_cart'); }
 // ===== HELD ORDERS =====
 function holdOrder() {
     if (cart.length === 0) {
-        alert('❌ Cart is empty');
+        alert(' Cart is empty');
         return;
     }
     var holdId = 'HOLD-' + Date.now().toString().slice(-6);
@@ -761,7 +761,7 @@ function holdOrder() {
     cart = [];
     renderCart();
     clearCartSession();
-    alert('✅ Order held!\nID: ' + holdId);
+    alert(' Order held!\nID: ' + holdId);
     loadHeldOrders();
 }
 
@@ -778,11 +778,11 @@ function loadHeldOrders() {
     var html = '';
     holds.forEach(function(h, index) {
         var total = h.items.reduce(function(s, i) { return s + (i.price || 0) * (i.qty || 1); }, 0);
-        var noteDisplay = h.note ? ' 📝 ' + h.note : '';
-        var customerDisplay = h.customer ? ' 👤 ' + h.customer.name : '';
+        var noteDisplay = h.note ? '  ' + h.note : '';
+        var customerDisplay = h.customer ? '  ' + h.customer.name : '';
         html += '<div class="held-order-item">';
         html += '<div class="info"><strong style="font-size:12px;">' + h.id + '</strong> <span style="color:#94a3b8;font-size:11px;">' + h.items.length + ' items</span> <span style="font-weight:600;font-size:12px;">KES ' + total.toFixed(0) + '</span>' + customerDisplay + noteDisplay + '</div>';
-        html += '<div class="actions"><button class="retrieve" onclick="retrieveHold(' + index + ')">📥 Retrieve</button><button class="delete" onclick="deleteHold(' + index + ')">✕</button></div>';
+        html += '<div class="actions"><button class="retrieve" onclick="retrieveHold(' + index + ')"> Retrieve</button><button class="delete" onclick="deleteHold(' + index + ')"></button></div>';
         html += '</div>';
     });
     list.innerHTML = html;
@@ -802,7 +802,7 @@ function retrieveHold(index) {
     holds.splice(index, 1);
     localStorage.setItem('held_orders', JSON.stringify(holds));
     loadHeldOrders();
-    alert('✅ Order retrieved!\n' + hold.id + ' - ' + cart.length + ' items restored');
+    alert(' Order retrieved!\n' + hold.id + ' - ' + cart.length + ' items restored');
 }
 
 function deleteHold(index) {
@@ -828,7 +828,7 @@ async function checkLowStock() {
         var banner = document.getElementById('lowStockBanner');
         var message = document.getElementById('lowStockMessage');
         if (lowStock.length > 0 || outStock.length > 0) {
-            var msg = '⚠️ ';
+            var msg = ' ';
             if (lowStock.length > 0) msg += lowStock.length + ' product(s) low on stock. ';
             if (outStock.length > 0) msg += outStock.length + ' product(s) out of stock. ';
             msg += 'Check Stock page for details.';
@@ -853,7 +853,7 @@ function addOrderNote() {
     }
     orderNote = note;
     var display = document.getElementById('orderNoteDisplay');
-    if (display) display.textContent = '📝 ' + note;
+    if (display) display.textContent = ' ' + note;
     input.value = '';
 }
 
@@ -876,7 +876,7 @@ async function loadTaxSettings() {
             }
         }
         updateTotals();
-        console.log('🧾 Tax loaded:', { taxEnabled: taxEnabled, taxRate: taxRate, taxName: taxName });
+        console.log(' Tax loaded:', { taxEnabled: taxEnabled, taxRate: taxRate, taxName: taxName });
     } catch(e) {
         console.error('Error loading tax settings:', e);
         taxEnabled = true;
@@ -911,7 +911,7 @@ async function loadPaymentSettings() {
                 btn.style.display = normalized[key] ? 'block' : 'none';
             }
         });
-        console.log('💳 Payment settings loaded');
+        console.log(' Payment settings loaded');
     } catch(e) {
         console.error('Error loading payment settings:', e);
     }
@@ -926,23 +926,23 @@ async function loadStoreName() {
         settings.forEach(function(s) { map[s.key] = s.value; });
         if (map.storeName) {
             var badge = document.getElementById('storeName');
-            if (badge) badge.textContent = '🏪 ' + map.storeName;
+            if (badge) badge.textContent = ' ' + map.storeName;
             var display = document.getElementById('storeNameDisplay');
-            if (display) display.textContent = '🏪 ' + map.storeName;
+            if (display) display.textContent = ' ' + map.storeName;
         }
         if (map.storeAddress) {
             var addrDisplay = document.getElementById('storeAddressDisplay');
-            if (addrDisplay) addrDisplay.textContent = '📍 ' + map.storeAddress;
+            if (addrDisplay) addrDisplay.textContent = ' ' + map.storeAddress;
         }
         if (map.storePhone) {
             var phoneDisplay = document.getElementById('storePhoneDisplay');
-            if (phoneDisplay) phoneDisplay.textContent = '📞 ' + map.storePhone;
+            if (phoneDisplay) phoneDisplay.textContent = ' ' + map.storePhone;
         }
         if (map.storeEmail) {
             var emailDisplay = document.getElementById('storeEmailDisplay');
-            if (emailDisplay) emailDisplay.textContent = '✉️ ' + map.storeEmail;
+            if (emailDisplay) emailDisplay.textContent = ' ' + map.storeEmail;
         }
-        console.log('🏪 Store name loaded');
+        console.log(' Store name loaded');
     } catch(e) {
         console.error('Error loading store name:', e);
     }
@@ -962,7 +962,7 @@ async function loadReceiptSettings() {
             showCustomer: map.receiptShowCustomer !== 'no',
             showCashier: map.receiptShowCashier !== 'no'
         };
-        console.log('🧾 Receipt settings loaded');
+        console.log(' Receipt settings loaded');
     } catch(e) {
         console.error('Error loading receipt settings:', e);
         window.receiptSettings = {
@@ -982,7 +982,7 @@ let cashPendingOrder = null;
 
 function openCashTender() {
     if (cart.length === 0) {
-        alert('❌ Cart is empty');
+        alert(' Cart is empty');
         return;
     }
     
@@ -1030,12 +1030,12 @@ function confirmCashPayment() {
     var total = cashPendingOrder ? cashPendingOrder.total : 0;
     
     if (received < total) {
-        alert('❌ Amount received is less than the total amount due.');
+        alert(' Amount received is less than the total amount due.');
         return;
     }
     
     var change = received - total;
-    var confirmMsg = '💵 Cash Payment\n\n';
+    var confirmMsg = ' Cash Payment\n\n';
     confirmMsg += 'Total: KES ' + total.toFixed(2) + '\n';
     confirmMsg += 'Received: KES ' + received.toFixed(2) + '\n';
     confirmMsg += 'Change: KES ' + change.toFixed(2) + '\n\n';
@@ -1055,7 +1055,7 @@ function closeCashTender() {
 
 function processPayment(method, amountReceived) {
     if (cart.length === 0) {
-        alert('❌ Cart is empty');
+        alert(' Cart is empty');
         return;
     }
     
@@ -1074,26 +1074,26 @@ function processPayment(method, amountReceived) {
     
     var customerName = selectedCustomer ? selectedCustomer.name : 'Walk-in';
     var customerId = selectedCustomer ? selectedCustomer.id : null;
-    var methodNames = { cash: '💵 Cash', mpesa: '📱 M-Pesa', card: '💳 Card', credit: '📋 Credit', bank: '🏦 Bank Transfer' };
+    var methodNames = { cash: ' Cash', mpesa: ' M-Pesa', card: ' Card', credit: ' Credit', bank: ' Bank Transfer' };
 
     if (method === 'credit') {
         if (!selectedCustomer) {
-            alert('❌ Credit payment requires a registered customer.');
+            alert(' Credit payment requires a registered customer.');
             return;
         }
         var currentCredit = selectedCustomer.credit || 0;
         var creditLimit = selectedCustomer.credit_limit || 0;
         if (creditLimit > 0 && (currentCredit + total) > creditLimit) {
-            alert('❌ Credit limit exceeded!\nCurrent: KES ' + currentCredit.toFixed(2) + '\nLimit: KES ' + creditLimit.toFixed(2));
+            alert(' Credit limit exceeded!\nCurrent: KES ' + currentCredit.toFixed(2) + '\nLimit: KES ' + creditLimit.toFixed(2));
             return;
         }
     }
 
     var summary = '═══════════════════════════════\n';
-    summary += '        📋 ORDER SUMMARY\n';
+    summary += '         ORDER SUMMARY\n';
     summary += '═══════════════════════════════\n';
-    summary += '👤 Customer:  ' + customerName + '\n';
-    summary += '💳 Payment:   ' + (methodNames[method] || method) + '\n';
+    summary += ' Customer:  ' + customerName + '\n';
+    summary += ' Payment:   ' + (methodNames[method] || method) + '\n';
     summary += '───────────────────────────────\n';
     cart.forEach(function(item) {
         var discount = item.discount || 0;
@@ -1107,19 +1107,19 @@ function processPayment(method, amountReceived) {
         }
     });
     summary += '───────────────────────────────\n';
-    summary += '💰 Subtotal:   KES ' + subtotal.toFixed(2) + '\n';
+    summary += ' Subtotal:   KES ' + subtotal.toFixed(2) + '\n';
     if (tax > 0) {
-        summary += '🧾 Tax (' + taxRate + '%): KES ' + tax.toFixed(2) + '\n';
+        summary += ' Tax (' + taxRate + '%): KES ' + tax.toFixed(2) + '\n';
     }
-    summary += '💎 TOTAL:      KES ' + total.toFixed(2) + '\n';
+    summary += ' TOTAL:      KES ' + total.toFixed(2) + '\n';
     summary += '═══════════════════════════════\n';
     if (method === 'credit' && selectedCustomer) {
-        summary += '\n💳 CREDIT INFO:\n';
+        summary += '\n CREDIT INFO:\n';
         summary += 'Current Credit:  KES ' + (selectedCustomer.credit || 0).toFixed(2) + '\n';
         summary += 'New Balance:     KES ' + ((selectedCustomer.credit || 0) + total).toFixed(2) + '\n';
         summary += '═══════════════════════════════\n';
     }
-    if (!confirm('📋 Confirm Payment\n\n' + summary + '\n✅ Confirm?')) return;
+    if (!confirm(' Confirm Payment\n\n' + summary + '\n Confirm?')) return;
 
     var order = {
         order_number: 'ORD-' + Date.now().toString().slice(-6),
@@ -1187,14 +1187,14 @@ function processPayment(method, amountReceived) {
                     }
                 });
             }
-            alert('✅ Payment successful!\n' + (methodNames[method] || method) + ': KES ' + total.toFixed(2) + '\n👤 Customer: ' + customerName);
+            alert(' Payment successful!\n' + (methodNames[method] || method) + ': KES ' + total.toFixed(2) + '\n Customer: ' + customerName);
             showReceipt(order);
             cart = [];
             renderCart();
             clearCartSession();
             loadProducts();
         }).catch(function(e) {
-            alert('❌ Error: ' + e.message);
+            alert(' Error: ' + e.message);
             console.error('Payment error:', e);
         });
     });
@@ -1203,7 +1203,7 @@ function processPayment(method, amountReceived) {
 // ===== PRINT & RECEIPT =====
 function printCartPreview() {
     if (cart.length === 0) {
-        alert('❌ Cart is empty');
+        alert(' Cart is empty');
         return;
     }
     var subtotal = cart.reduce(function(s, i) { return s + (i.price * i.qty * (1 - (i.discount || 0) / 100)); }, 0);
@@ -1263,7 +1263,7 @@ function showReceipt(order) {
         receipt += 'Customer: ' + (order.customer_name || 'Walk-in') + '\n';
     }
     if (order.note) {
-        receipt += '📝 Note: ' + order.note + '\n';
+        receipt += ' Note: ' + order.note + '\n';
     }
     receipt += '--------------------------------\n';
     items.forEach(function(item) {
@@ -1306,7 +1306,7 @@ function closeReceiptPreview() {
 function printFromPreview() {
     var content = document.getElementById('receiptPreviewContent');
     if (!content) {
-        alert('❌ No receipt to print');
+        alert(' No receipt to print');
         return;
     }
     var receipt = content.textContent;
@@ -1334,14 +1334,14 @@ function printFromPreview() {
 
 function voidTransaction() {
     if (cart.length === 0) {
-        alert('❌ Cart is empty');
+        alert(' Cart is empty');
         return;
     }
-    if (!confirm('⚠️ Void this transaction?')) return;
+    if (!confirm(' Void this transaction?')) return;
     cart = [];
     renderCart();
     clearCartSession();
-    alert('✅ Transaction voided');
+    alert(' Transaction voided');
 }
 
 // ===== KEYBOARD SHORTCUTS =====
@@ -1375,7 +1375,7 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(loadCart, 500);
     setTimeout(loadHeldOrders, 600);
     setTimeout(updateCreditButton, 700);
-    console.log('✅ POS initialized');
+    console.log(' POS initialized');
 });
 
 // ===== SEARCH =====
@@ -1908,10 +1908,10 @@ if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
         navigator.serviceWorker.register('/sw.js')
             .then(function(reg) {
-                console.log('✅ Service Worker registered');
+                console.log(' Service Worker registered');
             })
             .catch(function(err) {
-                console.log('❌ Service Worker registration failed:', err);
+                console.log(' Service Worker registration failed:', err);
             });
     });
 }
@@ -1925,7 +1925,7 @@ if ('serviceWorker' in navigator) {
 </script>
 
 <!-- License Warning Banner -->
-    <span id="licenseWarningMessage">⚠️ Your license expires soon. Please renew in Settings.</span>
+    <span id="licenseWarningMessage"> Your license expires soon. Please renew in Settings.</span>
 </div>
 
 <script>
@@ -1935,7 +1935,7 @@ function checkLicenseStatus() {
     const expiry = localStorage.getItem("expiry_date");
     
     if (!activated || activated !== "true") {
-        alert("⚠️ Your license is not activated.\nPlease go to Settings to activate your license.");
+        alert(" Your license is not activated.\nPlease go to Settings to activate your license.");
         window.location.href = "settings.html";
         return false;
     }
@@ -1946,7 +1946,7 @@ function checkLicenseStatus() {
         const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
         
         if (expiryDate < now) {
-            alert("⚠️ Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
+            alert(" Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
             localStorage.removeItem("activated");
             localStorage.removeItem("activation_code");
             localStorage.removeItem("expiry_date");
@@ -1956,7 +1956,7 @@ function checkLicenseStatus() {
         
         // Show warning 7 days before expiry
         if (daysRemaining <= 7 && daysRemaining > 0) {
-            const message = "⚠️ Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
+            const message = " Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
             alert(message);
         }
     }
@@ -1988,7 +1988,7 @@ function checkLicenseStatus() {
     const expiry = localStorage.getItem("expiry_date");
     
     if (!activated || activated !== "true") {
-        alert("⚠️ Your license is not activated.\nPlease go to Settings to activate your license.");
+        alert(" Your license is not activated.\nPlease go to Settings to activate your license.");
         window.location.href = "settings.html";
         return false;
     }
@@ -1999,7 +1999,7 @@ function checkLicenseStatus() {
         const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
         
         if (expiryDate < now) {
-            alert("⚠️ Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
+            alert(" Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
             localStorage.removeItem("activated");
             localStorage.removeItem("activation_code");
             localStorage.removeItem("expiry_date");
@@ -2009,7 +2009,7 @@ function checkLicenseStatus() {
         
         // Show warning 7 days before expiry
         if (daysRemaining <= 7 && daysRemaining > 0) {
-            const message = "⚠️ Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
+            const message = " Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
             alert(message);
         }
     }

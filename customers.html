@@ -112,28 +112,28 @@
     <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
     
     <aside class="sidebar">
-        <div class="logo">🏪 <span>Soko</span>Pulse <button class="close-btn" onclick="toggleSidebar()">✕</button></div>
+        <div class="logo"> <span>Soko</span>Pulse <button class="close-btn" onclick="toggleSidebar()"></button></div>
         <nav>
             <div class="nav-label">Main</div>
-            <a href="pos.html">🛒 POS</a>
-            <a href="dashboard.html">📊 Dashboard</a>
-            <a href="orders.html">📋 Orders</a>
+            <a href="pos.html"> POS</a>
+            <a href="dashboard.html"> Dashboard</a>
+            <a href="orders.html"> Orders</a>
             <div class="nav-label">Inventory</div>
-            <a href="products.html">📦 Products</a>
-            <a href="categories.html">📂 Categories</a>
-            <a href="suppliers.html">📦 Suppliers</a>
-            <a href="stock.html">📦 Stock</a>
+            <a href="products.html"> Products</a>
+            <a href="categories.html"> Categories</a>
+            <a href="suppliers.html"> Suppliers</a>
+            <a href="stock.html"> Stock</a>
             <a href="expiry.html">⏰ Expiry</a>
             <div class="nav-label">Management</div>
-            <a href="customers.html" class="active">👤 Customers</a>
-            <a href="reports.html">📈 Reports</a>
-            <a href="audit.html">📋 Audit</a>
-            <a href="returns.html">🔄 Returns</a>
-            <a href="settings.html">⚙️ Settings</a>
+            <a href="customers.html" class="active"> Customers</a>
+            <a href="reports.html"> Reports</a>
+            <a href="audit.html"> Audit</a>
+            <a href="returns.html"> Returns</a>
+            <a href="settings.html"> Settings</a>
         </nav>
         <div class="user-section">
             <div class="name" id="userName">Administrator</div>
-        <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+        <button class="logout-btn" onclick="logout()"> Logout</button>
             <div class="role" id="userRole">Admin</div>
         </div>
     </aside>
@@ -141,11 +141,11 @@
     <main class="main-content">
         <header class="topbar">
             <div class="left">
-                <button class="hamburger" onclick="toggleSidebar()">☰</button>
-                <h1>👤 Customers</h1>
+                <button class="hamburger" onclick="toggleSidebar()"></button>
+                <h1> Customers</h1>
             </div>
             <div class="right">
-                <span class="store-badge">🏪 SokoPulse</span>
+                <span class="store-badge"> SokoPulse</span>
                 <span class="time" id="timeDisplay"></span>
             </div>
         </header>
@@ -168,10 +168,10 @@
 
             <div class="toolbar">
                 <div class="search-wrapper">
-                    <span class="search-icon">🔍</span>
+                    <span class="search-icon"></span>
                     <input type="text" id="searchInput" placeholder="Search by name or phone..." oninput="renderCustomers()">
                 </div>
-                <button class="btn-add" onclick="openAddModal()">➕ Add Customer</button>
+                <button class="btn-add" onclick="openAddModal()"> Add Customer</button>
             </div>
 
             <div id="customersList">
@@ -216,7 +216,7 @@
             </div>
             <div class="modal-actions">
                 <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
-                <button type="submit" class="btn-save">💾 Save Customer</button>
+                <button type="submit" class="btn-save"> Save Customer</button>
             </div>
         </form>
     </div>
@@ -234,7 +234,7 @@ function toggleSidebar() {
 
 function openAddModal() {
     editingId = null;
-    document.getElementById('modalTitle').textContent = '➕ Add Customer';
+    document.getElementById('modalTitle').textContent = ' Add Customer';
     document.getElementById('editId').value = '';
     document.getElementById('custName').value = '';
     document.getElementById('custPhone').value = '';
@@ -249,7 +249,7 @@ function openEditModal(id) {
     const c = customers.find(x => x.id === id);
     if (!c) return;
     editingId = id;
-    document.getElementById('modalTitle').textContent = '✏️ Edit Customer';
+    document.getElementById('modalTitle').textContent = ' Edit Customer';
     document.getElementById('editId').value = id;
     document.getElementById('custName').value = c.name || '';
     document.getElementById('custPhone').value = c.phone || '';
@@ -263,7 +263,7 @@ function openEditModal(id) {
 function viewCustomer(id) {
     const c = customers.find(x => x.id === id);
     if (!c) return;
-    alert(`👤 Customer Details\n\nName: ${c.name}\nPhone: ${c.phone}\nEmail: ${c.email || '-'}\nAddress: ${c.address || '-'}\nTotal Orders: ${c.total_orders || 0}\nTotal Spent: KES ${(c.total_spent || 0).toFixed(2)}\nCredit: KES ${(c.credit || 0).toFixed(2)}\nCredit Limit: KES ${(c.credit_limit || 0).toFixed(2)}`);
+    alert(` Customer Details\n\nName: ${c.name}\nPhone: ${c.phone}\nEmail: ${c.email || '-'}\nAddress: ${c.address || '-'}\nTotal Orders: ${c.total_orders || 0}\nTotal Spent: KES ${(c.total_spent || 0).toFixed(2)}\nCredit: KES ${(c.credit || 0).toFixed(2)}\nCredit Limit: KES ${(c.credit_limit || 0).toFixed(2)}`);
 }
 
 function closeModal() {
@@ -277,10 +277,10 @@ async function deleteCustomer(id) {
         const tx = db.transaction("customers", "readwrite");
         const store = tx.objectStore("customers");
         await store.delete(id);
-        alert("✅ Customer deleted");
+        alert(" Customer deleted");
         await loadCustomers();
     } catch(e) {
-        alert("❌ Error: " + e.message);
+        alert(" Error: " + e.message);
     }
 }
 
@@ -364,7 +364,7 @@ function renderCustomers() {
     if (filtered.length === 0) {
         container.innerHTML = `
             <div class="empty-state">
-                <div class="empty-icon">👤</div>
+                <div class="empty-icon"></div>
                 <h3>No customers found</h3>
                 <p style="color:#94a3b8;">Add your first customer to get started</p>
             </div>
@@ -375,17 +375,17 @@ function renderCustomers() {
         const credit = c.credit || 0;
         const creditLimit = c.credit_limit || 0;
         let creditStatus = 'good';
-        let creditLabel = '✅ Good';
-        if (credit >= creditLimit && creditLimit > 0) { creditStatus = 'danger'; creditLabel = '⚠️ Max Credit'; }
-        else if (credit > creditLimit * 0.7 && creditLimit > 0) { creditStatus = 'warning'; creditLabel = '⚠️ High Credit'; }
+        let creditLabel = ' Good';
+        if (credit >= creditLimit && creditLimit > 0) { creditStatus = 'danger'; creditLabel = ' Max Credit'; }
+        else if (credit > creditLimit * 0.7 && creditLimit > 0) { creditStatus = 'warning'; creditLabel = ' High Credit'; }
         return `
             <div class="customer-card">
                 <div class="info">
                     <div class="name">${c.name || 'Unnamed'}</div>
                     <div class="details">
-                        📱 ${c.phone || '-'} 
-                        ${c.email ? '✉️ ' + c.email : ''}
-                        ${c.address ? '📍 ' + c.address : ''}
+                         ${c.phone || '-'} 
+                        ${c.email ? ' ' + c.email : ''}
+                        ${c.address ? ' ' + c.address : ''}
                         <span class="credit-badge ${creditStatus}">${creditLabel}</span>
                     </div>
                 </div>
@@ -394,9 +394,9 @@ function renderCustomers() {
                     <div class="orders">${c.total_orders || 0} orders</div>
                 </div>
                 <div class="actions">
-                    <button class="btn-view" onclick="viewCustomer(${c.id})">👁️</button>
-                    <button class="btn-edit" onclick="openEditModal(${c.id})">✏️</button>
-                    <button class="btn-delete" onclick="deleteCustomer(${c.id})">🗑️</button>
+                    <button class="btn-view" onclick="viewCustomer(${c.id})"></button>
+                    <button class="btn-edit" onclick="openEditModal(${c.id})"></button>
+                    <button class="btn-delete" onclick="deleteCustomer(${c.id})"></button>
                 </div>
             </div>
         `;
@@ -417,7 +417,7 @@ async function saveCustomer(e) {
         created_at: new Date().toISOString()
     };
     if (!data.name || !data.phone) {
-        alert("❌ Name and phone are required");
+        alert(" Name and phone are required");
         return;
     }
     try {
@@ -438,10 +438,10 @@ async function saveCustomer(e) {
         });
         
         closeModal();
-        alert(editId ? "✅ Customer updated successfully" : "✅ Customer added successfully");
+        alert(editId ? " Customer updated successfully" : " Customer added successfully");
         await loadCustomers();
     } catch(e) {
-        alert("❌ Error: " + e.message);
+        alert(" Error: " + e.message);
         console.error(e);
     }
 }
@@ -462,10 +462,10 @@ if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
         navigator.serviceWorker.register('/sw.js')
             .then(function(reg) {
-                console.log('✅ Service Worker registered');
+                console.log(' Service Worker registered');
             })
             .catch(function(err) {
-                console.log('❌ Service Worker registration failed:', err);
+                console.log(' Service Worker registration failed:', err);
             });
     });
 }
@@ -479,7 +479,7 @@ if ('serviceWorker' in navigator) {
 </script>
 
 <!-- License Warning Banner -->
-    <span id="licenseWarningMessage">⚠️ Your license expires soon. Please renew in Settings.</span>
+    <span id="licenseWarningMessage"> Your license expires soon. Please renew in Settings.</span>
 </div>
 
 <script>
@@ -489,7 +489,7 @@ function checkLicenseStatus() {
     const expiry = localStorage.getItem("expiry_date");
     
     if (!activated || activated !== "true") {
-        alert("⚠️ Your license is not activated.\nPlease go to Settings to activate your license.");
+        alert(" Your license is not activated.\nPlease go to Settings to activate your license.");
         window.location.href = "settings.html";
         return false;
     }
@@ -500,7 +500,7 @@ function checkLicenseStatus() {
         const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
         
         if (expiryDate < now) {
-            alert("⚠️ Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
+            alert(" Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
             localStorage.removeItem("activated");
             localStorage.removeItem("activation_code");
             localStorage.removeItem("expiry_date");
@@ -510,7 +510,7 @@ function checkLicenseStatus() {
         
         // Show warning 7 days before expiry
         if (daysRemaining <= 7 && daysRemaining > 0) {
-            const message = "⚠️ Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
+            const message = " Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
             alert(message);
         }
     }
@@ -542,7 +542,7 @@ function checkLicenseStatus() {
     const expiry = localStorage.getItem("expiry_date");
     
     if (!activated || activated !== "true") {
-        alert("⚠️ Your license is not activated.\nPlease go to Settings to activate your license.");
+        alert(" Your license is not activated.\nPlease go to Settings to activate your license.");
         window.location.href = "settings.html";
         return false;
     }
@@ -553,7 +553,7 @@ function checkLicenseStatus() {
         const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
         
         if (expiryDate < now) {
-            alert("⚠️ Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
+            alert(" Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
             localStorage.removeItem("activated");
             localStorage.removeItem("activation_code");
             localStorage.removeItem("expiry_date");
@@ -563,7 +563,7 @@ function checkLicenseStatus() {
         
         // Show warning 7 days before expiry
         if (daysRemaining <= 7 && daysRemaining > 0) {
-            const message = "⚠️ Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
+            const message = " Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
             alert(message);
         }
     }
@@ -711,7 +711,7 @@ if (document.readyState === 'loading') {
 // ===== BULK EXPORT CUSTOMERS =====
 function exportCustomers() {
     if (customers.length === 0) {
-        alert('❌ No customers to export');
+        alert(' No customers to export');
         return;
     }
     
@@ -727,7 +727,7 @@ function exportCustomers() {
     a.download = `customers_${new Date().toISOString().slice(0,10)}.csv`;
     a.click();
     URL.revokeObjectURL(url);
-    alert('✅ Customers exported!');
+    alert(' Customers exported!');
 }
 </script>
 

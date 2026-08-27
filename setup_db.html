@@ -4,7 +4,7 @@
     <title>Setup Database</title>
 </head>
 <body>
-<h2>📦 Setting up Database</h2>
+<h2> Setting up Database</h2>
 <div id="result"></div>
 
 <script src="db.js"></script>
@@ -26,26 +26,26 @@ function setupDatabase() {
                     store.createIndex(idx, idx, { unique: false });
                 }
                 created.push(name);
-                console.log('✅ Created store:', name);
+                console.log(' Created store:', name);
             }
         }
         
         result.innerHTML = created.length > 0 
-            ? '✅ Created stores: ' + created.join(', ')
-            : '✅ All stores already exist';
+            ? ' Created stores: ' + created.join(', ')
+            : ' All stores already exist';
     };
     
     req.onsuccess = function(e) {
         const db = e.target.result;
         const stores = Array.from(db.objectStoreNames);
-        result.innerHTML += '<br><br>📋 Available stores: ' + stores.join(', ');
-        result.innerHTML += '<br><br>✅ Database ready!';
-        result.innerHTML += '<br><br><a href="activation.html">🔑 Go to Activation</a>';
+        result.innerHTML += '<br><br> Available stores: ' + stores.join(', ');
+        result.innerHTML += '<br><br> Database ready!';
+        result.innerHTML += '<br><br><a href="activation.html"> Go to Activation</a>';
         db.close();
     };
     
     req.onerror = function(e) {
-        result.innerHTML = '❌ Error: ' + e.target.error;
+        result.innerHTML = ' Error: ' + e.target.error;
     };
 }
 
@@ -57,10 +57,10 @@ if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
         navigator.serviceWorker.register('/sw.js')
             .then(function(reg) {
-                console.log('✅ Service Worker registered');
+                console.log(' Service Worker registered');
             })
             .catch(function(err) {
-                console.log('❌ Service Worker registration failed:', err);
+                console.log(' Service Worker registration failed:', err);
             });
     });
 }

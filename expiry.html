@@ -35,41 +35,41 @@
 <div class="app">
     <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
     <aside class="sidebar">
-        <div class="logo">🏪 <span>Soko</span>Pulse <button class="close-btn" onclick="toggleSidebar()">✕</button></div>
+        <div class="logo"> <span>Soko</span>Pulse <button class="close-btn" onclick="toggleSidebar()"></button></div>
         <nav>
             <div class="nav-label">Main</div>
-            <a href="pos.html">🛒 POS</a>
-            <a href="dashboard.html">📊 Dashboard</a>
-            <a href="orders.html">📋 Orders</a>
+            <a href="pos.html"> POS</a>
+            <a href="dashboard.html"> Dashboard</a>
+            <a href="orders.html"> Orders</a>
             <div class="nav-label">Inventory</div>
-            <a href="products.html">📦 Products</a>
-            <a href="categories.html">📂 Categories</a>
-            <a href="suppliers.html">📦 Suppliers</a>
-            <a href="stock.html">📦 Stock</a>
+            <a href="products.html"> Products</a>
+            <a href="categories.html"> Categories</a>
+            <a href="suppliers.html"> Suppliers</a>
+            <a href="stock.html"> Stock</a>
             <a href="expiry.html" class="active">⏰ Expiry</a>
             <div class="nav-label">Management</div>
-            <a href="customers.html">👤 Customers</a>
-            <a href="reports.html">📈 Reports</a>
-            <a href="audit.html">📋 Audit</a>
-            <a href="returns.html">🔄 Returns</a>
-            <a href="settings.html">⚙️ Settings</a>
+            <a href="customers.html"> Customers</a>
+            <a href="reports.html"> Reports</a>
+            <a href="audit.html"> Audit</a>
+            <a href="returns.html"> Returns</a>
+            <a href="settings.html"> Settings</a>
         </nav>
         <div class="user-section">
             <div class="name" id="userName">Administrator</div>
-        <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+        <button class="logout-btn" onclick="logout()"> Logout</button>
             <div class="role" id="userRole">Admin</div>
         </div>
     </aside>
     <main class="main-content">
         <header class="topbar">
-            <div class="left"><button class="hamburger" onclick="toggleSidebar()">☰</button><h1>⏰ Expiry Management</h1></div>
-            <div class="right"><span class="store-badge">🏪 SokoPulse</span><span class="time" id="timeDisplay"></span></div>
+            <div class="left"><button class="hamburger" onclick="toggleSidebar()"></button><h1>⏰ Expiry Management</h1></div>
+            <div class="right"><span class="store-badge"> SokoPulse</span><span class="time" id="timeDisplay"></span></div>
         </header>
         <div class="page-container">
             <div class="stats-grid">
-                <div class="stat-card"><div class="stat-number red" id="expiredCount">0</div><div class="stat-label">🔴 Expired</div></div>
-                <div class="stat-card"><div class="stat-number orange" id="expiringCount">0</div><div class="stat-label">🟡 Expiring Soon (7 days)</div></div>
-                <div class="stat-card"><div class="stat-number green" id="goodCount">0</div><div class="stat-label">🟢 Good</div></div>
+                <div class="stat-card"><div class="stat-number red" id="expiredCount">0</div><div class="stat-label"> Expired</div></div>
+                <div class="stat-card"><div class="stat-number orange" id="expiringCount">0</div><div class="stat-label"> Expiring Soon (7 days)</div></div>
+                <div class="stat-card"><div class="stat-number green" id="goodCount">0</div><div class="stat-label"> Good</div></div>
             </div>
             <div class="table-container">
                 <table>
@@ -94,7 +94,7 @@ const userData = localStorage.getItem('pos_user');
 if (userData) {
     const user = JSON.parse(userData);
     if (user.role === 'cashier' && window.location.pathname.includes('/pos/') && !window.location.pathname.includes('pos.html')) {
-        alert('⛔ Cashiers can only access POS. Redirecting...');
+        alert(' Cashiers can only access POS. Redirecting...');
     }
 }
 
@@ -145,9 +145,9 @@ function renderExpiry() {
         const expiry = new Date(p.expiry_date);
         const days = Math.ceil((expiry - today) / (1000 * 60 * 60 * 24));
         let status, statusLabel;
-        if (days < 0) { status = 'expired'; statusLabel = '🔴 Expired'; }
-        else if (days <= 7) { status = 'expiring'; statusLabel = '🟡 Expiring Soon'; }
-        else { status = 'good'; statusLabel = '🟢 Good'; }
+        if (days < 0) { status = 'expired'; statusLabel = ' Expired'; }
+        else if (days <= 7) { status = 'expiring'; statusLabel = ' Expiring Soon'; }
+        else { status = 'good'; statusLabel = ' Good'; }
         return `
             <tr>
                 <td><strong>${p.name || 'Unnamed'}</strong></td>
@@ -170,10 +170,10 @@ if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
         navigator.serviceWorker.register('/sw.js')
             .then(function(reg) {
-                console.log('✅ Service Worker registered');
+                console.log(' Service Worker registered');
             })
             .catch(function(err) {
-                console.log('❌ Service Worker registration failed:', err);
+                console.log(' Service Worker registration failed:', err);
             });
     });
 }
@@ -186,7 +186,7 @@ function checkLicenseStatus() {
     const expiry = localStorage.getItem("expiry_date");
     
     if (!activated || activated !== "true") {
-        alert("⚠️ Your license is not activated.\nPlease go to Settings to activate your license.");
+        alert(" Your license is not activated.\nPlease go to Settings to activate your license.");
         window.location.href = "settings.html";
         return false;
     }
@@ -197,7 +197,7 @@ function checkLicenseStatus() {
         const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
         
         if (expiryDate < now) {
-            alert("⚠️ Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
+            alert(" Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
             localStorage.removeItem("activated");
             localStorage.removeItem("activation_code");
             localStorage.removeItem("expiry_date");
@@ -207,7 +207,7 @@ function checkLicenseStatus() {
         
         // Show warning 7 days before expiry
         if (daysRemaining <= 7 && daysRemaining > 0) {
-            const message = "⚠️ Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
+            const message = " Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
             alert(message);
         }
     }
@@ -239,7 +239,7 @@ function checkLicenseStatus() {
     const expiry = localStorage.getItem("expiry_date");
     
     if (!activated || activated !== "true") {
-        alert("⚠️ Your license is not activated.\nPlease go to Settings to activate your license.");
+        alert(" Your license is not activated.\nPlease go to Settings to activate your license.");
         window.location.href = "settings.html";
         return false;
     }
@@ -250,7 +250,7 @@ function checkLicenseStatus() {
         const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
         
         if (expiryDate < now) {
-            alert("⚠️ Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
+            alert(" Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
             localStorage.removeItem("activated");
             localStorage.removeItem("activation_code");
             localStorage.removeItem("expiry_date");
@@ -260,7 +260,7 @@ function checkLicenseStatus() {
         
         // Show warning 7 days before expiry
         if (daysRemaining <= 7 && daysRemaining > 0) {
-            const message = "⚠️ Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
+            const message = " Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
             alert(message);
         }
     }

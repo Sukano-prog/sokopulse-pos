@@ -287,40 +287,40 @@
     <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
 
     <aside class="sidebar">
-        <div class="logo">🏪 <span>Soko</span>Pulse <button class="close-btn" onclick="toggleSidebar()">✕</button></div>
+        <div class="logo"> <span>Soko</span>Pulse <button class="close-btn" onclick="toggleSidebar()"></button></div>
         <nav>
             <div class="nav-label">Main</div>
-            <a href="pos.html">🛒 POS</a>
-            <a href="dashboard.html">📊 Dashboard</a>
-            <a href="orders.html">📋 Orders</a>
+            <a href="pos.html"> POS</a>
+            <a href="dashboard.html"> Dashboard</a>
+            <a href="orders.html"> Orders</a>
             <div class="nav-label">Inventory</div>
-            <a href="products.html">📦 Products</a>
-            <a href="categories.html">📂 Categories</a>
-            <a href="suppliers.html">📦 Suppliers</a>
-            <a href="stock.html" class="active">📦 Stock</a>
+            <a href="products.html"> Products</a>
+            <a href="categories.html"> Categories</a>
+            <a href="suppliers.html"> Suppliers</a>
+            <a href="stock.html" class="active"> Stock</a>
             <a href="expiry.html">⏰ Expiry</a>
             <div class="nav-label">Management</div>
-            <a href="customers.html">👤 Customers</a>
-            <a href="reports.html">📈 Reports</a>
-            <a href="audit.html">📋 Audit</a>
-            <a href="returns.html">🔄 Returns</a>
-            <a href="settings.html">⚙️ Settings</a>
+            <a href="customers.html"> Customers</a>
+            <a href="reports.html"> Reports</a>
+            <a href="audit.html"> Audit</a>
+            <a href="returns.html"> Returns</a>
+            <a href="settings.html"> Settings</a>
         </nav>
         <div class="user-section">
             <div class="name" id="userName">Administrator</div>
             <div class="role" id="userRole">Admin</div>
         </div>
-        <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+        <button class="logout-btn" onclick="logout()"> Logout</button>
     </aside>
 
     <main class="main-content">
         <header class="topbar">
             <div class="left">
-                <button class="hamburger" onclick="toggleSidebar()">☰</button>
-                <h1>📦 Stock Management</h1>
+                <button class="hamburger" onclick="toggleSidebar()"></button>
+                <h1> Stock Management</h1>
             </div>
             <div class="right">
-                <span class="store-badge">🏪 SokoPulse</span>
+                <span class="store-badge"> SokoPulse</span>
                 <span class="time" id="timeDisplay"></span>
             </div>
         </header>
@@ -328,34 +328,34 @@
         <div class="page-container">
             <!-- Stats -->
             <div class="stats-grid" id="statsGrid">
-                <div class="stat-card"><div class="stat-number" id="totalItems">0</div><div class="stat-label">📦 Total</div></div>
-                <div class="stat-card"><div class="stat-number green" id="inStock">0</div><div class="stat-label">✅ In Stock</div></div>
-                <div class="stat-card"><div class="stat-number orange" id="lowStock">0</div><div class="stat-label">⚠️ Low</div></div>
-                <div class="stat-card"><div class="stat-number red" id="outStock">0</div><div class="stat-label">❌ Out</div></div>
-                <div class="stat-card"><div class="stat-number blue" id="totalReceived">0</div><div class="stat-label">📥 Received</div></div>
-                <div class="stat-card"><div class="stat-number red" id="totalSold">0</div><div class="stat-label">📤 Sold</div></div>
-                <div class="stat-card"><div class="stat-number orange" id="totalAdjusted">0</div><div class="stat-label">📊 Adjusted</div></div>
-                <div class="stat-card"><div class="stat-number purple" id="stockValue">KES 0</div><div class="stat-label">💰 Value</div></div>
+                <div class="stat-card"><div class="stat-number" id="totalItems">0</div><div class="stat-label"> Total</div></div>
+                <div class="stat-card"><div class="stat-number green" id="inStock">0</div><div class="stat-label"> In Stock</div></div>
+                <div class="stat-card"><div class="stat-number orange" id="lowStock">0</div><div class="stat-label"> Low</div></div>
+                <div class="stat-card"><div class="stat-number red" id="outStock">0</div><div class="stat-label"> Out</div></div>
+                <div class="stat-card"><div class="stat-number blue" id="totalReceived">0</div><div class="stat-label"> Received</div></div>
+                <div class="stat-card"><div class="stat-number red" id="totalSold">0</div><div class="stat-label"> Sold</div></div>
+                <div class="stat-card"><div class="stat-number orange" id="totalAdjusted">0</div><div class="stat-label"> Adjusted</div></div>
+                <div class="stat-card"><div class="stat-number purple" id="stockValue">KES 0</div><div class="stat-label"> Value</div></div>
             </div>
 
             <!-- Tabs -->
             <div class="tabs">
-                <button class="active" onclick="switchTab('products')">📦 Stock Levels</button>
-                <button onclick="switchTab('movements')">📊 Movements</button>
-                <button onclick="switchTab('summary')">📋 Product Summary</button>
+                <button class="active" onclick="switchTab('products')"> Stock Levels</button>
+                <button onclick="switchTab('movements')"> Movements</button>
+                <button onclick="switchTab('summary')"> Product Summary</button>
             </div>
 
             <!-- Tab: Products (with per-product stats) -->
             <div class="tab-content active" id="tab-products">
                 <div class="toolbar">
                     <div class="search-wrapper">
-                        <span class="search-icon">🔍</span>
+                        <span class="search-icon"></span>
                         <input type="text" id="searchInput" placeholder="Search by name or SKU..." oninput="renderProducts()">
                     </div>
-                    <button class="btn-receive" onclick="openReceiveModal()">📥 Receive Stock</button>
-                    <button class="btn-adjust" onclick="openAdjustModal()">📊 Adjust Stock</button>
-                <button class="btn-adjust" onclick="openBulkAdjust()" style="background:#8b5cf6;color:white;">📊 Bulk Adjust</button>
-                    <button class="btn-export" onclick="exportStock()">📤 Export</button>
+                    <button class="btn-receive" onclick="openReceiveModal()"> Receive Stock</button>
+                    <button class="btn-adjust" onclick="openAdjustModal()"> Adjust Stock</button>
+                <button class="btn-adjust" onclick="openBulkAdjust()" style="background:#8b5cf6;color:white;"> Bulk Adjust</button>
+                    <button class="btn-export" onclick="exportStock()"> Export</button>
                 </div>
 
                 <div class="stock-table-container">
@@ -384,15 +384,15 @@
             <div class="tab-content" id="tab-movements">
                 <div class="toolbar">
                     <div class="search-wrapper">
-                        <span class="search-icon">🔍</span>
+                        <span class="search-icon"></span>
                         <input type="text" id="movementSearch" placeholder="Search movements..." oninput="renderMovements()">
                     </div>
                     <select id="movementFilter" onchange="renderMovements()" style="padding:10px 14px;border:2px solid #e2e8f0;border-radius:10px;font-family:'Inter',sans-serif;font-size:13px;">
                         <option value="all">All Types</option>
-                        <option value="receive">📥 Receive</option>
-                        <option value="sold">📤 Sold</option>
-                        <option value="adjust">📊 Adjust</option>
-                        <option value="return">🔄 Return</option>
+                        <option value="receive"> Receive</option>
+                        <option value="sold"> Sold</option>
+                        <option value="adjust"> Adjust</option>
+                        <option value="return"> Return</option>
                     </select>
                 </div>
 
@@ -439,7 +439,7 @@
 <div class="modal" id="receiveModal">
     <div class="modal-content">
         <span class="modal-close" onclick="closeModal('receiveModal')">&times;</span>
-        <h2>📥 Receive Stock</h2>
+        <h2> Receive Stock</h2>
         <form id="receiveForm" onsubmit="receiveStock(event)">
             <div class="form-group">
                 <label>Product *</label>
@@ -483,7 +483,7 @@
             </div>
             <div class="modal-actions">
                 <button type="button" class="btn-cancel" onclick="closeModal('receiveModal')">Cancel</button>
-                <button type="submit" class="btn-save">📥 Receive Stock</button>
+                <button type="submit" class="btn-save"> Receive Stock</button>
             </div>
         </form>
     </div>
@@ -493,7 +493,7 @@
 <div class="modal" id="adjustModal">
     <div class="modal-content">
         <span class="modal-close" onclick="closeModal('adjustModal')">&times;</span>
-        <h2>📊 Adjust Stock</h2>
+        <h2> Adjust Stock</h2>
         <form id="adjustForm" onsubmit="adjustStock(event)">
             <div class="form-group">
                 <label>Product *</label>
@@ -509,9 +509,9 @@
                 <div class="form-group">
                     <label>Adjustment Type *</label>
                     <select id="adjustType" required>
-                        <option value="increase">➕ Increase Stock</option>
-                        <option value="decrease">➖ Decrease Stock</option>
-                        <option value="set">📊 Set Stock Level</option>
+                        <option value="increase"> Increase Stock</option>
+                        <option value="decrease"> Decrease Stock</option>
+                        <option value="set"> Set Stock Level</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -537,7 +537,7 @@
             </div>
             <div class="modal-actions">
                 <button type="button" class="btn-cancel" onclick="closeModal('adjustModal')">Cancel</button>
-                <button type="submit" class="btn-save">📊 Adjust Stock</button>
+                <button type="submit" class="btn-save"> Adjust Stock</button>
             </div>
         </form>
     </div>
@@ -658,9 +658,9 @@ function renderProducts() {
         const netChange = (p.current_stock || 0) - (p.initial_stock || 0);
         
         let status = 'in-stock';
-        let statusLabel = '✅ In Stock';
-        if (p.current_stock <= 0) { status = 'out-of-stock'; statusLabel = '❌ Out of Stock'; }
-        else if (p.current_stock < (p.min_stock_alert || 5)) { status = 'low-stock'; statusLabel = '⚠️ Low Stock'; }
+        let statusLabel = ' In Stock';
+        if (p.current_stock <= 0) { status = 'out-of-stock'; statusLabel = ' Out of Stock'; }
+        else if (p.current_stock < (p.min_stock_alert || 5)) { status = 'low-stock'; statusLabel = ' Low Stock'; }
         
         const stockClass = p.current_stock <= 0 ? 'red' : p.current_stock < (p.min_stock_alert || 5) ? 'orange' : 'green';
         
@@ -678,9 +678,9 @@ function renderProducts() {
                 <td><span class="stock-number ${netChange >= 0 ? 'green' : 'red'}">${netChange >= 0 ? '+' : ''}${netChange}</span></td>
                 <td><span class="status-badge ${status}">${statusLabel}</span></td>
                 <td>
-                    <button class="btn-action receive" onclick="openReceiveModal(${p.id})">📥</button>
-                    <button class="btn-action adjust" onclick="openAdjustModal(${p.id})">📊</button>
-                    <button class="btn-action history" onclick="showProductHistory(${p.id})">📋</button>
+                    <button class="btn-action receive" onclick="openReceiveModal(${p.id})"></button>
+                    <button class="btn-action adjust" onclick="openAdjustModal(${p.id})"></button>
+                    <button class="btn-action history" onclick="showProductHistory(${p.id})"></button>
                 </td>
             </tr>
         `;
@@ -717,10 +717,10 @@ function renderMovements() {
     }
     
     const typeLabels = {
-        receive: '📥 Receive',
-        sold: '📤 Sold',
-        adjust: '📊 Adjust',
-        return: '🔄 Return'
+        receive: ' Receive',
+        sold: ' Sold',
+        adjust: ' Adjust',
+        return: ' Return'
     };
     
     tbody.innerHTML = filtered.map(m => {
@@ -876,17 +876,17 @@ async function receiveStock(e) {
     const notes = document.getElementById('receiveNotes').value;
 
     if (!productId || !qty || qty <= 0) {
-        alert('❌ Please select a product and enter a valid quantity');
+        alert(' Please select a product and enter a valid quantity');
         return;
     }
 
     const product = products.find(p => p.id === productId);
-    if (!product) { alert('❌ Product not found'); return; }
+    if (!product) { alert(' Product not found'); return; }
 
     const oldStock = product.current_stock || 0;
     const newStock = oldStock + qty;
 
-    if (!confirm(`📥 Receive ${qty} units of ${product.name}?\nCurrent stock: ${oldStock}\nNew stock: ${newStock}`)) return;
+    if (!confirm(` Receive ${qty} units of ${product.name}?\nCurrent stock: ${oldStock}\nNew stock: ${newStock}`)) return;
 
     try {
         const db = await openDB();
@@ -920,9 +920,9 @@ async function receiveStock(e) {
 
         closeModal('receiveModal');
         await loadStockData();
-        alert(`✅ Received ${qty} units of ${product.name}\nNew stock: ${newStock}`);
+        alert(` Received ${qty} units of ${product.name}\nNew stock: ${newStock}`);
     } catch(e) {
-        alert('❌ Error: ' + e.message);
+        alert(' Error: ' + e.message);
     }
 }
 
@@ -936,12 +936,12 @@ async function adjustStock(e) {
     const notes = document.getElementById('adjustNotes').value;
 
     if (!productId || !qty || qty < 0 || !reason) {
-        alert('❌ Please fill in all required fields');
+        alert(' Please fill in all required fields');
         return;
     }
 
     const product = products.find(p => p.id === productId);
-    if (!product) { alert('❌ Product not found'); return; }
+    if (!product) { alert(' Product not found'); return; }
 
     const oldStock = product.current_stock || 0;
     let newStock = oldStock;
@@ -950,7 +950,7 @@ async function adjustStock(e) {
         newStock = oldStock + qty;
     } else if (type === 'decrease') {
         if (qty > oldStock) {
-            alert(`❌ Cannot decrease below 0. Current stock: ${oldStock}`);
+            alert(` Cannot decrease below 0. Current stock: ${oldStock}`);
             return;
         }
         newStock = oldStock - qty;
@@ -958,7 +958,7 @@ async function adjustStock(e) {
         newStock = qty;
     }
 
-    if (!confirm(`📊 Adjust stock for ${product.name}?\nCurrent: ${oldStock}\nNew: ${newStock}\nReason: ${reason}`)) return;
+    if (!confirm(` Adjust stock for ${product.name}?\nCurrent: ${oldStock}\nNew: ${newStock}\nReason: ${reason}`)) return;
 
     try {
         const db = await openDB();
@@ -988,9 +988,9 @@ async function adjustStock(e) {
 
         closeModal('adjustModal');
         await loadStockData();
-        alert(`✅ Stock adjusted successfully!\n${product.name}: ${oldStock} → ${newStock}`);
+        alert(` Stock adjusted successfully!\n${product.name}: ${oldStock} → ${newStock}`);
     } catch(e) {
-        alert('❌ Error: ' + e.message);
+        alert(' Error: ' + e.message);
     }
 }
 
@@ -1001,11 +1001,11 @@ function showProductHistory(productId) {
 
     const productMovements = movements.filter(m => m.product_id === productId);
     if (productMovements.length === 0) {
-        alert(`📋 ${product.name}\n\nNo movements recorded for this product.`);
+        alert(` ${product.name}\n\nNo movements recorded for this product.`);
         return;
     }
 
-    let msg = `📋 Stock History: ${product.name}\n`;
+    let msg = ` Stock History: ${product.name}\n`;
     msg += `Current Stock: ${product.current_stock || 0}\n`;
     msg += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
     msg += `Date          Type     Qty    From→To\n`;
@@ -1025,7 +1025,7 @@ function showProductHistory(productId) {
 // ===== EXPORT STOCK =====
 function exportStock() {
     if (!products || products.length === 0) {
-        alert('❌ No products to export');
+        alert(' No products to export');
         return;
     }
 
@@ -1094,7 +1094,7 @@ function updateBulkStockCount() {
 async function bulkAdjustStock() {
     const count = bulkStockSelected.size;
     if (count === 0) {
-        alert('❌ Select at least one product');
+        alert(' Select at least one product');
         return;
     }
 
@@ -1103,11 +1103,11 @@ async function bulkAdjustStock() {
     const reason = document.getElementById('bulkAdjustReason')?.value || 'bulk';
 
     if (!qty || qty < 0) {
-        alert('❌ Enter a valid quantity');
+        alert(' Enter a valid quantity');
         return;
     }
 
-    if (!confirm(`📊 Apply ${type} ${qty} to ${count} products?\nReason: ${reason}`)) return;
+    if (!confirm(` Apply ${type} ${qty} to ${count} products?\nReason: ${reason}`)) return;
 
     try {
         const db = await openDB();
@@ -1157,9 +1157,9 @@ async function bulkAdjustStock() {
 
         closeModal('bulkAdjustModal');
         await loadStockData();
-        alert(`✅ ${adjusted} products adjusted successfully!`);
+        alert(` ${adjusted} products adjusted successfully!`);
     } catch(e) {
-        alert('❌ Error: ' + e.message);
+        alert(' Error: ' + e.message);
     }
 }
 
@@ -1206,7 +1206,7 @@ document.addEventListener('keydown', function(e) {
 <div class="modal" id="bulkAdjustModal">
     <div class="modal-content" style="max-width:500px;">
         <span class="modal-close" onclick="closeModal('bulkAdjustModal')">&times;</span>
-        <h2>📊 Bulk Stock Adjust</h2>
+        <h2> Bulk Stock Adjust</h2>
         <p style="color:#94a3b8;font-size:13px;margin-bottom:12px;">
             Adjust stock for multiple products at once.
         </p>
@@ -1218,9 +1218,9 @@ document.addEventListener('keydown', function(e) {
         <div class="form-group">
             <label>Adjustment Type</label>
             <select id="bulkAdjustType">
-                <option value="increase">➕ Increase Stock</option>
-                <option value="decrease">➖ Decrease Stock</option>
-                <option value="set">📊 Set Stock Level</option>
+                <option value="increase"> Increase Stock</option>
+                <option value="decrease"> Decrease Stock</option>
+                <option value="set"> Set Stock Level</option>
             </select>
         </div>
 
@@ -1246,7 +1246,7 @@ document.addEventListener('keydown', function(e) {
 
         <div class="modal-actions">
             <button type="button" class="btn-cancel" onclick="closeModal('bulkAdjustModal')">Cancel</button>
-            <button type="button" class="btn-save" onclick="bulkAdjustStock()">📊 Apply to Selected</button>
+            <button type="button" class="btn-save" onclick="bulkAdjustStock()"> Apply to Selected</button>
         </div>
     </div>
 </div>
@@ -1367,7 +1367,7 @@ function checkForStockUpdates() {
     if (lastUpdate) {
         const lastCheck = sessionStorage.getItem('stock_checked') || '0';
         if (parseInt(lastUpdate) > parseInt(lastCheck)) {
-            console.log('🔄 Stock update detected, refreshing...');
+            console.log(' Stock update detected, refreshing...');
             sessionStorage.setItem('stock_checked', lastUpdate);
             loadStockData();
             return true;
@@ -1398,12 +1398,12 @@ document.addEventListener('visibilitychange', function() {
 });
 </script>
 <!-- Add refresh button to toolbar -->
-<button onclick="loadStockData()" style="padding:10px 18px;background:#1a3c34;color:white;border:none;border-radius:10px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;">🔄 Refresh</button>
+<button onclick="loadStockData()" style="padding:10px 18px;background:#1a3c34;color:white;border:none;border-radius:10px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;"> Refresh</button>
 <script>
 // ===== BULK EXPORT STOCK =====
 function exportStock() {
     if (products.length === 0) {
-        alert('❌ No stock data to export');
+        alert(' No stock data to export');
         return;
     }
     
@@ -1420,7 +1420,7 @@ function exportStock() {
     a.download = `stock_${new Date().toISOString().slice(0,10)}.csv`;
     a.click();
     URL.revokeObjectURL(url);
-    alert('✅ Stock exported!');
+    alert(' Stock exported!');
 }
 </script>
 <script>
@@ -1470,9 +1470,9 @@ renderProducts = function() {
         const totalValue = costPrice * stock;
         
         let status = 'in-stock';
-        let statusLabel = '✅ In Stock';
-        if (p.current_stock <= 0) { status = 'out-of-stock'; statusLabel = '❌ Out of Stock'; }
-        else if (p.current_stock < (p.min_stock_alert || 5)) { status = 'low-stock'; statusLabel = '⚠️ Low Stock'; }
+        let statusLabel = ' In Stock';
+        if (p.current_stock <= 0) { status = 'out-of-stock'; statusLabel = ' Out of Stock'; }
+        else if (p.current_stock < (p.min_stock_alert || 5)) { status = 'low-stock'; statusLabel = ' Low Stock'; }
         
         const stockClass = p.current_stock <= 0 ? 'red' : p.current_stock < (p.min_stock_alert || 5) ? 'orange' : 'green';
         
@@ -1489,9 +1489,9 @@ renderProducts = function() {
                 <td><span class="stock-number ${netChange >= 0 ? 'green' : 'red'}">${netChange >= 0 ? '+' : ''}${netChange}</span></td>
                 <td><span class="status-badge ${status}">${statusLabel}</span></td>
                 <td>
-                    <button class="btn-action receive" onclick="openReceiveModal(${p.id})">📥</button>
-                    <button class="btn-action adjust" onclick="openAdjustModal(${p.id})">📊</button>
-                    <button class="btn-action history" onclick="showProductHistory(${p.id})">📋</button>
+                    <button class="btn-action receive" onclick="openReceiveModal(${p.id})"></button>
+                    <button class="btn-action adjust" onclick="openAdjustModal(${p.id})"></button>
+                    <button class="btn-action history" onclick="showProductHistory(${p.id})"></button>
                 </td>
             </tr>
         `;
@@ -1560,9 +1560,9 @@ renderProducts = function() {
         const totalValue = costPrice * stock;
         
         let status = 'in-stock';
-        let statusLabel = '✅ In Stock';
-        if (p.current_stock <= 0) { status = 'out-of-stock'; statusLabel = '❌ Out of Stock'; }
-        else if (p.current_stock < (p.min_stock_alert || 5)) { status = 'low-stock'; statusLabel = '⚠️ Low Stock'; }
+        let statusLabel = ' In Stock';
+        if (p.current_stock <= 0) { status = 'out-of-stock'; statusLabel = ' Out of Stock'; }
+        else if (p.current_stock < (p.min_stock_alert || 5)) { status = 'low-stock'; statusLabel = ' Low Stock'; }
         
         const stockClass = p.current_stock <= 0 ? 'red' : p.current_stock < (p.min_stock_alert || 5) ? 'orange' : 'green';
         
@@ -1581,9 +1581,9 @@ renderProducts = function() {
                 <td><span class="stock-number ${netChange >= 0 ? 'green' : 'red'}">${netChange >= 0 ? '+' : ''}${netChange}</span></td>
                 <td><span class="status-badge ${status}">${statusLabel}</span></td>
                 <td>
-                    <button class="btn-action receive" onclick="openReceiveModal(${p.id})">📥</button>
-                    <button class="btn-action adjust" onclick="openAdjustModal(${p.id})">📊</button>
-                    <button class="btn-action history" onclick="showProductHistory(${p.id})">📋</button>
+                    <button class="btn-action receive" onclick="openReceiveModal(${p.id})"></button>
+                    <button class="btn-action adjust" onclick="openAdjustModal(${p.id})"></button>
+                    <button class="btn-action history" onclick="showProductHistory(${p.id})"></button>
                 </td>
             </tr>
         `;
@@ -1617,7 +1617,7 @@ renderProducts = function() {
     const totalValue = products ? products.reduce((s, p) => s + ((p.cost_price || 0) * (p.current_stock || 0)), 0) : 0;
     document.getElementById('stockValue').textContent = `KES ${totalValue.toFixed(0)}`;
     
-    console.log('📊 Stock stats:', { total, inStock, lowStock, outStock });
+    console.log(' Stock stats:', { total, inStock, lowStock, outStock });
 };
 </script>
 <script>
@@ -1625,7 +1625,7 @@ function checkLicenseStatus() {
     const activated = localStorage.getItem("activated");
     const expiry = localStorage.getItem("expiry_date");
     if (!activated || activated !== "true") {
-        alert("⚠️ Your license is not activated.\nPlease go to Settings to activate your license.");
+        alert(" Your license is not activated.\nPlease go to Settings to activate your license.");
         window.location.href = "settings.html";
         return false;
     }
@@ -1634,7 +1634,7 @@ function checkLicenseStatus() {
         const now = new Date();
         const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
         if (expiryDate < now) {
-            alert("⚠️ Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
+            alert(" Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
             localStorage.removeItem("activated");
             localStorage.removeItem("activation_code");
             localStorage.removeItem("expiry_date");
@@ -1642,7 +1642,7 @@ function checkLicenseStatus() {
             return false;
         }
         if (daysRemaining <= 7) {
-            alert("⚠️ Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease renew your license soon.");
+            alert(" Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease renew your license soon.");
         }
     }
     return true;
@@ -1658,10 +1658,10 @@ if ("serviceWorker" in navigator) {
     window.addEventListener("load", function() {
         navigator.serviceWorker.register("/sw.js")
             .then(function(reg) {
-                console.log("✅ Service Worker registered for stock.html");
+                console.log(" Service Worker registered for stock.html");
             })
             .catch(function(err) {
-                console.log("❌ Service Worker registration failed:", err);
+                console.log(" Service Worker registration failed:", err);
             });
     });
 }

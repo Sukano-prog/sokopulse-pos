@@ -123,37 +123,37 @@
     <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
 
     <aside class="sidebar">
-        <div class="logo">🏪 <span>Soko</span>Pulse <button class="close-btn" onclick="toggleSidebar()">✕</button></div>
+        <div class="logo"> <span>Soko</span>Pulse <button class="close-btn" onclick="toggleSidebar()"></button></div>
         <nav>
             <div class="nav-label">Main</div>
-            <a href="pos.html">🛒 POS</a>
-            <a href="dashboard.html">📊 Dashboard</a>
-            <a href="orders.html">📋 Orders</a>
+            <a href="pos.html"> POS</a>
+            <a href="dashboard.html"> Dashboard</a>
+            <a href="orders.html"> Orders</a>
             <div class="nav-label">Inventory</div>
-            <a href="products.html">📦 Products</a>
-            <a href="stock.html">📦 Stock</a>
+            <a href="products.html"> Products</a>
+            <a href="stock.html"> Stock</a>
             <a href="expiry.html">⏰ Expiry</a>
-            <a href="categories.html">📂 Categories</a>
-            <a href="suppliers.html">📦 Suppliers</a>
+            <a href="categories.html"> Categories</a>
+            <a href="suppliers.html"> Suppliers</a>
             <div class="nav-label">Management</div>
-            <a href="customers.html">👤 Customers</a>
-            <a href="reports.html">📈 Reports</a>
-            <a href="audit.html" class="active">📋 Audit</a>
-            <a href="returns.html">🔄 Returns</a>
-            <a href="settings.html">⚙️ Settings</a>
+            <a href="customers.html"> Customers</a>
+            <a href="reports.html"> Reports</a>
+            <a href="audit.html" class="active"> Audit</a>
+            <a href="returns.html"> Returns</a>
+            <a href="settings.html"> Settings</a>
         </nav>
         <div class="user-section"><div class="name" id="userName">Administrator</div><div class="role" id="userRole">Admin</div></div>
-        <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+        <button class="logout-btn" onclick="logout()"> Logout</button>
     </aside>
 
     <main class="main-content">
         <header class="topbar">
             <div class="left">
-                <button class="hamburger" onclick="toggleSidebar()">☰</button>
-                <h1>📋 Audit Log</h1>
+                <button class="hamburger" onclick="toggleSidebar()"></button>
+                <h1> Audit Log</h1>
             </div>
             <div class="right">
-                <span class="store-badge">🏪 SokoPulse</span>
+                <span class="store-badge"> SokoPulse</span>
                 <span class="time" id="timeDisplay"></span>
             </div>
         </header>
@@ -161,7 +161,7 @@
         <div class="page-container">
             <div class="toolbar">
                 <div class="search-wrapper">
-                    <span class="search-icon">🔍</span>
+                    <span class="search-icon"></span>
                     <input type="text" id="searchInput" placeholder="Search by user or action..." oninput="renderAudit()">
                 </div>
                 <select class="filter-select" id="actionFilter" onchange="renderAudit()">
@@ -174,8 +174,8 @@
                     <option value="update">Update</option>
                     <option value="credit">Credit</option>
                 </select>
-                <button class="btn-refresh" onclick="loadAudit()">🔄 Refresh</button>
-                <button class="btn-export" onclick="exportAudit()">📤 Export CSV</button>
+                <button class="btn-refresh" onclick="loadAudit()"> Refresh</button>
+                <button class="btn-export" onclick="exportAudit()"> Export CSV</button>
             </div>
 
             <div id="auditList">
@@ -279,7 +279,7 @@ async function loadAudit() {
         var db = await openDB();
         // Check if audit_log store exists
         if (!db.objectStoreNames.contains('audit_log')) {
-            console.log('⚠️ audit_log store not found - creating it now');
+            console.log(' audit_log store not found - creating it now');
             // Create the store by closing and reopening with upgrade
             db.close();
             var req = indexedDB.open('SokoPulsePOS', 7);
@@ -287,7 +287,7 @@ async function loadAudit() {
                 var db2 = e.target.result;
                 auditLogs = [];
                 renderAudit();
-                console.log('📋 Audit store created, no records yet');
+                console.log(' Audit store created, no records yet');
                 db2.close();
             };
             req.onerror = function(e) {
@@ -301,7 +301,7 @@ async function loadAudit() {
         // Sort by date descending
         auditLogs.sort(function(a, b) { return new Date(b.date) - new Date(a.date); });
         renderAudit();
-        console.log('📋 Audit loaded:', auditLogs.length, 'records');
+        console.log(' Audit loaded:', auditLogs.length, 'records');
     } catch(e) {
         console.error('Error loading audit:', e);
         document.getElementById('auditList').innerHTML = '<div style="text-align:center;padding:40px;color:#ef4444;">Error loading audit log</div>';
@@ -332,13 +332,13 @@ function renderAudit() {
     }
 
     var actionLabels = {
-        'login': '🔐 Login',
-        'sale': '💰 Sale',
-        'return': '🔄 Return',
-        'adjust': '📊 Stock Adjust',
-        'delete': '🗑️ Delete',
-        'update': '✏️ Update',
-        'credit': '💳 Credit'
+        'login': ' Login',
+        'sale': ' Sale',
+        'return': ' Return',
+        'adjust': ' Stock Adjust',
+        'delete': ' Delete',
+        'update': ' Update',
+        'credit': ' Credit'
     };
 
     var actionClasses = {
@@ -361,7 +361,7 @@ function renderAudit() {
         html += '<div class="info">';
         html += '<span class="action-badge ' + actionClass + '">' + actionLabel + '</span>';
         html += ' <span class="action">' + (a.details || '') + '</span>';
-        html += '<div class="user">👤 ' + (a.user || 'System') + '</div>';
+        html += '<div class="user"> ' + (a.user || 'System') + '</div>';
         html += '</div>';
         html += '<div class="time">' + timeStr + '</div>';
         html += '</div>';
@@ -388,7 +388,7 @@ function exportAudit() {
     a.download = 'audit_log_' + new Date().toISOString().slice(0, 10) + '.csv';
     a.click();
     URL.revokeObjectURL(url);
-    alert('✅ Audit exported!');
+    alert(' Audit exported!');
 }
 
 // ===== LOG ACTION =====
@@ -425,7 +425,7 @@ document.addEventListener('DOMContentLoaded', function() {
     openDB().then(function(db) {
         if (!db.objectStoreNames.contains('audit_log')) {
             // Store doesn't exist, will be created on upgrade
-            console.log('⚠️ Audit log store not found, will be created on next upgrade');
+            console.log(' Audit log store not found, will be created on next upgrade');
         }
         loadAudit();
     });
@@ -449,10 +449,10 @@ if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
         navigator.serviceWorker.register('/sw.js')
             .then(function(reg) {
-                console.log('✅ Service Worker registered');
+                console.log(' Service Worker registered');
             })
             .catch(function(err) {
-                console.log('❌ Service Worker registration failed:', err);
+                console.log(' Service Worker registration failed:', err);
             });
     });
 }

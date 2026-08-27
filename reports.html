@@ -245,61 +245,61 @@
 <div class="app">
     <div class="sidebar-overlay" onclick="toggleSidebar()">
                 <div class="filter-group" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-                    <label style="font-size:12px;font-weight:600;color:#0f172a;">📦 Product</label>
+                    <label style="font-size:12px;font-weight:600;color:#0f172a;"> Product</label>
                     <select id="productFilter" onchange="loadActiveReport()" style="padding:8px 12px;border:2px solid #e2e8f0;border-radius:8px;font-family:'Inter',sans-serif;font-size:13px;background:white;min-width:150px;">
                         <option value="all">All Products</option>
                     </select>
                 </div>
                 <div class="filter-group" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
-                    <label style="font-size:12px;font-weight:600;color:#0f172a;">📂 Category</label>
+                    <label style="font-size:12px;font-weight:600;color:#0f172a;"> Category</label>
                     <select id="categoryFilter" onchange="loadActiveReport()" style="padding:8px 12px;border:2px solid #e2e8f0;border-radius:8px;font-family:'Inter',sans-serif;font-size:13px;background:white;min-width:130px;">
                         <option value="all">All Categories</option>
                     </select>
                 </div></div>
 
     <aside class="sidebar">
-        <div class="logo">🏪 <span>Soko</span>Pulse <button class="close-btn" onclick="toggleSidebar()">✕</button></div>
+        <div class="logo"> <span>Soko</span>Pulse <button class="close-btn" onclick="toggleSidebar()"></button></div>
         <nav>
             <div class="nav-label">Main</div>
-            <a href="pos.html">🛒 POS</a>
-            <a href="dashboard.html">📊 Dashboard</a>
-            <a href="orders.html">📋 Orders</a>
+            <a href="pos.html"> POS</a>
+            <a href="dashboard.html"> Dashboard</a>
+            <a href="orders.html"> Orders</a>
             <div class="nav-label">Inventory</div>
-            <a href="products.html">📦 Products</a>
-            <a href="stock.html">📦 Stock</a>
+            <a href="products.html"> Products</a>
+            <a href="stock.html"> Stock</a>
             <a href="expiry.html">⏰ Expiry</a>
-            <a href="categories.html">📂 Categories</a>
-            <a href="suppliers.html">📦 Suppliers</a>
+            <a href="categories.html"> Categories</a>
+            <a href="suppliers.html"> Suppliers</a>
             <div class="nav-label">Management</div>
-            <a href="customers.html">👤 Customers</a>
-            <a href="reports.html" class="active">📈 Reports</a>
-            <a href="audit.html">📋 Audit</a>
-            <a href="returns.html">🔄 Returns</a>
-            <a href="settings.html">⚙️ Settings</a>
+            <a href="customers.html"> Customers</a>
+            <a href="reports.html" class="active"> Reports</a>
+            <a href="audit.html"> Audit</a>
+            <a href="returns.html"> Returns</a>
+            <a href="settings.html"> Settings</a>
         </nav>
         <div class="user-section"><div class="name" id="userName">Administrator</div><div class="role" id="userRole">Admin</div></div>
-        <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+        <button class="logout-btn" onclick="logout()"> Logout</button>
     </aside>
 
     <main class="main-content">
         <header class="topbar">
-            <div class="left"><button class="hamburger" onclick="toggleSidebar()">☰</button><h1>📈 Reports</h1></div>
-            <div class="right"><span class="store-badge">🏪 SokoPulse</span><span class="time" id="timeDisplay"></span></div>
+            <div class="left"><button class="hamburger" onclick="toggleSidebar()"></button><h1> Reports</h1></div>
+            <div class="right"><span class="store-badge"> SokoPulse</span><span class="time" id="timeDisplay"></span></div>
         </header>
 
         <div class="page-container">
             <!-- Tabs -->
             <div class="report-tabs">
-                <button class="active" onclick="switchTab('sales')">📊 Sales</button>
-                <button onclick="switchTab('products')">📦 Products</button>
-                <button onclick="switchTab('payments')">💳 Payments</button>
-                <button onclick="switchTab('customers')">👤 Customers</button>
-                <button onclick="switchTab('profitloss')">💰 Profit/Loss</button>
+                <button class="active" onclick="switchTab('sales')"> Sales</button>
+                <button onclick="switchTab('products')"> Products</button>
+                <button onclick="switchTab('payments')"> Payments</button>
+                <button onclick="switchTab('customers')"> Customers</button>
+                <button onclick="switchTab('profitloss')"> Profit/Loss</button>
             </div>
 
             <!-- Date Filter -->
             <div class="date-filter-row" id="dateFilterRow">
-                <label>📅 Period</label>
+                <label> Period</label>
                 <select id="dateRangeSelect" onchange="applyDateRange()">
                     <option value="today">Today</option>
                     <option value="yesterday">Yesterday</option>
@@ -314,20 +314,20 @@
                     <span style="color:#94a3b8;">→</span>
                     <input type="date" id="reportEndDate">
                 </div>
-                <button class="btn-apply" onclick="loadActiveReport()">📊 Apply</button>
-                <button class="btn-export" onclick="exportReport()">📤 Export</button>
+                <button class="btn-apply" onclick="loadActiveReport()"> Apply</button>
+                <button class="btn-export" onclick="exportReport()"> Export</button>
             </div>
 
             <!-- Sales Report -->
             <div class="report-content active" id="tab-sales">
                 <div class="report-stats">
-                    <div class="report-stat"><div class="number" id="totalRevenue">KES 0</div><div class="label">💰 Total Revenue</div></div>
-                    <div class="report-stat"><div class="number" id="totalOrders">0</div><div class="label">📋 Total Orders</div></div>
-                    <div class="report-stat"><div class="number" id="avgOrder">KES 0</div><div class="label">📊 Average Order</div></div>
-                    <div class="report-stat"><div class="number" id="topDay">-</div><div class="label">📅 Best Day</div></div>
+                    <div class="report-stat"><div class="number" id="totalRevenue">KES 0</div><div class="label"> Total Revenue</div></div>
+                    <div class="report-stat"><div class="number" id="totalOrders">0</div><div class="label"> Total Orders</div></div>
+                    <div class="report-stat"><div class="number" id="avgOrder">KES 0</div><div class="label"> Average Order</div></div>
+                    <div class="report-stat"><div class="number" id="topDay">-</div><div class="label"> Best Day</div></div>
                 </div>
                 <div class="chart-container">
-                    <h4>📊 Daily Sales Trend</h4>
+                    <h4> Daily Sales Trend</h4>
                     <div class="chart-bars" id="salesChart"><div class="no-data">No sales data available</div></div>
                 </div>
             </div>
@@ -335,11 +335,11 @@
             <!-- Products Report -->
             <div class="report-content" id="tab-products">
                 <div class="report-stats">
-                    <div class="report-stat"><div class="number" id="totalProductsSold">0</div><div class="label">📦 Total Sold</div></div>
-                    <div class="report-stat"><div class="number" id="topProductName">-</div><div class="label">🏆 Top Product</div></div>
+                    <div class="report-stat"><div class="number" id="totalProductsSold">0</div><div class="label"> Total Sold</div></div>
+                    <div class="report-stat"><div class="number" id="topProductName">-</div><div class="label"> Top Product</div></div>
                 </div>
                 <div class="chart-container">
-                    <h4>🏆 Top Selling Products</h4>
+                    <h4> Top Selling Products</h4>
                     <div id="topProductsList"><div class="no-data">No data available</div></div>
                 </div>
             </div>
@@ -347,13 +347,13 @@
             <!-- Payments Report -->
             <div class="report-content" id="tab-payments">
                 <div class="report-stats">
-                    <div class="report-stat"><div class="number green" id="cashTotal">KES 0</div><div class="label">💵 Cash</div></div>
-                    <div class="report-stat"><div class="number orange" id="mpesaTotal">KES 0</div><div class="label">📱 M-Pesa</div></div>
-                    <div class="report-stat"><div class="number blue" id="cardTotal">KES 0</div><div class="label">💳 Card</div></div>
-                    <div class="report-stat"><div class="number purple" id="creditTotal">KES 0</div><div class="label">📋 Credit</div></div>
+                    <div class="report-stat"><div class="number green" id="cashTotal">KES 0</div><div class="label"> Cash</div></div>
+                    <div class="report-stat"><div class="number orange" id="mpesaTotal">KES 0</div><div class="label"> M-Pesa</div></div>
+                    <div class="report-stat"><div class="number blue" id="cardTotal">KES 0</div><div class="label"> Card</div></div>
+                    <div class="report-stat"><div class="number purple" id="creditTotal">KES 0</div><div class="label"> Credit</div></div>
                 </div>
                 <div class="chart-container">
-                    <h4>💳 Payment Breakdown</h4>
+                    <h4> Payment Breakdown</h4>
                     <div class="payment-breakdown" id="paymentBreakdown"><div class="no-data">No data available</div></div>
                 </div>
             </div>
@@ -361,11 +361,11 @@
             <!-- Customers Report -->
             <div class="report-content" id="tab-customers">
                 <div class="report-stats">
-                    <div class="report-stat"><div class="number" id="totalCustomers">0</div><div class="label">👤 Total Customers</div></div>
-                    <div class="report-stat"><div class="number green" id="topCustomerName">-</div><div class="label">🏆 Top Customer</div></div>
+                    <div class="report-stat"><div class="number" id="totalCustomers">0</div><div class="label"> Total Customers</div></div>
+                    <div class="report-stat"><div class="number green" id="topCustomerName">-</div><div class="label"> Top Customer</div></div>
                 </div>
                 <div class="chart-container">
-                    <h4>🏆 Top Customers</h4>
+                    <h4> Top Customers</h4>
                     <div id="topCustomersList"><div class="no-data">No data available</div></div>
                 </div>
             </div>
@@ -572,7 +572,7 @@ function getFilteredOrders(startDate, endDate) {
 
 // ===== SALES REPORT =====
 function loadSalesReport() {
-    console.log('📊 Loading Sales Report...');
+    console.log(' Loading Sales Report...');
     var range = getDateRange();
     if (!range.start || !range.end) {
         var today = new Date();
@@ -622,12 +622,12 @@ function loadSalesReport() {
             '<span class="bar-label">' + label + '</span>' +
         '</div>';
     }).join('');
-    console.log('✅ Sales Report loaded:', count, 'orders');
+    console.log(' Sales Report loaded:', count, 'orders');
 }
 
 // ===== PRODUCTS REPORT =====
 function loadProductsReport() {
-    console.log('📊 Loading Products Report...');
+    console.log(' Loading Products Report...');
     var range = getDateRange();
     if (!range.start || !range.end) { setDefaultDates(); range = getDateRange(); }
 
@@ -659,7 +659,7 @@ function loadProductsReport() {
         return;
     }
 
-    var icons = ['🥇', '🥈', '🥉', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟'];
+    var icons = ['', '', '', '4⃣', '5⃣', '6⃣', '7⃣', '8⃣', '9⃣', ''];
     list.innerHTML = sorted.slice(0, 10).map(function(item, i) {
         var name = item[0];
         var data = item[1];
@@ -671,12 +671,12 @@ function loadProductsReport() {
             '<span class="total">KES ' + data.revenue.toFixed(0) + '</span>' +
         '</div>';
     }).join('');
-    console.log('✅ Products Report loaded');
+    console.log(' Products Report loaded');
 }
 
 // ===== PAYMENTS REPORT =====
 function loadPaymentsReport() {
-    console.log('📊 Loading Payments Report...');
+    console.log(' Loading Payments Report...');
     var range = getDateRange();
     if (!range.start || !range.end) { setDefaultDates(); range = getDateRange(); }
 
@@ -693,7 +693,7 @@ function loadPaymentsReport() {
     document.getElementById('cardTotal').textContent = 'KES ' + (payments.card || 0).toFixed(0);
     document.getElementById('creditTotal').textContent = 'KES ' + (payments.credit || 0).toFixed(0);
 
-    var labels = { cash: '💵 Cash', mpesa: '📱 M-Pesa', card: '💳 Card', credit: '📋 Credit', bank: '🏦 Bank' };
+    var labels = { cash: ' Cash', mpesa: ' M-Pesa', card: ' Card', credit: ' Credit', bank: ' Bank' };
     var container = document.getElementById('paymentBreakdown');
     var entries = Object.entries(payments);
     if (entries.length === 0) {
@@ -710,12 +710,12 @@ function loadPaymentsReport() {
             '<div class="label">' + (labels[method] || method) + '</div>' +
         '</div>';
     }).join('');
-    console.log('✅ Payments Report loaded');
+    console.log(' Payments Report loaded');
 }
 
 // ===== CUSTOMERS REPORT =====
 function loadCustomersReport() {
-    console.log('📊 Loading Customers Report...');
+    console.log(' Loading Customers Report...');
     var range = getDateRange();
     if (!range.start || !range.end) { setDefaultDates(); range = getDateRange(); }
 
@@ -739,7 +739,7 @@ function loadCustomersReport() {
             customerStats[id].total += (o.total || 0);
         } else if (o.customer_name && o.customer_name !== 'Walk-in') {
             if (!customerStats['other']) {
-                customerStats['other'] = { name: '👤 Other', phone: '', orders: 0, total: 0, credit: 0 };
+                customerStats['other'] = { name: ' Other', phone: '', orders: 0, total: 0, credit: 0 };
             }
             customerStats['other'].orders += 1;
             customerStats['other'].total += (o.total || 0);
@@ -759,10 +759,10 @@ function loadCustomersReport() {
         return;
     }
 
-    var icons = ['🥇', '🥈', '🥉', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟'];
+    var icons = ['', '', '', '4⃣', '5⃣', '6⃣', '7⃣', '8⃣', '9⃣', ''];
     list.innerHTML = sorted.slice(0, 10).map(function(c, i) {
         var icon = icons[i] || (i + 1);
-        var credit = c.credit > 0 ? ' 💳 KES ' + c.credit.toFixed(0) : '';
+        var credit = c.credit > 0 ? '  KES ' + c.credit.toFixed(0) : '';
         return '<div class="top-product">' +
             '<span style="font-weight:600;min-width:30px;">' + icon + '</span>' +
             '<span class="name">' + c.name + '</span>' +
@@ -770,12 +770,12 @@ function loadCustomersReport() {
             '<span class="total">KES ' + c.total.toFixed(0) + credit + '</span>' +
         '</div>';
     }).join('');
-    console.log('✅ Customers Report loaded');
+    console.log(' Customers Report loaded');
 }
 
 // ===== PROFIT/LOSS REPORT =====
 function loadProfitLoss() {
-    console.log('📊 Loading Profit/Loss...');
+    console.log(' Loading Profit/Loss...');
     var range = getDateRange();
     if (!range.start || !range.end) { setDefaultDates(); range = getDateRange(); }
 
@@ -834,7 +834,7 @@ function loadProfitLoss() {
     
     if (sortedProducts.length > 0) {
         productHtml = '<div style="background:white;border-radius:12px;padding:20px;border:1px solid #e2e8f0;margin-top:12px;">' +
-            '<h3 style="font-size:16px;font-weight:700;color:#0f172a;margin-bottom:12px;">📦 Profit by Product</h3>' +
+            '<h3 style="font-size:16px;font-weight:700;color:#0f172a;margin-bottom:12px;"> Profit by Product</h3>' +
             '<div style="overflow-x:auto;">' +
             '<table style="width:100%;border-collapse:collapse;font-size:13px;">' +
                 '<thead>' +
@@ -871,47 +871,47 @@ function loadProfitLoss() {
 
     container.innerHTML = 
         '<div style="background:white;border-radius:12px;padding:20px;border:1px solid #e2e8f0;margin-bottom:16px;">' +
-            '<h3 style="font-size:16px;font-weight:700;color:#0f172a;margin-bottom:12px;">📊 Profit & Loss Summary</h3>' +
+            '<h3 style="font-size:16px;font-weight:700;color:#0f172a;margin-bottom:12px;"> Profit & Loss Summary</h3>' +
             '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;">' +
                 '<div style="background:#f0fdf4;padding:16px;border-radius:10px;border:1px solid #bbf7d0;text-align:center;">' +
-                    '<div style="font-size:12px;color:#166534;font-weight:600;text-transform:uppercase;">💰 Total Revenue</div>' +
+                    '<div style="font-size:12px;color:#166534;font-weight:600;text-transform:uppercase;"> Total Revenue</div>' +
                     '<div style="font-size:28px;font-weight:800;color:#166534;">KES ' + totalRevenue.toFixed(0) + '</div>' +
                 '</div>' +
                 '<div style="background:#fef3c7;padding:16px;border-radius:10px;border:1px solid #fde68a;text-align:center;">' +
-                    '<div style="font-size:12px;color:#92400e;font-weight:600;text-transform:uppercase;">📦 Cost of Goods Sold</div>' +
+                    '<div style="font-size:12px;color:#92400e;font-weight:600;text-transform:uppercase;"> Cost of Goods Sold</div>' +
                     '<div style="font-size:28px;font-weight:800;color:#92400e;">KES ' + totalCOGS.toFixed(0) + '</div>' +
                     '<div style="font-size:12px;color:#92400e;">(' + totalUnits + ' units sold)</div>' +
                 '</div>' +
                 '<div style="background:' + (grossProfit >= 0 ? '#dbeafe' : '#fee2e2') + ';padding:16px;border-radius:10px;border:1px solid ' + (grossProfit >= 0 ? '#bfdbfe' : '#fecaca') + ';text-align:center;">' +
-                    '<div style="font-size:12px;color:' + (grossProfit >= 0 ? '#1e40af' : '#991b1b') + ';font-weight:600;text-transform:uppercase;">' + (grossProfit >= 0 ? '📈' : '📉') + ' Gross Profit</div>' +
+                    '<div style="font-size:12px;color:' + (grossProfit >= 0 ? '#1e40af' : '#991b1b') + ';font-weight:600;text-transform:uppercase;">' + (grossProfit >= 0 ? '' : '') + ' Gross Profit</div>' +
                     '<div style="font-size:28px;font-weight:800;color:' + (grossProfit >= 0 ? '#1e40af' : '#991b1b') + ';">KES ' + grossProfit.toFixed(0) + '</div>' +
-                    '<div style="font-size:14px;color:' + (grossProfit >= 0 ? '#1e40af' : '#991b1b') + ';">' + (grossProfit >= 0 ? '✅ Profitable' : '⚠️ Loss') + '</div>' +
+                    '<div style="font-size:14px;color:' + (grossProfit >= 0 ? '#1e40af' : '#991b1b') + ';">' + (grossProfit >= 0 ? ' Profitable' : ' Loss') + '</div>' +
                 '</div>' +
                 '<div style="background:#f5f3ff;padding:16px;border-radius:10px;border:1px solid #ddd6fe;text-align:center;">' +
-                    '<div style="font-size:12px;color:#5b21b6;font-weight:600;text-transform:uppercase;">📊 Gross Margin</div>' +
+                    '<div style="font-size:12px;color:#5b21b6;font-weight:600;text-transform:uppercase;"> Gross Margin</div>' +
                     '<div style="font-size:28px;font-weight:800;color:#5b21b6;">' + grossMargin.toFixed(1) + '%</div>' +
                 '</div>' +
             '</div>' +
         '</div>' +
         '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:12px;">' +
             '<div style="background:white;padding:12px 16px;border-radius:8px;border:1px solid #e2e8f0;text-align:center;">' +
-                '<div style="font-size:11px;color:#94a3b8;font-weight:600;text-transform:uppercase;">📅 Period</div>' +
+                '<div style="font-size:11px;color:#94a3b8;font-weight:600;text-transform:uppercase;"> Period</div>' +
                 '<div style="font-size:14px;font-weight:600;color:#0f172a;">' + range.start + ' → ' + range.end + '</div>' +
             '</div>' +
             '<div style="background:white;padding:12px 16px;border-radius:8px;border:1px solid #e2e8f0;text-align:center;">' +
-                '<div style="font-size:11px;color:#94a3b8;font-weight:600;text-transform:uppercase;">📋 Total Orders</div>' +
+                '<div style="font-size:11px;color:#94a3b8;font-weight:600;text-transform:uppercase;"> Total Orders</div>' +
                 '<div style="font-size:14px;font-weight:600;color:#0f172a;">' + totalOrders + '</div>' +
             '</div>' +
             '<div style="background:white;padding:12px 16px;border-radius:8px;border:1px solid #e2e8f0;text-align:center;">' +
-                '<div style="font-size:11px;color:#94a3b8;font-weight:600;text-transform:uppercase;">📊 Average Order</div>' +
+                '<div style="font-size:11px;color:#94a3b8;font-weight:600;text-transform:uppercase;"> Average Order</div>' +
                 '<div style="font-size:14px;font-weight:600;color:#0f172a;">KES ' + avgOrder.toFixed(0) + '</div>' +
             '</div>' +
         '</div>' +
         '<div style="background:#f8fafc;padding:12px 16px;border-radius:8px;font-size:12px;color:#64748b;border:1px solid #e2e8f0;">' +
-            '<span>💡 Gross Profit = Revenue - COGS | Gross Margin = (Gross Profit / Revenue) × 100</span>' +
+            '<span> Gross Profit = Revenue - COGS | Gross Margin = (Gross Profit / Revenue) × 100</span>' +
         '</div>' +
         productHtml;
-    console.log('✅ Profit/Loss loaded');
+    console.log(' Profit/Loss loaded');
 }
 
 function setDefaultDates() {
@@ -961,10 +961,10 @@ if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
         navigator.serviceWorker.register('/sw.js')
             .then(function(reg) {
-                console.log('✅ Service Worker registered');
+                console.log(' Service Worker registered');
             })
             .catch(function(err) {
-                console.log('❌ Service Worker registration failed:', err);
+                console.log(' Service Worker registration failed:', err);
             });
     });
 }
@@ -978,7 +978,7 @@ if ('serviceWorker' in navigator) {
 </script>
 
 <!-- License Warning Banner -->
-    <span id="licenseWarningMessage">⚠️ Your license expires soon. Please renew in Settings.</span>
+    <span id="licenseWarningMessage"> Your license expires soon. Please renew in Settings.</span>
 </div>
 
 <script>
@@ -988,7 +988,7 @@ function checkLicenseStatus() {
     const expiry = localStorage.getItem("expiry_date");
     
     if (!activated || activated !== "true") {
-        alert("⚠️ Your license is not activated.\nPlease go to Settings to activate your license.");
+        alert(" Your license is not activated.\nPlease go to Settings to activate your license.");
         window.location.href = "settings.html";
         return false;
     }
@@ -999,7 +999,7 @@ function checkLicenseStatus() {
         const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
         
         if (expiryDate < now) {
-            alert("⚠️ Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
+            alert(" Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
             localStorage.removeItem("activated");
             localStorage.removeItem("activation_code");
             localStorage.removeItem("expiry_date");
@@ -1009,7 +1009,7 @@ function checkLicenseStatus() {
         
         // Show warning 7 days before expiry
         if (daysRemaining <= 7 && daysRemaining > 0) {
-            const message = "⚠️ Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
+            const message = " Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
             alert(message);
         }
     }
@@ -1041,7 +1041,7 @@ function checkLicenseStatus() {
     const expiry = localStorage.getItem("expiry_date");
     
     if (!activated || activated !== "true") {
-        alert("⚠️ Your license is not activated.\nPlease go to Settings to activate your license.");
+        alert(" Your license is not activated.\nPlease go to Settings to activate your license.");
         window.location.href = "settings.html";
         return false;
     }
@@ -1052,7 +1052,7 @@ function checkLicenseStatus() {
         const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
         
         if (expiryDate < now) {
-            alert("⚠️ Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
+            alert(" Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
             localStorage.removeItem("activated");
             localStorage.removeItem("activation_code");
             localStorage.removeItem("expiry_date");
@@ -1062,7 +1062,7 @@ function checkLicenseStatus() {
         
         // Show warning 7 days before expiry
         if (daysRemaining <= 7 && daysRemaining > 0) {
-            const message = "⚠️ Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
+            const message = " Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
             alert(message);
         }
     }

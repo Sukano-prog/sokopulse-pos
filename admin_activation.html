@@ -6,11 +6,11 @@ const ADMIN_PASSWORD = "admin123";
 // Check if already authenticated in this session
 // Always ask for password
 if (true) {
-    const enteredPassword = prompt("🔒 Admin Access Required\n\nEnter the admin password:");
+    const enteredPassword = prompt(" Admin Access Required\n\nEnter the admin password:");
     if (enteredPassword === "Linux@123") {
         sessionStorage.setItem("admin_authenticated", "true");
     } else {
-        alert("❌ Incorrect password! Access denied.");
+        alert(" Incorrect password! Access denied.");
         window.location.href = "index.html";
     }
 }
@@ -186,7 +186,7 @@ if (true) {
 <body>
 <div class="container">
     <div class="logo">
-        <h1>🏪 <span>Soko</span>Pulse</h1>
+        <h1> <span>Soko</span>Pulse</h1>
         <p>Admin - Activation Code Generator</p>
     </div>
     
@@ -244,7 +244,7 @@ if (true) {
         </div>
     </div>
     
-    <button class="btn btn-primary" onclick="generateCode()">🔑 Generate Activation Code</button>
+    <button class="btn btn-primary" onclick="generateCode()"> Generate Activation Code</button>
     
     <!-- Code Display -->
     <div id="codeDisplay" style="display:none;">
@@ -255,16 +255,16 @@ if (true) {
                 Valid for: <span id="codeExpiry">30 days</span>
             </div>
         </div>
-        <button class="btn btn-secondary" onclick="copyCode()" style="width:100%;">📋 Copy Code</button>
+        <button class="btn btn-secondary" onclick="copyCode()" style="width:100%;"> Copy Code</button>
     </div>
     
     <!-- Code List -->
     <div class="code-list">
         <div class="toolbar">
-            <h3>📋 Active Codes</h3>
+            <h3> Active Codes</h3>
             <span style="font-size:12px;color:#94a3b8;" id="codeCount">Total: 0</span>
-            <button class="btn btn-secondary btn-sm" onclick="exportCodes()">📤 Export</button>
-            <button class="btn btn-danger btn-sm" onclick="revokeAll()">🗑️ Revoke All</button>
+            <button class="btn btn-secondary btn-sm" onclick="exportCodes()"> Export</button>
+            <button class="btn btn-danger btn-sm" onclick="revokeAll()"> Revoke All</button>
         </div>
         <div id="codeListContainer">
             <p style="color:#94a3b8;font-size:13px;">No codes generated yet.</p>
@@ -289,12 +289,12 @@ function generateCode() {
     
     if (!storeName) {
         status.className = 'status error show';
-        status.textContent = '❌ Please enter store name.';
+        status.textContent = ' Please enter store name.';
         return;
     }
     if (!machineId || machineId.length < 10) {
         status.className = 'status error show';
-        status.textContent = '❌ Please enter a valid Machine ID.';
+        status.textContent = ' Please enter a valid Machine ID.';
         return;
     }
     
@@ -338,7 +338,7 @@ function generateCode() {
     document.getElementById('codeExpiry').textContent = expiryDate.toLocaleDateString() + ' (30 days)';
     codeDisplay.style.display = 'block';
     status.className = 'status success show';
-    status.textContent = '✅ Code generated and saved!';
+    status.textContent = ' Code generated and saved!';
     
     renderCodeList();
 }
@@ -364,14 +364,14 @@ function renderCodeList() {
         const originalIndex = generatedCodes.length - 1 - index;
         const isActive = c.active && !c.revoked && !c.used;
         const statusClass = c.revoked ? 'revoked' : (c.used ? 'used' : 'active');
-        const statusLabel = c.revoked ? '⛔ Revoked' : (c.used ? '🔒 Used' : '✅ Active');
+        const statusLabel = c.revoked ? ' Revoked' : (c.used ? ' Used' : ' Active');
         
         html += '<div class="code-item">';
         html += '<div class="info">';
-        html += '<div class="code-text">🔑 ' + c.code + '</div>';
+        html += '<div class="code-text"> ' + c.code + '</div>';
         html += '<div class="details">';
         html += 'Machine: ' + (c.machineId ? c.machineId.slice(0, 16) + '...' : 'N/A');
-        if (c.phone) html += ' | 📞 ' + c.phone;
+        if (c.phone) html += ' |  ' + c.phone;
         html += ' | ' + c.storeName;
         if (c.ownerName && c.ownerName !== 'Unknown') html += ' (' + c.ownerName + ')';
         html += '<br>Generated: ' + new Date(c.generated).toLocaleDateString() + ' | Expires: ' + new Date(c.expires).toLocaleDateString();
@@ -380,9 +380,9 @@ function renderCodeList() {
         html += '<span class="badge ' + statusClass + '">' + statusLabel + '</span>';
         html += '<div class="actions">';
         if (c.active && !c.revoked) {
-            html += '<button class="btn btn-danger btn-sm" onclick="revokeCode(' + originalIndex + ')">⛔ Revoke</button>';
+            html += '<button class="btn btn-danger btn-sm" onclick="revokeCode(' + originalIndex + ')"> Revoke</button>';
         }
-        html += '<button class="btn btn-secondary btn-sm" onclick="deleteCode(' + originalIndex + ')">✕</button>';
+        html += '<button class="btn btn-secondary btn-sm" onclick="deleteCode(' + originalIndex + ')"></button>';
         html += '</div>';
         html += '</div>';
     });
@@ -397,7 +397,7 @@ function revokeCode(index) {
     localStorage.setItem('activation_codes', JSON.stringify(generatedCodes));
     renderCodeList();
     document.getElementById('status').className = 'status info show';
-    document.getElementById('status').textContent = '⛔ Code revoked.';
+    document.getElementById('status').textContent = ' Code revoked.';
 }
 
 // ===== DELETE CODE =====
@@ -407,7 +407,7 @@ function deleteCode(index) {
     localStorage.setItem('activation_codes', JSON.stringify(generatedCodes));
     renderCodeList();
     document.getElementById('status').className = 'status info show';
-    document.getElementById('status').textContent = '🗑️ Code deleted.';
+    document.getElementById('status').textContent = ' Code deleted.';
 }
 
 // ===== REVOKE ALL =====
@@ -422,14 +422,14 @@ function revokeAll() {
     localStorage.setItem('activation_codes', JSON.stringify(generatedCodes));
     renderCodeList();
     document.getElementById('status').className = 'status info show';
-    document.getElementById('status').textContent = '⛔ All codes revoked.';
+    document.getElementById('status').textContent = ' All codes revoked.';
 }
 
 // ===== COPY CODE =====
 function copyCode() {
     const code = document.getElementById('generatedCode').textContent;
     navigator.clipboard.writeText(code).then(() => {
-        alert('✅ Code copied: ' + code);
+        alert(' Code copied: ' + code);
     }).catch(() => {
         const input = document.createElement('input');
         input.value = code;
@@ -437,7 +437,7 @@ function copyCode() {
         input.select();
         document.execCommand('copy');
         document.body.removeChild(input);
-        alert('✅ Code copied: ' + code);
+        alert(' Code copied: ' + code);
     });
 }
 
@@ -474,7 +474,7 @@ document.getElementById('machineIdInput').addEventListener('input', function() {
 // Override generateCode with debug version
 const originalGenerate = window.generateCode;
 window.generateCode = function() {
-    console.log('🔑 Generating code...');
+    console.log(' Generating code...');
     
     const storeName = document.getElementById('storeNameInput').value.trim();
     const machineId = document.getElementById('machineIdInput').value.trim();
@@ -487,7 +487,7 @@ window.generateCode = function() {
     
     if (!storeName || !machineId) {
         status.className = 'status error show';
-        status.textContent = '❌ Please enter store name and Machine ID.';
+        status.textContent = ' Please enter store name and Machine ID.';
         return;
     }
     
@@ -525,15 +525,15 @@ window.generateCode = function() {
     
     // Get existing codes
     let existingCodes = JSON.parse(localStorage.getItem('activation_codes') || '[]');
-    console.log('📦 Existing codes:', existingCodes.length);
+    console.log(' Existing codes:', existingCodes.length);
     
     existingCodes.push(codeData);
     localStorage.setItem('activation_codes', JSON.stringify(existingCodes));
     
     // Verify save
     const saved = JSON.parse(localStorage.getItem('activation_codes') || '[]');
-    console.log('✅ Saved codes:', saved.length);
-    console.log('✅ Code saved:', code);
+    console.log(' Saved codes:', saved.length);
+    console.log(' Code saved:', code);
     
     // Update the global array
     generatedCodes = saved;
@@ -543,7 +543,7 @@ window.generateCode = function() {
     document.getElementById('codeExpiry').textContent = expiryDate.toLocaleDateString() + ' (30 days)';
     codeDisplay.style.display = 'block';
     status.className = 'status success show';
-    status.textContent = '✅ Code generated and SAVED! (' + saved.length + ' total)';
+    status.textContent = ' Code generated and SAVED! (' + saved.length + ' total)';
     
     renderCodeList();
 };

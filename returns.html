@@ -184,37 +184,37 @@
     <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
 
     <aside class="sidebar">
-        <div class="logo">🏪 <span>Soko</span>Pulse <button class="close-btn" onclick="toggleSidebar()">✕</button></div>
+        <div class="logo"> <span>Soko</span>Pulse <button class="close-btn" onclick="toggleSidebar()"></button></div>
         <nav>
             <div class="nav-label">Main</div>
-            <a href="pos.html">🛒 POS</a>
-            <a href="dashboard.html">📊 Dashboard</a>
-            <a href="orders.html">📋 Orders</a>
+            <a href="pos.html"> POS</a>
+            <a href="dashboard.html"> Dashboard</a>
+            <a href="orders.html"> Orders</a>
             <div class="nav-label">Inventory</div>
-            <a href="products.html">📦 Products</a>
-            <a href="stock.html">📦 Stock</a>
+            <a href="products.html"> Products</a>
+            <a href="stock.html"> Stock</a>
             <a href="expiry.html">⏰ Expiry</a>
-            <a href="categories.html">📂 Categories</a>
-            <a href="suppliers.html">📦 Suppliers</a>
+            <a href="categories.html"> Categories</a>
+            <a href="suppliers.html"> Suppliers</a>
             <div class="nav-label">Management</div>
-            <a href="customers.html">👤 Customers</a>
-            <a href="reports.html">📈 Reports</a>
-            <a href="audit.html" class="active">📋 Audit</a>
-            <a href="returns.html">🔄 Returns</a>
-            <a href="settings.html">⚙️ Settings</a>
+            <a href="customers.html"> Customers</a>
+            <a href="reports.html"> Reports</a>
+            <a href="audit.html" class="active"> Audit</a>
+            <a href="returns.html"> Returns</a>
+            <a href="settings.html"> Settings</a>
         </nav>
         <div class="user-section"><div class="name" id="userName">Administrator</div><div class="role" id="userRole">Admin</div></div>
-        <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+        <button class="logout-btn" onclick="logout()"> Logout</button>
     </aside>
 
     <main class="main-content">
         <header class="topbar">
             <div class="left">
-                <button class="hamburger" onclick="toggleSidebar()">☰</button>
-                <h1>🔄 Returns</h1>
+                <button class="hamburger" onclick="toggleSidebar()"></button>
+                <h1> Returns</h1>
             </div>
             <div class="right">
-                <span class="store-badge">🏪 SokoPulse</span>
+                <span class="store-badge"> SokoPulse</span>
                 <span class="time" id="timeDisplay"></span>
             </div>
         </header>
@@ -222,11 +222,11 @@
         <div class="page-container">
             <div class="toolbar">
                 <div class="search-wrapper">
-                    <span class="search-icon">🔍</span>
+                    <span class="search-icon"></span>
                     <input type="text" id="searchInput" placeholder="Search by order or customer..." oninput="renderReturns()">
                 </div>
-                <button class="btn-new-return" onclick="openNewReturn()">➕ New Return</button>
-                <button class="btn-refresh" onclick="loadReturns()">🔄 Refresh</button>
+                <button class="btn-new-return" onclick="openNewReturn()"> New Return</button>
+                <button class="btn-refresh" onclick="loadReturns()"> Refresh</button>
             </div>
 
             <div id="returnsList">
@@ -240,12 +240,12 @@
 <div class="modal" id="returnModal">
     <div class="modal-content">
         <span class="modal-close" onclick="closeModal()">&times;</span>
-        <h2>🔄 Process Return</h2>
+        <h2> Process Return</h2>
         <form id="returnForm" onsubmit="processReturn(event)">
             <div class="form-group">
                 <label>Order Number</label>
                 <div class="dropdown-container">
-                    <input type="text" id="orderSearchInput" placeholder="🔍 Search by order number or customer..." oninput="filterOrderDropdown()" onfocus="toggleOrderDropdown()" autocomplete="off">
+                    <input type="text" id="orderSearchInput" placeholder=" Search by order number or customer..." oninput="filterOrderDropdown()" onfocus="toggleOrderDropdown()" autocomplete="off">
                     <input type="hidden" id="returnOrderNumber">
                     <div class="dropdown-list" id="orderDropdownList"></div>
                 </div>
@@ -273,10 +273,10 @@
                 <div class="form-group">
                     <label>Refund Method</label>
                     <select id="refundMethod">
-                        <option value="cash">💵 Cash</option>
-                        <option value="mpesa">📱 M-Pesa</option>
-                        <option value="card">💳 Card</option>
-                        <option value="credit">📋 Store Credit</option>
+                        <option value="cash"> Cash</option>
+                        <option value="mpesa"> M-Pesa</option>
+                        <option value="card"> Card</option>
+                        <option value="credit"> Store Credit</option>
                     </select>
                 </div>
             </div>
@@ -285,7 +285,7 @@
             </div>
             <div class="modal-actions">
                 <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
-                <button type="submit" class="btn-save">🔄 Process Return</button>
+                <button type="submit" class="btn-save"> Process Return</button>
             </div>
         </form>
     </div>
@@ -409,7 +409,7 @@ async function loadReturns() {
         orders = await dbGetAll(db, 'orders');
         allProducts = await dbGetAll(db, 'products');
         renderReturns();
-        console.log('🔄 Returns loaded:', returns.length);
+        console.log(' Returns loaded:', returns.length);
     } catch(e) {
         console.error('Error loading returns:', e);
         document.getElementById('returnsList').innerHTML = '<div style="text-align:center;padding:40px;color:#ef4444;">Error loading returns</div>';
@@ -435,8 +435,8 @@ function renderReturns() {
 
     var statusLabels = {
         'pending': '⏳ Pending',
-        'approved': '✅ Approved',
-        'rejected': '❌ Rejected'
+        'approved': ' Approved',
+        'rejected': ' Rejected'
     };
 
     var html = '';
@@ -452,10 +452,10 @@ function renderReturns() {
         html += '<div class="amount">KES ' + (r.total || 0).toFixed(2) + '</div>';
         html += '<span class="status ' + statusClass + '">' + (statusLabels[statusClass] || statusClass) + '</span>';
         html += '<div>';
-        html += '<button class="btn-action view" onclick="viewReturn(' + r.id + ')">👁️</button>';
+        html += '<button class="btn-action view" onclick="viewReturn(' + r.id + ')"></button>';
         if (r.status === 'pending') {
-            html += '<button class="btn-action approve" onclick="updateReturnStatus(' + r.id + ', \'approved\')">✅ Approve</button>';
-            html += '<button class="btn-action reject" onclick="updateReturnStatus(' + r.id + ', \'rejected\')">❌ Reject</button>';
+            html += '<button class="btn-action approve" onclick="updateReturnStatus(' + r.id + ', \'approved\')"> Approve</button>';
+            html += '<button class="btn-action reject" onclick="updateReturnStatus(' + r.id + ', \'rejected\')"> Reject</button>';
         }
         html += '</div>';
         html += '</div>';
@@ -490,7 +490,7 @@ async function loadOrdersForDropdown() {
             return true;
         });
         allOrdersForDropdown.sort(function(a, b) { return new Date(b.date) - new Date(a.date); });
-        console.log('📋 Orders loaded for dropdown:', allOrdersForDropdown.length);
+        console.log(' Orders loaded for dropdown:', allOrdersForDropdown.length);
     } catch(e) {
         console.error('Error loading orders for dropdown:', e);
     }
@@ -585,7 +585,7 @@ function loadOrderForReturn() {
     });
 
     if (!order) {
-        alert('❌ Order not found');
+        alert(' Order not found');
         return;
     }
 
@@ -599,7 +599,7 @@ function loadOrderForReturn() {
     }
 
     if (items.length === 0) {
-        alert('❌ No items in this order');
+        alert(' No items in this order');
         return;
     }
 
@@ -691,9 +691,9 @@ async function processReturn(e) {
         await dbAdd(db, 'returns', returnData);
         closeModal();
         loadReturns();
-        alert('✅ Return submitted for approval!');
+        alert(' Return submitted for approval!');
     } catch(e) {
-        alert('❌ Error processing return: ' + e.message);
+        alert(' Error processing return: ' + e.message);
     }
 }
 
@@ -703,7 +703,7 @@ function viewReturn(id) {
     if (!ret) return;
 
     var modal = document.getElementById('viewReturnModal');
-    document.getElementById('viewReturnTitle').textContent = '🔄 Return #' + ret.id;
+    document.getElementById('viewReturnTitle').textContent = ' Return #' + ret.id;
 
     var items = [];
     if (ret.items) {
@@ -721,7 +721,7 @@ function viewReturn(id) {
     html += '</div>';
 
     if (items.length > 0) {
-        html += '<div style="border-top:1px solid #e2e8f0;padding-top:10px;"><h4>📦 Items Returned</h4>';
+        html += '<div style="border-top:1px solid #e2e8f0;padding-top:10px;"><h4> Items Returned</h4>';
         items.forEach(function(item) {
             html += '<div class="return-item-row"><span>' + item.name + '</span><span>x' + (item.qty || 1) + ' = KES ' + ((item.price || 0) * (item.qty || 1)).toFixed(2) + '</span></div>';
         });
@@ -735,10 +735,10 @@ function viewReturn(id) {
 // ===== UPDATE RETURN STATUS =====
 async function updateReturnStatus(id, status) {
     if (!isAdmin()) {
-        alert("❌ Only admins can approve returns");
+        alert(" Only admins can approve returns");
         return;
     }
-    if (!isAdmin()) { alert("❌ Only admins can approve returns"); return; }
+    if (!isAdmin()) { alert(" Only admins can approve returns"); return; }
     if (!confirm('Update return to ' + status + '?')) return;
 
     try {
@@ -749,9 +749,9 @@ async function updateReturnStatus(id, status) {
         ret.status = status;
         await dbPut(db, 'returns', ret);
         loadReturns();
-        alert('✅ Return updated to ' + status);
+        alert(' Return updated to ' + status);
     } catch(e) {
-        alert('❌ Error: ' + e.message);
+        alert(' Error: ' + e.message);
     }
 }
 
@@ -777,10 +777,10 @@ if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
         navigator.serviceWorker.register('/sw.js')
             .then(function(reg) {
-                console.log('✅ Service Worker registered');
+                console.log(' Service Worker registered');
             })
             .catch(function(err) {
-                console.log('❌ Service Worker registration failed:', err);
+                console.log(' Service Worker registration failed:', err);
             });
     });
 }
@@ -794,7 +794,7 @@ if ('serviceWorker' in navigator) {
 </script>
 
 <!-- License Warning Banner -->
-    <span id="licenseWarningMessage">⚠️ Your license expires soon. Please renew in Settings.</span>
+    <span id="licenseWarningMessage"> Your license expires soon. Please renew in Settings.</span>
 </div>
 
 <script>
@@ -804,7 +804,7 @@ function checkLicenseStatus() {
     const expiry = localStorage.getItem("expiry_date");
     
     if (!activated || activated !== "true") {
-        alert("⚠️ Your license is not activated.\nPlease go to Settings to activate your license.");
+        alert(" Your license is not activated.\nPlease go to Settings to activate your license.");
         window.location.href = "settings.html";
         return false;
     }
@@ -815,7 +815,7 @@ function checkLicenseStatus() {
         const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
         
         if (expiryDate < now) {
-            alert("⚠️ Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
+            alert(" Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
             localStorage.removeItem("activated");
             localStorage.removeItem("activation_code");
             localStorage.removeItem("expiry_date");
@@ -825,7 +825,7 @@ function checkLicenseStatus() {
         
         // Show warning 7 days before expiry
         if (daysRemaining <= 7 && daysRemaining > 0) {
-            const message = "⚠️ Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
+            const message = " Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
             alert(message);
         }
     }
@@ -857,7 +857,7 @@ function checkLicenseStatus() {
     const expiry = localStorage.getItem("expiry_date");
     
     if (!activated || activated !== "true") {
-        alert("⚠️ Your license is not activated.\nPlease go to Settings to activate your license.");
+        alert(" Your license is not activated.\nPlease go to Settings to activate your license.");
         window.location.href = "settings.html";
         return false;
     }
@@ -868,7 +868,7 @@ function checkLicenseStatus() {
         const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
         
         if (expiryDate < now) {
-            alert("⚠️ Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
+            alert(" Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
             localStorage.removeItem("activated");
             localStorage.removeItem("activation_code");
             localStorage.removeItem("expiry_date");
@@ -878,7 +878,7 @@ function checkLicenseStatus() {
         
         // Show warning 7 days before expiry
         if (daysRemaining <= 7 && daysRemaining > 0) {
-            const message = "⚠️ Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
+            const message = " Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
             alert(message);
         }
     }
@@ -967,20 +967,20 @@ async function processReturn(e) {
         
         closeModal();
         loadReturns();
-        alert('✅ Return submitted for approval!\n\nOnce approved, stock will be updated automatically.');
+        alert(' Return submitted for approval!\n\nOnce approved, stock will be updated automatically.');
         
     } catch(e) {
-        alert('❌ Error processing return: ' + e.message);
+        alert(' Error processing return: ' + e.message);
     }
 }
 
 // ===== APPROVE RETURN - SYNC WITH SYSTEM =====
 async function updateReturnStatus(id, status) {
     if (!isAdmin()) {
-        alert("❌ Only admins can approve returns");
+        alert(" Only admins can approve returns");
         return;
     }
-    if (!isAdmin()) { alert("❌ Only admins can approve returns"); return; }
+    if (!isAdmin()) { alert(" Only admins can approve returns"); return; }
     if (!confirm('Update return to ' + status + '?')) return;
 
     try {
@@ -1018,7 +1018,7 @@ async function updateReturnStatus(id, status) {
                         newStock: product.current_stock,
                         qty: qty
                     });
-                    console.log('📦 Restocked: ' + product.name + ' (' + oldStock + ' → ' + product.current_stock + ')');
+                    console.log(' Restocked: ' + product.name + ' (' + oldStock + ' → ' + product.current_stock + ')');
                 }
             }
             
@@ -1038,7 +1038,7 @@ async function updateReturnStatus(id, status) {
                 order.returned_items = returnedItems;
                 order.status = 'partially_returned';
                 await dbPut(db, 'orders', order);
-                console.log('📋 Order updated: ' + order.order_number + ' → partially_returned');
+                console.log(' Order updated: ' + order.order_number + ' → partially_returned');
             }
             
             // 3. UPDATE CUSTOMER CREDIT (if refund method is credit)
@@ -1048,7 +1048,7 @@ async function updateReturnStatus(id, status) {
                 if (customer) {
                     customer.credit = (customer.credit || 0) - ret.total;
                     await dbPut(db, 'customers', customer);
-                    console.log('💳 Customer credit updated: ' + customer.name + ' → KES ' + customer.credit.toFixed(2));
+                    console.log(' Customer credit updated: ' + customer.name + ' → KES ' + customer.credit.toFixed(2));
                 }
             }
             
@@ -1084,18 +1084,18 @@ async function updateReturnStatus(id, status) {
                 notes: 'Return of ' + items.length + ' items (' + totalQty + ' units) | ' + stockChangeSummary.join('; ')
             };
             await dbAdd(db, 'stock_movements', movement);
-            console.log('📊 Stock movement logged for return');
+            console.log(' Stock movement logged for return');
         }
 
         // Log action
         logAction('return', 'Return ' + ret.order_number + ' updated to ' + status);
 
         loadReturns();
-        alert('✅ Return updated to ' + status + 
-              (status === 'approved' ? '\n\n✅ Stock updated!\n✅ Order updated!\n✅ Customer credit updated!' : ''));
+        alert(' Return updated to ' + status + 
+              (status === 'approved' ? '\n\n Stock updated!\n Order updated!\n Customer credit updated!' : ''));
         
     } catch(e) {
-        alert('❌ Error updating return: ' + e.message);
+        alert(' Error updating return: ' + e.message);
     }
 }
 
@@ -1121,7 +1121,7 @@ function logAction(action, details) {
 </script>
 <!-- Date Range Filter -->
 <div class="date-filter" style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;align-items:center;background:white;padding:8px 12px;border-radius:8px;border:1px solid #e2e8f0;">
-    <span style="font-size:12px;font-weight:600;color:#0f172a;">📅 Period:</span>
+    <span style="font-size:12px;font-weight:600;color:#0f172a;"> Period:</span>
     <select id="returnsPeriod" onchange="applyReturnsFilter()" style="padding:6px 12px;border:2px solid #e2e8f0;border-radius:6px;font-size:12px;font-family:'Inter',sans-serif;background:white;">
         <option value="today">Today</option>
         <option value="yesterday">Yesterday</option>
@@ -1184,7 +1184,7 @@ function applyReturnsFilter() {
     window.returnsStartDate = startDate;
     window.returnsEndDate = endDate;
     
-    document.getElementById('returnsDateInfo').textContent = '📆 ' + startDate + ' → ' + endDate;
+    document.getElementById('returnsDateInfo').textContent = ' ' + startDate + ' → ' + endDate;
     
     renderReturns();
 }
@@ -1221,8 +1221,8 @@ renderReturns = function() {
 
     var statusLabels = {
         'pending': '⏳ Pending',
-        'approved': '✅ Approved',
-        'rejected': '❌ Rejected'
+        'approved': ' Approved',
+        'rejected': ' Rejected'
     };
 
     var html = '';
@@ -1238,10 +1238,10 @@ renderReturns = function() {
         html += '<div class="amount">KES ' + (r.total || 0).toFixed(2) + '</div>';
         html += '<span class="status ' + statusClass + '">' + (statusLabels[statusClass] || statusClass) + '</span>';
         html += '<div>';
-        html += '<button class="btn-action view" onclick="viewReturn(' + r.id + ')">👁️</button>';
+        html += '<button class="btn-action view" onclick="viewReturn(' + r.id + ')"></button>';
         if (r.status === 'pending') {
-            html += '<button class="btn-action approve" onclick="updateReturnStatus(' + r.id + ', \'approved\')">✅ Approve</button>';
-            html += '<button class="btn-action reject" onclick="updateReturnStatus(' + r.id + ', \'rejected\')">❌ Reject</button>';
+            html += '<button class="btn-action approve" onclick="updateReturnStatus(' + r.id + ', \'approved\')"> Approve</button>';
+            html += '<button class="btn-action reject" onclick="updateReturnStatus(' + r.id + ', \'rejected\')"> Reject</button>';
         }
         html += '</div>';
         html += '</div>';

@@ -26,7 +26,7 @@ function openDB() {
                     for (const idx of indexes) {
                         store.createIndex(idx, idx, { unique: false });
                     }
-                    console.log('✅ Created store: ' + name);
+                    console.log(' Created store: ' + name);
                 }
             }
         };

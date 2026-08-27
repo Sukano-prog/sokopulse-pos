@@ -134,28 +134,28 @@
     <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
     
     <aside class="sidebar">
-        <div class="logo">🏪 <span>Soko</span>Pulse <button class="close-btn" onclick="toggleSidebar()">✕</button></div>
+        <div class="logo"> <span>Soko</span>Pulse <button class="close-btn" onclick="toggleSidebar()"></button></div>
         <nav>
             <div class="nav-label">Main</div>
-            <a href="pos.html">🛒 POS</a>
-            <a href="dashboard.html">📊 Dashboard</a>
-            <a href="orders.html">📋 Orders</a>
+            <a href="pos.html"> POS</a>
+            <a href="dashboard.html"> Dashboard</a>
+            <a href="orders.html"> Orders</a>
             <div class="nav-label">Inventory</div>
-            <a href="products.html">📦 Products</a>
-            <a href="stock.html">📦 Stock</a>
+            <a href="products.html"> Products</a>
+            <a href="stock.html"> Stock</a>
             <a href="expiry.html">⏰ Expiry</a>
-            <a href="categories.html">📂 Categories</a>
-            <a href="suppliers.html" class="active">📦 Suppliers</a>
+            <a href="categories.html"> Categories</a>
+            <a href="suppliers.html" class="active"> Suppliers</a>
             <div class="nav-label">Management</div>
-            <a href="customers.html">👤 Customers</a>
-            <a href="reports.html">📈 Reports</a>
-            <a href="audit.html">📋 Audit</a>
-            <a href="returns.html">🔄 Returns</a>
-            <a href="settings.html">⚙️ Settings</a>
+            <a href="customers.html"> Customers</a>
+            <a href="reports.html"> Reports</a>
+            <a href="audit.html"> Audit</a>
+            <a href="returns.html"> Returns</a>
+            <a href="settings.html"> Settings</a>
         </nav>
         <div class="user-section">
             <div class="name" id="userName">Administrator</div>
-        <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+        <button class="logout-btn" onclick="logout()"> Logout</button>
             <div class="role" id="userRole">Admin</div>
         </div>
     </aside>
@@ -163,11 +163,11 @@
     <main class="main-content">
         <header class="topbar">
             <div class="left">
-                <button class="hamburger" onclick="toggleSidebar()">☰</button>
-                <h1>📦 Suppliers</h1>
+                <button class="hamburger" onclick="toggleSidebar()"></button>
+                <h1> Suppliers</h1>
             </div>
             <div class="right">
-                <span class="store-badge">🏪 SokoPulse</span>
+                <span class="store-badge"> SokoPulse</span>
                 <span class="time" id="timeDisplay"></span>
             </div>
         </header>
@@ -175,11 +175,11 @@
         <div class="page-container">
             <div class="toolbar">
                 <div class="search-wrapper">
-                    <span class="search-icon">🔍</span>
+                    <span class="search-icon"></span>
                     <input type="text" id="searchInput" placeholder="Search suppliers..." oninput="renderSuppliers()">
                 </div>
-                <button class="btn-add" onclick="openAddModal()">➕ Add Supplier</button>
-                <button class="btn-export" onclick="exportSuppliers()">📤 Export</button>
+                <button class="btn-add" onclick="openAddModal()"> Add Supplier</button>
+                <button class="btn-export" onclick="exportSuppliers()"> Export</button>
             </div>
 
             <div id="suppliersList">
@@ -222,7 +222,7 @@
             </div>
             <div class="modal-actions">
                 <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
-                <button type="submit" class="btn-save">💾 Save Supplier</button>
+                <button type="submit" class="btn-save"> Save Supplier</button>
             </div>
         </form>
     </div>
@@ -324,7 +324,7 @@ function renderSuppliers() {
     if (filtered.length === 0) {
         container.innerHTML = `
             <div class="empty-state">
-                <div class="empty-icon">📦</div>
+                <div class="empty-icon"></div>
                 <h3>No suppliers found</h3>
                 <p style="color:#94a3b8;">Add your first supplier to get started</p>
             </div>
@@ -337,16 +337,16 @@ function renderSuppliers() {
             <div class="info">
                 <div class="name">${s.name || 'Unnamed'}</div>
                 <div class="details">
-                    📱 ${s.phone || '-'} 
-                    ${s.email ? '✉️ ' + s.email : ''}
-                    ${s.contact ? '👤 ' + s.contact : ''}
-                    ${s.address ? '📍 ' + s.address : ''}
+                     ${s.phone || '-'} 
+                    ${s.email ? ' ' + s.email : ''}
+                    ${s.contact ? ' ' + s.contact : ''}
+                    ${s.address ? ' ' + s.address : ''}
                 </div>
             </div>
             <div class="actions">
-                <button class="btn-view" onclick="viewSupplier(${s.id})">👁️</button>
-                <button class="btn-edit" onclick="openEditModal(${s.id})">✏️</button>
-                <button class="btn-delete" onclick="deleteSupplier(${s.id})">🗑️</button>
+                <button class="btn-view" onclick="viewSupplier(${s.id})"></button>
+                <button class="btn-edit" onclick="openEditModal(${s.id})"></button>
+                <button class="btn-delete" onclick="deleteSupplier(${s.id})"></button>
             </div>
         </div>
     `).join('');
@@ -356,13 +356,13 @@ function renderSuppliers() {
 function viewSupplier(id) {
     const s = suppliers.find(x => x.id === id);
     if (!s) return;
-    alert(`📦 Supplier Details\n\nName: ${s.name}\nContact: ${s.contact || '-'}\nPhone: ${s.phone}\nEmail: ${s.email || '-'}\nAddress: ${s.address || '-'}\nNotes: ${s.notes || '-'}`);
+    alert(` Supplier Details\n\nName: ${s.name}\nContact: ${s.contact || '-'}\nPhone: ${s.phone}\nEmail: ${s.email || '-'}\nAddress: ${s.address || '-'}\nNotes: ${s.notes || '-'}`);
 }
 
 // ===== ADD/EDIT MODAL =====
 function openAddModal() {
     editingId = null;
-    document.getElementById('modalTitle').textContent = '➕ Add Supplier';
+    document.getElementById('modalTitle').textContent = ' Add Supplier';
     document.getElementById('editId').value = '';
     document.getElementById('supplierName').value = '';
     document.getElementById('supplierContact').value = '';
@@ -377,7 +377,7 @@ function openEditModal(id) {
     const s = suppliers.find(x => x.id === id);
     if (!s) return;
     editingId = id;
-    document.getElementById('modalTitle').textContent = '✏️ Edit Supplier';
+    document.getElementById('modalTitle').textContent = ' Edit Supplier';
     document.getElementById('editId').value = id;
     document.getElementById('supplierName').value = s.name || '';
     document.getElementById('supplierContact').value = s.contact || '';
@@ -401,7 +401,7 @@ async function saveSupplier(e) {
     };
     
     if (!data.name || !data.phone) {
-        alert('❌ Supplier name and phone are required');
+        alert(' Supplier name and phone are required');
         return;
     }
     
@@ -416,9 +416,9 @@ async function saveSupplier(e) {
         }
         closeModal();
         loadSuppliers();
-        alert('✅ Supplier saved successfully!');
+        alert(' Supplier saved successfully!');
     } catch(e) {
-        alert('❌ Error saving supplier: ' + e.message);
+        alert(' Error saving supplier: ' + e.message);
     }
 }
 
@@ -429,9 +429,9 @@ async function deleteSupplier(id) {
         const db = await openDB();
         await dbDelete(db, 'suppliers', id);
         loadSuppliers();
-        alert('✅ Supplier deleted');
+        alert(' Supplier deleted');
     } catch(e) {
-        alert('❌ Error: ' + e.message);
+        alert(' Error: ' + e.message);
     }
 }
 
@@ -487,10 +487,10 @@ if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
         navigator.serviceWorker.register('/sw.js')
             .then(function(reg) {
-                console.log('✅ Service Worker registered');
+                console.log(' Service Worker registered');
             })
             .catch(function(err) {
-                console.log('❌ Service Worker registration failed:', err);
+                console.log(' Service Worker registration failed:', err);
             });
     });
 }
@@ -503,7 +503,7 @@ function checkLicenseStatus() {
     const expiry = localStorage.getItem("expiry_date");
     
     if (!activated || activated !== "true") {
-        alert("⚠️ Your license is not activated.\nPlease go to Settings to activate your license.");
+        alert(" Your license is not activated.\nPlease go to Settings to activate your license.");
         window.location.href = "settings.html";
         return false;
     }
@@ -514,7 +514,7 @@ function checkLicenseStatus() {
         const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
         
         if (expiryDate < now) {
-            alert("⚠️ Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
+            alert(" Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
             localStorage.removeItem("activated");
             localStorage.removeItem("activation_code");
             localStorage.removeItem("expiry_date");
@@ -524,7 +524,7 @@ function checkLicenseStatus() {
         
         // Show warning 7 days before expiry
         if (daysRemaining <= 7 && daysRemaining > 0) {
-            const message = "⚠️ Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
+            const message = " Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
             alert(message);
         }
     }
@@ -556,7 +556,7 @@ function checkLicenseStatus() {
     const expiry = localStorage.getItem("expiry_date");
     
     if (!activated || activated !== "true") {
-        alert("⚠️ Your license is not activated.\nPlease go to Settings to activate your license.");
+        alert(" Your license is not activated.\nPlease go to Settings to activate your license.");
         window.location.href = "settings.html";
         return false;
     }
@@ -567,7 +567,7 @@ function checkLicenseStatus() {
         const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
         
         if (expiryDate < now) {
-            alert("⚠️ Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
+            alert(" Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
             localStorage.removeItem("activated");
             localStorage.removeItem("activation_code");
             localStorage.removeItem("expiry_date");
@@ -577,7 +577,7 @@ function checkLicenseStatus() {
         
         // Show warning 7 days before expiry
         if (daysRemaining <= 7 && daysRemaining > 0) {
-            const message = "⚠️ Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
+            const message = " Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
             alert(message);
         }
     }
