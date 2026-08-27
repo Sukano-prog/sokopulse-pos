@@ -1,1 +1,677 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Categories - SokoPulse</title><link href="https: //fonts.googleapis.com/css2?family=Inter: wght@300;400;500;600;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="css/style.css"><link rel="stylesheet" href="css/responsive.css"><style>.category-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px; margin-top: 16px; }.category-card { background: white; padding: 20px; border-radius: 12px; border: 1px solid #f1f5f9; text-align: center; cursor: pointer; transition: all 0.2s; }.category-card: hover { border-color: #1a3c34; transform: translateY(-4px); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06); }.category-card.icon { font-size: 32px; }.category-card.name { font-weight: 600; color: #0f172a; margin-top: 8px; }.category-card.count { font-size: 12px; color: #94a3b8; }.category-card.actions { margin-top: 12px; display: flex; gap: 6px; justify-content: center; }.category-card.actions button { padding: 4px 12px; border: none; border-radius: 4px; cursor: pointer; font-size: 11px; font-family: 'Inter', sans-serif; }.btn-edit-cat { background: #f1f5f9; color: #0f172a; }.btn-delete-cat { background: #fef2f2; color: #ef4444; }.category-color { width: 20px; height: 20px; border-radius: 50%; display: inline-block; margin: 0 auto 4px; } </style><script src="js/printer.js"></script></head><body><div class="app"><div class="sidebar-overlay" onclick="toggleSidebar"></div><aside class="sidebar"><div class="logo"><span>Soko</span>Pulse <button class="close-btn" onclick="toggleSidebar"></button></div><nav><div class="nav-label">Main</div><a href="pos.html"> POS</a><a href="dashboard.html"> Dashboard</a><a href="orders.html"> Orders</a><div class="nav-label">Inventory</div><a href="products.html"> Products</a><a href="stock.html"> Stock</a><a href="expiry.html"> Expiry</a><a href="categories.html" class="active"> Categories</a><a href="suppliers.html"> Suppliers</a><div class="nav-label">Management</div><a href="customers.html"> Customers</a><a href="reports.html"> Reports</a><a href="audit.html"> Audit</a><a href="returns.html"> Returns</a><a href="settings.html"> Settings</a></nav><div class="user-section"><div class="name" id="userName">Administrator</div><button class="logout-btn" onclick="logout"> Logout</button><div class="role" id="userRole">Admin</div></div></aside><main class="main-content"><header class="topbar"><div class="left"><button class="hamburger" onclick="toggleSidebar"></button><h1> Product Categories</h1></div><div class="right"><span class="store-badge"> SokoPulse</span><span class="time" id="timeDisplay"></span></div></header><div class="page-container"><div class="toolbar"><button class="btn-add" onclick="openCategoryModal"> Add Category</button><button class="btn-export" onclick="refreshCategories"> Refresh</button></div><div class="category-grid" id="categoryGrid"><div style="text-align: center;padding: 40px;color: #94a3b8;grid-column: 1/-1;">Loading categories...</div></div></div></main></div><!-- Category Modal --><div class="modal" id="categoryModal"><div class="modal-content"><span class="modal-close" onclick="closeCategoryModal">&times;</span><h2 id="categoryModalTitle"> Add Category</h2><form id="categoryForm" onsubmit="saveCategory(event)"><input type="hidden" id="editCategoryId"><div class="form-group"><label>Category Name *</label><input type="text" id="categoryName" placeholder="Enter category name" required></div><div class="form-group"><label>Icon (emoji)</label><input type="text" id="categoryIcon" placeholder="" value=""></div><div class="form-group"><label>Color</label><input type="color" id="categoryColor" value="#1a3c34"></div><div class="form-group"><label>Description</label><textarea id="categoryDescription" rows="2" placeholder="Category description"></textarea></div><div class="modal-actions"><button type="button" class="btn-cancel" onclick="closeCategoryModal">Cancel</button><button type="submit" class="btn-save"> Save Category</button></div></form></div></div><script src="db.js"></script><script> let categories =; let products =; document.addEventListener('DOMContentLoaded', function { const userData = localStorage.getItem('pos_user'); if (!userData) { window.location.href = 'index.html'; return; } const user = JSON.parse(userData); document.getElementById('userName').textContent = user.name || user.username; document.getElementById('userRole').textContent = user.role || 'User'; setInterval( => { document.getElementById('timeDisplay').textContent = new Date.toLocaleTimeString('en-KE', { hour12: false }); }, 1000); loadCategories; }); function toggleSidebar { document.querySelector('.sidebar').classList.toggle('open'); document.querySelector('.sidebar-overlay').classList.toggle('show'); } async function loadCategories { try { const db = await openDB; categories = await dbGetAll(db, 'categories'); products = await dbGetAll(db, 'products'); renderCategories; } catch(e) { // If categories store doesn't exist, create it if (e.message.includes('not found')) { await upgradeDatabase; loadCategories; } else { console.error('Error loading categories: ', e); document.getElementById('categoryGrid').innerHTML = '<div style="text-align: center;padding: 40px;color: #ef4444;grid-column: 1/-1;">Error loading categories</div>'; } } } function renderCategories { const grid = document.getElementById('categoryGrid'); if (categories.length === 0) { grid.innerHTML = ` <div style="text-align: center;padding: 40px;color: #94a3b8;grid-column: 1/-1;"><div style="font-size: 48px;margin-bottom: 12px;"></div><h3 style="color: #334155;">No categories yet</h3><p>Add your first category to organize products</p></div> `; return; } grid.innerHTML = categories.map(c => { const productCount = products.filter(p => p.category_id === c.id).length; return ` <div class="category-card"><div class="category-color" style="background: ${c.color || '#1a3c34'}"></div><div class="icon">${c.icon || ''}</div><div class="name">${c.name}</div><div class="count">${productCount} products</div><div class="actions"><button class="btn-edit-cat" onclick="editCategory(${c.id})"> Edit</button><button class="btn-delete-cat" onclick="deleteCategory(${c.id})"></button></div></div> `; }).join(''); } function openCategoryModal { document.getElementById('categoryModalTitle').textContent = ' Add Category'; document.getElementById('editCategoryId').value = ''; document.getElementById('categoryName').value = ''; document.getElementById('categoryIcon').value = ''; document.getElementById('categoryColor').value = '#1a3c34'; document.getElementById('categoryDescription').value = ''; document.getElementById('categoryModal').classList.add('show'); } function editCategory(id) { const cat = categories.find(c => c.id === id); if (!cat) return; document.getElementById('categoryModalTitle').textContent = ' Edit Category'; document.getElementById('editCategoryId').value = id; document.getElementById('categoryName').value = cat.name; document.getElementById('categoryIcon').value = cat.icon || ''; document.getElementById('categoryColor').value = cat.color || '#1a3c34'; document.getElementById('categoryDescription').value = cat.description || ''; document.getElementById('categoryModal').classList.add('show'); } function closeCategoryModal { document.getElementById('categoryModal').classList.remove('show'); } async function saveCategory(e) { e.preventDefault; const data = { name: document.getElementById('categoryName').value.trim, icon: document.getElementById('categoryIcon').value || '', color: document.getElementById('categoryColor').value || '#1a3c34', description: document.getElementById('categoryDescription').value.trim }; if (!data.name) { alert(' Category name is required'); return; } try { const db = await openDB; const tx = db.transaction('categories', 'readwrite'); const store = tx.objectStore('categories'); const id = document.getElementById('editCategoryId').value; if (id) { data.id = parseInt(id); await store.put(data); } else { await store.add(data); } closeCategoryModal; loadCategories; alert(' Category saved successfully!'); } catch(e) { alert(' Error saving category: ' + e.message); } } async function deleteCategory(id) { const cat = categories.find(c => c.id === id); if (!cat) return; const productCount = products.filter(p => p.category_id === id).length; if (productCount > 0) { if (!confirm(` ${productCount} products belong to this category.\nDelete category anyway? (Products will become uncategorized)`)) return; } else { if (!confirm(`Delete category "${cat.name}"?`)) return; } try { const db = await openDB; const tx = db.transaction('categories', 'readwrite'); const store = tx.objectStore('categories'); await store.delete(id); loadCategories; alert(' Category deleted'); } catch(e) { alert(' Error: ' + e.message); } } function refreshCategories { loadCategories; } async function upgradeDatabase { return new Promise((resolve, reject) => { req.onsuccess = function(e) { resolve(e.target.result); }; req.onerror = function(e) { reject(e.target.error); }; }); } function logout { if (confirm('Logout?')) { localStorage.removeItem('pos_user'); window.location.href = 'index.html'; } } </script><script> // ===== LOAD STORE NAME ===== async function loadStoreName { try { const db = await openDB; const settings = await dbGetAll(db, "settings"); const map = {}; settings.forEach(s => { map[s.key] = s.value; }); if (map.storeName) { const el = document.querySelector(".store-badge"); if (el) el.textContent = " " + map.storeName; document.title = map.storeName + " - " + (document.title.split(" - ").pop || "SokoPulse"); } } catch(e) { console.error("Error loading store name: ", e); } } document.addEventListener("DOMContentLoaded", function { setTimeout(loadStoreName, 300); }); </script><script> if ('serviceWorker' in navigator) { window.addEventListener('load', function { navigator.serviceWorker.register('/sw.js').then(function(reg) { console.log(' Service Worker registered'); }).catch(function(err) { console.log(' Service Worker registration failed: ', err); }); }); } </script><script> // ===== LICENSE STATUS CHECK ===== function checkLicenseStatus { const activated = localStorage.getItem("activated"); const expiry = localStorage.getItem("expiry_date"); if (!activated || activated!== "true") { alert(" Your license is not activated.\nPlease go to Settings to activate your license."); window.location.href = "settings.html"; return false; } if (expiry) { const expiryDate = new Date(expiry); const now = new Date; const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24)); if (expiryDate < now) { alert(" Your license has expired on " + expiryDate.toLocaleDateString + ".\nPlease contact your administrator to renew."); localStorage.removeItem("activated"); localStorage.removeItem("activation_code"); localStorage.removeItem("expiry_date"); window.location.href = "settings.html"; return false; } // Show warning 7 days before expiry if (daysRemaining <= 7 && daysRemaining > 0) { const message = " Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString + ").\nPlease contact your administrator to renew."; alert(message); } } return true; } function checkAndRedirect { if (!checkLicenseStatus) { // If not on settings page, redirect to settings if (!window.location.pathname.includes('settings.html') &&!window.location.pathname.includes('activation.html') &&!window.location.pathname.includes('index.html')) { window.location.href = 'activation.html'; } } } // Run check on page load document.addEventListener('DOMContentLoaded', function { checkAndRedirect; }); </script><script> // ===== LICENSE CHECK WITH ALERTS AND BLOCKING ===== function checkLicenseStatus { const activated = localStorage.getItem("activated"); const expiry = localStorage.getItem("expiry_date"); if (!activated || activated!== "true") { alert(" Your license is not activated.\nPlease go to Settings to activate your license."); window.location.href = "settings.html"; return false; } if (expiry) { const expiryDate = new Date(expiry); const now = new Date; const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24)); if (expiryDate < now) { alert(" Your license has expired on " + expiryDate.toLocaleDateString + ".\nPlease contact your administrator to renew."); localStorage.removeItem("activated"); localStorage.removeItem("activation_code"); localStorage.removeItem("expiry_date"); window.location.href = "settings.html"; return false; } // Show warning 7 days before expiry if (daysRemaining <= 7 && daysRemaining > 0) { const message = " Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString + ").\nPlease contact your administrator to renew."; alert(message); } } return true; } // Run on page load if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', function { checkLicenseStatus; }); } else { checkLicenseStatus; } </script></body></html><style> @media (max-width: 768px) {.page-container { padding: 10px!important; overflow-x: hidden!important; }.category-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr))!important; gap: 10px!important; }.category-card { padding: 12px!important; }.category-card.name { font-size: 13px!important; }.toolbar { flex-direction: column!important; align-items: stretch!important; }.btn-add,.btn-export { width: 100%!important; justify-content: center!important; }.modal-content { margin: 10px!important; padding: 15px!important; width: auto!important; }.form-row { flex-direction: column!important; gap: 8px!important; } } </style><style> /* ===== TOPBAR - STORE NAME ALWAYS VISIBLE ===== */.topbar { display: flex!important; justify-content: space-between!important; align-items: center!important; padding: 10px 20px!important; background: white!important; border-bottom: 1px solid #e2e8f0!important; flex-shrink: 0!important; min-height: 56px!important; }.topbar.left { display: flex!important; align-items: center!important; gap: 12px!important; flex: 1!important; }.topbar.right { display: flex!important; align-items: center!important; gap: 12px!important; flex-shrink: 0!important; }.topbar.right.store-badge { display: inline-block!important; font-size: 13px!important; padding: 4px 14px!important; background: #f1f5f9!important; border-radius: 20px!important; color: #0f172a!important; font-weight: 600!important; white-space: nowrap!important; }.topbar.right.time { font-size: 13px!important; color: #64748b!important; font-weight: 500!important; } @media (max-width: 768px) {.topbar { padding: 6px 10px!important; min-height: 48px!important; flex-wrap: nowrap!important; }.topbar.left { gap: 6px!important; flex: 0 0 auto!important; }.topbar.left.hamburger { font-size: 18px!important; padding: 2px 6px!important; display: block!important; background: none!important; border: none!important; cursor: pointer!important; }.topbar.left h1 { font-size: 13px!important; white-space: nowrap!important; }.topbar.right { flex: 1!important; justify-content: flex-end!important; gap: 6px!important; }.topbar.right.store-badge { display: inline-block!important; font-size: 11px!important; padding: 3px 12px!important; background: #1a3c34!important; color: white!important; border-radius: 16px!important; max-width: 120px!important; overflow: hidden!important; text-overflow: ellipsis!important; white-space: nowrap!important; font-weight: 600!important; }.topbar.right.time { font-size: 10px!important; color: #64748b!important; display: inline-block!important; } } @media (max-width: 480px) {.topbar { padding: 4px 8px!important; min-height: 42px!important; }.topbar.left.hamburger { font-size: 16px!important; padding: 2px 4px!important; }.topbar.left h1 { font-size: 12px!important; }.topbar.right.store-badge { font-size: 10px!important; padding: 2px 8px!important; max-width: 80px!important; }.topbar.right.time { font-size: 9px!important; } } </style><script> // ===== ACTIVATION CHECK ===== </script><style> /* ===== BUTTON COLORS ===== */.btn-add { background: #1a3c34!important; color: white!important; border: none!important; padding: 10px 20px!important; border-radius: 8px!important; font-weight: 600!important; cursor: pointer!important; font-family: 'Inter', sans-serif!important; }.btn-add: hover { background: #2a5c54!important; }.btn-export { background: #3b82f6!important; color: white!important; border: none!important; padding: 10px 20px!important; border-radius: 8px!important; font-weight: 600!important; cursor: pointer!important; font-family: 'Inter', sans-serif!important; }.btn-export: hover { background: #2563eb!important; }.btn-edit-cat { background: #f59e0b!important; color: white!important; border: none!important; padding: 6px 14px!important; border-radius: 6px!important; font-weight: 600!important; cursor: pointer!important; font-size: 12px!important; font-family: 'Inter', sans-serif!important; }.btn-edit-cat: hover { background: #d97706!important; }.btn-delete-cat { background: #ef4444!important; color: white!important; border: none!important; padding: 6px 14px!important; border-radius: 6px!important; font-weight: 600!important; cursor: pointer!important; font-size: 12px!important; font-family: 'Inter', sans-serif!important; }.btn-delete-cat: hover { background: #dc2626!important; }.btn-save { background: #1a3c34!important; color: white!important; border: none!important; padding: 10px 24px!important; border-radius: 8px!important; font-weight: 600!important; cursor: pointer!important; font-family: 'Inter', sans-serif!important; }.btn-save: hover { background: #2a5c54!important; }.btn-cancel { background: #94a3b8!important; color: white!important; border: none!important; padding: 10px 24px!important; border-radius: 8px!important; font-weight: 600!important; cursor: pointer!important; font-family: 'Inter', sans-serif!important; }.btn-cancel: hover { background: #64748b!important; } </style> 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Categories - SokoPulse</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <style>
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 14px;
+            margin-top: 16px;
+        }
+        .category-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #f1f5f9;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .category-card:hover {
+            border-color: #1a3c34;
+            transform: translateY(-4px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        }
+        .category-card .icon { font-size: 32px; }
+        .category-card .name { font-weight: 600; color: #0f172a; margin-top: 8px; }
+        .category-card .count { font-size: 12px; color: #94a3b8; }
+        .category-card .actions {
+            margin-top: 12px;
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+        }
+        .category-card .actions button {
+            padding: 4px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
+            font-family: 'Inter', sans-serif;
+        }
+        .btn-edit-cat { background: #f1f5f9; color: #0f172a; }
+        .btn-delete-cat { background: #fef2f2; color: #ef4444; }
+        
+        .category-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: inline-block;
+            margin: 0 auto 4px;
+        }
+    </style>
+    <script src="js/printer.js"></script>
+</head>
+<body>
+<div class="app">
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+    
+    <aside class="sidebar">
+        <div class="logo">🏪 <span>Soko</span>Pulse <button class="close-btn" onclick="toggleSidebar()">✕</button></div>
+        <nav>
+            <div class="nav-label">Main</div>
+            <a href="pos.html">🛒 POS</a>
+            <a href="dashboard.html">📊 Dashboard</a>
+            <a href="orders.html">📋 Orders</a>
+            <div class="nav-label">Inventory</div>
+            <a href="products.html">📦 Products</a>
+            <a href="stock.html">📦 Stock</a>
+            <a href="expiry.html">⏰ Expiry</a>
+            <a href="categories.html" class="active">📂 Categories</a>
+            <a href="suppliers.html">📦 Suppliers</a>
+            <div class="nav-label">Management</div>
+            <a href="customers.html">👤 Customers</a>
+            <a href="reports.html">📈 Reports</a>
+            <a href="audit.html">📋 Audit</a>
+            <a href="returns.html">🔄 Returns</a>
+            <a href="settings.html">⚙️ Settings</a>
+        </nav>
+        <div class="user-section">
+            <div class="name" id="userName">Administrator</div>
+        <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+            <div class="role" id="userRole">Admin</div>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div class="left">
+                <button class="hamburger" onclick="toggleSidebar()">☰</button>
+                <h1>📂 Product Categories</h1>
+            </div>
+            <div class="right">
+                <span class="store-badge">🏪 SokoPulse</span>
+                <span class="time" id="timeDisplay"></span>
+            </div>
+        </header>
+
+        <div class="page-container">
+            <div class="toolbar">
+                <button class="btn-add" onclick="openCategoryModal()">➕ Add Category</button>
+                <button class="btn-export" onclick="refreshCategories()">🔄 Refresh</button>
+            </div>
+
+            <div class="category-grid" id="categoryGrid">
+                <div style="text-align:center;padding:40px;color:#94a3b8;grid-column:1/-1;">Loading categories...</div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Category Modal -->
+<div class="modal" id="categoryModal">
+    <div class="modal-content">
+        <span class="modal-close" onclick="closeCategoryModal()">&times;</span>
+        <h2 id="categoryModalTitle">➕ Add Category</h2>
+        <form id="categoryForm" onsubmit="saveCategory(event)">
+            <input type="hidden" id="editCategoryId">
+            <div class="form-group">
+                <label>Category Name *</label>
+                <input type="text" id="categoryName" placeholder="Enter category name" required>
+            </div>
+            <div class="form-group">
+                <label>Icon (emoji)</label>
+                <input type="text" id="categoryIcon" placeholder="🛒" value="📦">
+            </div>
+            <div class="form-group">
+                <label>Color</label>
+                <input type="color" id="categoryColor" value="#1a3c34">
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea id="categoryDescription" rows="2" placeholder="Category description"></textarea>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-cancel" onclick="closeCategoryModal()">Cancel</button>
+                <button type="submit" class="btn-save">💾 Save Category</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<script src="db.js"></script>
+<script>
+let categories = [];
+let products = [];
+
+document.addEventListener('DOMContentLoaded', function() {
+    const userData = localStorage.getItem('pos_user');
+    if (!userData) { window.location.href = 'index.html'; return; }
+    const user = JSON.parse(userData);
+    document.getElementById('userName').textContent = user.name || user.username;
+    document.getElementById('userRole').textContent = user.role || 'User';
+    setInterval(() => {
+        document.getElementById('timeDisplay').textContent = new Date().toLocaleTimeString('en-KE', { hour12: false });
+    }, 1000);
+    loadCategories();
+});
+
+function toggleSidebar() {
+    document.querySelector('.sidebar').classList.toggle('open');
+    document.querySelector('.sidebar-overlay').classList.toggle('show');
+}
+
+async function loadCategories() {
+    try {
+        const db = await openDB();
+        categories = await dbGetAll(db, 'categories');
+        products = await dbGetAll(db, 'products');
+        renderCategories();
+    } catch(e) {
+        // If categories store doesn't exist, create it
+        if (e.message.includes('not found')) {
+            await upgradeDatabase();
+            loadCategories();
+        } else {
+            console.error('Error loading categories:', e);
+            document.getElementById('categoryGrid').innerHTML = '<div style="text-align:center;padding:40px;color:#ef4444;grid-column:1/-1;">Error loading categories</div>';
+        }
+    }
+}
+
+function renderCategories() {
+    const grid = document.getElementById('categoryGrid');
+    
+    if (categories.length === 0) {
+        grid.innerHTML = `
+            <div style="text-align:center;padding:40px;color:#94a3b8;grid-column:1/-1;">
+                <div style="font-size:48px;margin-bottom:12px;">📂</div>
+                <h3 style="color:#334155;">No categories yet</h3>
+                <p>Add your first category to organize products</p>
+            </div>
+        `;
+        return;
+    }
+    
+    grid.innerHTML = categories.map(c => {
+        const productCount = products.filter(p => p.category_id === c.id).length;
+        return `
+            <div class="category-card">
+                <div class="category-color" style="background:${c.color || '#1a3c34'}"></div>
+                <div class="icon">${c.icon || '📦'}</div>
+                <div class="name">${c.name}</div>
+                <div class="count">${productCount} products</div>
+                <div class="actions">
+                    <button class="btn-edit-cat" onclick="editCategory(${c.id})">✏️ Edit</button>
+                    <button class="btn-delete-cat" onclick="deleteCategory(${c.id})">🗑️</button>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function openCategoryModal() {
+    document.getElementById('categoryModalTitle').textContent = '➕ Add Category';
+    document.getElementById('editCategoryId').value = '';
+    document.getElementById('categoryName').value = '';
+    document.getElementById('categoryIcon').value = '📦';
+    document.getElementById('categoryColor').value = '#1a3c34';
+    document.getElementById('categoryDescription').value = '';
+    document.getElementById('categoryModal').classList.add('show');
+}
+
+function editCategory(id) {
+    const cat = categories.find(c => c.id === id);
+    if (!cat) return;
+    document.getElementById('categoryModalTitle').textContent = '✏️ Edit Category';
+    document.getElementById('editCategoryId').value = id;
+    document.getElementById('categoryName').value = cat.name;
+    document.getElementById('categoryIcon').value = cat.icon || '📦';
+    document.getElementById('categoryColor').value = cat.color || '#1a3c34';
+    document.getElementById('categoryDescription').value = cat.description || '';
+    document.getElementById('categoryModal').classList.add('show');
+}
+
+function closeCategoryModal() {
+    document.getElementById('categoryModal').classList.remove('show');
+}
+
+async function saveCategory(e) {
+    e.preventDefault();
+    const data = {
+        name: document.getElementById('categoryName').value.trim(),
+        icon: document.getElementById('categoryIcon').value || '📦',
+        color: document.getElementById('categoryColor').value || '#1a3c34',
+        description: document.getElementById('categoryDescription').value.trim()
+    };
+    
+    if (!data.name) {
+        alert('❌ Category name is required');
+        return;
+    }
+    
+    try {
+        const db = await openDB();
+        const tx = db.transaction('categories', 'readwrite');
+        const store = tx.objectStore('categories');
+        const id = document.getElementById('editCategoryId').value;
+        if (id) {
+            data.id = parseInt(id);
+            await store.put(data);
+        } else {
+            await store.add(data);
+        }
+        closeCategoryModal();
+        loadCategories();
+        alert('✅ Category saved successfully!');
+    } catch(e) {
+        alert('❌ Error saving category: ' + e.message);
+    }
+}
+
+async function deleteCategory(id) {
+    const cat = categories.find(c => c.id === id);
+    if (!cat) return;
+    const productCount = products.filter(p => p.category_id === id).length;
+    if (productCount > 0) {
+        if (!confirm(`⚠️ ${productCount} products belong to this category.\nDelete category anyway? (Products will become uncategorized)`)) return;
+    } else {
+        if (!confirm(`Delete category "${cat.name}"?`)) return;
+    }
+    
+    try {
+        const db = await openDB();
+        const tx = db.transaction('categories', 'readwrite');
+        const store = tx.objectStore('categories');
+        await store.delete(id);
+        loadCategories();
+        alert('✅ Category deleted');
+    } catch(e) {
+        alert('❌ Error: ' + e.message);
+    }
+}
+
+function refreshCategories() {
+    loadCategories();
+}
+
+async function upgradeDatabase() {
+    return new Promise((resolve, reject) => {
+        req.onsuccess = function(e) {
+            resolve(e.target.result);
+        };
+        req.onerror = function(e) {
+            reject(e.target.error);
+        };
+    });
+}
+
+function logout() {
+    if (confirm('Logout?')) {
+        localStorage.removeItem('pos_user');
+        window.location.href = 'index.html';
+    }
+}
+
+
+</script>
+
+<script>
+// ===== LOAD STORE NAME =====
+async function loadStoreName() {
+    try {
+        const db = await openDB();
+        const settings = await dbGetAll(db, "settings");
+        const map = {};
+        settings.forEach(s => { map[s.key] = s.value; });
+        if (map.storeName) {
+            const el = document.querySelector(".store-badge");
+            if (el) el.textContent = "🏪 " + map.storeName;
+            document.title = map.storeName + " - " + (document.title.split(" - ").pop() || "SokoPulse");
+        }
+    } catch(e) {
+        console.error("Error loading store name:", e);
+    }
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    setTimeout(loadStoreName, 300);
+});
+</script>
+
+<script>
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/sw.js')
+            .then(function(reg) {
+                console.log('✅ Service Worker registered');
+            })
+            .catch(function(err) {
+                console.log('❌ Service Worker registration failed:', err);
+            });
+    });
+}
+</script>
+
+<script>
+// ===== LICENSE STATUS CHECK =====
+function checkLicenseStatus() {
+    const activated = localStorage.getItem("activated");
+    const expiry = localStorage.getItem("expiry_date");
+    
+    if (!activated || activated !== "true") {
+        alert("⚠️ Your license is not activated.\nPlease go to Settings to activate your license.");
+        window.location.href = "settings.html";
+        return false;
+    }
+    
+    if (expiry) {
+        const expiryDate = new Date(expiry);
+        const now = new Date();
+        const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
+        
+        if (expiryDate < now) {
+            alert("⚠️ Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
+            localStorage.removeItem("activated");
+            localStorage.removeItem("activation_code");
+            localStorage.removeItem("expiry_date");
+            window.location.href = "settings.html";
+            return false;
+        }
+        
+        // Show warning 7 days before expiry
+        if (daysRemaining <= 7 && daysRemaining > 0) {
+            const message = "⚠️ Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
+            alert(message);
+        }
+    }
+    
+    return true;
+}
+
+function checkAndRedirect() {
+    if (!checkLicenseStatus()) {
+        // If not on settings page, redirect to settings
+        if (!window.location.pathname.includes('settings.html') &&
+            !window.location.pathname.includes('activation.html') &&
+            !window.location.pathname.includes('index.html')) {
+            window.location.href = 'activation.html';
+        }
+    }
+}
+
+// Run check on page load
+document.addEventListener('DOMContentLoaded', function() {
+    checkAndRedirect();
+});
+</script>
+
+<script>
+// ===== LICENSE CHECK WITH ALERTS AND BLOCKING =====
+function checkLicenseStatus() {
+    const activated = localStorage.getItem("activated");
+    const expiry = localStorage.getItem("expiry_date");
+    
+    if (!activated || activated !== "true") {
+        alert("⚠️ Your license is not activated.\nPlease go to Settings to activate your license.");
+        window.location.href = "settings.html";
+        return false;
+    }
+    
+    if (expiry) {
+        const expiryDate = new Date(expiry);
+        const now = new Date();
+        const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
+        
+        if (expiryDate < now) {
+            alert("⚠️ Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
+            localStorage.removeItem("activated");
+            localStorage.removeItem("activation_code");
+            localStorage.removeItem("expiry_date");
+            window.location.href = "settings.html";
+            return false;
+        }
+        
+        // Show warning 7 days before expiry
+        if (daysRemaining <= 7 && daysRemaining > 0) {
+            const message = "⚠️ Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
+            alert(message);
+        }
+    }
+    
+    return true;
+}
+
+// Run on page load
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
+        checkLicenseStatus();
+    });
+} else {
+    checkLicenseStatus();
+}
+</script>
+
+</body>
+</html>
+<style>
+@media (max-width: 768px) {
+    .page-container { padding: 10px !important; overflow-x: hidden !important; }
+    .category-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)) !important; gap: 10px !important; }
+    .category-card { padding: 12px !important; }
+    .category-card .name { font-size: 13px !important; }
+    .toolbar { flex-direction: column !important; align-items: stretch !important; }
+    .btn-add, .btn-export { width: 100% !important; justify-content: center !important; }
+    .modal-content { margin: 10px !important; padding: 15px !important; width: auto !important; }
+    .form-row { flex-direction: column !important; gap: 8px !important; }
+}
+</style>
+<style>
+/* ===== TOPBAR - STORE NAME ALWAYS VISIBLE ===== */
+.topbar {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 10px 20px !important;
+    background: white !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    flex-shrink: 0 !important;
+    min-height: 56px !important;
+}
+.topbar .left {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    flex: 1 !important;
+}
+.topbar .right {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    flex-shrink: 0 !important;
+}
+.topbar .right .store-badge {
+    display: inline-block !important;
+    font-size: 13px !important;
+    padding: 4px 14px !important;
+    background: #f1f5f9 !important;
+    border-radius: 20px !important;
+    color: #0f172a !important;
+    font-weight: 600 !important;
+    white-space: nowrap !important;
+}
+.topbar .right .time {
+    font-size: 13px !important;
+    color: #64748b !important;
+    font-weight: 500 !important;
+}
+
+@media (max-width: 768px) {
+    .topbar {
+        padding: 6px 10px !important;
+        min-height: 48px !important;
+        flex-wrap: nowrap !important;
+    }
+    .topbar .left {
+        gap: 6px !important;
+        flex: 0 0 auto !important;
+    }
+    .topbar .left .hamburger {
+        font-size: 18px !important;
+        padding: 2px 6px !important;
+        display: block !important;
+        background: none !important;
+        border: none !important;
+        cursor: pointer !important;
+    }
+    .topbar .left h1 {
+        font-size: 13px !important;
+        white-space: nowrap !important;
+    }
+    .topbar .right {
+        flex: 1 !important;
+        justify-content: flex-end !important;
+        gap: 6px !important;
+    }
+    .topbar .right .store-badge {
+        display: inline-block !important;
+        font-size: 11px !important;
+        padding: 3px 12px !important;
+        background: #1a3c34 !important;
+        color: white !important;
+        border-radius: 16px !important;
+        max-width: 120px !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        white-space: nowrap !important;
+        font-weight: 600 !important;
+    }
+    .topbar .right .time {
+        font-size: 10px !important;
+        color: #64748b !important;
+        display: inline-block !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .topbar {
+        padding: 4px 8px !important;
+        min-height: 42px !important;
+    }
+    .topbar .left .hamburger {
+        font-size: 16px !important;
+        padding: 2px 4px !important;
+    }
+    .topbar .left h1 {
+        font-size: 12px !important;
+    }
+    .topbar .right .store-badge {
+        font-size: 10px !important;
+        padding: 2px 8px !important;
+        max-width: 80px !important;
+    }
+    .topbar .right .time {
+        font-size: 9px !important;
+    }
+}
+</style>
+
+<script>
+// ===== ACTIVATION CHECK =====
+
+</script>
+<style>
+/* ===== BUTTON COLORS ===== */
+.btn-add {
+    background: #1a3c34 !important;
+    color: white !important;
+    border: none !important;
+    padding: 10px 20px !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    font-family: 'Inter', sans-serif !important;
+}
+.btn-add:hover {
+    background: #2a5c54 !important;
+}
+
+.btn-export {
+    background: #3b82f6 !important;
+    color: white !important;
+    border: none !important;
+    padding: 10px 20px !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    font-family: 'Inter', sans-serif !important;
+}
+.btn-export:hover {
+    background: #2563eb !important;
+}
+
+.btn-edit-cat {
+    background: #f59e0b !important;
+    color: white !important;
+    border: none !important;
+    padding: 6px 14px !important;
+    border-radius: 6px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    font-size: 12px !important;
+    font-family: 'Inter', sans-serif !important;
+}
+.btn-edit-cat:hover {
+    background: #d97706 !important;
+}
+
+.btn-delete-cat {
+    background: #ef4444 !important;
+    color: white !important;
+    border: none !important;
+    padding: 6px 14px !important;
+    border-radius: 6px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    font-size: 12px !important;
+    font-family: 'Inter', sans-serif !important;
+}
+.btn-delete-cat:hover {
+    background: #dc2626 !important;
+}
+
+.btn-save {
+    background: #1a3c34 !important;
+    color: white !important;
+    border: none !important;
+    padding: 10px 24px !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    font-family: 'Inter', sans-serif !important;
+}
+.btn-save:hover {
+    background: #2a5c54 !important;
+}
+
+.btn-cancel {
+    background: #94a3b8 !important;
+    color: white !important;
+    border: none !important;
+    padding: 10px 24px !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    font-family: 'Inter', sans-serif !important;
+}
+.btn-cancel:hover {
+    background: #64748b !important;
+}
+</style>

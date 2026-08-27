@@ -1,1 +1,546 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Orders - SokoPulse</title><link href="https: //fonts.googleapis.com/css2?family=Inter: wght@300;400;500;600;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="css/style.css"><link rel="stylesheet" href="css/responsive.css"><style>.toolbar { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; align-items: center; }.toolbar.search-wrapper { flex: 1; position: relative; min-width: 180px; }.toolbar.search-wrapper input { width: 100%; padding: 10px 14px 10px 38px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 14px; font-family: 'Inter', sans-serif; }.toolbar.search-wrapper input: focus { outline: none; border-color: #1a3c34; }.toolbar.search-wrapper.search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #94a3b8; }.toolbar.filter-select { padding: 10px 14px; border: 2px solid #e2e8f0; border-radius: 10px; font-family: 'Inter', sans-serif; font-size: 13px; background: white; }.btn-refresh { padding: 10px 18px; background: #1a3c34; color: white; border: none; border-radius: 10px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; }.btn-refresh: hover { background: #2a5c54; }.btn-export { padding: 10px 18px; background: #f1f5f9; color: #0f172a; border: none; border-radius: 10px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; }.btn-export: hover { background: #e2e8f0; }.btn-print-bulk { padding: 10px 18px; background: #1a3c34; color: white; border: none; border-radius: 10px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; }.btn-print-bulk: hover { background: #2a5c54; }.status-badge { padding: 3px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; }.status-badge.completed { background: #dcfce7; color: #166534; }.status-badge.pending { background: #fef3c7; color: #92400e; }.status-badge.cancelled { background: #fee2e2; color: #991b1b; }.status-badge.processing { background: #dbeafe; color: #1e40af; }.btn-view { padding: 4px 12px; background: #f1f5f9; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; font-family: 'Inter', sans-serif; font-weight: 500; }.btn-view: hover { background: #e2e8f0; }.btn-reprint { padding: 4px 12px; background: #dbeafe; color: #1e40af; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; font-family: 'Inter', sans-serif; font-weight: 500; }.btn-reprint: hover { background: #bfdbfe; }.btn-status { padding: 4px 12px; background: #fef3c7; color: #92400e; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; font-family: 'Inter', sans-serif; font-weight: 500; }.btn-status: hover { background: #fde68a; }.modal-content { max-width: 500px; }.order-detail-item { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #f1f5f9; font-size: 13px; }.order-detail-item: last-child { border-bottom: none; } @media (max-width: 768px) {.toolbar { flex-direction: column; align-items: stretch; }.toolbar.search-wrapper { min-width: unset; }.btn-refresh,.btn-export,.btn-print-bulk { width: 100%; }.filter-select { width: 100%; } table { font-size: 12px; min-width: 600px; } th, td { padding: 6px 8px; white-space: nowrap; }.table-container { overflow-x: auto; } } </style></head><body><div class="app"><div class="sidebar-overlay" onclick="toggleSidebar"></div><aside class="sidebar"><div class="logo"><span>Soko</span>Pulse <button class="close-btn" onclick="toggleSidebar"></button></div><nav><div class="nav-label">Main</div><a href="pos.html"> POS</a><a href="dashboard.html"> Dashboard</a><a href="orders.html" class="active"> Orders</a><div class="nav-label">Inventory</div><a href="products.html"> Products</a><a href="stock.html"> Stock</a><a href="expiry.html"> Expiry</a><a href="categories.html"> Categories</a><a href="suppliers.html"> Suppliers</a><div class="nav-label">Management</div><a href="customers.html"> Customers</a><a href="reports.html"> Reports</a><a href="audit.html"> Audit</a><a href="returns.html"> Returns</a><a href="settings.html"> Settings</a></nav><div class="user-section"><div class="name" id="userName">Administrator</div><button class="logout-btn" onclick="logout"> Logout</button><div class="role" id="userRole">Admin</div></div></aside><main class="main-content"><header class="topbar"><div class="left"><button class="hamburger" onclick="toggleSidebar"></button><h1> Orders</h1></div><div class="right"><span class="store-badge"> SokoPulse</span><span class="time" id="timeDisplay"></span></div></header><div class="page-container"><div class="toolbar"><div class="search-wrapper"><span class="search-icon"></span><input type="text" id="searchInput" placeholder="Search by order or customer..." oninput="renderOrders"></div><select class="filter-select" id="statusFilter" onchange="renderOrders"><option value="all">All Status</option><option value="completed">Completed</option><option value="pending">Pending</option><option value="processing">Processing</option><option value="cancelled">Cancelled</option></select><button class="btn-refresh" onclick="loadOrders"> Refresh</button><button class="btn-print-bulk" onclick="openBulkPrintPreview"> Bulk Print</button><button class="btn-export" onclick="exportOrders"> Export CSV</button></div><div class="table-container"><table><thead><tr><th>Order</th><th>Customer</th><th>Date</th><th>Total</th><th>Status</th><th>Actions</th></tr></thead><tbody id="ordersBody"><tr><td colspan="6" style="text-align: center;padding: 40px;color: #94a3b8;">Loading orders...</td></tr></tbody></table></div></div></main></div><!-- Order Detail Modal --><div class="modal" id="orderModal"><div class="modal-content"><span class="modal-close" onclick="closeModal">&times;</span><h2 id="orderModalTitle">Order Details</h2><div id="orderDetails"></div><div class="modal-actions"><button class="btn-cancel" onclick="closeModal">Close</button></div></div></div><!-- Status Change Modal --><div class="modal" id="statusModal"><div class="modal-content"><span class="modal-close" onclick="closeModal">&times;</span><h2> Change Order Status</h2><input type="hidden" id="statusOrderId"><div class="form-group"><label>New Status</label><select id="newStatus" style="width: 100%;padding: 10px;border: 2px solid #e2e8f0;border-radius: 8px;font-family: 'Inter', sans-serif;font-size: 14px;"><option value="pending"> Pending</option><option value="processing"> Processing</option><option value="completed"> Completed</option><option value="cancelled"> Cancelled</option></select></div><div class="modal-actions"><button class="btn-cancel" onclick="closeModal">Cancel</button><button class="btn-save" onclick="changeOrderStatus"> Update</button></div></div></div><!-- Bulk Print Preview Modal --><div class="modal" id="bulkPrintModal"><div class="modal-content" style="max-width: 700px;"><span class="modal-close" onclick="closeBulkPrint">&times;</span><h2> Bulk Print Preview</h2><div style="display: flex;gap: 10px;margin-bottom: 10px;flex-wrap: wrap;"><span style="font-size: 13px;color: #64748b;" id="bulkOrderCount">0 orders selected</span><span style="font-size: 13px;color: #64748b;" id="bulkTotalAmount">Total: KES 0.00</span></div><div id="bulkPrintContent" style="background: #f8fafc;padding: 16px;border-radius: 8px;font-family: monospace;font-size: 12px;white-space: pre-wrap;max-height: 500px;overflow-y: auto;border: 1px solid #e2e8f0;"></div><div class="modal-actions"><button class="btn-cancel" onclick="closeBulkPrint"> Close</button><button class="btn-save" onclick="printBulkFromPreview"> Print All</button></div></div></div><script src="db.js"></script><script> // ===== ORDERS PAGE - COMPLETE SCRIPT ===== var orders =; function isAdmin { try { const user = JSON.parse(localStorage.getItem("pos_user") || "{}"); return user.role === "admin"; } catch(e) { return false; } } if (!isAdmin) { window.location.href = "pos.html"; } function toggleSidebar { document.querySelector('.sidebar').classList.toggle('open'); document.querySelector('.sidebar-overlay').classList.toggle('show'); } function logout { if (confirm('Logout?')) { localStorage.removeItem('pos_user'); window.location.href = 'index.html'; } } function updateTime { var el = document.getElementById('timeDisplay'); if (el) el.textContent = new Date.toLocaleTimeString('en-KE', { hour12: false }); } function dbPut(db, storeName, data) { return new Promise(function(resolve, reject) { var tx = db.transaction(storeName, 'readwrite'); var store = tx.objectStore(storeName); var req = store.put(data); req.onsuccess = function { resolve(req.result); }; req.onerror = function { reject(req.error); }; }); } async function loadOrders { try { var db = await openDB; orders = await dbGetAll(db, 'orders'); renderOrders; } catch(e) { console.error('Error loading orders: ', e); document.getElementById('ordersBody').innerHTML = '<tr><td colspan="6" style="text-align: center;padding: 40px;color: #ef4444;">Error loading orders</td></tr>'; } } function renderOrders { var tbody = document.getElementById('ordersBody'); var search = document.getElementById('searchInput').value.toLowerCase; var filter = document.getElementById('statusFilter').value; var filtered = orders; if (search) { filtered = filtered.filter(function(o) { return (o.order_number || '').toLowerCase.includes(search) || (o.customer_name || '').toLowerCase.includes(search); }); } if (filter!== 'all') { filtered = filtered.filter(function(o) { return o.status === filter; }); } if (filtered.length === 0) { tbody.innerHTML = '<tr><td colspan="6" style="text-align: center;padding: 40px;color: #94a3b8;">No orders found</td></tr>'; return; } var sorted = filtered.sort(function(a, b) { return new Date(b.date) - new Date(a.date); }); var html = ''; sorted.forEach(function(o) { html += '<tr>'; html += '<td><strong>' + (o.order_number || '#' + o.id) + '</strong></td>'; html += '<td>' + (o.customer_name || 'Walk-in') + '</td>'; html += '<td>' + new Date(o.date).toLocaleDateString + '</td>'; html += '<td>KES ' + (o.total || 0).toFixed(2) + '</td>'; html += '<td><span class="status-badge ' + (o.status || 'completed') + '">' + (o.status || 'completed') + '</span></td>'; html += '<td>'; html += '<button class="btn-view" onclick="viewOrder(' + o.id + ')"></button>'; html += '<button class="btn-reprint" onclick="reprintReceipt(' + o.id + ')"></button>'; html += '<button class="btn-status" onclick="openStatusModal(' + o.id + ')"></button>'; html += '</td>'; html += '</tr>'; }); tbody.innerHTML = html; } function viewOrder(id) { var order = orders.find(function(o) { return o.id === id; }); if (!order) { alert('Order not found'); return; } var items =; if (order.items) { if (typeof order.items === 'string') { try { items = JSON.parse(order.items); } catch(e) { items =; } } else if (Array.isArray(order.items)) { items = order.items; } } var modal = document.getElementById('orderModal'); var title = document.getElementById('orderModalTitle'); var details = document.getElementById('orderDetails'); title.textContent = ' Order ' + (order.order_number || '#' + order.id); var html = '<div style="margin: 8px 0;">'; html += '<p><strong>Customer: </strong> ' + (order.customer_name || 'Walk-in') + '</p>'; html += '<p><strong>Date: </strong> ' + new Date(order.date).toLocaleString + '</p>'; html += '<p><strong>Payment: </strong> ' + (order.payment_method || 'Cash') + '</p>'; html += '<p><strong>Status: </strong><span class="status-badge ' + (order.status || 'completed') + '">' + (order.status || 'completed') + '</span></p>'; html += '<p><strong>Total: </strong> KES ' + (order.total || 0).toFixed(2) + '</p>'; html += '</div>'; html += '<div style="border-top: 1px solid #e2e8f0;padding-top: 10px;margin-top: 10px;">'; html += '<h4> Items</h4>'; if (items.length === 0) { html += '<p style="color: #94a3b8;">No items</p>'; } else { items.forEach(function(item) { html += '<div class="order-detail-item">'; html += '<span>' + item.name + '</span>'; html += '<span>x' + (item.qty || 1) + '</span>'; html += '<span>KES ' + ((item.price || 0) * (item.qty || 1)).toFixed(2) + '</span>'; html += '</div>'; }); } html += '</div>'; details.innerHTML = html; modal.classList.add('show'); } function reprintReceipt(id) { var order = orders.find(function(o) { return o.id === id; }); if (!order) { alert('Order not found'); return; } var items =; if (order.items) { if (typeof order.items === 'string') { try { items = JSON.parse(order.items); } catch(e) { items =; } } else if (Array.isArray(order.items)) { items = order.items; } } var receipt = '================================\n'; receipt += ' SOKOPULSE POS\n'; receipt += '================================\n'; receipt += 'Order: ' + (order.order_number || '#' + order.id) + '\n'; receipt += 'Date: ' + new Date(order.date).toLocaleString + '\n'; receipt += 'Customer: ' + (order.customer_name || 'Walk-in') + '\n'; receipt += '--------------------------------\n'; items.forEach(function(item) { receipt += item.name + ' x' + (item.qty || 1) + ' = KES ' + ((item.price || 0) * (item.qty || 1)).toFixed(2) + '\n'; }); receipt += '--------------------------------\n'; receipt += 'TOTAL: KES ' + (order.total || 0).toFixed(2) + '\n'; receipt += 'Payment: ' + (order.payment_method || 'Cash') + '\n'; receipt += 'Status: ' + (order.status || 'Completed') + '\n'; receipt += '================================\n'; receipt += ' Thank you for shopping with us!\n'; receipt += '================================\n'; var win = window.open('', '_blank', 'width=400, height=600'); if (!win) { alert('Please allow popups for printing'); return; } win.document.write('<html><head><title>Receipt</title><style>body{font-family: monospace;padding: 20px;white-space: pre;}</style></head><body><pre>' + receipt + '</pre></body></html>'); win.document.close; win.print; } function openStatusModal(id) { document.getElementById('statusOrderId').value = id; var order = orders.find(function(o) { return o.id === id; }); if (order) { document.getElementById('newStatus').value = order.status || 'pending'; } document.getElementById('statusModal').classList.add('show'); } async function changeOrderStatus { var id = parseInt(document.getElementById('statusOrderId').value); var newStatus = document.getElementById('newStatus').value; if (!confirm('Change order status to ' + newStatus + '?')) return; try { var db = await openDB; var order = orders.find(function(o) { return o.id === id; }); if (!order) { alert('Order not found'); return; } order.status = newStatus; await dbPut(db, 'orders', order); closeModal; loadOrders; alert('Order status updated!'); } catch(e) { alert('Error: ' + e.message); } } function exportOrders { if (orders.length === 0) { alert('No orders to export'); return; } var csv = 'Order #, Date, Customer, Total, Payment Method, Status, Items\n'; orders.forEach(function(o) { var items =; if (o.items) { if (typeof o.items === 'string') { try { items = JSON.parse(o.items); } catch(e) { items =; } } else if (Array.isArray(o.items)) { items = o.items; } } var itemNames = items.map(function(i) { return i.name + ' x' + (i.qty || 1); }).join('; '); csv += (o.order_number || '#' + o.id) + ', ' + new Date(o.date).toLocaleDateString + ', ' + (o.customer_name || 'Walk-in') + ', ' + (o.total || 0).toFixed(2) + ', ' + (o.payment_method || 'cash') + ', ' + (o.status || 'completed') + ', "' + itemNames + '"\n'; }); var blob = new Blob([csv], { type: 'text/csv' }); var url = URL.createObjectURL(blob); var a = document.createElement('a'); a.href = url; a.download = 'orders_' + new Date.toISOString.slice(0, 10) + '.csv'; a.click; URL.revokeObjectURL(url); alert('Orders exported!'); } var bulkPrintData =; function openBulkPrintPreview { var filtered = getFilteredOrders; if (filtered.length === 0) { alert('No orders to print'); return; } bulkPrintData = filtered; var html = ''; var grandTotal = 0; filtered.forEach(function(o, index) { var items =; if (o.items) { if (typeof o.items === 'string') { try { items = JSON.parse(o.items); } catch(e) { items =; } } else if (Array.isArray(o.items)) { items = o.items; } } var orderTotal = o.total || 0; grandTotal += orderTotal; html += '================================\n'; html += ' SOKOPULSE POS\n'; html += '================================\n'; html += 'Order: ' + (o.order_number || '#' + o.id) + '\n'; html += 'Date: ' + new Date(o.date).toLocaleString + '\n'; html += 'Customer: ' + (o.customer_name || 'Walk-in') + '\n'; html += 'Payment: ' + (o.payment_method || 'Cash') + '\n'; html += 'Status: ' + (o.status || 'Completed') + '\n'; html += '--------------------------------\n'; if (items.length === 0) { html += 'No items\n'; } else { items.forEach(function(item) { var qty = item.qty || 1; var price = item.price || 0; var total = price * qty; var name = (item.name || 'Unknown').slice(0, 25); html += name.padEnd(25) + ' x' + qty + ' KES ' + total.toFixed(2) + '\n'; }); } html += '--------------------------------\n'; html += 'Subtotal: KES ' + (orderTotal || 0).toFixed(2) + '\n'; html += 'Tax (16%): KES ' + ((orderTotal || 0) * 0.16).toFixed(2) + '\n'; html += 'TOTAL: KES ' + (orderTotal || 0).toFixed(2) + '\n'; html += '================================\n'; if (index < filtered.length - 1) { html += '\n\n'; } }); html += '\n\n'; html += '================================\n'; html += ' SUMMARY\n'; html += '================================\n'; html += 'Total Orders: ' + filtered.length + '\n'; html += 'Grand Total: KES ' + grandTotal.toFixed(2) + '\n'; html += '================================\n'; document.getElementById('bulkPrintContent').textContent = html; document.getElementById('bulkOrderCount').textContent = filtered.length + ' orders selected'; document.getElementById('bulkTotalAmount').textContent = 'Total: KES ' + grandTotal.toFixed(2); document.getElementById('bulkPrintModal').classList.add('show'); } function closeBulkPrint { document.getElementById('bulkPrintModal').classList.remove('show'); } function printBulkFromPreview { var content = document.getElementById('bulkPrintContent'); if (!content) return; var receipt = content.textContent; var win = window.open('', '_blank', 'width=450, height=700'); if (!win) { alert('Please allow popups for printing'); return; } win.document.write('<html><head><title>Bulk Receipts</title><style>body{font-family: "Courier New", monospace;padding: 20px;white-space: pre;font-size: 12px;background: white;margin: 0;}@media print{body{padding: 10px;}@page{margin: 0.5cm;}}</style></head><body><pre>' + receipt + '</pre></body></html>'); win.document.close; win.print; } function getFilteredOrders { var search = document.getElementById('searchInput').value.toLowerCase; var filter = document.getElementById('statusFilter').value; var filtered = orders; if (search) { filtered = filtered.filter(function(o) { return (o.order_number || '').toLowerCase.includes(search) || (o.customer_name || '').toLowerCase.includes(search); }); } if (filter!== 'all') { filtered = filtered.filter(function(o) { return o.status === filter; }); } return filtered; } function closeModal { document.querySelectorAll('.modal.show').forEach(function(m) { m.classList.remove('show'); }); } // ===== LICENSE CHECK ===== function checkLicenseStatus { const activated = localStorage.getItem("activated"); const expiry = localStorage.getItem("expiry_date"); if (!activated || activated!== "true") { alert(" Your license is not activated.\nPlease go to Settings to activate your license."); window.location.href = "settings.html"; return false; } if (expiry) { const expiryDate = new Date(expiry); const now = new Date; const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24)); if (expiryDate < now) { alert(" Your license has expired on " + expiryDate.toLocaleDateString + ".\nPlease contact your administrator to renew."); localStorage.removeItem("activated"); localStorage.removeItem("activation_code"); localStorage.removeItem("expiry_date"); window.location.href = "settings.html"; return false; } // Show warning 7 days before expiry if (daysRemaining <= 7 && daysRemaining > 0) { const message = " Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString + ").\nPlease contact your administrator to renew."; alert(message); } } return true; } // ===== SERVICE WORKER ===== if ('serviceWorker' in navigator) { window.addEventListener('load', function { navigator.serviceWorker.register('/sw.js').then(function(reg) { console.log(' Service Worker registered'); }).catch(function(err) { console.log(' Service Worker registration failed: ', err); }); }); } // ===== INIT ===== document.addEventListener('DOMContentLoaded', function { var userData = localStorage.getItem('pos_user'); if (!userData) { window.location.href = 'index.html'; return; } var user = JSON.parse(userData); document.getElementById('userName').textContent = user.name || user.username; document.getElementById('userRole').textContent = user.role || 'User'; setInterval(updateTime, 1000); updateTime; loadOrders; checkLicenseStatus; }); document.addEventListener('click', function(e) { if (e.target.classList.contains('modal')) { e.target.classList.remove('show'); } }); document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { document.querySelectorAll('.modal.show').forEach(function(m) { m.classList.remove('show'); }); } }); </script></body></html> 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders - SokoPulse</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <style>
+        .toolbar { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; align-items: center; }
+        .toolbar .search-wrapper { flex: 1; position: relative; min-width: 180px; }
+        .toolbar .search-wrapper input { width: 100%; padding: 10px 14px 10px 38px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 14px; font-family: 'Inter', sans-serif; }
+        .toolbar .search-wrapper input:focus { outline: none; border-color: #1a3c34; }
+        .toolbar .search-wrapper .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #94a3b8; }
+        .toolbar .filter-select { padding: 10px 14px; border: 2px solid #e2e8f0; border-radius: 10px; font-family: 'Inter', sans-serif; font-size: 13px; background: white; }
+        .btn-refresh { padding: 10px 18px; background: #1a3c34; color: white; border: none; border-radius: 10px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; }
+        .btn-refresh:hover { background: #2a5c54; }
+        .btn-export { padding: 10px 18px; background: #f1f5f9; color: #0f172a; border: none; border-radius: 10px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; }
+        .btn-export:hover { background: #e2e8f0; }
+        .btn-print-bulk { padding: 10px 18px; background: #1a3c34; color: white; border: none; border-radius: 10px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; }
+        .btn-print-bulk:hover { background: #2a5c54; }
+        .status-badge { padding: 3px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+        .status-badge.completed { background: #dcfce7; color: #166534; }
+        .status-badge.pending { background: #fef3c7; color: #92400e; }
+        .status-badge.cancelled { background: #fee2e2; color: #991b1b; }
+        .status-badge.processing { background: #dbeafe; color: #1e40af; }
+        .btn-view { padding: 4px 12px; background: #f1f5f9; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; font-family: 'Inter', sans-serif; font-weight: 500; }
+        .btn-view:hover { background: #e2e8f0; }
+        .btn-reprint { padding: 4px 12px; background: #dbeafe; color: #1e40af; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; font-family: 'Inter', sans-serif; font-weight: 500; }
+        .btn-reprint:hover { background: #bfdbfe; }
+        .btn-status { padding: 4px 12px; background: #fef3c7; color: #92400e; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; font-family: 'Inter', sans-serif; font-weight: 500; }
+        .btn-status:hover { background: #fde68a; }
+        .modal-content { max-width: 500px; }
+        .order-detail-item { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
+        .order-detail-item:last-child { border-bottom: none; }
+        @media (max-width: 768px) {
+            .toolbar { flex-direction: column; align-items: stretch; }
+            .toolbar .search-wrapper { min-width: unset; }
+            .btn-refresh, .btn-export, .btn-print-bulk { width: 100%; }
+            .filter-select { width: 100%; }
+            table { font-size: 12px; min-width: 600px; }
+            th, td { padding: 6px 8px; white-space: nowrap; }
+            .table-container { overflow-x: auto; }
+        }
+    </style>
+</head>
+<body>
+<div class="app">
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+    <aside class="sidebar">
+        <div class="logo">🏪 <span>Soko</span>Pulse <button class="close-btn" onclick="toggleSidebar()">✕</button></div>
+        <nav>
+            <div class="nav-label">Main</div>
+            <a href="pos.html">🛒 POS</a>
+            <a href="dashboard.html">📊 Dashboard</a>
+            <a href="orders.html" class="active">📋 Orders</a>
+            <div class="nav-label">Inventory</div>
+            <a href="products.html">📦 Products</a>
+            <a href="stock.html">📦 Stock</a>
+            <a href="expiry.html">⏰ Expiry</a>
+            <a href="categories.html">📂 Categories</a>
+            <a href="suppliers.html">📦 Suppliers</a>
+            <div class="nav-label">Management</div>
+            <a href="customers.html">👤 Customers</a>
+            <a href="reports.html">📈 Reports</a>
+            <a href="audit.html">📋 Audit</a>
+            <a href="returns.html">🔄 Returns</a>
+            <a href="settings.html">⚙️ Settings</a>
+        </nav>
+        <div class="user-section">
+            <div class="name" id="userName">Administrator</div>
+            <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+            <div class="role" id="userRole">Admin</div>
+        </div>
+    </aside>
+    <main class="main-content">
+        <header class="topbar">
+            <div class="left">
+                <button class="hamburger" onclick="toggleSidebar()">☰</button>
+                <h1>📋 Orders</h1>
+            </div>
+            <div class="right">
+                <span class="store-badge">🏪 SokoPulse</span>
+                <span class="time" id="timeDisplay"></span>
+            </div>
+        </header>
+        <div class="page-container">
+            <div class="toolbar">
+                <div class="search-wrapper">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="searchInput" placeholder="Search by order or customer..." oninput="renderOrders()">
+                </div>
+                <select class="filter-select" id="statusFilter" onchange="renderOrders()">
+                    <option value="all">All Status</option>
+                    <option value="completed">Completed</option>
+                    <option value="pending">Pending</option>
+                    <option value="processing">Processing</option>
+                    <option value="cancelled">Cancelled</option>
+                </select>
+                <button class="btn-refresh" onclick="loadOrders()">🔄 Refresh</button>
+                <button class="btn-print-bulk" onclick="openBulkPrintPreview()">🖨️ Bulk Print</button>
+                <button class="btn-export" onclick="exportOrders()">📤 Export CSV</button>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr><th>Order</th><th>Customer</th><th>Date</th><th>Total</th><th>Status</th><th>Actions</th></tr>
+                    </thead>
+                    <tbody id="ordersBody"><tr><td colspan="6" style="text-align:center;padding:40px;color:#94a3b8;">Loading orders...</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Order Detail Modal -->
+<div class="modal" id="orderModal">
+    <div class="modal-content">
+        <span class="modal-close" onclick="closeModal()">&times;</span>
+        <h2 id="orderModalTitle">Order Details</h2>
+        <div id="orderDetails"></div>
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeModal()">Close</button>
+        </div>
+    </div>
+</div>
+
+<!-- Status Change Modal -->
+<div class="modal" id="statusModal">
+    <div class="modal-content">
+        <span class="modal-close" onclick="closeModal()">&times;</span>
+        <h2>🔄 Change Order Status</h2>
+        <input type="hidden" id="statusOrderId">
+        <div class="form-group">
+            <label>New Status</label>
+            <select id="newStatus" style="width:100%;padding:10px;border:2px solid #e2e8f0;border-radius:8px;font-family:'Inter',sans-serif;font-size:14px;">
+                <option value="pending">⏳ Pending</option>
+                <option value="processing">🔄 Processing</option>
+                <option value="completed">✅ Completed</option>
+                <option value="cancelled">❌ Cancelled</option>
+            </select>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+            <button class="btn-save" onclick="changeOrderStatus()">💾 Update</button>
+        </div>
+    </div>
+</div>
+
+<!-- Bulk Print Preview Modal -->
+<div class="modal" id="bulkPrintModal">
+    <div class="modal-content" style="max-width:700px;">
+        <span class="modal-close" onclick="closeBulkPrint()">&times;</span>
+        <h2>🖨️ Bulk Print Preview</h2>
+        <div style="display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap;">
+            <span style="font-size:13px;color:#64748b;" id="bulkOrderCount">0 orders selected</span>
+            <span style="font-size:13px;color:#64748b;" id="bulkTotalAmount">Total: KES 0.00</span>
+        </div>
+        <div id="bulkPrintContent" style="background:#f8fafc;padding:16px;border-radius:8px;font-family:monospace;font-size:12px;white-space:pre-wrap;max-height:500px;overflow-y:auto;border:1px solid #e2e8f0;"></div>
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeBulkPrint()">✕ Close</button>
+            <button class="btn-save" onclick="printBulkFromPreview()">🖨️ Print All</button>
+        </div>
+    </div>
+</div>
+
+<script src="db.js"></script>
+<script>
+// ===== ORDERS PAGE - COMPLETE SCRIPT =====
+var orders = [];
+
+function isAdmin() {
+    try {
+        const user = JSON.parse(localStorage.getItem("pos_user") || "{}");
+        return user.role === "admin";
+    } catch(e) { return false; }
+}
+if (!isAdmin()) { window.location.href = "pos.html"; }
+
+function toggleSidebar() {
+    document.querySelector('.sidebar').classList.toggle('open');
+    document.querySelector('.sidebar-overlay').classList.toggle('show');
+}
+
+function logout() {
+    if (confirm('Logout?')) {
+        localStorage.removeItem('pos_user');
+        window.location.href = 'index.html';
+    }
+}
+
+function updateTime() {
+    var el = document.getElementById('timeDisplay');
+    if (el) el.textContent = new Date().toLocaleTimeString('en-KE', { hour12: false });
+}
+
+function dbPut(db, storeName, data) {
+    return new Promise(function(resolve, reject) {
+        var tx = db.transaction(storeName, 'readwrite');
+        var store = tx.objectStore(storeName);
+        var req = store.put(data);
+        req.onsuccess = function() { resolve(req.result); };
+        req.onerror = function() { reject(req.error); };
+    });
+}
+
+async function loadOrders() {
+    try {
+        var db = await openDB();
+        orders = await dbGetAll(db, 'orders');
+        renderOrders();
+    } catch(e) {
+        console.error('Error loading orders:', e);
+        document.getElementById('ordersBody').innerHTML = '<tr><td colspan="6" style="text-align:center;padding:40px;color:#ef4444;">Error loading orders</td></tr>';
+    }
+}
+
+function renderOrders() {
+    var tbody = document.getElementById('ordersBody');
+    var search = document.getElementById('searchInput').value.toLowerCase();
+    var filter = document.getElementById('statusFilter').value;
+    var filtered = orders;
+    if (search) {
+        filtered = filtered.filter(function(o) {
+            return (o.order_number || '').toLowerCase().includes(search) || (o.customer_name || '').toLowerCase().includes(search);
+        });
+    }
+    if (filter !== 'all') {
+        filtered = filtered.filter(function(o) { return o.status === filter; });
+    }
+    if (filtered.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:40px;color:#94a3b8;">No orders found</td></tr>';
+        return;
+    }
+    var sorted = filtered.sort(function(a, b) { return new Date(b.date) - new Date(a.date); });
+    var html = '';
+    sorted.forEach(function(o) {
+        html += '<tr>';
+        html += '<td><strong>' + (o.order_number || '#' + o.id) + '</strong></td>';
+        html += '<td>' + (o.customer_name || 'Walk-in') + '</td>';
+        html += '<td>' + new Date(o.date).toLocaleDateString() + '</td>';
+        html += '<td>KES ' + (o.total || 0).toFixed(2) + '</td>';
+        html += '<td><span class="status-badge ' + (o.status || 'completed') + '">' + (o.status || 'completed') + '</span></td>';
+        html += '<td>';
+        html += '<button class="btn-view" onclick="viewOrder(' + o.id + ')">👁️</button>';
+        html += '<button class="btn-reprint" onclick="reprintReceipt(' + o.id + ')">🖨️</button>';
+        html += '<button class="btn-status" onclick="openStatusModal(' + o.id + ')">📊</button>';
+        html += '</td>';
+        html += '</tr>';
+    });
+    tbody.innerHTML = html;
+}
+
+function viewOrder(id) {
+    var order = orders.find(function(o) { return o.id === id; });
+    if (!order) { alert('Order not found'); return; }
+    var items = [];
+    if (order.items) {
+        if (typeof order.items === 'string') {
+            try { items = JSON.parse(order.items); } catch(e) { items = []; }
+        } else if (Array.isArray(order.items)) {
+            items = order.items;
+        }
+    }
+    var modal = document.getElementById('orderModal');
+    var title = document.getElementById('orderModalTitle');
+    var details = document.getElementById('orderDetails');
+    title.textContent = '📋 Order ' + (order.order_number || '#' + order.id);
+    var html = '<div style="margin:8px 0;">';
+    html += '<p><strong>Customer:</strong> ' + (order.customer_name || 'Walk-in') + '</p>';
+    html += '<p><strong>Date:</strong> ' + new Date(order.date).toLocaleString() + '</p>';
+    html += '<p><strong>Payment:</strong> ' + (order.payment_method || 'Cash') + '</p>';
+    html += '<p><strong>Status:</strong> <span class="status-badge ' + (order.status || 'completed') + '">' + (order.status || 'completed') + '</span></p>';
+    html += '<p><strong>Total:</strong> KES ' + (order.total || 0).toFixed(2) + '</p>';
+    html += '</div>';
+    html += '<div style="border-top:1px solid #e2e8f0;padding-top:10px;margin-top:10px;">';
+    html += '<h4>📦 Items</h4>';
+    if (items.length === 0) {
+        html += '<p style="color:#94a3b8;">No items</p>';
+    } else {
+        items.forEach(function(item) {
+            html += '<div class="order-detail-item">';
+            html += '<span>' + item.name + '</span>';
+            html += '<span>x' + (item.qty || 1) + '</span>';
+            html += '<span>KES ' + ((item.price || 0) * (item.qty || 1)).toFixed(2) + '</span>';
+            html += '</div>';
+        });
+    }
+    html += '</div>';
+    details.innerHTML = html;
+    modal.classList.add('show');
+}
+
+function reprintReceipt(id) {
+    var order = orders.find(function(o) { return o.id === id; });
+    if (!order) { alert('Order not found'); return; }
+    var items = [];
+    if (order.items) {
+        if (typeof order.items === 'string') {
+            try { items = JSON.parse(order.items); } catch(e) { items = []; }
+        } else if (Array.isArray(order.items)) {
+            items = order.items;
+        }
+    }
+    var receipt = '================================\n';
+    receipt += '        SOKOPULSE POS\n';
+    receipt += '================================\n';
+    receipt += 'Order: ' + (order.order_number || '#' + order.id) + '\n';
+    receipt += 'Date: ' + new Date(order.date).toLocaleString() + '\n';
+    receipt += 'Customer: ' + (order.customer_name || 'Walk-in') + '\n';
+    receipt += '--------------------------------\n';
+    items.forEach(function(item) {
+        receipt += item.name + ' x' + (item.qty || 1) + ' = KES ' + ((item.price || 0) * (item.qty || 1)).toFixed(2) + '\n';
+    });
+    receipt += '--------------------------------\n';
+    receipt += 'TOTAL: KES ' + (order.total || 0).toFixed(2) + '\n';
+    receipt += 'Payment: ' + (order.payment_method || 'Cash') + '\n';
+    receipt += 'Status: ' + (order.status || 'Completed') + '\n';
+    receipt += '================================\n';
+    receipt += '  Thank you for shopping with us!\n';
+    receipt += '================================\n';
+    var win = window.open('', '_blank', 'width=400,height=600');
+    if (!win) { alert('Please allow popups for printing'); return; }
+    win.document.write('<html><head><title>Receipt</title><style>body{font-family:monospace;padding:20px;white-space:pre;}</style></head><body><pre>' + receipt + '</pre></body></html>');
+    win.document.close();
+    win.print();
+}
+
+function openStatusModal(id) {
+    document.getElementById('statusOrderId').value = id;
+    var order = orders.find(function(o) { return o.id === id; });
+    if (order) { document.getElementById('newStatus').value = order.status || 'pending'; }
+    document.getElementById('statusModal').classList.add('show');
+}
+
+async function changeOrderStatus() {
+    var id = parseInt(document.getElementById('statusOrderId').value);
+    var newStatus = document.getElementById('newStatus').value;
+    if (!confirm('Change order status to ' + newStatus + '?')) return;
+    try {
+        var db = await openDB();
+        var order = orders.find(function(o) { return o.id === id; });
+        if (!order) { alert('Order not found'); return; }
+        order.status = newStatus;
+        await dbPut(db, 'orders', order);
+        closeModal();
+        loadOrders();
+        alert('Order status updated!');
+    } catch(e) { alert('Error: ' + e.message); }
+}
+
+function exportOrders() {
+    if (orders.length === 0) { alert('No orders to export'); return; }
+    var csv = 'Order #,Date,Customer,Total,Payment Method,Status,Items\n';
+    orders.forEach(function(o) {
+        var items = [];
+        if (o.items) {
+            if (typeof o.items === 'string') {
+                try { items = JSON.parse(o.items); } catch(e) { items = []; }
+            } else if (Array.isArray(o.items)) {
+                items = o.items;
+            }
+        }
+        var itemNames = items.map(function(i) { return i.name + ' x' + (i.qty || 1); }).join('; ');
+        csv += (o.order_number || '#' + o.id) + ',' + new Date(o.date).toLocaleDateString() + ',' + (o.customer_name || 'Walk-in') + ',' + (o.total || 0).toFixed(2) + ',' + (o.payment_method || 'cash') + ',' + (o.status || 'completed') + ',"' + itemNames + '"\n';
+    });
+    var blob = new Blob([csv], { type: 'text/csv' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'orders_' + new Date().toISOString().slice(0, 10) + '.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+    alert('Orders exported!');
+}
+
+var bulkPrintData = [];
+
+function openBulkPrintPreview() {
+    var filtered = getFilteredOrders();
+    if (filtered.length === 0) { alert('No orders to print'); return; }
+    bulkPrintData = filtered;
+    var html = '';
+    var grandTotal = 0;
+    filtered.forEach(function(o, index) {
+        var items = [];
+        if (o.items) {
+            if (typeof o.items === 'string') {
+                try { items = JSON.parse(o.items); } catch(e) { items = []; }
+            } else if (Array.isArray(o.items)) {
+                items = o.items;
+            }
+        }
+        var orderTotal = o.total || 0;
+        grandTotal += orderTotal;
+        html += '================================\n';
+        html += '        SOKOPULSE POS\n';
+        html += '================================\n';
+        html += 'Order: ' + (o.order_number || '#' + o.id) + '\n';
+        html += 'Date: ' + new Date(o.date).toLocaleString() + '\n';
+        html += 'Customer: ' + (o.customer_name || 'Walk-in') + '\n';
+        html += 'Payment: ' + (o.payment_method || 'Cash') + '\n';
+        html += 'Status: ' + (o.status || 'Completed') + '\n';
+        html += '--------------------------------\n';
+        if (items.length === 0) {
+            html += 'No items\n';
+        } else {
+            items.forEach(function(item) {
+                var qty = item.qty || 1;
+                var price = item.price || 0;
+                var total = price * qty;
+                var name = (item.name || 'Unknown').slice(0, 25);
+                html += name.padEnd(25) + ' x' + qty + '  KES ' + total.toFixed(2) + '\n';
+            });
+        }
+        html += '--------------------------------\n';
+        html += 'Subtotal:    KES ' + (orderTotal || 0).toFixed(2) + '\n';
+        html += 'Tax (16%):   KES ' + ((orderTotal || 0) * 0.16).toFixed(2) + '\n';
+        html += 'TOTAL:       KES ' + (orderTotal || 0).toFixed(2) + '\n';
+        html += '================================\n';
+        if (index < filtered.length - 1) { html += '\n\n'; }
+    });
+    html += '\n\n';
+    html += '================================\n';
+    html += '          SUMMARY\n';
+    html += '================================\n';
+    html += 'Total Orders: ' + filtered.length + '\n';
+    html += 'Grand Total:  KES ' + grandTotal.toFixed(2) + '\n';
+    html += '================================\n';
+    document.getElementById('bulkPrintContent').textContent = html;
+    document.getElementById('bulkOrderCount').textContent = filtered.length + ' orders selected';
+    document.getElementById('bulkTotalAmount').textContent = 'Total: KES ' + grandTotal.toFixed(2);
+    document.getElementById('bulkPrintModal').classList.add('show');
+}
+
+function closeBulkPrint() {
+    document.getElementById('bulkPrintModal').classList.remove('show');
+}
+
+function printBulkFromPreview() {
+    var content = document.getElementById('bulkPrintContent');
+    if (!content) return;
+    var receipt = content.textContent;
+    var win = window.open('', '_blank', 'width=450,height=700');
+    if (!win) { alert('Please allow popups for printing'); return; }
+    win.document.write('<html><head><title>Bulk Receipts</title><style>body{font-family:"Courier New",monospace;padding:20px;white-space:pre;font-size:12px;background:white;margin:0;}@media print{body{padding:10px;}@page{margin:0.5cm;}}</style></head><body><pre>' + receipt + '</pre></body></html>');
+    win.document.close();
+    win.print();
+}
+
+function getFilteredOrders() {
+    var search = document.getElementById('searchInput').value.toLowerCase();
+    var filter = document.getElementById('statusFilter').value;
+    var filtered = orders;
+    if (search) {
+        filtered = filtered.filter(function(o) {
+            return (o.order_number || '').toLowerCase().includes(search) || (o.customer_name || '').toLowerCase().includes(search);
+        });
+    }
+    if (filter !== 'all') {
+        filtered = filtered.filter(function(o) { return o.status === filter; });
+    }
+    return filtered;
+}
+
+function closeModal() {
+    document.querySelectorAll('.modal.show').forEach(function(m) { m.classList.remove('show'); });
+}
+
+// ===== LICENSE CHECK =====
+function checkLicenseStatus() {
+    const activated = localStorage.getItem("activated");
+    const expiry = localStorage.getItem("expiry_date");
+    
+    if (!activated || activated !== "true") {
+        alert("⚠️ Your license is not activated.\nPlease go to Settings to activate your license.");
+        window.location.href = "settings.html";
+        return false;
+    }
+    
+    if (expiry) {
+        const expiryDate = new Date(expiry);
+        const now = new Date();
+        const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
+        
+        if (expiryDate < now) {
+            alert("⚠️ Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
+            localStorage.removeItem("activated");
+            localStorage.removeItem("activation_code");
+            localStorage.removeItem("expiry_date");
+            window.location.href = "settings.html";
+            return false;
+        }
+        
+        // Show warning 7 days before expiry
+        if (daysRemaining <= 7 && daysRemaining > 0) {
+            const message = "⚠️ Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
+            alert(message);
+        }
+    }
+    
+    return true;
+}
+
+// ===== SERVICE WORKER =====
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/sw.js')
+            .then(function(reg) {
+                console.log('✅ Service Worker registered');
+            })
+            .catch(function(err) {
+                console.log('❌ Service Worker registration failed:', err);
+            });
+    });
+}
+
+// ===== INIT =====
+document.addEventListener('DOMContentLoaded', function() {
+    var userData = localStorage.getItem('pos_user');
+    if (!userData) {
+        window.location.href = 'index.html';
+        return;
+    }
+    var user = JSON.parse(userData);
+    document.getElementById('userName').textContent = user.name || user.username;
+    document.getElementById('userRole').textContent = user.role || 'User';
+    setInterval(updateTime, 1000);
+    updateTime();
+    loadOrders();
+    checkLicenseStatus();
+});
+
+document.addEventListener('click', function(e) {
+    if (e.target.classList.contains('modal')) { e.target.classList.remove('show'); }
+});
+
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        document.querySelectorAll('.modal.show').forEach(function(m) { m.classList.remove('show'); });
+    }
+});
+</script>
+</body>
+</html>

@@ -1,1 +1,741 @@
-<!DOCTYPE html><html lang="en"><head><script src="db.js"></script><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Customers - SokoPulse</title><link href="https: //fonts.googleapis.com/css2?family=Inter: wght@300;400;500;600;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="css/style.css"><link rel="stylesheet" href="css/responsive.css"><style>.toolbar { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; align-items: center; }.toolbar.search-wrapper { flex: 1; position: relative; min-width: 180px; }.toolbar.search-wrapper input { width: 100%; padding: 10px 14px 10px 38px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 14px; font-family: 'Inter', sans-serif; }.toolbar.search-wrapper input: focus { outline: none; border-color: #1a3c34; }.toolbar.search-wrapper.search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #94a3b8; }.btn-add { padding: 10px 20px; background: #1a3c34; color: white; border: none; border-radius: 10px; font-weight: 600; font-family: 'Inter', sans-serif; cursor: pointer; transition: all 0.15s; }.btn-add: hover { background: #2a5c54; transform: translateY(-2px); }.customer-card { background: white; border-radius: 12px; padding: 16px 20px; border: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; transition: all 0.15s; }.customer-card: hover { border-color: #1a3c34; }.customer-card.info { flex: 1; }.customer-card.info.name { font-weight: 600; color: #0f172a; }.customer-card.info.details { font-size: 13px; color: #94a3b8; }.customer-card.stats { text-align: right; }.customer-card.stats.total { font-weight: 600; color: #0f172a; }.customer-card.stats.orders { font-size: 12px; color: #94a3b8; }.customer-card.actions { display: flex; gap: 6px; margin-left: 12px; }.customer-card.actions button { padding: 4px 12px; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; font-family: 'Inter', sans-serif; font-weight: 500; }.btn-edit { background: #f1f5f9; color: #0f172a; }.btn-edit: hover { background: #e2e8f0; }.btn-delete { background: #fef2f2; color: #ef4444; }.btn-delete: hover { background: #fee2e2; }.btn-view { background: #dbeafe; color: #1e40af; }.btn-view: hover { background: #bfdbfe; }.credit-badge { font-size: 11px; font-weight: 600; padding: 2px 10px; border-radius: 20px; }.credit-badge.good { background: #dcfce7; color: #166534; }.credit-badge.warning { background: #fef3c7; color: #92400e; }.credit-badge.danger { background: #fee2e2; color: #991b1b; }.empty-state { text-align: center; padding: 60px 20px; color: #94a3b8; }.empty-state.empty-icon { font-size: 48px; margin-bottom: 12px; }.empty-state h3 { color: #334155; font-weight: 600; } </style></head><body><div class="app"><div class="sidebar-overlay" onclick="toggleSidebar"></div><aside class="sidebar"><div class="logo"><span>Soko</span>Pulse <button class="close-btn" onclick="toggleSidebar"></button></div><nav><div class="nav-label">Main</div><a href="pos.html"> POS</a><a href="dashboard.html"> Dashboard</a><a href="orders.html"> Orders</a><div class="nav-label">Inventory</div><a href="products.html"> Products</a><a href="categories.html"> Categories</a><a href="suppliers.html"> Suppliers</a><a href="stock.html"> Stock</a><a href="expiry.html"> Expiry</a><div class="nav-label">Management</div><a href="customers.html" class="active"> Customers</a><a href="reports.html"> Reports</a><a href="audit.html"> Audit</a><a href="returns.html"> Returns</a><a href="settings.html"> Settings</a></nav><div class="user-section"><div class="name" id="userName">Administrator</div><button class="logout-btn" onclick="logout"> Logout</button><div class="role" id="userRole">Admin</div></div></aside><main class="main-content"><header class="topbar"><div class="left"><button class="hamburger" onclick="toggleSidebar"></button><h1> Customers</h1></div><div class="right"><span class="store-badge"> SokoPulse</span><span class="time" id="timeDisplay"></span></div></header><div class="page-container"><div class="stats-grid" style="display: grid;grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));gap: 12px;margin-bottom: 16px;"><div class="stat-card" style="background: white;padding: 12px 16px;border-radius: 10px;border: 1px solid #e2e8f0;text-align: center;"><div style="font-size: 11px;color: #94a3b8;font-weight: 600;text-transform: uppercase;">Total Customers</div><div style="font-size: 24px;font-weight: 700;color: #0f172a;" id="totalCustomers">0</div></div><div class="stat-card" style="background: white;padding: 12px 16px;border-radius: 10px;border: 1px solid #e2e8f0;text-align: center;"><div style="font-size: 11px;color: #94a3b8;font-weight: 600;text-transform: uppercase;">Total Credit</div><div style="font-size: 24px;font-weight: 700;color: #f59e0b;" id="totalCredit">KES 0</div></div><div class="stat-card" style="background: white;padding: 12px 16px;border-radius: 10px;border: 1px solid #e2e8f0;text-align: center;"><div style="font-size: 11px;color: #94a3b8;font-weight: 600;text-transform: uppercase;">Total Spent</div><div style="font-size: 24px;font-weight: 700;color: #1a3c34;" id="totalSpent">KES 0</div></div></div><div class="toolbar"><div class="search-wrapper"><span class="search-icon"></span><input type="text" id="searchInput" placeholder="Search by name or phone..." oninput="renderCustomers"></div><button class="btn-add" onclick="openAddModal"> Add Customer</button></div><div id="customersList"><div style="text-align: center;padding: 40px;color: #94a3b8;">Loading customers...</div></div></div></main></div><!-- Add/Edit Modal --><div class="modal" id="customerModal"><div class="modal-content"><span class="modal-close" onclick="closeModal">&times;</span><h2 id="modalTitle">Add Customer</h2><form id="customerForm" onsubmit="saveCustomer(event)"><input type="hidden" id="editId"><div class="form-group"><label>Full Name *</label><input type="text" id="custName" placeholder="Enter full name" required></div><div class="form-group"><label>Phone Number *</label><input type="tel" id="custPhone" placeholder="0712345678" required></div><div class="form-group"><label>Email</label><input type="email" id="custEmail" placeholder="customer@email.com"></div><div class="form-group"><label>Address</label><input type="text" id="custAddress" placeholder="Enter address"></div><div class="form-row"><div class="form-group"><label>Credit Limit (KES)</label><input type="number" id="custCreditLimit" placeholder="0" value="0"></div><div class="form-group"><label>Current Credit (KES)</label><input type="number" id="custCredit" placeholder="0" value="0"></div></div><div class="modal-actions"><button type="button" class="btn-cancel" onclick="closeModal">Cancel</button><button type="submit" class="btn-save"> Save Customer</button></div></form></div></div><script> // ===== ALL FUNCTIONS ===== function toggleSidebar { document.querySelector('.sidebar').classList.toggle('open'); document.querySelector('.sidebar-overlay').classList.toggle('show'); } function openAddModal { editingId = null; document.getElementById('modalTitle').textContent = ' Add Customer'; document.getElementById('editId').value = ''; document.getElementById('custName').value = ''; document.getElementById('custPhone').value = ''; document.getElementById('custEmail').value = ''; document.getElementById('custAddress').value = ''; document.getElementById('custCreditLimit').value = '0'; document.getElementById('custCredit').value = '0'; document.getElementById('customerModal').classList.add('show'); } function openEditModal(id) { const c = customers.find(x => x.id === id); if (!c) return; editingId = id; document.getElementById('modalTitle').textContent = ' Edit Customer'; document.getElementById('editId').value = id; document.getElementById('custName').value = c.name || ''; document.getElementById('custPhone').value = c.phone || ''; document.getElementById('custEmail').value = c.email || ''; document.getElementById('custAddress').value = c.address || ''; document.getElementById('custCreditLimit').value = c.credit_limit || 0; document.getElementById('custCredit').value = c.credit || 0; document.getElementById('customerModal').classList.add('show'); } function viewCustomer(id) { const c = customers.find(x => x.id === id); if (!c) return; alert(` Customer Details\n\nName: ${c.name}\nPhone: ${c.phone}\nEmail: ${c.email || '-'}\nAddress: ${c.address || '-'}\nTotal Orders: ${c.total_orders || 0}\nTotal Spent: KES ${(c.total_spent || 0).toFixed(2)}\nCredit: KES ${(c.credit || 0).toFixed(2)}\nCredit Limit: KES ${(c.credit_limit || 0).toFixed(2)}`); } function closeModal { document.getElementById('customerModal').classList.remove('show'); } async function deleteCustomer(id) { if (!confirm("Delete this customer?")) return; try { const db = await openDB; const tx = db.transaction("customers", "readwrite"); const store = tx.objectStore("customers"); await store.delete(id); alert(" Customer deleted"); await loadCustomers; } catch(e) { alert(" Error: " + e.message); } } function logout { if (confirm('Logout?')) { localStorage.removeItem('pos_user'); window.location.href = 'index.html'; } } // ===== DOM CONTENT LOADED ===== // ===== LOAD CUSTOMERS ===== async function loadCustomers { console.log('loadCustomers called'); try { const db = await openDB; const tx = db.transaction('customers', 'readonly'); const store = tx.objectStore('customers'); const req = store.getAll; req.onsuccess = function { customers = req.result; console.log('Customers loaded: ', customers.length); renderCustomers; updateCustomerStats; }; req.onerror = function { console.error('Error getting customers'); document.getElementById('customersList').innerHTML = '<div style="text-align: center;padding: 40px;color: #ef4444;">Error loading customers</div>'; }; } catch(e) { console.error('Error loading customers: ', e); document.getElementById('customersList').innerHTML = '<div style="text-align: center;padding: 40px;color: #ef4444;">Error loading customers: ' + e.message + '</div>'; } } // ===== REST OF CODE ===== let customers =; let editingId = null; // ===== ROLE-BASED ACCESS ===== const userData = localStorage.getItem('pos_user'); if (userData) { const user = JSON.parse(userData); } document.addEventListener('DOMContentLoaded', function { const userData = localStorage.getItem('pos_user'); if (!userData) { window.location.href = 'index.html'; return; } const user = JSON.parse(userData); document.getElementById('userName').textContent = user.name || user.username; document.getElementById('userRole').textContent = user.role || 'User'; setInterval( => { document.getElementById('timeDisplay').textContent = new Date.toLocaleTimeString('en-KE', { hour12: false }); }, 1000); }); function updateCustomerStats { const total = customers.length; const totalCredit = customers.reduce((sum, c) => sum + (c.credit || 0), 0); const totalSpent = customers.reduce((sum, c) => sum + (c.total_spent || 0), 0); const el1 = document.getElementById('totalCustomers'); const el2 = document.getElementById('totalCredit'); const el3 = document.getElementById('totalSpent'); if (el1) el1.textContent = total; if (el2) el2.textContent = 'KES ' + totalCredit.toFixed(2); if (el3) el3.textContent = 'KES ' + totalSpent.toFixed(2); } function renderCustomers { const container = document.getElementById('customersList'); const search = document.getElementById('searchInput').value.toLowerCase; let filtered = customers; if (search) { filtered = filtered.filter(c => (c.name || '').toLowerCase.includes(search) || (c.phone || '').includes(search) ); } if (filtered.length === 0) { container.innerHTML = ` <div class="empty-state"><div class="empty-icon"></div><h3>No customers found</h3><p style="color: #94a3b8;">Add your first customer to get started</p></div> `; return; } container.innerHTML = filtered.map(c => { const credit = c.credit || 0; const creditLimit = c.credit_limit || 0; let creditStatus = 'good'; let creditLabel = ' Good'; if (credit >= creditLimit && creditLimit > 0) { creditStatus = 'danger'; creditLabel = ' Max Credit'; } else if (credit > creditLimit * 0.7 && creditLimit > 0) { creditStatus = 'warning'; creditLabel = ' High Credit'; } return ` <div class="customer-card"><div class="info"><div class="name">${c.name || 'Unnamed'}</div><div class="details"> ${c.phone || '-'} ${c.email? ' ' + c.email: ''} ${c.address? ' ' + c.address: ''} <span class="credit-badge ${creditStatus}">${creditLabel}</span></div></div><div class="stats"><div class="total">KES ${(c.total_spent || 0).toFixed(2)}</div><div class="orders">${c.total_orders || 0} orders</div></div><div class="actions"><button class="btn-view" onclick="viewCustomer(${c.id})"></button><button class="btn-edit" onclick="openEditModal(${c.id})"></button><button class="btn-delete" onclick="deleteCustomer(${c.id})"></button></div></div> `; }).join(''); } async function saveCustomer(e) { e.preventDefault; const editId = document.getElementById("editId").value; const data = { name: document.getElementById("custName").value.trim, phone: document.getElementById("custPhone").value.trim, email: document.getElementById("custEmail").value.trim, address: document.getElementById("custAddress").value.trim, credit_limit: parseFloat(document.getElementById("custCreditLimit").value) || 0, credit: parseFloat(document.getElementById("custCredit").value) || 0, total_orders: 0, total_spent: 0, created_at: new Date.toISOString }; if (!data.name ||!data.phone) { alert(" Name and phone are required"); return; } try { const db = await openDB; const tx = db.transaction("customers", "readwrite"); const store = tx.objectStore("customers"); await new Promise((resolve, reject) => { let request; if (editId) { data.id = parseInt(editId); request = store.put(data); } else { request = store.add(data); } request.onsuccess = => resolve; request.onerror = => reject(request.error); }); closeModal; alert(editId? " Customer updated successfully": " Customer added successfully"); await loadCustomers; } catch(e) { alert(" Error: " + e.message); console.error(e); } } </script><script> // ===== LOAD STORE NAME ===== document.addEventListener("DOMContentLoaded", function { loadCustomers; loadCustomers; }); </script><script> if ('serviceWorker' in navigator) { window.addEventListener('load', function { navigator.serviceWorker.register('/sw.js').then(function(reg) { console.log(' Service Worker registered'); }).catch(function(err) { console.log(' Service Worker registration failed: ', err); }); }); } </script><script> // ===== LICENSE CHECK ===== // Run checks // License check removed); </script><!-- License Warning Banner --><span id="licenseWarningMessage"> Your license expires soon. Please renew in Settings.</span></div><script> // ===== LICENSE STATUS CHECK ===== function checkLicenseStatus { const activated = localStorage.getItem("activated"); const expiry = localStorage.getItem("expiry_date"); if (!activated || activated!== "true") { alert(" Your license is not activated.\nPlease go to Settings to activate your license."); window.location.href = "settings.html"; return false; } if (expiry) { const expiryDate = new Date(expiry); const now = new Date; const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24)); if (expiryDate < now) { alert(" Your license has expired on " + expiryDate.toLocaleDateString + ".\nPlease contact your administrator to renew."); localStorage.removeItem("activated"); localStorage.removeItem("activation_code"); localStorage.removeItem("expiry_date"); window.location.href = "settings.html"; return false; } // Show warning 7 days before expiry if (daysRemaining <= 7 && daysRemaining > 0) { const message = " Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString + ").\nPlease contact your administrator to renew."; alert(message); } } return true; } function checkAndRedirect { if (!checkLicenseStatus) { // If not on settings page, redirect to settings if (!window.location.pathname.includes('settings.html') &&!window.location.pathname.includes('activation.html') &&!window.location.pathname.includes('index.html')) { window.location.href = 'activation.html'; } } } // Run check on page load document.addEventListener('DOMContentLoaded', function { checkAndRedirect; }); </script><script> // ===== LICENSE CHECK WITH ALERTS AND BLOCKING ===== function checkLicenseStatus { const activated = localStorage.getItem("activated"); const expiry = localStorage.getItem("expiry_date"); if (!activated || activated!== "true") { alert(" Your license is not activated.\nPlease go to Settings to activate your license."); window.location.href = "settings.html"; return false; } if (expiry) { const expiryDate = new Date(expiry); const now = new Date; const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24)); if (expiryDate < now) { alert(" Your license has expired on " + expiryDate.toLocaleDateString + ".\nPlease contact your administrator to renew."); localStorage.removeItem("activated"); localStorage.removeItem("activation_code"); localStorage.removeItem("expiry_date"); window.location.href = "settings.html"; return false; } // Show warning 7 days before expiry if (daysRemaining <= 7 && daysRemaining > 0) { const message = " Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString + ").\nPlease contact your administrator to renew."; alert(message); } } return true; } // Run on page load if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', function { checkLicenseStatus; }); } else { checkLicenseStatus; } </script></body></html><style> @media (max-width: 768px) {.page-container { padding: 10px!important; overflow-x: hidden!important; }.toolbar { flex-direction: column!important; align-items: stretch!important; }.toolbar.search-wrapper { min-width: unset!important; }.btn-add { width: 100%!important; justify-content: center!important; }.customer-card { flex-direction: column!important; align-items: flex-start!important; gap: 8px!important; }.customer-card.stats { width: 100%!important; text-align: left!important; }.customer-card.actions { width: 100%!important; justify-content: flex-start!important; }.modal-content { margin: 10px!important; padding: 15px!important; width: auto!important; }.form-row { flex-direction: column!important; gap: 8px!important; } } </style><style> /* ===== TOPBAR - STORE NAME ALWAYS VISIBLE ===== */.topbar { display: flex!important; justify-content: space-between!important; align-items: center!important; padding: 10px 20px!important; background: white!important; border-bottom: 1px solid #e2e8f0!important; flex-shrink: 0!important; min-height: 56px!important; }.topbar.left { display: flex!important; align-items: center!important; gap: 12px!important; flex: 1!important; }.topbar.right { display: flex!important; align-items: center!important; gap: 12px!important; flex-shrink: 0!important; }.topbar.right.store-badge { display: inline-block!important; font-size: 13px!important; padding: 4px 14px!important; background: #f1f5f9!important; border-radius: 20px!important; color: #0f172a!important; font-weight: 600!important; white-space: nowrap!important; }.topbar.right.time { font-size: 13px!important; color: #64748b!important; font-weight: 500!important; } @media (max-width: 768px) {.topbar { padding: 6px 10px!important; min-height: 48px!important; flex-wrap: nowrap!important; }.topbar.left { gap: 6px!important; flex: 0 0 auto!important; }.topbar.left.hamburger { font-size: 18px!important; padding: 2px 6px!important; display: block!important; background: none!important; border: none!important; cursor: pointer!important; }.topbar.left h1 { font-size: 13px!important; white-space: nowrap!important; }.topbar.right { flex: 1!important; justify-content: flex-end!important; gap: 6px!important; }.topbar.right.store-badge { display: inline-block!important; font-size: 11px!important; padding: 3px 12px!important; background: #1a3c34!important; color: white!important; border-radius: 16px!important; max-width: 120px!important; overflow: hidden!important; text-overflow: ellipsis!important; white-space: nowrap!important; font-weight: 600!important; }.topbar.right.time { font-size: 10px!important; color: #64748b!important; display: inline-block!important; } } @media (max-width: 480px) {.topbar { padding: 4px 8px!important; min-height: 42px!important; }.topbar.left.hamburger { font-size: 16px!important; padding: 2px 4px!important; }.topbar.left h1 { font-size: 12px!important; }.topbar.right.store-badge { font-size: 10px!important; padding: 2px 8px!important; max-width: 80px!important; }.topbar.right.time { font-size: 9px!important; } } </style><script> // ===== BULK EXPORT CUSTOMERS ===== function exportCustomers { if (customers.length === 0) { alert(' No customers to export'); return; } let csv = 'Name, Phone, Email, Address, Credit Limit, Current Credit, Total Orders, Total Spent\n'; customers.forEach(c => { csv += `${c.name || ''}, ${c.phone || ''}, ${c.email || ''}, ${c.address || ''}, ${c.credit_limit || 0}, ${c.credit || 0}, ${c.total_orders || 0}, ${c.total_spent || 0}\n`; }); const blob = new Blob([csv], { type: 'text/csv' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = `customers_${new Date.toISOString.slice(0, 10)}.csv`; a.click; URL.revokeObjectURL(url); alert(' Customers exported!'); } </script><script> // ===== ACTIVATION CHECK ===== </script> 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="db.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customers - SokoPulse</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <style>
+        .toolbar {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+            align-items: center;
+        }
+        .toolbar .search-wrapper {
+            flex: 1;
+            position: relative;
+            min-width: 180px;
+        }
+        .toolbar .search-wrapper input {
+            width: 100%;
+            padding: 10px 14px 10px 38px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+        }
+        .toolbar .search-wrapper input:focus {
+            outline: none;
+            border-color: #1a3c34;
+        }
+        .toolbar .search-wrapper .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+        }
+        .btn-add {
+            padding: 10px 20px;
+            background: #1a3c34;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .btn-add:hover { background: #2a5c54; transform: translateY(-2px); }
+        
+        .customer-card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px 20px;
+            border: 1px solid #f1f5f9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            transition: all 0.15s;
+        }
+        .customer-card:hover { border-color: #1a3c34; }
+        .customer-card .info { flex: 1; }
+        .customer-card .info .name { font-weight: 600; color: #0f172a; }
+        .customer-card .info .details { font-size: 13px; color: #94a3b8; }
+        .customer-card .stats { text-align: right; }
+        .customer-card .stats .total { font-weight: 600; color: #0f172a; }
+        .customer-card .stats .orders { font-size: 12px; color: #94a3b8; }
+        .customer-card .actions { display: flex; gap: 6px; margin-left: 12px; }
+        .customer-card .actions button {
+            padding: 4px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+        }
+        .btn-edit { background: #f1f5f9; color: #0f172a; }
+        .btn-edit:hover { background: #e2e8f0; }
+        .btn-delete { background: #fef2f2; color: #ef4444; }
+        .btn-delete:hover { background: #fee2e2; }
+        .btn-view { background: #dbeafe; color: #1e40af; }
+        .btn-view:hover { background: #bfdbfe; }
+        
+        .credit-badge {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 10px;
+            border-radius: 20px;
+        }
+        .credit-badge.good { background: #dcfce7; color: #166534; }
+        .credit-badge.warning { background: #fef3c7; color: #92400e; }
+        .credit-badge.danger { background: #fee2e2; color: #991b1b; }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #94a3b8;
+        }
+        .empty-state .empty-icon { font-size: 48px; margin-bottom: 12px; }
+        .empty-state h3 { color: #334155; font-weight: 600; }
+    </style>
+</head>
+<body>
+<div class="app">
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+    
+    <aside class="sidebar">
+        <div class="logo">🏪 <span>Soko</span>Pulse <button class="close-btn" onclick="toggleSidebar()">✕</button></div>
+        <nav>
+            <div class="nav-label">Main</div>
+            <a href="pos.html">🛒 POS</a>
+            <a href="dashboard.html">📊 Dashboard</a>
+            <a href="orders.html">📋 Orders</a>
+            <div class="nav-label">Inventory</div>
+            <a href="products.html">📦 Products</a>
+            <a href="categories.html">📂 Categories</a>
+            <a href="suppliers.html">📦 Suppliers</a>
+            <a href="stock.html">📦 Stock</a>
+            <a href="expiry.html">⏰ Expiry</a>
+            <div class="nav-label">Management</div>
+            <a href="customers.html" class="active">👤 Customers</a>
+            <a href="reports.html">📈 Reports</a>
+            <a href="audit.html">📋 Audit</a>
+            <a href="returns.html">🔄 Returns</a>
+            <a href="settings.html">⚙️ Settings</a>
+        </nav>
+        <div class="user-section">
+            <div class="name" id="userName">Administrator</div>
+        <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+            <div class="role" id="userRole">Admin</div>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div class="left">
+                <button class="hamburger" onclick="toggleSidebar()">☰</button>
+                <h1>👤 Customers</h1>
+            </div>
+            <div class="right">
+                <span class="store-badge">🏪 SokoPulse</span>
+                <span class="time" id="timeDisplay"></span>
+            </div>
+        </header>
+
+        <div class="page-container">
+        <div class="stats-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:16px;">
+            <div class="stat-card" style="background:white;padding:12px 16px;border-radius:10px;border:1px solid #e2e8f0;text-align:center;">
+                <div style="font-size:11px;color:#94a3b8;font-weight:600;text-transform:uppercase;">Total Customers</div>
+                <div style="font-size:24px;font-weight:700;color:#0f172a;" id="totalCustomers">0</div>
+            </div>
+            <div class="stat-card" style="background:white;padding:12px 16px;border-radius:10px;border:1px solid #e2e8f0;text-align:center;">
+                <div style="font-size:11px;color:#94a3b8;font-weight:600;text-transform:uppercase;">Total Credit</div>
+                <div style="font-size:24px;font-weight:700;color:#f59e0b;" id="totalCredit">KES 0</div>
+            </div>
+            <div class="stat-card" style="background:white;padding:12px 16px;border-radius:10px;border:1px solid #e2e8f0;text-align:center;">
+                <div style="font-size:11px;color:#94a3b8;font-weight:600;text-transform:uppercase;">Total Spent</div>
+                <div style="font-size:24px;font-weight:700;color:#1a3c34;" id="totalSpent">KES 0</div>
+            </div>
+        </div>
+
+            <div class="toolbar">
+                <div class="search-wrapper">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="searchInput" placeholder="Search by name or phone..." oninput="renderCustomers()">
+                </div>
+                <button class="btn-add" onclick="openAddModal()">➕ Add Customer</button>
+            </div>
+
+            <div id="customersList">
+                <div style="text-align:center;padding:40px;color:#94a3b8;">Loading customers...</div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Add/Edit Modal -->
+<div class="modal" id="customerModal">
+    <div class="modal-content">
+        <span class="modal-close" onclick="closeModal()">&times;</span>
+        <h2 id="modalTitle">Add Customer</h2>
+        <form id="customerForm" onsubmit="saveCustomer(event)">
+            <input type="hidden" id="editId">
+            <div class="form-group">
+                <label>Full Name *</label>
+                <input type="text" id="custName" placeholder="Enter full name" required>
+            </div>
+            <div class="form-group">
+                <label>Phone Number *</label>
+                <input type="tel" id="custPhone" placeholder="0712345678" required>
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="custEmail" placeholder="customer@email.com">
+            </div>
+            <div class="form-group">
+                <label>Address</label>
+                <input type="text" id="custAddress" placeholder="Enter address">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Credit Limit (KES)</label>
+                    <input type="number" id="custCreditLimit" placeholder="0" value="0">
+                </div>
+                <div class="form-group">
+                    <label>Current Credit (KES)</label>
+                    <input type="number" id="custCredit" placeholder="0" value="0">
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
+                <button type="submit" class="btn-save">💾 Save Customer</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+<script>
+
+// ===== ALL FUNCTIONS =====
+function toggleSidebar() {
+    document.querySelector('.sidebar').classList.toggle('open');
+    document.querySelector('.sidebar-overlay').classList.toggle('show');
+}
+
+function openAddModal() {
+    editingId = null;
+    document.getElementById('modalTitle').textContent = '➕ Add Customer';
+    document.getElementById('editId').value = '';
+    document.getElementById('custName').value = '';
+    document.getElementById('custPhone').value = '';
+    document.getElementById('custEmail').value = '';
+    document.getElementById('custAddress').value = '';
+    document.getElementById('custCreditLimit').value = '0';
+    document.getElementById('custCredit').value = '0';
+    document.getElementById('customerModal').classList.add('show');
+}
+
+function openEditModal(id) {
+    const c = customers.find(x => x.id === id);
+    if (!c) return;
+    editingId = id;
+    document.getElementById('modalTitle').textContent = '✏️ Edit Customer';
+    document.getElementById('editId').value = id;
+    document.getElementById('custName').value = c.name || '';
+    document.getElementById('custPhone').value = c.phone || '';
+    document.getElementById('custEmail').value = c.email || '';
+    document.getElementById('custAddress').value = c.address || '';
+    document.getElementById('custCreditLimit').value = c.credit_limit || 0;
+    document.getElementById('custCredit').value = c.credit || 0;
+    document.getElementById('customerModal').classList.add('show');
+}
+
+function viewCustomer(id) {
+    const c = customers.find(x => x.id === id);
+    if (!c) return;
+    alert(`👤 Customer Details\n\nName: ${c.name}\nPhone: ${c.phone}\nEmail: ${c.email || '-'}\nAddress: ${c.address || '-'}\nTotal Orders: ${c.total_orders || 0}\nTotal Spent: KES ${(c.total_spent || 0).toFixed(2)}\nCredit: KES ${(c.credit || 0).toFixed(2)}\nCredit Limit: KES ${(c.credit_limit || 0).toFixed(2)}`);
+}
+
+function closeModal() {
+    document.getElementById('customerModal').classList.remove('show');
+}
+
+async function deleteCustomer(id) {
+    if (!confirm("Delete this customer?")) return;
+    try {
+        const db = await openDB();
+        const tx = db.transaction("customers", "readwrite");
+        const store = tx.objectStore("customers");
+        await store.delete(id);
+        alert("✅ Customer deleted");
+        await loadCustomers();
+    } catch(e) {
+        alert("❌ Error: " + e.message);
+    }
+}
+
+function logout() {
+    if (confirm('Logout?')) { localStorage.removeItem('pos_user'); window.location.href = 'index.html'; }
+}
+
+
+// ===== DOM CONTENT LOADED =====
+
+
+
+
+// ===== LOAD CUSTOMERS =====
+async function loadCustomers() {
+    console.log('loadCustomers called');
+    try {
+        const db = await openDB();
+        const tx = db.transaction('customers', 'readonly');
+        const store = tx.objectStore('customers');
+        const req = store.getAll();
+        req.onsuccess = function() {
+            customers = req.result;
+            console.log('Customers loaded:', customers.length);
+            renderCustomers();
+    updateCustomerStats();
+        };
+        req.onerror = function() {
+            console.error('Error getting customers');
+            document.getElementById('customersList').innerHTML = '<div style="text-align:center;padding:40px;color:#ef4444;">Error loading customers</div>';
+        };
+    } catch(e) {
+        console.error('Error loading customers:', e);
+        document.getElementById('customersList').innerHTML = '<div style="text-align:center;padding:40px;color:#ef4444;">Error loading customers: ' + e.message + '</div>';
+    }
+}
+
+// ===== REST OF CODE =====
+
+let customers = [];
+let editingId = null;
+// ===== ROLE-BASED ACCESS =====
+const userData = localStorage.getItem('pos_user');
+if (userData) {
+    const user = JSON.parse(userData);
+    
+}
+document.addEventListener('DOMContentLoaded', function() {
+    const userData = localStorage.getItem('pos_user');
+    if (!userData) { window.location.href = 'index.html'; return; }
+    const user = JSON.parse(userData);
+    document.getElementById('userName').textContent = user.name || user.username;
+    document.getElementById('userRole').textContent = user.role || 'User';
+    setInterval(() => {
+        document.getElementById('timeDisplay').textContent = new Date().toLocaleTimeString('en-KE', { hour12: false });
+    }, 1000);
+});
+
+function updateCustomerStats() {
+    const total = customers.length;
+    const totalCredit = customers.reduce((sum, c) => sum + (c.credit || 0), 0);
+    const totalSpent = customers.reduce((sum, c) => sum + (c.total_spent || 0), 0);
+    const el1 = document.getElementById('totalCustomers');
+    const el2 = document.getElementById('totalCredit');
+    const el3 = document.getElementById('totalSpent');
+    if (el1) el1.textContent = total;
+    if (el2) el2.textContent = 'KES ' + totalCredit.toFixed(2);
+    if (el3) el3.textContent = 'KES ' + totalSpent.toFixed(2);
+}
+
+function renderCustomers() {
+    const container = document.getElementById('customersList');
+    const search = document.getElementById('searchInput').value.toLowerCase();
+    let filtered = customers;
+    if (search) {
+        filtered = filtered.filter(c => 
+            (c.name || '').toLowerCase().includes(search) || 
+            (c.phone || '').includes(search)
+        );
+    }
+    if (filtered.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-icon">👤</div>
+                <h3>No customers found</h3>
+                <p style="color:#94a3b8;">Add your first customer to get started</p>
+            </div>
+        `;
+        return;
+    }
+    container.innerHTML = filtered.map(c => {
+        const credit = c.credit || 0;
+        const creditLimit = c.credit_limit || 0;
+        let creditStatus = 'good';
+        let creditLabel = '✅ Good';
+        if (credit >= creditLimit && creditLimit > 0) { creditStatus = 'danger'; creditLabel = '⚠️ Max Credit'; }
+        else if (credit > creditLimit * 0.7 && creditLimit > 0) { creditStatus = 'warning'; creditLabel = '⚠️ High Credit'; }
+        return `
+            <div class="customer-card">
+                <div class="info">
+                    <div class="name">${c.name || 'Unnamed'}</div>
+                    <div class="details">
+                        📱 ${c.phone || '-'} 
+                        ${c.email ? '✉️ ' + c.email : ''}
+                        ${c.address ? '📍 ' + c.address : ''}
+                        <span class="credit-badge ${creditStatus}">${creditLabel}</span>
+                    </div>
+                </div>
+                <div class="stats">
+                    <div class="total">KES ${(c.total_spent || 0).toFixed(2)}</div>
+                    <div class="orders">${c.total_orders || 0} orders</div>
+                </div>
+                <div class="actions">
+                    <button class="btn-view" onclick="viewCustomer(${c.id})">👁️</button>
+                    <button class="btn-edit" onclick="openEditModal(${c.id})">✏️</button>
+                    <button class="btn-delete" onclick="deleteCustomer(${c.id})">🗑️</button>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+async function saveCustomer(e) {
+    e.preventDefault();
+    const editId = document.getElementById("editId").value;
+    const data = {
+        name: document.getElementById("custName").value.trim(),
+        phone: document.getElementById("custPhone").value.trim(),
+        email: document.getElementById("custEmail").value.trim(),
+        address: document.getElementById("custAddress").value.trim(),
+        credit_limit: parseFloat(document.getElementById("custCreditLimit").value) || 0,
+        credit: parseFloat(document.getElementById("custCredit").value) || 0,
+        total_orders: 0,
+        total_spent: 0,
+        created_at: new Date().toISOString()
+    };
+    if (!data.name || !data.phone) {
+        alert("❌ Name and phone are required");
+        return;
+    }
+    try {
+        const db = await openDB();
+        const tx = db.transaction("customers", "readwrite");
+        const store = tx.objectStore("customers");
+        
+        await new Promise((resolve, reject) => {
+            let request;
+            if (editId) {
+                data.id = parseInt(editId);
+                request = store.put(data);
+            } else {
+                request = store.add(data);
+            }
+            request.onsuccess = () => resolve();
+            request.onerror = () => reject(request.error);
+        });
+        
+        closeModal();
+        alert(editId ? "✅ Customer updated successfully" : "✅ Customer added successfully");
+        await loadCustomers();
+    } catch(e) {
+        alert("❌ Error: " + e.message);
+        console.error(e);
+    }
+}
+</script>
+
+
+<script>
+// ===== LOAD STORE NAME =====
+
+document.addEventListener("DOMContentLoaded", function() {
+    loadCustomers();
+    loadCustomers();
+});
+</script>
+
+<script>
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/sw.js')
+            .then(function(reg) {
+                console.log('✅ Service Worker registered');
+            })
+            .catch(function(err) {
+                console.log('❌ Service Worker registration failed:', err);
+            });
+    });
+}
+</script>
+
+<script>
+// ===== LICENSE CHECK =====
+
+// Run checks
+// License check removed);
+</script>
+
+<!-- License Warning Banner -->
+    <span id="licenseWarningMessage">⚠️ Your license expires soon. Please renew in Settings.</span>
+</div>
+
+<script>
+// ===== LICENSE STATUS CHECK =====
+function checkLicenseStatus() {
+    const activated = localStorage.getItem("activated");
+    const expiry = localStorage.getItem("expiry_date");
+    
+    if (!activated || activated !== "true") {
+        alert("⚠️ Your license is not activated.\nPlease go to Settings to activate your license.");
+        window.location.href = "settings.html";
+        return false;
+    }
+    
+    if (expiry) {
+        const expiryDate = new Date(expiry);
+        const now = new Date();
+        const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
+        
+        if (expiryDate < now) {
+            alert("⚠️ Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
+            localStorage.removeItem("activated");
+            localStorage.removeItem("activation_code");
+            localStorage.removeItem("expiry_date");
+            window.location.href = "settings.html";
+            return false;
+        }
+        
+        // Show warning 7 days before expiry
+        if (daysRemaining <= 7 && daysRemaining > 0) {
+            const message = "⚠️ Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
+            alert(message);
+        }
+    }
+    
+    return true;
+}
+
+function checkAndRedirect() {
+    if (!checkLicenseStatus()) {
+        // If not on settings page, redirect to settings
+        if (!window.location.pathname.includes('settings.html') &&
+            !window.location.pathname.includes('activation.html') &&
+            !window.location.pathname.includes('index.html')) {
+            window.location.href = 'activation.html';
+        }
+    }
+}
+
+// Run check on page load
+document.addEventListener('DOMContentLoaded', function() {
+    checkAndRedirect();
+});
+</script>
+
+<script>
+// ===== LICENSE CHECK WITH ALERTS AND BLOCKING =====
+function checkLicenseStatus() {
+    const activated = localStorage.getItem("activated");
+    const expiry = localStorage.getItem("expiry_date");
+    
+    if (!activated || activated !== "true") {
+        alert("⚠️ Your license is not activated.\nPlease go to Settings to activate your license.");
+        window.location.href = "settings.html";
+        return false;
+    }
+    
+    if (expiry) {
+        const expiryDate = new Date(expiry);
+        const now = new Date();
+        const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
+        
+        if (expiryDate < now) {
+            alert("⚠️ Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
+            localStorage.removeItem("activated");
+            localStorage.removeItem("activation_code");
+            localStorage.removeItem("expiry_date");
+            window.location.href = "settings.html";
+            return false;
+        }
+        
+        // Show warning 7 days before expiry
+        if (daysRemaining <= 7 && daysRemaining > 0) {
+            const message = "⚠️ Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
+            alert(message);
+        }
+    }
+    
+    return true;
+}
+
+// Run on page load
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
+        checkLicenseStatus();
+    });
+} else {
+    checkLicenseStatus();
+}
+</script>
+
+</body>
+</html>
+<style>
+@media (max-width: 768px) {
+    .page-container { padding: 10px !important; overflow-x: hidden !important; }
+    .toolbar { flex-direction: column !important; align-items: stretch !important; }
+    .toolbar .search-wrapper { min-width: unset !important; }
+    .btn-add { width: 100% !important; justify-content: center !important; }
+    .customer-card { flex-direction: column !important; align-items: flex-start !important; gap: 8px !important; }
+    .customer-card .stats { width: 100% !important; text-align: left !important; }
+    .customer-card .actions { width: 100% !important; justify-content: flex-start !important; }
+    .modal-content { margin: 10px !important; padding: 15px !important; width: auto !important; }
+    .form-row { flex-direction: column !important; gap: 8px !important; }
+}
+</style>
+<style>
+/* ===== TOPBAR - STORE NAME ALWAYS VISIBLE ===== */
+.topbar {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 10px 20px !important;
+    background: white !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    flex-shrink: 0 !important;
+    min-height: 56px !important;
+}
+.topbar .left {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    flex: 1 !important;
+}
+.topbar .right {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    flex-shrink: 0 !important;
+}
+.topbar .right .store-badge {
+    display: inline-block !important;
+    font-size: 13px !important;
+    padding: 4px 14px !important;
+    background: #f1f5f9 !important;
+    border-radius: 20px !important;
+    color: #0f172a !important;
+    font-weight: 600 !important;
+    white-space: nowrap !important;
+}
+.topbar .right .time {
+    font-size: 13px !important;
+    color: #64748b !important;
+    font-weight: 500 !important;
+}
+
+@media (max-width: 768px) {
+    .topbar {
+        padding: 6px 10px !important;
+        min-height: 48px !important;
+        flex-wrap: nowrap !important;
+    }
+    .topbar .left {
+        gap: 6px !important;
+        flex: 0 0 auto !important;
+    }
+    .topbar .left .hamburger {
+        font-size: 18px !important;
+        padding: 2px 6px !important;
+        display: block !important;
+        background: none !important;
+        border: none !important;
+        cursor: pointer !important;
+    }
+    .topbar .left h1 {
+        font-size: 13px !important;
+        white-space: nowrap !important;
+    }
+    .topbar .right {
+        flex: 1 !important;
+        justify-content: flex-end !important;
+        gap: 6px !important;
+    }
+    .topbar .right .store-badge {
+        display: inline-block !important;
+        font-size: 11px !important;
+        padding: 3px 12px !important;
+        background: #1a3c34 !important;
+        color: white !important;
+        border-radius: 16px !important;
+        max-width: 120px !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        white-space: nowrap !important;
+        font-weight: 600 !important;
+    }
+    .topbar .right .time {
+        font-size: 10px !important;
+        color: #64748b !important;
+        display: inline-block !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .topbar {
+        padding: 4px 8px !important;
+        min-height: 42px !important;
+    }
+    .topbar .left .hamburger {
+        font-size: 16px !important;
+        padding: 2px 4px !important;
+    }
+    .topbar .left h1 {
+        font-size: 12px !important;
+    }
+    .topbar .right .store-badge {
+        font-size: 10px !important;
+        padding: 2px 8px !important;
+        max-width: 80px !important;
+    }
+    .topbar .right .time {
+        font-size: 9px !important;
+    }
+}
+</style>
+
+
+<script>
+// ===== BULK EXPORT CUSTOMERS =====
+function exportCustomers() {
+    if (customers.length === 0) {
+        alert('❌ No customers to export');
+        return;
+    }
+    
+    let csv = 'Name,Phone,Email,Address,Credit Limit,Current Credit,Total Orders,Total Spent\n';
+    customers.forEach(c => {
+        csv += `${c.name || ''},${c.phone || ''},${c.email || ''},${c.address || ''},${c.credit_limit || 0},${c.credit || 0},${c.total_orders || 0},${c.total_spent || 0}\n`;
+    });
+    
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `customers_${new Date().toISOString().slice(0,10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    alert('✅ Customers exported!');
+}
+</script>
+
+
+<script>
+// ===== ACTIVATION CHECK =====
+
+</script>
+
+
+

@@ -1,1 +1,69 @@
-<!DOCTYPE html><html><head><title>Setup Database</title></head><body><h2> Setting up Database</h2><div id="result"></div><script src="db.js"></script><script> const DB_NAME = 'SokoPulsePOS'; const DB_VERSION = 6; function setupDatabase { const result = document.getElementById('result'); result.innerHTML = ' Setting up database...'; const req = indexedDB.open(DB_NAME, DB_VERSION); for (const [name, indexes] of Object.entries(stores)) { if (!db.objectStoreNames.contains(name)) { const store = db.createObjectStore(name, { keyPath: 'id', autoIncrement: true }); for (const idx of indexes) { store.createIndex(idx, idx, { unique: false }); } created.push(name); console.log(' Created store: ', name); } } result.innerHTML = created.length > 0? ' Created stores: ' + created.join(', '): ' All stores already exist'; }; req.onsuccess = function(e) { const db = e.target.result; const stores = Array.from(db.objectStoreNames); result.innerHTML += '<br><br> Available stores: ' + stores.join(', '); result.innerHTML += '<br><br> Database ready!'; result.innerHTML += '<br><br><a href="activation.html"> Go to Activation</a>'; db.close; }; req.onerror = function(e) { result.innerHTML = ' Error: ' + e.target.error; }; } setupDatabase; </script><script> if ('serviceWorker' in navigator) { window.addEventListener('load', function { navigator.serviceWorker.register('/sw.js').then(function(reg) { console.log(' Service Worker registered'); }).catch(function(err) { console.log(' Service Worker registration failed: ', err); }); }); } </script></body></html> 
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Setup Database</title>
+</head>
+<body>
+<h2>📦 Setting up Database</h2>
+<div id="result"></div>
+
+<script src="db.js"></script>
+<script>
+const DB_NAME = 'SokoPulsePOS';
+const DB_VERSION = 6;
+
+function setupDatabase() {
+    const result = document.getElementById('result');
+    result.innerHTML = '⏳ Setting up database...';
+    
+    const req = indexedDB.open(DB_NAME, DB_VERSION);
+    
+        
+        for (const [name, indexes] of Object.entries(stores)) {
+            if (!db.objectStoreNames.contains(name)) {
+                const store = db.createObjectStore(name, { keyPath: 'id', autoIncrement: true });
+                for (const idx of indexes) {
+                    store.createIndex(idx, idx, { unique: false });
+                }
+                created.push(name);
+                console.log('✅ Created store:', name);
+            }
+        }
+        
+        result.innerHTML = created.length > 0 
+            ? '✅ Created stores: ' + created.join(', ')
+            : '✅ All stores already exist';
+    };
+    
+    req.onsuccess = function(e) {
+        const db = e.target.result;
+        const stores = Array.from(db.objectStoreNames);
+        result.innerHTML += '<br><br>📋 Available stores: ' + stores.join(', ');
+        result.innerHTML += '<br><br>✅ Database ready!';
+        result.innerHTML += '<br><br><a href="activation.html">🔑 Go to Activation</a>';
+        db.close();
+    };
+    
+    req.onerror = function(e) {
+        result.innerHTML = '❌ Error: ' + e.target.error;
+    };
+}
+
+setupDatabase();
+</script>
+
+<script>
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/sw.js')
+            .then(function(reg) {
+                console.log('✅ Service Worker registered');
+            })
+            .catch(function(err) {
+                console.log('❌ Service Worker registration failed:', err);
+            });
+    });
+}
+</script>
+</body>
+</html>
