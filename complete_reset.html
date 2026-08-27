@@ -1,303 +1,343 @@
-<!DOCTYPE html><html><head><title>Complete Database Reset</title><style>
- body { font-family: 'Inter', sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; background: #f8fafc; }.card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
- button { padding: 12px 24px; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; margin: 8px; }.btn-danger { background: #dc2626; color: white; }.btn-success { background: #16a34a; color: white; }.btn-primary { background: #1a3c34; color: white; }.btn-danger:hover { background: #b91c1c; }.btn-success:hover { background: #15803d; }.btn-primary:hover { background: #0f2a24; }
- #result { margin-top: 20px; padding: 16px; background: #f1f5f9; border-radius: 8px; font-family: monospace; white-space: pre-wrap; max-height: 500px; overflow-y: auto; }.warning { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 12px; margin: 12px 0; border-radius: 4px; }.success { background: #d1fae5; border-left: 4px solid #10b981; padding: 12px; margin: 12px 0; border-radius: 4px; }.store-tag { display: inline-block; background: #e2e8f0; padding: 2px 10px; border-radius: 12px; margin: 2px; font-size: 12px; }
- </style></head><body><div class="card"><h1> Complete Database Reset</h1><p>This will delete ALL versions of the database and create a fresh one.</p><div class="warning"><strong>Warning:</strong> This will delete ALL data! All products, customers, orders, and settings will be lost.
- </div><button class="btn-danger" onclick="deleteAllDatabases()"> Delete All Databases</button><button class="btn-success" onclick="createFreshDatabase()"> Create Fresh Database</button><button class="btn-primary" onclick="checkDatabase()"> Check Database</button><button class="btn-primary" onclick="addSampleData()"> Add Sample Data</button><div id="result">Click a button to start...</div></div><script src="db.js"></script><script>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Complete Database Reset</title>
+    <style>
+        body { font-family: 'Inter', sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; background: #f8fafc; }
+        .card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        button { padding: 12px 24px; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; margin: 8px; }
+        .btn-danger { background: #dc2626; color: white; }
+        .btn-success { background: #16a34a; color: white; }
+        .btn-primary { background: #1a3c34; color: white; }
+        .btn-danger:hover { background: #b91c1c; }
+        .btn-success:hover { background: #15803d; }
+        .btn-primary:hover { background: #0f2a24; }
+        #result { margin-top: 20px; padding: 16px; background: #f1f5f9; border-radius: 8px; font-family: monospace; white-space: pre-wrap; max-height: 500px; overflow-y: auto; }
+        .warning { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 12px; margin: 12px 0; border-radius: 4px; }
+        .success { background: #d1fae5; border-left: 4px solid #10b981; padding: 12px; margin: 12px 0; border-radius: 4px; }
+        .store-tag { display: inline-block; background: #e2e8f0; padding: 2px 10px; border-radius: 12px; margin: 2px; font-size: 12px; }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h1>🗑️ Complete Database Reset</h1>
+    <p>This will delete ALL versions of the database and create a fresh one.</p>
+    
+    <div class="warning">
+        ⚠️ <strong>Warning:</strong> This will delete ALL data! All products, customers, orders, and settings will be lost.
+    </div>
+    
+    <button class="btn-danger" onclick="deleteAllDatabases()">🗑️ Delete All Databases</button>
+    <button class="btn-success" onclick="createFreshDatabase()">✨ Create Fresh Database</button>
+    <button class="btn-primary" onclick="checkDatabase()">🔍 Check Database</button>
+    <button class="btn-primary" onclick="addSampleData()">📦 Add Sample Data</button>
+    
+    <div id="result">Click a button to start...</div>
+</div>
+
+
+<script src="db.js"></script>
+<script>
 const DB_NAME = 'SokoPulsePOS';
 const DB_VERSION = 6; // Start fresh with version 1
 
 function log(msg) {
- const result = document.getElementById('result');
- result.textContent += msg + '\n';
- result.scrollTop = result.scrollHeight;
+    const result = document.getElementById('result');
+    result.textContent += msg + '\n';
+    result.scrollTop = result.scrollHeight;
 }
 
 function clearLog() {
- document.getElementById('result').textContent = '';
+    document.getElementById('result').textContent = '';
 }
 
 function deleteAllDatabases() {
- if (!confirm(' ARE YOU ABSOLUTELY SURE?\n\nThis will delete EVERYTHING!\n\nAll products, customers, orders, and settings will be permanently lost.\n\nThis cannot be undone!')) {
- return;
- }
- 
- if (!confirm(' FINAL WARNING: Type "DELETE" in the next prompt to confirm.')) {
- return;
- }
- 
- const confirmation = prompt('Type "DELETE" to confirm:');
- if (confirmation!== 'DELETE') {
- log(' Cancelled - did not type DELETE');
- return;
- }
- 
- clearLog();
- log(' Deleting database...');
- 
- const req = indexedDB.deleteDatabase(DB_NAME);
- 
- req.onsuccess = function() {
- log(' Database deleted successfully!');
- log(' All versions removed.');
- log('\n Now click "Create Fresh Database" to start fresh.');
- };
- 
- req.onerror = function(e) {
- log(' Error deleting database: ' + e.target.error);
- };
- 
- req.onblocked = function() {
- log('⏳ Database is blocked. Please close all tabs using this database.');
- log(' Then try again.');
- };
+    if (!confirm('⚠️⚠️⚠️ ARE YOU ABSOLUTELY SURE?\n\nThis will delete EVERYTHING!\n\nAll products, customers, orders, and settings will be permanently lost.\n\nThis cannot be undone!')) {
+        return;
+    }
+    
+    if (!confirm('⚠️ FINAL WARNING: Type "DELETE" in the next prompt to confirm.')) {
+        return;
+    }
+    
+    const confirmation = prompt('Type "DELETE" to confirm:');
+    if (confirmation !== 'DELETE') {
+        log('❌ Cancelled - did not type DELETE');
+        return;
+    }
+    
+    clearLog();
+    log('🗑️ Deleting database...');
+    
+    const req = indexedDB.deleteDatabase(DB_NAME);
+    
+    req.onsuccess = function() {
+        log('✅ Database deleted successfully!');
+        log('📌 All versions removed.');
+        log('\n💡 Now click "Create Fresh Database" to start fresh.');
+    };
+    
+    req.onerror = function(e) {
+        log('❌ Error deleting database: ' + e.target.error);
+    };
+    
+    req.onblocked = function() {
+        log('⏳ Database is blocked. Please close all tabs using this database.');
+        log('📌 Then try again.');
+    };
 }
 
 function createFreshDatabase() {
- clearLog();
- log(' Creating fresh database with version ' + DB_VERSION + '...');
- 
- const req = indexedDB.open(DB_NAME, DB_VERSION);
- 
- const db = e.target.result;
- let stores =;
- 
- log(' Creating all stores...');
- 
- // Define all stores with their indexes
- const storeConfigs = {
- 'products': ['name', 'category', 'barcode', 'price'],
- 'customers': ['name', 'phone', 'email'],
- 'orders': ['order_number', 'customer_id', 'date', 'status'],
- 'returns': ['order_number', 'status', 'date'],
- 'audit_log': ['user', 'action', 'date'],
- 'stock_movements': ['product_id', 'type', 'date'],
- 'settings': ['key'],
- 'users': ['username', 'role']
- };
- 
- for (const [storeName, indexes] of Object.entries(storeConfigs)) {
- if (!db.objectStoreNames.contains(storeName)) {
- for (const idx of indexes) {
- store.createIndex(idx, idx, { unique: false });
- }
- stores.push(storeName);
- log(' Created: ' + storeName);
- }
- }
- 
- log(' Created ' + stores.length + ' stores');
- 
- // Add default user
- if (stores.includes('users')) {
- const userStore = e.target.transaction.objectStore('users');
- userStore.add({
- username: 'admin',
- password: '********',
- role: 'admin',
- name: 'Administrator',
- created_at: new Date().toISOString()
- });
- log(' Added default admin user');
- }
- 
- // Add default settings
- if (stores.includes('settings')) {
- const settingsStore = e.target.transaction.objectStore('settings');
- settingsStore.add({
- key: 'store_name',
- value: 'SokoPulse POS',
- updated_at: new Date().toISOString()
- });
- settingsStore.add({
- key: 'currency',
- value: 'KES',
- updated_at: new Date().toISOString()
- });
- settingsStore.add({
- key: 'tax_rate',
- value: '16',
- updated_at: new Date().toISOString()
- });
- log(' Added default settings');
- }
- };
- 
- req.onsuccess = function(e) {
- const db = e.target.result;
- const stores = Array.from(db.objectStoreNames);
- log('\n Database created successfully!');
- log(' Version: ' + db.version);
- log(' Stores (' + stores.length + '): ' + stores.join(', '));
- log('\n Ready to use!');
- log('\n Click "Add Sample Data" to populate with test data.');
- db.close();
- };
- 
- req.onerror = function(e) {
- log(' Error creating database: ' + e.target.error);
- if (e.target.error.name === 'VersionError') {
- log(' There might be an existing database with a different version.');
- log(' Click "Delete All Databases" first, then try again.');
- }
- };
+    clearLog();
+    log('✨ Creating fresh database with version ' + DB_VERSION + '...');
+    
+    const req = indexedDB.open(DB_NAME, DB_VERSION);
+    
+        const db = e.target.result;
+        let stores = [];
+        
+        log('📊 Creating all stores...');
+        
+        // Define all stores with their indexes
+        const storeConfigs = {
+            'products': ['name', 'category', 'barcode', 'price'],
+            'customers': ['name', 'phone', 'email'],
+            'orders': ['order_number', 'customer_id', 'date', 'status'],
+            'returns': ['order_number', 'status', 'date'],
+            'audit_log': ['user', 'action', 'date'],
+            'stock_movements': ['product_id', 'type', 'date'],
+            'settings': ['key'],
+            'users': ['username', 'role']
+        };
+        
+        for (const [storeName, indexes] of Object.entries(storeConfigs)) {
+            if (!db.objectStoreNames.contains(storeName)) {
+                for (const idx of indexes) {
+                    store.createIndex(idx, idx, { unique: false });
+                }
+                stores.push(storeName);
+                log('  ✅ Created: ' + storeName);
+            }
+        }
+        
+        log('✅ Created ' + stores.length + ' stores');
+        
+        // Add default user
+        if (stores.includes('users')) {
+            const userStore = e.target.transaction.objectStore('users');
+            userStore.add({
+                username: 'admin',
+                password: '********',
+                role: 'admin',
+                name: 'Administrator',
+                created_at: new Date().toISOString()
+            });
+            log('  ✅ Added default admin user');
+        }
+        
+        // Add default settings
+        if (stores.includes('settings')) {
+            const settingsStore = e.target.transaction.objectStore('settings');
+            settingsStore.add({
+                key: 'store_name',
+                value: 'SokoPulse POS',
+                updated_at: new Date().toISOString()
+            });
+            settingsStore.add({
+                key: 'currency',
+                value: 'KES',
+                updated_at: new Date().toISOString()
+            });
+            settingsStore.add({
+                key: 'tax_rate',
+                value: '16',
+                updated_at: new Date().toISOString()
+            });
+            log('  ✅ Added default settings');
+        }
+    };
+    
+    req.onsuccess = function(e) {
+        const db = e.target.result;
+        const stores = Array.from(db.objectStoreNames);
+        log('\n✅ Database created successfully!');
+        log('📌 Version: ' + db.version);
+        log('📋 Stores (' + stores.length + '): ' + stores.join(', '));
+        log('\n🎉 Ready to use!');
+        log('\n💡 Click "Add Sample Data" to populate with test data.');
+        db.close();
+    };
+    
+    req.onerror = function(e) {
+        log('❌ Error creating database: ' + e.target.error);
+        if (e.target.error.name === 'VersionError') {
+            log('💡 There might be an existing database with a different version.');
+            log('💡 Click "Delete All Databases" first, then try again.');
+        }
+    };
 }
 
 function checkDatabase() {
- clearLog();
- log(' Checking database...');
- 
- const req = indexedDB.open(DB_NAME);
- 
- req.onsuccess = function(e) {
- const db = e.target.result;
- const stores = Array.from(db.objectStoreNames);
- 
- log(' Database: ' + db.name);
- log(' Version: ' + db.version);
- log(' Stores (' + stores.length + '):');
- for (const store of stores) {
- log(' ' + store);
- }
- 
- if (stores.length === 0) {
- log('\n No stores found. Database is empty.');
- log(' Click "Create Fresh Database"');
- } else {
- log('\n Database is ready!');
- log('\n You can now use:');
- log(' - Customers: http://localhost:5000/pos/customers.html');
- log(' - Stock: http://localhost:5000/pos/stock.html');
- log(' - Audit: http://localhost:5000/pos/audit.html');
- log(' - Returns: http://localhost:5000/pos/returns.html');
- }
- db.close();
- };
- 
- req.onerror = function(e) {
- log(' Error: ' + e.target.error);
- if (e.target.error.name === 'NotFoundError') {
- log(' Database does not exist yet.');
- log(' Click "Create Fresh Database"');
- }
- };
+    clearLog();
+    log('🔍 Checking database...');
+    
+    const req = indexedDB.open(DB_NAME);
+    
+    req.onsuccess = function(e) {
+        const db = e.target.result;
+        const stores = Array.from(db.objectStoreNames);
+        
+        log('📊 Database: ' + db.name);
+        log('📌 Version: ' + db.version);
+        log('📋 Stores (' + stores.length + '):');
+        for (const store of stores) {
+            log('  ✅ ' + store);
+        }
+        
+        if (stores.length === 0) {
+            log('\n⚠️ No stores found. Database is empty.');
+            log('💡 Click "Create Fresh Database"');
+        } else {
+            log('\n✅ Database is ready!');
+            log('\n📱 You can now use:');
+            log('  - Customers: http://localhost:5000/pos/customers.html');
+            log('  - Stock: http://localhost:5000/pos/stock.html');
+            log('  - Audit: http://localhost:5000/pos/audit.html');
+            log('  - Returns: http://localhost:5000/pos/returns.html');
+        }
+        db.close();
+    };
+    
+    req.onerror = function(e) {
+        log('❌ Error: ' + e.target.error);
+        if (e.target.error.name === 'NotFoundError') {
+            log('📌 Database does not exist yet.');
+            log('💡 Click "Create Fresh Database"');
+        }
+    };
 }
 
 function addSampleData() {
- clearLog();
- log(' Adding sample data...');
- 
- const req = indexedDB.open(DB_NAME, DB_VERSION);
- 
- req.onsuccess = function(e) {
- const db = e.target.result;
- 
- // Check if we already have data
- const tx = db.transaction(['products', 'customers'], 'readonly');
- const productStore = tx.objectStore('products');
- const customerStore = tx.objectStore('customers');
- 
- productStore.count().onsuccess = function(countEvent) {
- if (countEvent.target.result > 0) {
- log(' Products already exist (' + countEvent.target.result + ' products)');
- if (!confirm('Products already exist. Add more sample data anyway?')) {
- db.close();
- return;
- }
- }
- 
- // Add sample products
- const writeTx = db.transaction(['products', 'customers', 'audit_log'], 'readwrite');
- const pStore = writeTx.objectStore('products');
- const cStore = writeTx.objectStore('customers');
- const aStore = writeTx.objectStore('audit_log');
- 
- const products = [
- { name: 'Sugar 1kg', category: 'Groceries', barcode: '123456789', price: 125, cost: 100, current_stock: 50, min_stock: 10, unit: 'kg' },
- { name: 'Cooking Oil 2L', category: 'Groceries', barcode: '987654321', price: 350, cost: 280, current_stock: 30, min_stock: 5, unit: 'L' },
- { name: 'Bread', category: 'Bakery', barcode: '456789123', price: 60, cost: 45, current_stock: 20, min_stock: 5, unit: 'pc' },
- { name: 'Milk 500ml', category: 'Dairy', barcode: '789123456', price: 55, cost: 40, current_stock: 40, min_stock: 10, unit: 'pc' },
- { name: 'Tea 100g', category: 'Beverages', barcode: '321654987', price: 85, cost: 65, current_stock: 25, min_stock: 5, unit: 'pc' },
- { name: 'Rice 2kg', category: 'Groceries', barcode: '654987321', price: 250, cost: 200, current_stock: 35, min_stock: 10, unit: 'kg' },
- { name: 'Flour 2kg', category: 'Groceries', barcode: '159357258', price: 180, cost: 140, current_stock: 45, min_stock: 10, unit: 'kg' },
- { name: 'Eggs 30pc', category: 'Dairy', barcode: '258369147', price: 450, cost: 380, current_stock: 15, min_stock: 5, unit: 'pc' },
- { name: 'Butter 500g', category: 'Dairy', barcode: '369147258', price: 220, cost: 180, current_stock: 20, min_stock: 5, unit: 'pc' },
- { name: 'Pasta 500g', category: 'Groceries', barcode: '147258369', price: 120, cost: 90, current_stock: 30, min_stock: 10, unit: 'pc' }
- ];
- 
- let productCount = 0;
- for (const p of products) {
- pStore.add(p);
- productCount++;
- }
- log(' Added ' + productCount + ' products');
- 
- // Add sample customers
- const customers = [
- { name: 'John Doe', phone: '0712345678', email: 'john@example.com', credit: 0, created_at: new Date().toISOString() },
- { name: 'Jane Smith', phone: '0723456789', email: 'jane@example.com', credit: 500, created_at: new Date().toISOString() },
- { name: 'ABC Company', phone: '0734567890', email: 'info@abcco.com', credit: 2000, created_at: new Date().toISOString() },
- { name: 'Walk-in Customer', phone: '0000000000', email: '', credit: 0, created_at: new Date().toISOString() }
- ];
- 
- let customerCount = 0;
- for (const c of customers) {
- cStore.add(c);
- customerCount++;
- }
- log(' Added ' + customerCount + ' customers');
- 
- // Add sample audit entries
- const now = new Date();
- const audits = [
- { user: 'admin', action: 'login', details: 'System initialized with sample data', date: now.toISOString() },
- { user: 'admin', action: 'sale', details: 'Sample sale: KES 1,250.00 | Customer: John Doe', date: new Date(now - 3600000).toISOString() },
- { user: 'admin', action: 'update', details: 'Added sample products and customers', date: new Date(now - 7200000).toISOString() }
- ];
- 
- for (const a of audits) {
- aStore.add(a);
- }
- log(' Added ' + audits.length + ' audit entries');
- 
- writeTx.oncomplete = function() {
- log('\n Sample data added successfully!');
- log('\n Summary:');
- log(' ' + productCount + ' products');
- log(' ' + customerCount + ' customers');
- log(' ' + audits.length + ' audit entries');
- log('\n Ready to use!');
- log('\n Go to: http://localhost:5000/pos/stock.html');
- db.close();
- };
- 
- writeTx.onerror = function(err) {
- log(' Error adding data: ' + err.target.error);
- db.close();
- };
- };
- };
- 
- req.onerror = function(e) {
- log(' Error: ' + e.target.error);
- if (e.target.error.name === 'NotFoundError') {
- log(' Database not found. Click "Create Fresh Database" first.');
- }
- };
+    clearLog();
+    log('📦 Adding sample data...');
+    
+    const req = indexedDB.open(DB_NAME, DB_VERSION);
+    
+    req.onsuccess = function(e) {
+        const db = e.target.result;
+        
+        // Check if we already have data
+        const tx = db.transaction(['products', 'customers'], 'readonly');
+        const productStore = tx.objectStore('products');
+        const customerStore = tx.objectStore('customers');
+        
+        productStore.count().onsuccess = function(countEvent) {
+            if (countEvent.target.result > 0) {
+                log('⚠️ Products already exist (' + countEvent.target.result + ' products)');
+                if (!confirm('Products already exist. Add more sample data anyway?')) {
+                    db.close();
+                    return;
+                }
+            }
+            
+            // Add sample products
+            const writeTx = db.transaction(['products', 'customers', 'audit_log'], 'readwrite');
+            const pStore = writeTx.objectStore('products');
+            const cStore = writeTx.objectStore('customers');
+            const aStore = writeTx.objectStore('audit_log');
+            
+            const products = [
+                { name: 'Sugar 1kg', category: 'Groceries', barcode: '123456789', price: 125, cost: 100, current_stock: 50, min_stock: 10, unit: 'kg' },
+                { name: 'Cooking Oil 2L', category: 'Groceries', barcode: '987654321', price: 350, cost: 280, current_stock: 30, min_stock: 5, unit: 'L' },
+                { name: 'Bread', category: 'Bakery', barcode: '456789123', price: 60, cost: 45, current_stock: 20, min_stock: 5, unit: 'pc' },
+                { name: 'Milk 500ml', category: 'Dairy', barcode: '789123456', price: 55, cost: 40, current_stock: 40, min_stock: 10, unit: 'pc' },
+                { name: 'Tea 100g', category: 'Beverages', barcode: '321654987', price: 85, cost: 65, current_stock: 25, min_stock: 5, unit: 'pc' },
+                { name: 'Rice 2kg', category: 'Groceries', barcode: '654987321', price: 250, cost: 200, current_stock: 35, min_stock: 10, unit: 'kg' },
+                { name: 'Flour 2kg', category: 'Groceries', barcode: '159357258', price: 180, cost: 140, current_stock: 45, min_stock: 10, unit: 'kg' },
+                { name: 'Eggs 30pc', category: 'Dairy', barcode: '258369147', price: 450, cost: 380, current_stock: 15, min_stock: 5, unit: 'pc' },
+                { name: 'Butter 500g', category: 'Dairy', barcode: '369147258', price: 220, cost: 180, current_stock: 20, min_stock: 5, unit: 'pc' },
+                { name: 'Pasta 500g', category: 'Groceries', barcode: '147258369', price: 120, cost: 90, current_stock: 30, min_stock: 10, unit: 'pc' }
+            ];
+            
+            let productCount = 0;
+            for (const p of products) {
+                pStore.add(p);
+                productCount++;
+            }
+            log('  ✅ Added ' + productCount + ' products');
+            
+            // Add sample customers
+            const customers = [
+                { name: 'John Doe', phone: '0712345678', email: 'john@example.com', credit: 0, created_at: new Date().toISOString() },
+                { name: 'Jane Smith', phone: '0723456789', email: 'jane@example.com', credit: 500, created_at: new Date().toISOString() },
+                { name: 'ABC Company', phone: '0734567890', email: 'info@abcco.com', credit: 2000, created_at: new Date().toISOString() },
+                { name: 'Walk-in Customer', phone: '0000000000', email: '', credit: 0, created_at: new Date().toISOString() }
+            ];
+            
+            let customerCount = 0;
+            for (const c of customers) {
+                cStore.add(c);
+                customerCount++;
+            }
+            log('  ✅ Added ' + customerCount + ' customers');
+            
+            // Add sample audit entries
+            const now = new Date();
+            const audits = [
+                { user: 'admin', action: 'login', details: 'System initialized with sample data', date: now.toISOString() },
+                { user: 'admin', action: 'sale', details: 'Sample sale: KES 1,250.00 | Customer: John Doe', date: new Date(now - 3600000).toISOString() },
+                { user: 'admin', action: 'update', details: 'Added sample products and customers', date: new Date(now - 7200000).toISOString() }
+            ];
+            
+            for (const a of audits) {
+                aStore.add(a);
+            }
+            log('  ✅ Added ' + audits.length + ' audit entries');
+            
+            writeTx.oncomplete = function() {
+                log('\n✅ Sample data added successfully!');
+                log('\n📊 Summary:');
+                log('  📦 ' + productCount + ' products');
+                log('  👤 ' + customerCount + ' customers');
+                log('  📋 ' + audits.length + ' audit entries');
+                log('\n🎉 Ready to use!');
+                log('\n📱 Go to: http://localhost:5000/pos/stock.html');
+                db.close();
+            };
+            
+            writeTx.onerror = function(err) {
+                log('❌ Error adding data: ' + err.target.error);
+                db.close();
+            };
+        };
+    };
+    
+    req.onerror = function(e) {
+        log('❌ Error: ' + e.target.error);
+        if (e.target.error.name === 'NotFoundError') {
+            log('💡 Database not found. Click "Create Fresh Database" first.');
+        }
+    };
 }
 
 // Auto-check on load
 window.onload = function() {
- setTimeout(checkDatabase, 500);
+    setTimeout(checkDatabase, 500);
 };
-</script><script>
+</script>
+
+<script>
 if ('serviceWorker' in navigator) {
- window.addEventListener('load', function() {
- navigator.serviceWorker.register('/sw.js').then(function(reg) {
- console.log(' Service Worker registered');
- }).catch(function(err) {
- console.log(' Service Worker registration failed:', err);
- });
- });
+    window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/sw.js')
+            .then(function(reg) {
+                console.log('✅ Service Worker registered');
+            })
+            .catch(function(err) {
+                console.log('❌ Service Worker registration failed:', err);
+            });
+    });
 }
-</script></body></html>
+</script>
+</body>
+</html>

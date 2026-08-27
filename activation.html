@@ -1,311 +1,433 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Activate - SokoPulse</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"><style>
- * { margin: 0; padding: 0; box-sizing: border-box; }
- body {
- font-family: 'Inter', sans-serif;
- min-height: 100vh;
- display: flex;
- align-items: center;
- justify-content: center;
- background: #f8fafc;
- padding: 20px;
- }.container {
- background: white;
- border-radius: 24px;
- box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15);
- padding: 40px;
- width: 420px;
- max-width: 100%;
- position: relative;
- }.container::before {
- content: '';
- position: absolute;
- top: 0;
- left: 0;
- right: 0;
- height: 4px;
- background: linear-gradient(90deg, #1a3c34, #f5a623);
- }.logo { text-align: center; margin-bottom: 24px; }.logo h1 { font-size: 28px; font-weight: 800; color: #1a3c34; }.logo h1 span { color: #f5a623; }.logo p { color: #94a3b8; font-size: 14px; margin-top: 4px; }.step { display: none; }.step.active { display: block; }.machine-id-box {
- background: #f8fafc;
- padding: 16px;
- border-radius: 12px;
- text-align: center;
- margin: 12px 0 16px 0;
- border: 1px dashed #e2e8f0;
- }.machine-id-box.id {
- font-family: monospace;
- font-size: 18px;
- font-weight: 700;
- color: #1a3c34;
- letter-spacing: 2px;
- word-break: break-all;
- }.machine-id-box.label { font-size: 12px; color: #94a3b8; }.form-group { margin-bottom: 16px; }.form-group label { display: block; font-size: 13px; font-weight: 600; color: #334155; margin-bottom: 6px; }.form-group input {
- width: 100%;
- padding: 12px 16px;
- border: 2px solid #e2e8f0;
- border-radius: 12px;
- font-size: 14px;
- font-family: 'Inter', sans-serif;
- transition: all 0.2s;
- background: #f8fafc;
- font-family: monospace;
- font-size: 18px;
- letter-spacing: 1px;
- text-transform: uppercase;
- }.form-group input:focus {
- outline: none;
- border-color: #1a3c34;
- background: white;
- box-shadow: 0 0 0 4px rgba(26,60,52,0.1);
- }.btn {
- width: 100%;
- padding: 14px;
- border: none;
- border-radius: 12px;
- font-size: 16px;
- font-weight: 600;
- font-family: 'Inter', sans-serif;
- cursor: pointer;
- transition: all 0.2s;
- margin-top: 8px;
- }.btn-primary {
- background: linear-gradient(135deg, #1a3c34, #2a5c54);
- color: white;
- }.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(26,60,52,0.3); }.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }.btn-secondary {
- background: #f1f5f9;
- color: #0f172a;
- }.btn-secondary:hover { background: #e2e8f0; }.status {
- padding: 10px 14px;
- border-radius: 10px;
- font-size: 13px;
- margin: 12px 0;
- display: none;
- }.status.show { display: block; }.status.error { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }.status.success { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }.status.info { background: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }.steps-indicator {
- display: flex;
- justify-content: center;
- gap: 8px;
- margin-bottom: 20px;
- }.steps-indicator.dot {
- width: 10px;
- height: 10px;
- border-radius: 50%;
- background: #e2e8f0;
- transition: all 0.3s;
- }.steps-indicator.dot.active { background: #1a3c34; transform: scale(1.2); }.steps-indicator.dot.done { background: #22c55e; }.success-icon { font-size: 48px; text-align: center; margin: 16px 0; }.offline-badge {
- display: inline-block;
- background: #dcfce7;
- color: #166534;
- font-size: 11px;
- font-weight: 600;
- padding: 2px 12px;
- border-radius: 20px;
- margin-top: 4px;
- }.code-format {
- font-size: 11px;
- color: #94a3b8;
- margin-top: 8px;
- padding: 8px;
- background: #f8fafc;
- border-radius: 6px;
- }.code-format code {
- background: white;
- padding: 2px 8px;
- border-radius: 4px;
- font-family: monospace;
- font-size: 13px;
- font-weight: 600;
- color: #1a3c34;
- }
- 
- h3 { font-size: 18px; font-weight: 600; color: #0f172a; }.mb-8 { margin-bottom: 8px; }.mb-12 { margin-bottom: 12px; }.text-center { text-align: center; }.text-muted { color: #94a3b8; font-size: 14px; }
- 
- @media (max-width: 480px) {.container { padding: 24px 20px; }
- }
- </style></head><body><div class="container"><div class="logo"><h1><span>Soko</span>Pulse</h1><p>One-Time Activation <span class="offline-badge"> Offline after activation</span></p></div><!-- Steps Indicator --><div class="steps-indicator"><span class="dot active" id="dot1"></span><span class="dot" id="dot2"></span><span class="dot" id="dot3"></span></div><!-- Step 1: Machine ID --><div class="step active" id="step1"><h3 class="mb-8"> Step 1: Get Machine ID</h3><p class="text-muted mb-12">
- Copy this Machine ID and send it to your administrator to get an activation code.
- </p><div class="machine-id-box"><div class="label">Your Machine ID</div><div class="id" id="machineId">Loading...</div></div><button class="btn btn-secondary" onclick="copyMachineId()"> Copy Machine ID</button><div class="status info show" id="nextStepInfo">
- ℹ After getting your activation code, click "Next" to continue.
- </div><button class="btn btn-primary" onclick="goToStep2()">Next →</button></div><!-- Step 2: Enter Code --><div class="step" id="step2"><h3 class="mb-8"> Step 2: Enter Activation Code</h3><p class="text-muted mb-12">
- Enter the activation code provided by your administrator.
- </p><div class="form-group"><label>Activation Code</label><input type="text" id="activationCodeInput" placeholder="XXXX-XXXX-XXXX-XXXX"></div><div class="code-format">
- Code format: <code>XXXX-XXXX-XXXX-XXXX</code> (4 parts of 4 characters each)
- </div><div class="status" id="activationStatus"></div><button class="btn btn-secondary" onclick="goToStep1()">← Back</button><button class="btn btn-primary" onclick="activateSystem()"> Activate Now</button></div><!-- Step 3: Success --><div class="step" id="step3"><div class="success-icon"></div><h3 class="text-center mb-8">Activation Successful!</h3><p class="text-center text-muted mb-12">
- Your POS system is now activated. You can use it fully offline.
- </p><div class="text-center text-muted mb-12" id="activationExpiryDisplay">
- License valid for 30 days
- </div><button class="btn btn-primary" onclick="goToPOS()"> Go to POS</button></div></div><script src="db.js"></script><script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activate - SokoPulse</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f8fafc;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15);
+            padding: 40px;
+            width: 420px;
+            max-width: 100%;
+            position: relative;
+        }
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #1a3c34, #f5a623);
+        }
+        .logo { text-align: center; margin-bottom: 24px; }
+        .logo h1 { font-size: 28px; font-weight: 800; color: #1a3c34; }
+        .logo h1 span { color: #f5a623; }
+        .logo p { color: #94a3b8; font-size: 14px; margin-top: 4px; }
+        
+        .step { display: none; }
+        .step.active { display: block; }
+        
+        .machine-id-box {
+            background: #f8fafc;
+            padding: 16px;
+            border-radius: 12px;
+            text-align: center;
+            margin: 12px 0 16px 0;
+            border: 1px dashed #e2e8f0;
+        }
+        .machine-id-box .id {
+            font-family: monospace;
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a3c34;
+            letter-spacing: 2px;
+            word-break: break-all;
+        }
+        .machine-id-box .label { font-size: 12px; color: #94a3b8; }
+        
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 600; color: #334155; margin-bottom: 6px; }
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s;
+            background: #f8fafc;
+            font-family: monospace;
+            font-size: 18px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #1a3c34;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(26,60,52,0.1);
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 8px;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #1a3c34, #2a5c54);
+            color: white;
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(26,60,52,0.3); }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #0f172a;
+        }
+        .btn-secondary:hover { background: #e2e8f0; }
+        
+        .status {
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: 13px;
+            margin: 12px 0;
+            display: none;
+        }
+        .status.show { display: block; }
+        .status.error { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+        .status.success { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+        .status.info { background: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
+        
+        .steps-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        .steps-indicator .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #e2e8f0;
+            transition: all 0.3s;
+        }
+        .steps-indicator .dot.active { background: #1a3c34; transform: scale(1.2); }
+        .steps-indicator .dot.done { background: #22c55e; }
+        
+        .success-icon { font-size: 48px; text-align: center; margin: 16px 0; }
+        .offline-badge {
+            display: inline-block;
+            background: #dcfce7;
+            color: #166534;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 12px;
+            border-radius: 20px;
+            margin-top: 4px;
+        }
+        .code-format {
+            font-size: 11px;
+            color: #94a3b8;
+            margin-top: 8px;
+            padding: 8px;
+            background: #f8fafc;
+            border-radius: 6px;
+        }
+        .code-format code {
+            background: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 13px;
+            font-weight: 600;
+            color: #1a3c34;
+        }
+        
+        h3 { font-size: 18px; font-weight: 600; color: #0f172a; }
+        .mb-8 { margin-bottom: 8px; }
+        .mb-12 { margin-bottom: 12px; }
+        .text-center { text-align: center; }
+        .text-muted { color: #94a3b8; font-size: 14px; }
+        
+        @media (max-width: 480px) {
+            .container { padding: 24px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="logo">
+        <h1>🏪 <span>Soko</span>Pulse</h1>
+        <p>One-Time Activation <span class="offline-badge">🔒 Offline after activation</span></p>
+    </div>
+
+    <!-- Steps Indicator -->
+    <div class="steps-indicator">
+        <span class="dot active" id="dot1"></span>
+        <span class="dot" id="dot2"></span>
+        <span class="dot" id="dot3"></span>
+    </div>
+
+    <!-- Step 1: Machine ID -->
+    <div class="step active" id="step1">
+        <h3 class="mb-8">📋 Step 1: Get Machine ID</h3>
+        <p class="text-muted mb-12">
+            Copy this Machine ID and send it to your administrator to get an activation code.
+        </p>
+        
+        <div class="machine-id-box">
+            <div class="label">Your Machine ID</div>
+            <div class="id" id="machineId">Loading...</div>
+        </div>
+        
+        <button class="btn btn-secondary" onclick="copyMachineId()">📋 Copy Machine ID</button>
+        
+        <div class="status info show" id="nextStepInfo">
+            ℹ️ After getting your activation code, click "Next" to continue.
+        </div>
+        
+        <button class="btn btn-primary" onclick="goToStep2()">Next →</button>
+    </div>
+
+    <!-- Step 2: Enter Code -->
+    <div class="step" id="step2">
+        <h3 class="mb-8">🔑 Step 2: Enter Activation Code</h3>
+        <p class="text-muted mb-12">
+            Enter the activation code provided by your administrator.
+        </p>
+        
+        <div class="form-group">
+            <label>Activation Code</label>
+            <input type="text" id="activationCodeInput" placeholder="XXXX-XXXX-XXXX-XXXX">
+        </div>
+        
+        <div class="code-format">
+            Code format: <code>XXXX-XXXX-XXXX-XXXX</code> (4 parts of 4 characters each)
+        </div>
+        
+        <div class="status" id="activationStatus"></div>
+        
+        <button class="btn btn-secondary" onclick="goToStep1()">← Back</button>
+        <button class="btn btn-primary" onclick="activateSystem()">🔓 Activate Now</button>
+    </div>
+
+    <!-- Step 3: Success -->
+    <div class="step" id="step3">
+        <div class="success-icon">🎉</div>
+        <h3 class="text-center mb-8">Activation Successful!</h3>
+        <p class="text-center text-muted mb-12">
+            Your POS system is now activated. You can use it fully offline.
+        </p>
+        <div class="text-center text-muted mb-12" id="activationExpiryDisplay">
+            🔒 License valid for 30 days
+        </div>
+        <button class="btn btn-primary" onclick="goToPOS()">🚀 Go to POS</button>
+    </div>
+</div>
+
+<script src="db.js"></script>
+<script>
 // ============================================================
 // ACTIVATION SYSTEM - COMPLETE
 // ============================================================
 
 // ===== GENERATE MACHINE ID =====
 function getMachineId() {
- let machineId = localStorage.getItem('machine_id');
- if (!machineId) {
- const components = [
- navigator.userAgent,
- navigator.language,
- screen.width,
- screen.height,
- navigator.hardwareConcurrency || 0,
- navigator.platform,
- navigator.deviceMemory || 0
- ];
- machineId = btoa(components.join('|')).slice(0, 24);
- localStorage.setItem('machine_id', machineId);
- }
- return machineId;
+    let machineId = localStorage.getItem('machine_id');
+    if (!machineId) {
+        const components = [
+            navigator.userAgent,
+            navigator.language,
+            screen.width,
+            screen.height,
+            navigator.hardwareConcurrency || 0,
+            navigator.platform,
+            navigator.deviceMemory || 0
+        ];
+        machineId = btoa(components.join('|')).slice(0, 24);
+        localStorage.setItem('machine_id', machineId);
+    }
+    return machineId;
 }
 
 function displayMachineId() {
- document.getElementById('machineId').textContent = getMachineId();
+    document.getElementById('machineId').textContent = getMachineId();
 }
 
 function copyMachineId() {
- const id = getMachineId();
- navigator.clipboard.writeText(id).then(() => {
- alert(' Machine ID copied to clipboard!');
- }).catch(() => {
- const input = document.createElement('input');
- input.value = id;
- document.body.appendChild(input);
- input.select();
- document.execCommand('copy');
- document.body.removeChild(input);
- alert(' Machine ID copied!');
- });
+    const id = getMachineId();
+    navigator.clipboard.writeText(id).then(() => {
+        alert('✅ Machine ID copied to clipboard!');
+    }).catch(() => {
+        const input = document.createElement('input');
+        input.value = id;
+        document.body.appendChild(input);
+        input.select();
+        document.execCommand('copy');
+        document.body.removeChild(input);
+        alert('✅ Machine ID copied!');
+    });
 }
 
 // ===== STEP NAVIGATION =====
 function goToStep1() {
- document.getElementById('step1').classList.add('active');
- document.getElementById('step2').classList.remove('active');
- document.getElementById('step3').classList.remove('active');
- updateDots(0);
+    document.getElementById('step1').classList.add('active');
+    document.getElementById('step2').classList.remove('active');
+    document.getElementById('step3').classList.remove('active');
+    updateDots(0);
 }
 
 function goToStep2() {
- if (!localStorage.getItem('machine_id')) {
- alert('Please generate a Machine ID first.');
- return;
- }
- document.getElementById('step1').classList.remove('active');
- document.getElementById('step2').classList.add('active');
- document.getElementById('step3').classList.remove('active');
- updateDots(1);
- document.getElementById('activationCodeInput').focus();
+    if (!localStorage.getItem('machine_id')) {
+        alert('Please generate a Machine ID first.');
+        return;
+    }
+    document.getElementById('step1').classList.remove('active');
+    document.getElementById('step2').classList.add('active');
+    document.getElementById('step3').classList.remove('active');
+    updateDots(1);
+    document.getElementById('activationCodeInput').focus();
 }
 
 function goToStep3() {
- document.getElementById('step1').classList.remove('active');
- document.getElementById('step2').classList.remove('active');
- document.getElementById('step3').classList.add('active');
- updateDots(2);
+    document.getElementById('step1').classList.remove('active');
+    document.getElementById('step2').classList.remove('active');
+    document.getElementById('step3').classList.add('active');
+    updateDots(2);
 }
 
 function updateDots(step) {
- for (let i = 1; i <= 3; i++) {
- const dot = document.getElementById('dot' + i);
- dot.classList.remove('active', 'done');
- if (i < step + 1) dot.classList.add('done');
- if (i === step + 1) dot.classList.add('active');
- }
+    for (let i = 1; i <= 3; i++) {
+        const dot = document.getElementById('dot' + i);
+        dot.classList.remove('active', 'done');
+        if (i < step + 1) dot.classList.add('done');
+        if (i === step + 1) dot.classList.add('active');
+    }
 }
 
 // ===== ACTIVATE SYSTEM =====
 function activateSystem() {
- const codeInput = document.getElementById("activationCodeInput");
- const status = document.getElementById("activationStatus");
- const code = codeInput.value.trim().toUpperCase();
- 
- status.className = "status";
- status.textContent = "";
- 
- // Validate format: XXXX-XXXX-XXXX-XXXX
- if (!code || code.length!== 19 ||!/^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(code)) {
- status.className = "status error show";
- status.textContent = " Please enter a valid activation code (format: XXXX-XXXX-XXXX-XXXX).";
- return;
- }
- 
- // Code format is valid - ACTIVATE IMMEDIATELY
- const expiryDate = new Date();
- expiryDate.setDate(expiryDate.getDate() + 30);
- 
- localStorage.setItem("activated", "true");
- localStorage.setItem("activation_code", code);
- localStorage.setItem("expiry_date", expiryDate.toISOString());
- localStorage.setItem("license_type", "Monthly");
- localStorage.setItem("machine_id", getMachineId());
- 
- status.className = "status success show";
- status.textContent = " Activation successful! License valid until " + expiryDate.toLocaleDateString();
- 
- document.querySelector(".btn-primary").disabled = true;
- 
- setTimeout(function() {
- goToStep3();
- document.getElementById("activationExpiryDisplay").textContent = " License valid until " + expiryDate.toLocaleDateString();
- }, 1000);
+    const codeInput = document.getElementById("activationCodeInput");
+    const status = document.getElementById("activationStatus");
+    const code = codeInput.value.trim().toUpperCase();
+    
+    status.className = "status";
+    status.textContent = "";
+    
+    // Validate format: XXXX-XXXX-XXXX-XXXX
+    if (!code || code.length !== 19 || !/^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(code)) {
+        status.className = "status error show";
+        status.textContent = "❌ Please enter a valid activation code (format: XXXX-XXXX-XXXX-XXXX).";
+        return;
+    }
+    
+    // Code format is valid - ACTIVATE IMMEDIATELY
+    const expiryDate = new Date();
+    expiryDate.setDate(expiryDate.getDate() + 30);
+    
+    localStorage.setItem("activated", "true");
+    localStorage.setItem("activation_code", code);
+    localStorage.setItem("expiry_date", expiryDate.toISOString());
+    localStorage.setItem("license_type", "Monthly");
+    localStorage.setItem("machine_id", getMachineId());
+    
+    status.className = "status success show";
+    status.textContent = "✅ Activation successful! License valid until " + expiryDate.toLocaleDateString();
+    
+    document.querySelector(".btn-primary").disabled = true;
+    
+    setTimeout(function() {
+        goToStep3();
+        document.getElementById("activationExpiryDisplay").textContent = "🔒 License valid until " + expiryDate.toLocaleDateString();
+    }, 1000);
 }
 
 // ===== GO TO POS =====
 function goToPOS() {
- window.location.href = 'index.html';
+    window.location.href = 'index.html';
 }
 
 // ===== CHECK IF ALREADY ACTIVATED =====
 function checkActivation() {
- if (localStorage.getItem("activated") === "true") {
- const expiryDate = localStorage.getItem("expiry_date");
- if (expiryDate) {
- const expiry = new Date(expiryDate);
- const now = new Date();
- if (expiry < now) {
- // Expired - clear and show activation
- localStorage.removeItem("activated");
- localStorage.removeItem("activation_code");
- localStorage.removeItem("expiry_date");
- localStorage.removeItem("pos_user");
- localStorage.removeItem("pos_logged_in");
- } else {
- // Already activated and valid - go to POS
- window.location.href = "index.html";
- return;
- }
- }
- }
- 
- // Show step 1
- document.getElementById("step1").classList.add("active");
- document.getElementById("step2").classList.remove("active");
- document.getElementById("step3").classList.remove("active");
- updateDots(0);
- displayMachineId();
+    if (localStorage.getItem("activated") === "true") {
+        const expiryDate = localStorage.getItem("expiry_date");
+        if (expiryDate) {
+            const expiry = new Date(expiryDate);
+            const now = new Date();
+            if (expiry < now) {
+                // Expired - clear and show activation
+                localStorage.removeItem("activated");
+                localStorage.removeItem("activation_code");
+                localStorage.removeItem("expiry_date");
+                localStorage.removeItem("pos_user");
+                localStorage.removeItem("pos_logged_in");
+            } else {
+                // Already activated and valid - go to POS
+                window.location.href = "index.html";
+                return;
+            }
+        }
+    }
+    
+    // Show step 1
+    document.getElementById("step1").classList.add("active");
+    document.getElementById("step2").classList.remove("active");
+    document.getElementById("step3").classList.remove("active");
+    updateDots(0);
+    displayMachineId();
 }
 
 // ===== FORMAT CODE INPUT =====
 document.getElementById('activationCodeInput').addEventListener('input', function(e) {
- let value = this.value.toUpperCase().replace(/[^A-Z0-9-]/g, '');
- // Auto-insert hyphens after 4 characters
- if (value.length === 4 || value.length === 9 || value.length === 14) {
- value += '-';
- }
- this.value = value;
+    let value = this.value.toUpperCase().replace(/[^A-Z0-9-]/g, '');
+    // Auto-insert hyphens after 4 characters
+    if (value.length === 4 || value.length === 9 || value.length === 14) {
+        value += '-';
+    }
+    this.value = value;
 });
 
 // ===== INIT =====
 document.addEventListener('DOMContentLoaded', function() {
- displayMachineId();
- checkActivation();
+    displayMachineId();
+    checkActivation();
 });
-</script><script>
+</script>
+
+<script>
 if ('serviceWorker' in navigator) {
- window.addEventListener('load', function() {
- navigator.serviceWorker.register('/sw.js').then(function(reg) {
- console.log(' Service Worker registered');
- }).catch(function(err) {
- console.log(' Service Worker registration failed:', err);
- });
- });
+    window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/sw.js')
+            .then(function(reg) {
+                console.log('✅ Service Worker registered');
+            })
+            .catch(function(err) {
+                console.log('❌ Service Worker registration failed:', err);
+            });
+    });
 }
-</script></body></html>
+</script>
+</body>
+</html>

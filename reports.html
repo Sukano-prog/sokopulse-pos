@@ -1,192 +1,403 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Reports - SokoPulse</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="css/style.css"><link rel="stylesheet" href="css/responsive.css"><style>.report-tabs {
- display: flex;
- gap: 4px;
- margin-bottom: 16px;
- border-bottom: 2px solid #e2e8f0;
- padding-bottom: 2px;
- flex-wrap: wrap;
- }.report-tabs button {
- padding: 8px 18px;
- border: none;
- background: none;
- font-family: 'Inter', sans-serif;
- font-weight: 600;
- font-size: 13px;
- color: #94a3b8;
- cursor: pointer;
- border-radius: 8px 8px 0 0;
- transition: all 0.2s;
- }.report-tabs button:hover { color: #0f172a; background: #f1f5f9; }.report-tabs button.active {
- color: #1a3c34;
- background: #f1f5f9;
- border-bottom: 3px solid #1a3c34;
- }.report-content { display: none; }.report-content.active { display: block; }.date-filter-row {
- display: flex;
- gap: 10px;
- flex-wrap: wrap;
- align-items: center;
- margin-bottom: 16px;
- background: white;
- padding: 12px 16px;
- border-radius: 10px;
- border: 1px solid #f1f5f9;
- }.date-filter-row label {
- font-size: 13px;
- font-weight: 600;
- color: #0f172a;
- }.date-filter-row select {
- padding: 8px 14px;
- border: 2px solid #e2e8f0;
- border-radius: 8px;
- font-family: 'Inter', sans-serif;
- font-size: 13px;
- background: white;
- min-width: 140px;
- cursor: pointer;
- }.date-filter-row select:focus {
- outline: none;
- border-color: #1a3c34;
- }.date-filter-row.date-inputs {
- display: flex;
- gap: 8px;
- align-items: center;
- }.date-filter-row.date-inputs input {
- padding: 8px 12px;
- border: 2px solid #e2e8f0;
- border-radius: 8px;
- font-family: 'Inter', sans-serif;
- font-size: 13px;
- }.date-filter-row.date-inputs input:focus {
- outline: none;
- border-color: #1a3c34;
- }.btn-apply {
- padding: 8px 20px;
- background: #1a3c34;
- color: white;
- border: none;
- border-radius: 8px;
- font-weight: 600;
- font-family: 'Inter', sans-serif;
- cursor: pointer;
- }.btn-apply:hover { background: #2a5c54; }.btn-export {
- padding: 8px 16px;
- background: #f1f5f9;
- color: #0f172a;
- border: none;
- border-radius: 8px;
- font-weight: 600;
- font-family: 'Inter', sans-serif;
- cursor: pointer;
- }.btn-export:hover { background: #e2e8f0; }.report-stats {
- display: grid;
- grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
- gap: 12px;
- margin-bottom: 16px;
- }.report-stat {
- background: white;
- padding: 14px 18px;
- border-radius: 10px;
- border: 1px solid #f1f5f9;
- }.report-stat.number {
- font-size: 22px;
- font-weight: 700;
- color: #0f172a;
- }.report-stat.number.green { color: #22c55e; }.report-stat.number.red { color: #ef4444; }.report-stat.number.orange { color: #f59e0b; }.report-stat.number.blue { color: #3b82f6; }.report-stat.label {
- font-size: 11px;
- color: #94a3b8;
- font-weight: 500;
- text-transform: uppercase;
- letter-spacing: 0.3px;
- }.chart-container {
- background: white;
- border-radius: 10px;
- padding: 16px 20px;
- border: 1px solid #f1f5f9;
- margin-bottom: 16px;
- }.chart-container h4 {
- font-size: 14px;
- font-weight: 600;
- color: #0f172a;
- margin-bottom: 12px;
- }.chart-bars {
- display: flex;
- gap: 6px;
- align-items: flex-end;
- height: 120px;
- padding: 4px 0;
- }.chart-bar {
- flex: 1;
- background: #1a3c34;
- border-radius: 4px 4px 0 0;
- min-height: 4px;
- transition: height 0.5s ease;
- position: relative;
- cursor: pointer;
- }.chart-bar:hover { opacity: 0.7; }.chart-bar.bar-value {
- position: absolute;
- top: -18px;
- left: 50%;
- transform: translateX(-50%);
- font-size: 9px;
- font-weight: 600;
- color: #0f172a;
- display: none;
- }.chart-bar:hover.bar-value { display: block; }.chart-bar.bar-label {
- position: absolute;
- bottom: -18px;
- left: 50%;
- transform: translateX(-50%);
- font-size: 8px;
- color: #94a3b8;
- white-space: nowrap;
- }.top-product {
- display: flex;
- justify-content: space-between;
- align-items: center;
- padding: 6px 0;
- border-bottom: 1px solid #f1f5f9;
- font-size: 13px;
- }.top-product:last-child { border-bottom: none; }.top-product.name { flex: 1; font-weight: 500; color: #0f172a; }.top-product.qty { color: #94a3b8; font-size: 12px; margin-right: 12px; }.top-product.total { font-weight: 600; color: #0f172a; }.payment-item {
- background: #f8fafc;
- padding: 10px 14px;
- border-radius: 6px;
- text-align: center;
- }.payment-item.percent { font-size: 18px; font-weight: 700; color: #1a3c34; }.payment-item.amount { font-weight: 600; color: #0f172a; }.payment-item.label { font-size: 11px; color: #94a3b8; }.payment-breakdown {
- display: grid;
- grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
- gap: 10px;
- }.no-data {
- text-align: center;
- padding: 30px;
- color: #94a3b8;
- font-size: 13px;
- }.profit-loss-grid {
- display: grid;
- grid-template-columns: 1fr 1fr 1fr 1fr;
- gap: 12px;
- margin-bottom: 16px;
- }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports - SokoPulse</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <style>
+        .report-tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 16px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 2px;
+            flex-wrap: wrap;
+        }
+        .report-tabs button {
+            padding: 8px 18px;
+            border: none;
+            background: none;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 13px;
+            color: #94a3b8;
+            cursor: pointer;
+            border-radius: 8px 8px 0 0;
+            transition: all 0.2s;
+        }
+        .report-tabs button:hover { color: #0f172a; background: #f1f5f9; }
+        .report-tabs button.active {
+            color: #1a3c34;
+            background: #f1f5f9;
+            border-bottom: 3px solid #1a3c34;
+        }
+        .report-content { display: none; }
+        .report-content.active { display: block; }
 
- @media (max-width: 768px) {.report-stats { grid-template-columns: 1fr 1fr; }.profit-loss-grid { grid-template-columns: 1fr 1fr; }.date-filter-row { flex-direction: column; align-items: stretch; }.date-filter-row.date-inputs { flex-wrap: wrap; }.date-filter-row.date-inputs input { flex: 1; }.report-tabs button { padding: 6px 12px; font-size: 12px; flex: 1; text-align: center; }.chart-bars { height: 80px; }.payment-breakdown { grid-template-columns: 1fr 1fr; }
- }
- </style></head><body><div class="app"><div class="sidebar-overlay" onclick="toggleSidebar()"><div class="filter-group" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;"><label style="font-size:12px;font-weight:600;color:#0f172a;"> Product</label><select id="productFilter" onchange="loadActiveReport()" style="padding:8px 12px;border:2px solid #e2e8f0;border-radius:8px;font-family:'Inter',sans-serif;font-size:13px;background:white;min-width:150px;"><option value="all">All Products</option></select></div><div class="filter-group" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;"><label style="font-size:12px;font-weight:600;color:#0f172a;"> Category</label><select id="categoryFilter" onchange="loadActiveReport()" style="padding:8px 12px;border:2px solid #e2e8f0;border-radius:8px;font-family:'Inter',sans-serif;font-size:13px;background:white;min-width:130px;"><option value="all">All Categories</option></select></div></div><aside class="sidebar"><div class="logo"><span>Soko</span>Pulse <button class="close-btn" onclick="toggleSidebar()"></button></div><nav><div class="nav-label">Main</div><a href="pos.html"> POS</a><a href="dashboard.html"> Dashboard</a><a href="orders.html"> Orders</a><div class="nav-label">Inventory</div><a href="products.html"> Products</a><a href="stock.html"> Stock</a><a href="expiry.html">⏰ Expiry</a><a href="categories.html"> Categories</a><a href="suppliers.html"> Suppliers</a><div class="nav-label">Management</div><a href="customers.html"> Customers</a><a href="reports.html" class="active"> Reports</a><a href="audit.html"> Audit</a><a href="returns.html"> Returns</a><a href="settings.html"> Settings</a></nav><div class="user-section"><div class="name" id="userName">Administrator</div><div class="role" id="userRole">Admin</div></div><button class="logout-btn" onclick="logout()"> Logout</button></aside><main class="main-content"><header class="topbar"><div class="left"><button class="hamburger" onclick="toggleSidebar()"></button><h1> Reports</h1></div><div class="right"><span class="store-badge"> SokoPulse</span><span class="time" id="timeDisplay"></span></div></header><div class="page-container"><!-- Tabs --><div class="report-tabs"><button class="active" onclick="switchTab('sales')"> Sales</button><button onclick="switchTab('products')"> Products</button><button onclick="switchTab('payments')"> Payments</button><button onclick="switchTab('customers')"> Customers</button><button onclick="switchTab('profitloss')"> Profit/Loss</button></div><!-- Date Filter --><div class="date-filter-row" id="dateFilterRow"><label> Period</label><select id="dateRangeSelect" onchange="applyDateRange()"><option value="today">Today</option><option value="yesterday">Yesterday</option><option value="week">Last 7 Days</option><option value="month" selected>Last 30 Days</option><option value="quarter">Last 90 Days</option><option value="year">Last Year</option><option value="custom">Custom Range</option></select><div class="date-inputs"><input type="date" id="reportStartDate"><span style="color:#94a3b8;">→</span><input type="date" id="reportEndDate"></div><button class="btn-apply" onclick="loadActiveReport()"> Apply</button><button class="btn-export" onclick="exportReport()"> Export</button></div><!-- Sales Report --><div class="report-content active" id="tab-sales"><div class="report-stats"><div class="report-stat"><div class="number" id="totalRevenue">KES 0</div><div class="label"> Total Revenue</div></div><div class="report-stat"><div class="number" id="totalOrders">0</div><div class="label"> Total Orders</div></div><div class="report-stat"><div class="number" id="avgOrder">KES 0</div><div class="label"> Average Order</div></div><div class="report-stat"><div class="number" id="topDay">-</div><div class="label"> Best Day</div></div></div><div class="chart-container"><h4> Daily Sales Trend</h4><div class="chart-bars" id="salesChart"><div class="no-data">No sales data available</div></div></div></div><!-- Products Report --><div class="report-content" id="tab-products"><div class="report-stats"><div class="report-stat"><div class="number" id="totalProductsSold">0</div><div class="label"> Total Sold</div></div><div class="report-stat"><div class="number" id="topProductName">-</div><div class="label"> Top Product</div></div></div><div class="chart-container"><h4> Top Selling Products</h4><div id="topProductsList"><div class="no-data">No data available</div></div></div></div><!-- Payments Report --><div class="report-content" id="tab-payments"><div class="report-stats"><div class="report-stat"><div class="number green" id="cashTotal">KES 0</div><div class="label"> Cash</div></div><div class="report-stat"><div class="number orange" id="mpesaTotal">KES 0</div><div class="label"> M-Pesa</div></div><div class="report-stat"><div class="number blue" id="cardTotal">KES 0</div><div class="label"> Card</div></div><div class="report-stat"><div class="number purple" id="creditTotal">KES 0</div><div class="label"> Credit</div></div></div><div class="chart-container"><h4> Payment Breakdown</h4><div class="payment-breakdown" id="paymentBreakdown"><div class="no-data">No data available</div></div></div></div><!-- Customers Report --><div class="report-content" id="tab-customers"><div class="report-stats"><div class="report-stat"><div class="number" id="totalCustomers">0</div><div class="label"> Total Customers</div></div><div class="report-stat"><div class="number green" id="topCustomerName">-</div><div class="label"> Top Customer</div></div></div><div class="chart-container"><h4> Top Customers</h4><div id="topCustomersList"><div class="no-data">No data available</div></div></div></div><!-- Profit/Loss Report --><div class="report-content" id="tab-profitloss"><div id="profitLossResult"><div class="no-data">Select date range and click Apply</div></div></div></div></main></div><script src="db.js"></script><script>
+        .date-filter-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-bottom: 16px;
+            background: white;
+            padding: 12px 16px;
+            border-radius: 10px;
+            border: 1px solid #f1f5f9;
+        }
+        .date-filter-row label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #0f172a;
+        }
+        .date-filter-row select {
+            padding: 8px 14px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            background: white;
+            min-width: 140px;
+            cursor: pointer;
+        }
+        .date-filter-row select:focus {
+            outline: none;
+            border-color: #1a3c34;
+        }
+        .date-filter-row .date-inputs {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .date-filter-row .date-inputs input {
+            padding: 8px 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+        }
+        .date-filter-row .date-inputs input:focus {
+            outline: none;
+            border-color: #1a3c34;
+        }
+        .btn-apply {
+            padding: 8px 20px;
+            background: #1a3c34;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+        }
+        .btn-apply:hover { background: #2a5c54; }
+        .btn-export {
+            padding: 8px 16px;
+            background: #f1f5f9;
+            color: #0f172a;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+        }
+        .btn-export:hover { background: #e2e8f0; }
+
+        .report-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .report-stat {
+            background: white;
+            padding: 14px 18px;
+            border-radius: 10px;
+            border: 1px solid #f1f5f9;
+        }
+        .report-stat .number {
+            font-size: 22px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+        .report-stat .number.green { color: #22c55e; }
+        .report-stat .number.red { color: #ef4444; }
+        .report-stat .number.orange { color: #f59e0b; }
+        .report-stat .number.blue { color: #3b82f6; }
+        .report-stat .label {
+            font-size: 11px;
+            color: #94a3b8;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .chart-container {
+            background: white;
+            border-radius: 10px;
+            padding: 16px 20px;
+            border: 1px solid #f1f5f9;
+            margin-bottom: 16px;
+        }
+        .chart-container h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #0f172a;
+            margin-bottom: 12px;
+        }
+        .chart-bars {
+            display: flex;
+            gap: 6px;
+            align-items: flex-end;
+            height: 120px;
+            padding: 4px 0;
+        }
+        .chart-bar {
+            flex: 1;
+            background: #1a3c34;
+            border-radius: 4px 4px 0 0;
+            min-height: 4px;
+            transition: height 0.5s ease;
+            position: relative;
+            cursor: pointer;
+        }
+        .chart-bar:hover { opacity: 0.7; }
+        .chart-bar .bar-value {
+            position: absolute;
+            top: -18px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 9px;
+            font-weight: 600;
+            color: #0f172a;
+            display: none;
+        }
+        .chart-bar:hover .bar-value { display: block; }
+        .chart-bar .bar-label {
+            position: absolute;
+            bottom: -18px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 8px;
+            color: #94a3b8;
+            white-space: nowrap;
+        }
+
+        .top-product {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 0;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 13px;
+        }
+        .top-product:last-child { border-bottom: none; }
+        .top-product .name { flex: 1; font-weight: 500; color: #0f172a; }
+        .top-product .qty { color: #94a3b8; font-size: 12px; margin-right: 12px; }
+        .top-product .total { font-weight: 600; color: #0f172a; }
+
+        .payment-item {
+            background: #f8fafc;
+            padding: 10px 14px;
+            border-radius: 6px;
+            text-align: center;
+        }
+        .payment-item .percent { font-size: 18px; font-weight: 700; color: #1a3c34; }
+        .payment-item .amount { font-weight: 600; color: #0f172a; }
+        .payment-item .label { font-size: 11px; color: #94a3b8; }
+
+        .payment-breakdown {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 30px;
+            color: #94a3b8;
+            font-size: 13px;
+        }
+
+        .profit-loss-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        @media (max-width: 768px) {
+            .report-stats { grid-template-columns: 1fr 1fr; }
+            .profit-loss-grid { grid-template-columns: 1fr 1fr; }
+            .date-filter-row { flex-direction: column; align-items: stretch; }
+            .date-filter-row .date-inputs { flex-wrap: wrap; }
+            .date-filter-row .date-inputs input { flex: 1; }
+            .report-tabs button { padding: 6px 12px; font-size: 12px; flex: 1; text-align: center; }
+            .chart-bars { height: 80px; }
+            .payment-breakdown { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+<div class="app">
+    <div class="sidebar-overlay" onclick="toggleSidebar()">
+                <div class="filter-group" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                    <label style="font-size:12px;font-weight:600;color:#0f172a;">📦 Product</label>
+                    <select id="productFilter" onchange="loadActiveReport()" style="padding:8px 12px;border:2px solid #e2e8f0;border-radius:8px;font-family:'Inter',sans-serif;font-size:13px;background:white;min-width:150px;">
+                        <option value="all">All Products</option>
+                    </select>
+                </div>
+                <div class="filter-group" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+                    <label style="font-size:12px;font-weight:600;color:#0f172a;">📂 Category</label>
+                    <select id="categoryFilter" onchange="loadActiveReport()" style="padding:8px 12px;border:2px solid #e2e8f0;border-radius:8px;font-family:'Inter',sans-serif;font-size:13px;background:white;min-width:130px;">
+                        <option value="all">All Categories</option>
+                    </select>
+                </div></div>
+
+    <aside class="sidebar">
+        <div class="logo">🏪 <span>Soko</span>Pulse <button class="close-btn" onclick="toggleSidebar()">✕</button></div>
+        <nav>
+            <div class="nav-label">Main</div>
+            <a href="pos.html">🛒 POS</a>
+            <a href="dashboard.html">📊 Dashboard</a>
+            <a href="orders.html">📋 Orders</a>
+            <div class="nav-label">Inventory</div>
+            <a href="products.html">📦 Products</a>
+            <a href="stock.html">📦 Stock</a>
+            <a href="expiry.html">⏰ Expiry</a>
+            <a href="categories.html">📂 Categories</a>
+            <a href="suppliers.html">📦 Suppliers</a>
+            <div class="nav-label">Management</div>
+            <a href="customers.html">👤 Customers</a>
+            <a href="reports.html" class="active">📈 Reports</a>
+            <a href="audit.html">📋 Audit</a>
+            <a href="returns.html">🔄 Returns</a>
+            <a href="settings.html">⚙️ Settings</a>
+        </nav>
+        <div class="user-section"><div class="name" id="userName">Administrator</div><div class="role" id="userRole">Admin</div></div>
+        <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div class="left"><button class="hamburger" onclick="toggleSidebar()">☰</button><h1>📈 Reports</h1></div>
+            <div class="right"><span class="store-badge">🏪 SokoPulse</span><span class="time" id="timeDisplay"></span></div>
+        </header>
+
+        <div class="page-container">
+            <!-- Tabs -->
+            <div class="report-tabs">
+                <button class="active" onclick="switchTab('sales')">📊 Sales</button>
+                <button onclick="switchTab('products')">📦 Products</button>
+                <button onclick="switchTab('payments')">💳 Payments</button>
+                <button onclick="switchTab('customers')">👤 Customers</button>
+                <button onclick="switchTab('profitloss')">💰 Profit/Loss</button>
+            </div>
+
+            <!-- Date Filter -->
+            <div class="date-filter-row" id="dateFilterRow">
+                <label>📅 Period</label>
+                <select id="dateRangeSelect" onchange="applyDateRange()">
+                    <option value="today">Today</option>
+                    <option value="yesterday">Yesterday</option>
+                    <option value="week">Last 7 Days</option>
+                    <option value="month" selected>Last 30 Days</option>
+                    <option value="quarter">Last 90 Days</option>
+                    <option value="year">Last Year</option>
+                    <option value="custom">Custom Range</option>
+                </select>
+                <div class="date-inputs">
+                    <input type="date" id="reportStartDate">
+                    <span style="color:#94a3b8;">→</span>
+                    <input type="date" id="reportEndDate">
+                </div>
+                <button class="btn-apply" onclick="loadActiveReport()">📊 Apply</button>
+                <button class="btn-export" onclick="exportReport()">📤 Export</button>
+            </div>
+
+            <!-- Sales Report -->
+            <div class="report-content active" id="tab-sales">
+                <div class="report-stats">
+                    <div class="report-stat"><div class="number" id="totalRevenue">KES 0</div><div class="label">💰 Total Revenue</div></div>
+                    <div class="report-stat"><div class="number" id="totalOrders">0</div><div class="label">📋 Total Orders</div></div>
+                    <div class="report-stat"><div class="number" id="avgOrder">KES 0</div><div class="label">📊 Average Order</div></div>
+                    <div class="report-stat"><div class="number" id="topDay">-</div><div class="label">📅 Best Day</div></div>
+                </div>
+                <div class="chart-container">
+                    <h4>📊 Daily Sales Trend</h4>
+                    <div class="chart-bars" id="salesChart"><div class="no-data">No sales data available</div></div>
+                </div>
+            </div>
+
+            <!-- Products Report -->
+            <div class="report-content" id="tab-products">
+                <div class="report-stats">
+                    <div class="report-stat"><div class="number" id="totalProductsSold">0</div><div class="label">📦 Total Sold</div></div>
+                    <div class="report-stat"><div class="number" id="topProductName">-</div><div class="label">🏆 Top Product</div></div>
+                </div>
+                <div class="chart-container">
+                    <h4>🏆 Top Selling Products</h4>
+                    <div id="topProductsList"><div class="no-data">No data available</div></div>
+                </div>
+            </div>
+
+            <!-- Payments Report -->
+            <div class="report-content" id="tab-payments">
+                <div class="report-stats">
+                    <div class="report-stat"><div class="number green" id="cashTotal">KES 0</div><div class="label">💵 Cash</div></div>
+                    <div class="report-stat"><div class="number orange" id="mpesaTotal">KES 0</div><div class="label">📱 M-Pesa</div></div>
+                    <div class="report-stat"><div class="number blue" id="cardTotal">KES 0</div><div class="label">💳 Card</div></div>
+                    <div class="report-stat"><div class="number purple" id="creditTotal">KES 0</div><div class="label">📋 Credit</div></div>
+                </div>
+                <div class="chart-container">
+                    <h4>💳 Payment Breakdown</h4>
+                    <div class="payment-breakdown" id="paymentBreakdown"><div class="no-data">No data available</div></div>
+                </div>
+            </div>
+
+            <!-- Customers Report -->
+            <div class="report-content" id="tab-customers">
+                <div class="report-stats">
+                    <div class="report-stat"><div class="number" id="totalCustomers">0</div><div class="label">👤 Total Customers</div></div>
+                    <div class="report-stat"><div class="number green" id="topCustomerName">-</div><div class="label">🏆 Top Customer</div></div>
+                </div>
+                <div class="chart-container">
+                    <h4>🏆 Top Customers</h4>
+                    <div id="topCustomersList"><div class="no-data">No data available</div></div>
+                </div>
+            </div>
+
+            <!-- Profit/Loss Report -->
+            <div class="report-content" id="tab-profitloss">
+                <div id="profitLossResult"><div class="no-data">Select date range and click Apply</div></div>
+            </div>
+        </div>
+    </main>
+</div>
+
+
+<script src="db.js"></script>
+<script>
 
 function isAdmin() {
- try {
- const user = JSON.parse(localStorage.getItem("pos_user") || "{}");
- return user.role === "admin";
- } catch(e) {
- return false;
- }
+    try {
+        const user = JSON.parse(localStorage.getItem("pos_user") || "{}");
+        return user.role === "admin";
+    } catch(e) {
+        return false;
+    }
 }
 if (!isAdmin()) {
- window.location.href = "pos.html";
+    window.location.href = "pos.html";
 }
 
 
 function toggleSidebar() {
- document.querySelector(".sidebar")?.classList.toggle("open");
- document.querySelector(".sidebar-overlay")?.classList.toggle("show");
+    document.querySelector(".sidebar")?.classList.toggle("open");
+    document.querySelector(".sidebar-overlay")?.classList.toggle("show");
 }
 
 
@@ -194,659 +405,680 @@ function toggleSidebar() {
 // Admin-only page check
 
 function logout() {
- if (confirm('Logout?')) {
- localStorage.removeItem('pos_user');
- window.location.href = 'index.html';
- }
+    if (confirm('Logout?')) {
+        localStorage.removeItem('pos_user');
+        window.location.href = 'index.html';
+    }
 }
 
 function updateTime() {
- var el = document.getElementById('timeDisplay');
- if (el) el.textContent = new Date().toLocaleTimeString('en-KE', { hour12: false });
+    var el = document.getElementById('timeDisplay');
+    if (el) el.textContent = new Date().toLocaleTimeString('en-KE', { hour12: false });
 }
 
 
 
 function switchTab(tab) {
- currentTab = tab;
- 
- var buttons = document.querySelectorAll(".report-tabs button,.tab-btn, button[onclick*='switchTab']");
- buttons.forEach(function(b) {
- b.classList.remove("active");
- });
- 
- var contents = document.querySelectorAll(".report-content,.tab-content, [id^='tab-']");
- contents.forEach(function(c) {
- c.classList.remove("active");
- });
- 
- var activeButton = document.querySelector(".report-tabs button[onclick*='" + tab + "']");
- if (activeButton) {
- activeButton.classList.add("active");
- }
- 
- var activeContent = document.getElementById("tab-" + tab);
- if (activeContent) {
- activeContent.classList.add("active");
- }
- 
- loadActiveReport();
+    currentTab = tab;
+    
+    var buttons = document.querySelectorAll(".report-tabs button, .tab-btn, button[onclick*='switchTab']");
+    buttons.forEach(function(b) {
+        b.classList.remove("active");
+    });
+    
+    var contents = document.querySelectorAll(".report-content, .tab-content, [id^='tab-']");
+    contents.forEach(function(c) {
+        c.classList.remove("active");
+    });
+    
+    var activeButton = document.querySelector(".report-tabs button[onclick*='" + tab + "']");
+    if (activeButton) {
+        activeButton.classList.add("active");
+    }
+    
+    var activeContent = document.getElementById("tab-" + tab);
+    if (activeContent) {
+        activeContent.classList.add("active");
+    }
+    
+    loadActiveReport();
 }
 
 function applyDateRange() {
- var select = document.getElementById('dateRangeSelect');
- var value = select.value;
- var startInput = document.getElementById('reportStartDate');
- var endInput = document.getElementById('reportEndDate');
- var today = new Date();
- var start = new Date();
+    var select = document.getElementById('dateRangeSelect');
+    var value = select.value;
+    var startInput = document.getElementById('reportStartDate');
+    var endInput = document.getElementById('reportEndDate');
+    var today = new Date();
+    var start = new Date();
 
- if (!startInput ||!endInput) return;
+    if (!startInput || !endInput) return;
 
- switch(value) {
- case 'today':
- start = new Date(today);
- break;
- case 'yesterday':
- start = new Date(today);
- start.setDate(start.getDate() - 1);
- today = new Date(today);
- today.setDate(today.getDate() - 1);
- break;
- case 'week':
- start = new Date(today);
- start.setDate(start.getDate() - 7);
- break;
- case 'month':
- start = new Date(today);
- start.setDate(start.getDate() - 30);
- break;
- case 'quarter':
- start = new Date(today);
- start.setDate(start.getDate() - 90);
- break;
- case 'year':
- start = new Date(today);
- start.setFullYear(start.getFullYear() - 1);
- break;
- case 'custom':
- return;
- default:
- start = new Date(today);
- start.setDate(start.getDate() - 30);
- }
+    switch(value) {
+        case 'today':
+            start = new Date(today);
+            break;
+        case 'yesterday':
+            start = new Date(today);
+            start.setDate(start.getDate() - 1);
+            today = new Date(today);
+            today.setDate(today.getDate() - 1);
+            break;
+        case 'week':
+            start = new Date(today);
+            start.setDate(start.getDate() - 7);
+            break;
+        case 'month':
+            start = new Date(today);
+            start.setDate(start.getDate() - 30);
+            break;
+        case 'quarter':
+            start = new Date(today);
+            start.setDate(start.getDate() - 90);
+            break;
+        case 'year':
+            start = new Date(today);
+            start.setFullYear(start.getFullYear() - 1);
+            break;
+        case 'custom':
+            return;
+        default:
+            start = new Date(today);
+            start.setDate(start.getDate() - 30);
+    }
 
- startInput.value = start.toISOString().slice(0, 10);
- endInput.value = today.toISOString().slice(0, 10);
- loadActiveReport();
+    startInput.value = start.toISOString().slice(0, 10);
+    endInput.value = today.toISOString().slice(0, 10);
+    loadActiveReport();
 }
 
 function loadActiveReport() {
- var funcMap = {
- 'sales': loadSalesReport,
- 'products': loadProductsReport,
- 'payments': loadPaymentsReport,
- 'customers': loadCustomersReport,
- 'profitloss': loadProfitLoss
- };
- var fn = funcMap[currentTab];
- if (fn && typeof fn === 'function') {
- fn();
- }
+    var funcMap = {
+        'sales': loadSalesReport,
+        'products': loadProductsReport,
+        'payments': loadPaymentsReport,
+        'customers': loadCustomersReport,
+        'profitloss': loadProfitLoss
+    };
+    var fn = funcMap[currentTab];
+    if (fn && typeof fn === 'function') {
+        fn();
+    }
 }
 
 function getProductFilter() {
- var el = document.getElementById('productFilter');
- return el? el.value: 'all';
+    var el = document.getElementById('productFilter');
+    return el ? el.value : 'all';
 }
 
 function getCategoryFilter() {
- var el = document.getElementById('categoryFilter');
- return el? el.value: 'all';
+    var el = document.getElementById('categoryFilter');
+    return el ? el.value : 'all';
 }
 
 function populateProductFilters() {
- var productSelect = document.getElementById('productFilter');
- var categorySelect = document.getElementById('categoryFilter');
- if (!productSelect ||!allProducts) return;
- var currentProduct = productSelect.value;
- var currentCategory = categorySelect? categorySelect.value: 'all';
- productSelect.innerHTML = '<option value="all">All Products</option>';
- var categories = {};
- allProducts.forEach(function(p) {
- var name = p.name || 'Unnamed';
- var cat = p.category || 'Uncategorized';
- categories[cat] = true;
- productSelect.innerHTML += '<option value="' + p.id + '">' + name + '</option>';
- });
- productSelect.value = currentProduct;
- if (categorySelect) {
- categorySelect.innerHTML = '<option value="all">All Categories</option>';
- Object.keys(categories).sort().forEach(function(cat) {
- categorySelect.innerHTML += '<option value="' + cat + '">' + cat + '</option>';
- });
- categorySelect.value = currentCategory;
- }
+    var productSelect = document.getElementById('productFilter');
+    var categorySelect = document.getElementById('categoryFilter');
+    if (!productSelect || !allProducts) return;
+    var currentProduct = productSelect.value;
+    var currentCategory = categorySelect ? categorySelect.value : 'all';
+    productSelect.innerHTML = '<option value="all">All Products</option>';
+    var categories = {};
+    allProducts.forEach(function(p) {
+        var name = p.name || 'Unnamed';
+        var cat = p.category || 'Uncategorized';
+        categories[cat] = true;
+        productSelect.innerHTML += '<option value="' + p.id + '">' + name + '</option>';
+    });
+    productSelect.value = currentProduct;
+    if (categorySelect) {
+        categorySelect.innerHTML = '<option value="all">All Categories</option>';
+        Object.keys(categories).sort().forEach(function(cat) {
+            categorySelect.innerHTML += '<option value="' + cat + '">' + cat + '</option>';
+        });
+        categorySelect.value = currentCategory;
+    }
 }
 
 function getDateRange() {
- var startInput = document.getElementById('reportStartDate');
- var endInput = document.getElementById('reportEndDate');
- if (!startInput ||!endInput) {
- return { start: '', end: '' };
- }
- return { start: startInput.value, end: endInput.value };
+    var startInput = document.getElementById('reportStartDate');
+    var endInput = document.getElementById('reportEndDate');
+    if (!startInput || !endInput) {
+        return { start: '', end: '' };
+    }
+    return { start: startInput.value, end: endInput.value };
 }
 
 // ===== LOAD ALL DATA =====
 async function loadAllData() {
- try {
- var db = await openDB();
- allOrders = await dbGetAll(db, 'orders');
- allProducts = await dbGetAll(db, 'products');
- allCustomers = await dbGetAll(db, 'customers');
- populateProductFilters();
- } catch(e) {
- console.error('Error loading data:', e);
- }
+    try {
+        var db = await openDB();
+        allOrders = await dbGetAll(db, 'orders');
+        allProducts = await dbGetAll(db, 'products');
+        allCustomers = await dbGetAll(db, 'customers');
+        populateProductFilters();
+    } catch(e) {
+        console.error('Error loading data:', e);
+    }
 }
 
 function getFilteredOrders(startDate, endDate) {
- return allOrders.filter(function(o) {
- if (!o.date) return false;
- var d = o.date.slice(0, 10);
- return d >= startDate && d <= endDate;
- });
+    return allOrders.filter(function(o) {
+        if (!o.date) return false;
+        var d = o.date.slice(0, 10);
+        return d >= startDate && d <= endDate;
+    });
 }
 
 // ===== SALES REPORT =====
 function loadSalesReport() {
- console.log(' Loading Sales Report...');
- var range = getDateRange();
- if (!range.start ||!range.end) {
- var today = new Date();
- var start = new Date();
- start.setDate(start.getDate() - 30);
- var startInput = document.getElementById('reportStartDate');
- var endInput = document.getElementById('reportEndDate');
- if (startInput) startInput.value = start.toISOString().slice(0, 10);
- if (endInput) endInput.value = today.toISOString().slice(0, 10);
- range = getDateRange();
- }
+    console.log('📊 Loading Sales Report...');
+    var range = getDateRange();
+    if (!range.start || !range.end) {
+        var today = new Date();
+        var start = new Date();
+        start.setDate(start.getDate() - 30);
+        var startInput = document.getElementById('reportStartDate');
+        var endInput = document.getElementById('reportEndDate');
+        if (startInput) startInput.value = start.toISOString().slice(0, 10);
+        if (endInput) endInput.value = today.toISOString().slice(0, 10);
+        range = getDateRange();
+    }
 
- var orders = getFilteredOrders(range.start, range.end);
- var total = orders.reduce(function(s, o) { return s + (o.total || 0); }, 0);
- var count = orders.length;
- var avg = count > 0? total / count: 0;
+    var orders = getFilteredOrders(range.start, range.end);
+    var total = orders.reduce(function(s, o) { return s + (o.total || 0); }, 0);
+    var count = orders.length;
+    var avg = count > 0 ? total / count : 0;
 
- document.getElementById('totalRevenue').textContent = 'KES ' + total.toFixed(0);
- document.getElementById('totalOrders').textContent = count;
- document.getElementById('avgOrder').textContent = 'KES ' + avg.toFixed(0);
+    document.getElementById('totalRevenue').textContent = 'KES ' + total.toFixed(0);
+    document.getElementById('totalOrders').textContent = count;
+    document.getElementById('avgOrder').textContent = 'KES ' + avg.toFixed(0);
 
- var daily = {};
- orders.forEach(function(o) {
- if (o.date) {
- var d = o.date.slice(0, 10);
- daily[d] = (daily[d] || 0) + (o.total || 0);
- }
- });
- var days = Object.keys(daily).sort();
- var maxVal = Math.max.apply(null, Object.values(daily).concat([1]));
+    var daily = {};
+    orders.forEach(function(o) {
+        if (o.date) {
+            var d = o.date.slice(0, 10);
+            daily[d] = (daily[d] || 0) + (o.total || 0);
+        }
+    });
+    var days = Object.keys(daily).sort();
+    var maxVal = Math.max.apply(null, Object.values(daily).concat([1]));
 
- var chart = document.getElementById('salesChart');
- if (days.length === 0) {
- chart.innerHTML = '<div class="no-data">No sales data available</div>';
- document.getElementById('topDay').textContent = '-';
- return;
- }
+    var chart = document.getElementById('salesChart');
+    if (days.length === 0) {
+        chart.innerHTML = '<div class="no-data">No sales data available</div>';
+        document.getElementById('topDay').textContent = '-';
+        return;
+    }
 
- var bestDay = days.reduce(function(a, b) { return daily[a] > daily[b]? a: b; });
- document.getElementById('topDay').textContent = new Date(bestDay).toLocaleDateString();
+    var bestDay = days.reduce(function(a, b) { return daily[a] > daily[b] ? a : b; });
+    document.getElementById('topDay').textContent = new Date(bestDay).toLocaleDateString();
 
- chart.innerHTML = days.map(function(d) {
- var height = (daily[d] / maxVal) * 100;
- var label = new Date(d).toLocaleDateString('en-KE', { day: '2-digit', month: 'short' });
- return '<div class="chart-bar" style="height:' + Math.max(height, 4) + '%;" title="' + d + ': KES ' + daily[d].toFixed(0) + '">' +
- '<span class="bar-value">KES ' + daily[d].toFixed(0) + '</span>' +
- '<span class="bar-label">' + label + '</span>' +
- '</div>';
- }).join('');
- console.log(' Sales Report loaded:', count, 'orders');
+    chart.innerHTML = days.map(function(d) {
+        var height = (daily[d] / maxVal) * 100;
+        var label = new Date(d).toLocaleDateString('en-KE', { day: '2-digit', month: 'short' });
+        return '<div class="chart-bar" style="height:' + Math.max(height, 4) + '%;" title="' + d + ': KES ' + daily[d].toFixed(0) + '">' +
+            '<span class="bar-value">KES ' + daily[d].toFixed(0) + '</span>' +
+            '<span class="bar-label">' + label + '</span>' +
+        '</div>';
+    }).join('');
+    console.log('✅ Sales Report loaded:', count, 'orders');
 }
 
 // ===== PRODUCTS REPORT =====
 function loadProductsReport() {
- console.log(' Loading Products Report...');
- var range = getDateRange();
- if (!range.start ||!range.end) { setDefaultDates(); range = getDateRange(); }
+    console.log('📊 Loading Products Report...');
+    var range = getDateRange();
+    if (!range.start || !range.end) { setDefaultDates(); range = getDateRange(); }
 
- var orders = getFilteredOrders(range.start, range.end);
- var productSales = {};
+    var orders = getFilteredOrders(range.start, range.end);
+    var productSales = {};
 
- orders.forEach(function(o) {
- if (o.items) {
- var items = typeof o.items === 'string'? JSON.parse(o.items): o.items;
- items.forEach(function(i) {
- var name = i.name || 'Unknown';
- if (!productSales[name]) productSales[name] = { qty: 0, revenue: 0 };
- productSales[name].qty += (i.qty || 1);
- productSales[name].revenue += (i.price || 0) * (i.qty || 1);
- });
- }
- });
+    orders.forEach(function(o) {
+        if (o.items) {
+            var items = typeof o.items === 'string' ? JSON.parse(o.items) : o.items;
+            items.forEach(function(i) {
+                var name = i.name || 'Unknown';
+                if (!productSales[name]) productSales[name] = { qty: 0, revenue: 0 };
+                productSales[name].qty += (i.qty || 1);
+                productSales[name].revenue += (i.price || 0) * (i.qty || 1);
+            });
+        }
+    });
 
- var total = Object.values(productSales).reduce(function(s, v) { return s + v.qty; }, 0);
- document.getElementById('totalProductsSold').textContent = total;
+    var total = Object.values(productSales).reduce(function(s, v) { return s + v.qty; }, 0);
+    document.getElementById('totalProductsSold').textContent = total;
 
- var sorted = Object.entries(productSales).sort(function(a, b) { return b[1].qty - a[1].qty; });
- var top = sorted[0] || ['-', 0];
- document.getElementById('topProductName').textContent = top[0]!== '-'? top[0] + ' (' + top[1].qty + ' units)': '-';
+    var sorted = Object.entries(productSales).sort(function(a, b) { return b[1].qty - a[1].qty; });
+    var top = sorted[0] || ['-', 0];
+    document.getElementById('topProductName').textContent = top[0] !== '-' ? top[0] + ' (' + top[1].qty + ' units)' : '-';
 
- var list = document.getElementById('topProductsList');
- if (sorted.length === 0) {
- list.innerHTML = '<div class="no-data">No product data available</div>';
- return;
- }
+    var list = document.getElementById('topProductsList');
+    if (sorted.length === 0) {
+        list.innerHTML = '<div class="no-data">No product data available</div>';
+        return;
+    }
 
- var icons = ['', '', '', '4⃣', '5⃣', '6⃣', '7⃣', '8⃣', '9⃣', ''];
- list.innerHTML = sorted.slice(0, 10).map(function(item, i) {
- var name = item[0];
- var data = item[1];
- var icon = icons[i] || (i + 1);
- return '<div class="top-product">' +
- '<span style="font-weight:600;min-width:30px;">' + icon + '</span>' +
- '<span class="name">' + name + '</span>' +
- '<span class="qty">' + data.qty + ' units</span>' +
- '<span class="total">KES ' + data.revenue.toFixed(0) + '</span>' +
- '</div>';
- }).join('');
- console.log(' Products Report loaded');
+    var icons = ['🥇', '🥈', '🥉', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟'];
+    list.innerHTML = sorted.slice(0, 10).map(function(item, i) {
+        var name = item[0];
+        var data = item[1];
+        var icon = icons[i] || (i + 1);
+        return '<div class="top-product">' +
+            '<span style="font-weight:600;min-width:30px;">' + icon + '</span>' +
+            '<span class="name">' + name + '</span>' +
+            '<span class="qty">' + data.qty + ' units</span>' +
+            '<span class="total">KES ' + data.revenue.toFixed(0) + '</span>' +
+        '</div>';
+    }).join('');
+    console.log('✅ Products Report loaded');
 }
 
 // ===== PAYMENTS REPORT =====
 function loadPaymentsReport() {
- console.log(' Loading Payments Report...');
- var range = getDateRange();
- if (!range.start ||!range.end) { setDefaultDates(); range = getDateRange(); }
+    console.log('📊 Loading Payments Report...');
+    var range = getDateRange();
+    if (!range.start || !range.end) { setDefaultDates(); range = getDateRange(); }
 
- var orders = getFilteredOrders(range.start, range.end);
- var payments = {};
- orders.forEach(function(o) {
- var method = o.payment_method || 'cash';
- payments[method] = (payments[method] || 0) + (o.total || 0);
- });
+    var orders = getFilteredOrders(range.start, range.end);
+    var payments = {};
+    orders.forEach(function(o) {
+        var method = o.payment_method || 'cash';
+        payments[method] = (payments[method] || 0) + (o.total || 0);
+    });
 
- var total = Object.values(payments).reduce(function(s, v) { return s + v; }, 0);
- document.getElementById('cashTotal').textContent = 'KES ' + (payments.cash || 0).toFixed(0);
- document.getElementById('mpesaTotal').textContent = 'KES ' + (payments.mpesa || 0).toFixed(0);
- document.getElementById('cardTotal').textContent = 'KES ' + (payments.card || 0).toFixed(0);
- document.getElementById('creditTotal').textContent = 'KES ' + (payments.credit || 0).toFixed(0);
+    var total = Object.values(payments).reduce(function(s, v) { return s + v; }, 0);
+    document.getElementById('cashTotal').textContent = 'KES ' + (payments.cash || 0).toFixed(0);
+    document.getElementById('mpesaTotal').textContent = 'KES ' + (payments.mpesa || 0).toFixed(0);
+    document.getElementById('cardTotal').textContent = 'KES ' + (payments.card || 0).toFixed(0);
+    document.getElementById('creditTotal').textContent = 'KES ' + (payments.credit || 0).toFixed(0);
 
- var labels = { cash: ' Cash', mpesa: ' M-Pesa', card: ' Card', credit: ' Credit', bank: ' Bank' };
- var container = document.getElementById('paymentBreakdown');
- var entries = Object.entries(payments);
- if (entries.length === 0) {
- container.innerHTML = '<div class="no-data">No payment data available</div>';
- return;
- }
- container.innerHTML = entries.map(function(item) {
- var method = item[0];
- var amount = item[1];
- var percent = total > 0? (amount / total) * 100: 0;
- return '<div class="payment-item">' +
- '<div class="percent">' + percent.toFixed(1) + '%</div>' +
- '<div class="amount">KES ' + amount.toFixed(0) + '</div>' +
- '<div class="label">' + (labels[method] || method) + '</div>' +
- '</div>';
- }).join('');
- console.log(' Payments Report loaded');
+    var labels = { cash: '💵 Cash', mpesa: '📱 M-Pesa', card: '💳 Card', credit: '📋 Credit', bank: '🏦 Bank' };
+    var container = document.getElementById('paymentBreakdown');
+    var entries = Object.entries(payments);
+    if (entries.length === 0) {
+        container.innerHTML = '<div class="no-data">No payment data available</div>';
+        return;
+    }
+    container.innerHTML = entries.map(function(item) {
+        var method = item[0];
+        var amount = item[1];
+        var percent = total > 0 ? (amount / total) * 100 : 0;
+        return '<div class="payment-item">' +
+            '<div class="percent">' + percent.toFixed(1) + '%</div>' +
+            '<div class="amount">KES ' + amount.toFixed(0) + '</div>' +
+            '<div class="label">' + (labels[method] || method) + '</div>' +
+        '</div>';
+    }).join('');
+    console.log('✅ Payments Report loaded');
 }
 
 // ===== CUSTOMERS REPORT =====
 function loadCustomersReport() {
- console.log(' Loading Customers Report...');
- var range = getDateRange();
- if (!range.start ||!range.end) { setDefaultDates(); range = getDateRange(); }
+    console.log('📊 Loading Customers Report...');
+    var range = getDateRange();
+    if (!range.start || !range.end) { setDefaultDates(); range = getDateRange(); }
 
- var orders = getFilteredOrders(range.start, range.end);
- var customerStats = {};
+    var orders = getFilteredOrders(range.start, range.end);
+    var customerStats = {};
 
- allCustomers.forEach(function(c) {
- customerStats[c.id] = {
- name: c.name || 'Unknown',
- phone: c.phone || '',
- orders: 0,
- total: 0,
- credit: c.credit || 0
- };
- });
+    allCustomers.forEach(function(c) {
+        customerStats[c.id] = {
+            name: c.name || 'Unknown',
+            phone: c.phone || '',
+            orders: 0,
+            total: 0,
+            credit: c.credit || 0
+        };
+    });
 
- orders.forEach(function(o) {
- var id = o.customer_id;
- if (id && customerStats[id]) {
- customerStats[id].orders += 1;
- customerStats[id].total += (o.total || 0);
- } else if (o.customer_name && o.customer_name!== 'Walk-in') {
- if (!customerStats['other']) {
- customerStats['other'] = { name: ' Other', phone: '', orders: 0, total: 0, credit: 0 };
- }
- customerStats['other'].orders += 1;
- customerStats['other'].total += (o.total || 0);
- }
- });
+    orders.forEach(function(o) {
+        var id = o.customer_id;
+        if (id && customerStats[id]) {
+            customerStats[id].orders += 1;
+            customerStats[id].total += (o.total || 0);
+        } else if (o.customer_name && o.customer_name !== 'Walk-in') {
+            if (!customerStats['other']) {
+                customerStats['other'] = { name: '👤 Other', phone: '', orders: 0, total: 0, credit: 0 };
+            }
+            customerStats['other'].orders += 1;
+            customerStats['other'].total += (o.total || 0);
+        }
+    });
 
- var sorted = Object.values(customerStats).filter(function(c) { return c.orders > 0 || c.credit > 0; }).sort(function(a, b) { return b.total - a.total; });
+    var sorted = Object.values(customerStats).filter(function(c) { return c.orders > 0 || c.credit > 0; })
+        .sort(function(a, b) { return b.total - a.total; });
 
- document.getElementById('totalCustomers').textContent = allCustomers.length;
- var top = sorted[0] || null;
- document.getElementById('topCustomerName').textContent = top? top.name + ' (KES ' + top.total.toFixed(0) + ')': '-';
+    document.getElementById('totalCustomers').textContent = allCustomers.length;
+    var top = sorted[0] || null;
+    document.getElementById('topCustomerName').textContent = top ? top.name + ' (KES ' + top.total.toFixed(0) + ')' : '-';
 
- var list = document.getElementById('topCustomersList');
- if (sorted.length === 0) {
- list.innerHTML = '<div class="no-data">No customer data available</div>';
- return;
- }
+    var list = document.getElementById('topCustomersList');
+    if (sorted.length === 0) {
+        list.innerHTML = '<div class="no-data">No customer data available</div>';
+        return;
+    }
 
- var icons = ['', '', '', '4⃣', '5⃣', '6⃣', '7⃣', '8⃣', '9⃣', ''];
- list.innerHTML = sorted.slice(0, 10).map(function(c, i) {
- var icon = icons[i] || (i + 1);
- var credit = c.credit > 0? ' KES ' + c.credit.toFixed(0): '';
- return '<div class="top-product">' +
- '<span style="font-weight:600;min-width:30px;">' + icon + '</span>' +
- '<span class="name">' + c.name + '</span>' +
- '<span class="qty">' + c.orders + ' orders</span>' +
- '<span class="total">KES ' + c.total.toFixed(0) + credit + '</span>' +
- '</div>';
- }).join('');
- console.log(' Customers Report loaded');
+    var icons = ['🥇', '🥈', '🥉', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟'];
+    list.innerHTML = sorted.slice(0, 10).map(function(c, i) {
+        var icon = icons[i] || (i + 1);
+        var credit = c.credit > 0 ? ' 💳 KES ' + c.credit.toFixed(0) : '';
+        return '<div class="top-product">' +
+            '<span style="font-weight:600;min-width:30px;">' + icon + '</span>' +
+            '<span class="name">' + c.name + '</span>' +
+            '<span class="qty">' + c.orders + ' orders</span>' +
+            '<span class="total">KES ' + c.total.toFixed(0) + credit + '</span>' +
+        '</div>';
+    }).join('');
+    console.log('✅ Customers Report loaded');
 }
 
 // ===== PROFIT/LOSS REPORT =====
 function loadProfitLoss() {
- console.log(' Loading Profit/Loss...');
- var range = getDateRange();
- if (!range.start ||!range.end) { setDefaultDates(); range = getDateRange(); }
+    console.log('📊 Loading Profit/Loss...');
+    var range = getDateRange();
+    if (!range.start || !range.end) { setDefaultDates(); range = getDateRange(); }
 
- var orders = getFilteredOrders(range.start, range.end);
- var totalRevenue = orders.reduce(function(s, o) { return s + (o.total || 0); }, 0);
- var totalOrders = orders.length;
- var avgOrder = totalOrders > 0? totalRevenue / totalOrders: 0;
+    var orders = getFilteredOrders(range.start, range.end);
+    var totalRevenue = orders.reduce(function(s, o) { return s + (o.total || 0); }, 0);
+    var totalOrders = orders.length;
+    var avgOrder = totalOrders > 0 ? totalRevenue / totalOrders : 0;
 
- var totalCOGS = 0;
- var totalUnits = 0;
- orders.forEach(function(o) {
- if (o.items) {
- var items = typeof o.items === 'string'? JSON.parse(o.items): o.items;
- items.forEach(function(item) {
- var product = allProducts.find(function(p) { return p.id === item.id || p.name === item.name; });
- var costPrice = product? (product.cost_price || 0): 0;
- var qty = item.qty || 1;
- totalCOGS += costPrice * qty;
- totalUnits += qty;
- });
- }
- });
+    var totalCOGS = 0;
+    var totalUnits = 0;
+    orders.forEach(function(o) {
+        if (o.items) {
+            var items = typeof o.items === 'string' ? JSON.parse(o.items) : o.items;
+            items.forEach(function(item) {
+                var product = allProducts.find(function(p) { return p.id === item.id || p.name === item.name; });
+                var costPrice = product ? (product.cost_price || 0) : 0;
+                var qty = item.qty || 1;
+                totalCOGS += costPrice * qty;
+                totalUnits += qty;
+            });
+        }
+    });
 
- var grossProfit = totalRevenue - totalCOGS;
- var grossMargin = totalRevenue > 0? (grossProfit / totalRevenue) * 100: 0;
+    var grossProfit = totalRevenue - totalCOGS;
+    var grossMargin = totalRevenue > 0 ? (grossProfit / totalRevenue) * 100 : 0;
 
- var container = document.getElementById('profitLossResult');
- 
- // Calculate product breakdown
- var productProfit = {};
- orders.forEach(function(o) {
- if (o.items) {
- var items = typeof o.items === 'string'? JSON.parse(o.items): o.items;
- items.forEach(function(item) {
- var name = item.name || 'Unknown';
- var qty = item.qty || 1;
- var price = item.price || 0;
- var revenue = price * qty;
- var product = allProducts.find(function(p) { return p.id === item.id || p.name === item.name; });
- var costPrice = product? (product.cost_price || 0): 0;
- var cost = costPrice * qty;
- if (!productProfit[name]) {
- productProfit[name] = { revenue: 0, cost: 0, qty: 0 };
- }
- productProfit[name].revenue += revenue;
- productProfit[name].cost += cost;
- productProfit[name].qty += qty;
- });
- }
- });
- 
- var productHtml = '';
- var sortedProducts = Object.keys(productProfit).sort(function(a, b) {
- return (productProfit[b].revenue - productProfit[b].cost) - (productProfit[a].revenue - productProfit[a].cost);
- });
- 
- if (sortedProducts.length > 0) {
- productHtml = '<div style="background:white;border-radius:12px;padding:20px;border:1px solid #e2e8f0;margin-top:12px;">' +
- '<h3 style="font-size:16px;font-weight:700;color:#0f172a;margin-bottom:12px;"> Profit by Product</h3>' +
- '<div style="overflow-x:auto;">' +
- '<table style="width:100%;border-collapse:collapse;font-size:13px;">' +
- '<thead>' +
- '<tr style="background:#f8fafc;border-bottom:2px solid #e2e8f0;">' +
- '<th style="padding:8px 12px;text-align:left;font-weight:600;color:#64748b;">Product</th>' +
- '<th style="padding:8px 12px;text-align:center;font-weight:600;color:#64748b;">Qty Sold</th>' +
- '<th style="padding:8px 12px;text-align:right;font-weight:600;color:#64748b;">Revenue</th>' +
- '<th style="padding:8px 12px;text-align:right;font-weight:600;color:#64748b;">Cost</th>' +
- '<th style="padding:8px 12px;text-align:right;font-weight:600;color:#64748b;">Profit</th>' +
- '<th style="padding:8px 12px;text-align:right;font-weight:600;color:#64748b;">Margin</th>' +
- '</tr>' +
- '</thead>' +
- '<tbody>';
- 
- sortedProducts.forEach(function(name) {
- var data = productProfit[name];
- var profit = data.revenue - data.cost;
- var margin = data.revenue > 0? (profit / data.revenue) * 100: 0;
- var profitColor = profit >= 0? '#166534': '#991b1b';
- var bgColor = profit >= 0? '#f0fdf4': '#fef2f2';
- productHtml +=
- '<tr style="border-bottom:1px solid #f1f5f9;">' +
- '<td style="padding:8px 12px;font-weight:500;color:#0f172a;">' + name + '</td>' +
- '<td style="padding:8px 12px;text-align:center;color:#64748b;">' + data.qty + '</td>' +
- '<td style="padding:8px 12px;text-align:right;color:#166534;">KES ' + data.revenue.toFixed(0) + '</td>' +
- '<td style="padding:8px 12px;text-align:right;color:#92400e;">KES ' + data.cost.toFixed(0) + '</td>' +
- '<td style="padding:8px 12px;text-align:right;font-weight:600;color:' + profitColor + ';">KES ' + profit.toFixed(0) + '</td>' +
- '<td style="padding:8px 12px;text-align:right;color:' + profitColor + ';">' + margin.toFixed(1) + '%</td>' +
- '</tr>';
- });
- 
- productHtml += '</tbody></table></div></div>';
- }
+    var container = document.getElementById('profitLossResult');
+    
+    // Calculate product breakdown
+    var productProfit = {};
+    orders.forEach(function(o) {
+        if (o.items) {
+            var items = typeof o.items === 'string' ? JSON.parse(o.items) : o.items;
+            items.forEach(function(item) {
+                var name = item.name || 'Unknown';
+                var qty = item.qty || 1;
+                var price = item.price || 0;
+                var revenue = price * qty;
+                var product = allProducts.find(function(p) { return p.id === item.id || p.name === item.name; });
+                var costPrice = product ? (product.cost_price || 0) : 0;
+                var cost = costPrice * qty;
+                if (!productProfit[name]) {
+                    productProfit[name] = { revenue: 0, cost: 0, qty: 0 };
+                }
+                productProfit[name].revenue += revenue;
+                productProfit[name].cost += cost;
+                productProfit[name].qty += qty;
+            });
+        }
+    });
+    
+    var productHtml = '';
+    var sortedProducts = Object.keys(productProfit).sort(function(a, b) {
+        return (productProfit[b].revenue - productProfit[b].cost) - (productProfit[a].revenue - productProfit[a].cost);
+    });
+    
+    if (sortedProducts.length > 0) {
+        productHtml = '<div style="background:white;border-radius:12px;padding:20px;border:1px solid #e2e8f0;margin-top:12px;">' +
+            '<h3 style="font-size:16px;font-weight:700;color:#0f172a;margin-bottom:12px;">📦 Profit by Product</h3>' +
+            '<div style="overflow-x:auto;">' +
+            '<table style="width:100%;border-collapse:collapse;font-size:13px;">' +
+                '<thead>' +
+                    '<tr style="background:#f8fafc;border-bottom:2px solid #e2e8f0;">' +
+                        '<th style="padding:8px 12px;text-align:left;font-weight:600;color:#64748b;">Product</th>' +
+                        '<th style="padding:8px 12px;text-align:center;font-weight:600;color:#64748b;">Qty Sold</th>' +
+                        '<th style="padding:8px 12px;text-align:right;font-weight:600;color:#64748b;">Revenue</th>' +
+                        '<th style="padding:8px 12px;text-align:right;font-weight:600;color:#64748b;">Cost</th>' +
+                        '<th style="padding:8px 12px;text-align:right;font-weight:600;color:#64748b;">Profit</th>' +
+                        '<th style="padding:8px 12px;text-align:right;font-weight:600;color:#64748b;">Margin</th>' +
+                    '</tr>' +
+                '</thead>' +
+                '<tbody>';
+        
+        sortedProducts.forEach(function(name) {
+            var data = productProfit[name];
+            var profit = data.revenue - data.cost;
+            var margin = data.revenue > 0 ? (profit / data.revenue) * 100 : 0;
+            var profitColor = profit >= 0 ? '#166534' : '#991b1b';
+            var bgColor = profit >= 0 ? '#f0fdf4' : '#fef2f2';
+            productHtml +=
+                '<tr style="border-bottom:1px solid #f1f5f9;">' +
+                    '<td style="padding:8px 12px;font-weight:500;color:#0f172a;">' + name + '</td>' +
+                    '<td style="padding:8px 12px;text-align:center;color:#64748b;">' + data.qty + '</td>' +
+                    '<td style="padding:8px 12px;text-align:right;color:#166534;">KES ' + data.revenue.toFixed(0) + '</td>' +
+                    '<td style="padding:8px 12px;text-align:right;color:#92400e;">KES ' + data.cost.toFixed(0) + '</td>' +
+                    '<td style="padding:8px 12px;text-align:right;font-weight:600;color:' + profitColor + ';">KES ' + profit.toFixed(0) + '</td>' +
+                    '<td style="padding:8px 12px;text-align:right;color:' + profitColor + ';">' + margin.toFixed(1) + '%</td>' +
+                '</tr>';
+        });
+        
+        productHtml += '</tbody></table></div></div>';
+    }
 
- container.innerHTML = 
- '<div style="background:white;border-radius:12px;padding:20px;border:1px solid #e2e8f0;margin-bottom:16px;">' +
- '<h3 style="font-size:16px;font-weight:700;color:#0f172a;margin-bottom:12px;"> Profit & Loss Summary</h3>' +
- '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;">' +
- '<div style="background:#f0fdf4;padding:16px;border-radius:10px;border:1px solid #bbf7d0;text-align:center;">' +
- '<div style="font-size:12px;color:#166534;font-weight:600;text-transform:uppercase;"> Total Revenue</div>' +
- '<div style="font-size:28px;font-weight:800;color:#166534;">KES ' + totalRevenue.toFixed(0) + '</div>' +
- '</div>' +
- '<div style="background:#fef3c7;padding:16px;border-radius:10px;border:1px solid #fde68a;text-align:center;">' +
- '<div style="font-size:12px;color:#92400e;font-weight:600;text-transform:uppercase;"> Cost of Goods Sold</div>' +
- '<div style="font-size:28px;font-weight:800;color:#92400e;">KES ' + totalCOGS.toFixed(0) + '</div>' +
- '<div style="font-size:12px;color:#92400e;">(' + totalUnits + ' units sold)</div>' +
- '</div>' +
- '<div style="background:' + (grossProfit >= 0? '#dbeafe': '#fee2e2') + ';padding:16px;border-radius:10px;border:1px solid ' + (grossProfit >= 0? '#bfdbfe': '#fecaca') + ';text-align:center;">' +
- '<div style="font-size:12px;color:' + (grossProfit >= 0? '#1e40af': '#991b1b') + ';font-weight:600;text-transform:uppercase;">' + (grossProfit >= 0? '': '') + ' Gross Profit</div>' +
- '<div style="font-size:28px;font-weight:800;color:' + (grossProfit >= 0? '#1e40af': '#991b1b') + ';">KES ' + grossProfit.toFixed(0) + '</div>' +
- '<div style="font-size:14px;color:' + (grossProfit >= 0? '#1e40af': '#991b1b') + ';">' + (grossProfit >= 0? ' Profitable': ' Loss') + '</div>' +
- '</div>' +
- '<div style="background:#f5f3ff;padding:16px;border-radius:10px;border:1px solid #ddd6fe;text-align:center;">' +
- '<div style="font-size:12px;color:#5b21b6;font-weight:600;text-transform:uppercase;"> Gross Margin</div>' +
- '<div style="font-size:28px;font-weight:800;color:#5b21b6;">' + grossMargin.toFixed(1) + '%</div>' +
- '</div>' +
- '</div>' +
- '</div>' +
- '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:12px;">' +
- '<div style="background:white;padding:12px 16px;border-radius:8px;border:1px solid #e2e8f0;text-align:center;">' +
- '<div style="font-size:11px;color:#94a3b8;font-weight:600;text-transform:uppercase;"> Period</div>' +
- '<div style="font-size:14px;font-weight:600;color:#0f172a;">' + range.start + ' → ' + range.end + '</div>' +
- '</div>' +
- '<div style="background:white;padding:12px 16px;border-radius:8px;border:1px solid #e2e8f0;text-align:center;">' +
- '<div style="font-size:11px;color:#94a3b8;font-weight:600;text-transform:uppercase;"> Total Orders</div>' +
- '<div style="font-size:14px;font-weight:600;color:#0f172a;">' + totalOrders + '</div>' +
- '</div>' +
- '<div style="background:white;padding:12px 16px;border-radius:8px;border:1px solid #e2e8f0;text-align:center;">' +
- '<div style="font-size:11px;color:#94a3b8;font-weight:600;text-transform:uppercase;"> Average Order</div>' +
- '<div style="font-size:14px;font-weight:600;color:#0f172a;">KES ' + avgOrder.toFixed(0) + '</div>' +
- '</div>' +
- '</div>' +
- '<div style="background:#f8fafc;padding:12px 16px;border-radius:8px;font-size:12px;color:#64748b;border:1px solid #e2e8f0;">' +
- '<span> Gross Profit = Revenue - COGS | Gross Margin = (Gross Profit / Revenue) × 100</span>' +
- '</div>' +
- productHtml;
- console.log(' Profit/Loss loaded');
+    container.innerHTML = 
+        '<div style="background:white;border-radius:12px;padding:20px;border:1px solid #e2e8f0;margin-bottom:16px;">' +
+            '<h3 style="font-size:16px;font-weight:700;color:#0f172a;margin-bottom:12px;">📊 Profit & Loss Summary</h3>' +
+            '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;">' +
+                '<div style="background:#f0fdf4;padding:16px;border-radius:10px;border:1px solid #bbf7d0;text-align:center;">' +
+                    '<div style="font-size:12px;color:#166534;font-weight:600;text-transform:uppercase;">💰 Total Revenue</div>' +
+                    '<div style="font-size:28px;font-weight:800;color:#166534;">KES ' + totalRevenue.toFixed(0) + '</div>' +
+                '</div>' +
+                '<div style="background:#fef3c7;padding:16px;border-radius:10px;border:1px solid #fde68a;text-align:center;">' +
+                    '<div style="font-size:12px;color:#92400e;font-weight:600;text-transform:uppercase;">📦 Cost of Goods Sold</div>' +
+                    '<div style="font-size:28px;font-weight:800;color:#92400e;">KES ' + totalCOGS.toFixed(0) + '</div>' +
+                    '<div style="font-size:12px;color:#92400e;">(' + totalUnits + ' units sold)</div>' +
+                '</div>' +
+                '<div style="background:' + (grossProfit >= 0 ? '#dbeafe' : '#fee2e2') + ';padding:16px;border-radius:10px;border:1px solid ' + (grossProfit >= 0 ? '#bfdbfe' : '#fecaca') + ';text-align:center;">' +
+                    '<div style="font-size:12px;color:' + (grossProfit >= 0 ? '#1e40af' : '#991b1b') + ';font-weight:600;text-transform:uppercase;">' + (grossProfit >= 0 ? '📈' : '📉') + ' Gross Profit</div>' +
+                    '<div style="font-size:28px;font-weight:800;color:' + (grossProfit >= 0 ? '#1e40af' : '#991b1b') + ';">KES ' + grossProfit.toFixed(0) + '</div>' +
+                    '<div style="font-size:14px;color:' + (grossProfit >= 0 ? '#1e40af' : '#991b1b') + ';">' + (grossProfit >= 0 ? '✅ Profitable' : '⚠️ Loss') + '</div>' +
+                '</div>' +
+                '<div style="background:#f5f3ff;padding:16px;border-radius:10px;border:1px solid #ddd6fe;text-align:center;">' +
+                    '<div style="font-size:12px;color:#5b21b6;font-weight:600;text-transform:uppercase;">📊 Gross Margin</div>' +
+                    '<div style="font-size:28px;font-weight:800;color:#5b21b6;">' + grossMargin.toFixed(1) + '%</div>' +
+                '</div>' +
+            '</div>' +
+        '</div>' +
+        '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:12px;">' +
+            '<div style="background:white;padding:12px 16px;border-radius:8px;border:1px solid #e2e8f0;text-align:center;">' +
+                '<div style="font-size:11px;color:#94a3b8;font-weight:600;text-transform:uppercase;">📅 Period</div>' +
+                '<div style="font-size:14px;font-weight:600;color:#0f172a;">' + range.start + ' → ' + range.end + '</div>' +
+            '</div>' +
+            '<div style="background:white;padding:12px 16px;border-radius:8px;border:1px solid #e2e8f0;text-align:center;">' +
+                '<div style="font-size:11px;color:#94a3b8;font-weight:600;text-transform:uppercase;">📋 Total Orders</div>' +
+                '<div style="font-size:14px;font-weight:600;color:#0f172a;">' + totalOrders + '</div>' +
+            '</div>' +
+            '<div style="background:white;padding:12px 16px;border-radius:8px;border:1px solid #e2e8f0;text-align:center;">' +
+                '<div style="font-size:11px;color:#94a3b8;font-weight:600;text-transform:uppercase;">📊 Average Order</div>' +
+                '<div style="font-size:14px;font-weight:600;color:#0f172a;">KES ' + avgOrder.toFixed(0) + '</div>' +
+            '</div>' +
+        '</div>' +
+        '<div style="background:#f8fafc;padding:12px 16px;border-radius:8px;font-size:12px;color:#64748b;border:1px solid #e2e8f0;">' +
+            '<span>💡 Gross Profit = Revenue - COGS | Gross Margin = (Gross Profit / Revenue) × 100</span>' +
+        '</div>' +
+        productHtml;
+    console.log('✅ Profit/Loss loaded');
 }
 
 function setDefaultDates() {
- var today = new Date();
- var start = new Date();
- start.setDate(start.getDate() - 30);
- var startInput = document.getElementById('reportStartDate');
- var endInput = document.getElementById('reportEndDate');
- if (startInput) startInput.value = start.toISOString().slice(0, 10);
- if (endInput) endInput.value = today.toISOString().slice(0, 10);
+    var today = new Date();
+    var start = new Date();
+    start.setDate(start.getDate() - 30);
+    var startInput = document.getElementById('reportStartDate');
+    var endInput = document.getElementById('reportEndDate');
+    if (startInput) startInput.value = start.toISOString().slice(0, 10);
+    if (endInput) endInput.value = today.toISOString().slice(0, 10);
 }
 
 function exportReport() {
- var content = document.querySelector('.report-content.active');
- if (!content) { alert('No data to export'); return; }
- var text = content.textContent || 'No data';
- var blob = new Blob([text], { type: 'text/plain' });
- var url = URL.createObjectURL(blob);
- var a = document.createElement('a');
- a.href = url;
- a.download = 'report_' + new Date().toISOString().slice(0, 10) + '.txt';
- a.click();
- URL.revokeObjectURL(url);
+    var content = document.querySelector('.report-content.active');
+    if (!content) { alert('No data to export'); return; }
+    var text = content.textContent || 'No data';
+    var blob = new Blob([text], { type: 'text/plain' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'report_' + new Date().toISOString().slice(0, 10) + '.txt';
+    a.click();
+    URL.revokeObjectURL(url);
 }
 
 // ===== INIT =====
 document.addEventListener('DOMContentLoaded', function() {
- var userData = localStorage.getItem('pos_user');
- if (!userData) { window.location.href = 'index.html'; return; }
- var user = JSON.parse(userData);
- document.getElementById('userName').textContent = user.name || user.username;
- document.getElementById('userRole').textContent = user.role || 'User';
+    var userData = localStorage.getItem('pos_user');
+    if (!userData) { window.location.href = 'index.html'; return; }
+    var user = JSON.parse(userData);
+    document.getElementById('userName').textContent = user.name || user.username;
+    document.getElementById('userRole').textContent = user.role || 'User';
 
- setInterval(updateTime, 1000);
- updateTime();
+    setInterval(updateTime, 1000);
+    updateTime();
 
- setDefaultDates();
- loadAllData().then(function() {
- loadSalesReport();
- });
+    setDefaultDates();
+    loadAllData().then(function() {
+        loadSalesReport();
+    });
 });
-</script><script>
+</script>
+
+
+<script>
 if ('serviceWorker' in navigator) {
- window.addEventListener('load', function() {
- navigator.serviceWorker.register('/sw.js').then(function(reg) {
- console.log(' Service Worker registered');
- }).catch(function(err) {
- console.log(' Service Worker registration failed:', err);
- });
- });
+    window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/sw.js')
+            .then(function(reg) {
+                console.log('✅ Service Worker registered');
+            })
+            .catch(function(err) {
+                console.log('❌ Service Worker registration failed:', err);
+            });
+    });
 }
-</script><script>
+</script>
+
+<script>
 // ===== LICENSE CHECK =====
 
 // Run checks
 // License check removed);
-</script><!-- License Warning Banner --><span id="licenseWarningMessage"> Your license expires soon. Please renew in Settings.</span></div><script>
+</script>
+
+<!-- License Warning Banner -->
+    <span id="licenseWarningMessage">⚠️ Your license expires soon. Please renew in Settings.</span>
+</div>
+
+<script>
 // ===== LICENSE STATUS CHECK =====
 function checkLicenseStatus() {
- const activated = localStorage.getItem("activated");
- const expiry = localStorage.getItem("expiry_date");
- 
- if (!activated || activated!== "true") {
- alert(" Your license is not activated.\nPlease go to Settings to activate your license.");
- window.location.href = "settings.html";
- return false;
- }
- 
- if (expiry) {
- const expiryDate = new Date(expiry);
- const now = new Date();
- const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
- 
- if (expiryDate < now) {
- alert(" Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
- localStorage.removeItem("activated");
- localStorage.removeItem("activation_code");
- localStorage.removeItem("expiry_date");
- window.location.href = "settings.html";
- return false;
- }
- 
- // Show warning 7 days before expiry
- if (daysRemaining <= 7 && daysRemaining > 0) {
- const message = " Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
- alert(message);
- }
- }
- 
- return true;
+    const activated = localStorage.getItem("activated");
+    const expiry = localStorage.getItem("expiry_date");
+    
+    if (!activated || activated !== "true") {
+        alert("⚠️ Your license is not activated.\nPlease go to Settings to activate your license.");
+        window.location.href = "settings.html";
+        return false;
+    }
+    
+    if (expiry) {
+        const expiryDate = new Date(expiry);
+        const now = new Date();
+        const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
+        
+        if (expiryDate < now) {
+            alert("⚠️ Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
+            localStorage.removeItem("activated");
+            localStorage.removeItem("activation_code");
+            localStorage.removeItem("expiry_date");
+            window.location.href = "settings.html";
+            return false;
+        }
+        
+        // Show warning 7 days before expiry
+        if (daysRemaining <= 7 && daysRemaining > 0) {
+            const message = "⚠️ Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
+            alert(message);
+        }
+    }
+    
+    return true;
 }
 
 function checkAndRedirect() {
- if (!checkLicenseStatus()) {
- // If not on settings page, redirect to settings
- if (!window.location.pathname.includes('settings.html') &&!window.location.pathname.includes('activation.html') &&!window.location.pathname.includes('index.html')) {
- window.location.href = 'activation.html';
- }
- }
+    if (!checkLicenseStatus()) {
+        // If not on settings page, redirect to settings
+        if (!window.location.pathname.includes('settings.html') &&
+            !window.location.pathname.includes('activation.html') &&
+            !window.location.pathname.includes('index.html')) {
+            window.location.href = 'activation.html';
+        }
+    }
 }
 
 // Run check on page load
 document.addEventListener('DOMContentLoaded', function() {
- checkAndRedirect();
+    checkAndRedirect();
 });
-</script><script>
+</script>
+
+<script>
 // ===== LICENSE CHECK WITH ALERTS AND BLOCKING =====
 function checkLicenseStatus() {
- const activated = localStorage.getItem("activated");
- const expiry = localStorage.getItem("expiry_date");
- 
- if (!activated || activated!== "true") {
- alert(" Your license is not activated.\nPlease go to Settings to activate your license.");
- window.location.href = "settings.html";
- return false;
- }
- 
- if (expiry) {
- const expiryDate = new Date(expiry);
- const now = new Date();
- const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
- 
- if (expiryDate < now) {
- alert(" Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
- localStorage.removeItem("activated");
- localStorage.removeItem("activation_code");
- localStorage.removeItem("expiry_date");
- window.location.href = "settings.html";
- return false;
- }
- 
- // Show warning 7 days before expiry
- if (daysRemaining <= 7 && daysRemaining > 0) {
- const message = " Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
- alert(message);
- }
- }
- 
- return true;
+    const activated = localStorage.getItem("activated");
+    const expiry = localStorage.getItem("expiry_date");
+    
+    if (!activated || activated !== "true") {
+        alert("⚠️ Your license is not activated.\nPlease go to Settings to activate your license.");
+        window.location.href = "settings.html";
+        return false;
+    }
+    
+    if (expiry) {
+        const expiryDate = new Date(expiry);
+        const now = new Date();
+        const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
+        
+        if (expiryDate < now) {
+            alert("⚠️ Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
+            localStorage.removeItem("activated");
+            localStorage.removeItem("activation_code");
+            localStorage.removeItem("expiry_date");
+            window.location.href = "settings.html";
+            return false;
+        }
+        
+        // Show warning 7 days before expiry
+        if (daysRemaining <= 7 && daysRemaining > 0) {
+            const message = "⚠️ Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
+            alert(message);
+        }
+    }
+    
+    return true;
 }
 
 // Run on page load
 if (document.readyState === 'loading') {
- document.addEventListener('DOMContentLoaded', function() {
- checkLicenseStatus();
- });
+    document.addEventListener('DOMContentLoaded', function() {
+        checkLicenseStatus();
+    });
 } else {
- checkLicenseStatus();
+    checkLicenseStatus();
 }
-</script></body></html>
+</script>
+
+</body>
+</html>

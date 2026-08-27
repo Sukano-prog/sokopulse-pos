@@ -1,288 +1,407 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Expiry - SokoPulse</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="css/style.css"><style>.stats-grid {
- display: grid;
- grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
- gap: 14px;
- margin-bottom: 20px;
- }.stat-card {
- background: white;
- padding: 16px 20px;
- border-radius: 12px;
- border: 1px solid #f1f5f9;
- }.stat-card.stat-number { font-size: 24px; font-weight: 700; }.stat-card.stat-number.red { color: #ef4444; }.stat-card.stat-number.orange { color: #f59e0b; }.stat-card.stat-number.green { color: #22c55e; }.stat-card.stat-label { font-size: 12px; color: #94a3b8; font-weight: 500; }.status-badge.expired { background: #fee2e2; color: #991b1b; }.status-badge.expiring { background: #fef3c7; color: #92400e; }.status-badge.good { background: #dcfce7; color: #166534; }
- </style><link rel="stylesheet" href="css/responsive.css"><script src="js/printer.js"></script></head><body><div class="app"><div class="sidebar-overlay" onclick="toggleSidebar()"></div><aside class="sidebar"><div class="logo"><span>Soko</span>Pulse <button class="close-btn" onclick="toggleSidebar()"></button></div><nav><div class="nav-label">Main</div><a href="pos.html"> POS</a><a href="dashboard.html"> Dashboard</a><a href="orders.html"> Orders</a><div class="nav-label">Inventory</div><a href="products.html"> Products</a><a href="categories.html"> Categories</a><a href="suppliers.html"> Suppliers</a><a href="stock.html"> Stock</a><a href="expiry.html" class="active">⏰ Expiry</a><div class="nav-label">Management</div><a href="customers.html"> Customers</a><a href="reports.html"> Reports</a><a href="audit.html"> Audit</a><a href="returns.html"> Returns</a><a href="settings.html"> Settings</a></nav><div class="user-section"><div class="name" id="userName">Administrator</div><button class="logout-btn" onclick="logout()"> Logout</button><div class="role" id="userRole">Admin</div></div></aside><main class="main-content"><header class="topbar"><div class="left"><button class="hamburger" onclick="toggleSidebar()"></button><h1>⏰ Expiry Management</h1></div><div class="right"><span class="store-badge"> SokoPulse</span><span class="time" id="timeDisplay"></span></div></header><div class="page-container"><div class="stats-grid"><div class="stat-card"><div class="stat-number red" id="expiredCount">0</div><div class="stat-label"> Expired</div></div><div class="stat-card"><div class="stat-number orange" id="expiringCount">0</div><div class="stat-label"> Expiring Soon (7 days)</div></div><div class="stat-card"><div class="stat-number green" id="goodCount">0</div><div class="stat-label"> Good</div></div></div><div class="table-container"><table><thead><tr><th>Product</th><th>SKU</th><th>Stock</th><th>Expiry Date</th><th>Days Left</th><th>Status</th></tr></thead><tbody id="expiryBody"><tr><td colspan="6" style="text-align:center;padding:40px;color:#94a3b8;">No products with expiry dates</td></tr></tbody></table></div></div></main></div><script src="db.js"></script><script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expiry - SokoPulse</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            background: white;
+            padding: 16px 20px;
+            border-radius: 12px;
+            border: 1px solid #f1f5f9;
+        }
+        .stat-card .stat-number { font-size: 24px; font-weight: 700; }
+        .stat-card .stat-number.red { color: #ef4444; }
+        .stat-card .stat-number.orange { color: #f59e0b; }
+        .stat-card .stat-number.green { color: #22c55e; }
+        .stat-card .stat-label { font-size: 12px; color: #94a3b8; font-weight: 500; }
+        .status-badge.expired { background: #fee2e2; color: #991b1b; }
+        .status-badge.expiring { background: #fef3c7; color: #92400e; }
+        .status-badge.good { background: #dcfce7; color: #166534; }
+    </style>
+<link rel="stylesheet" href="css/responsive.css">
+    <script src="js/printer.js"></script>
+</head>
+<body>
+<div class="app">
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+    <aside class="sidebar">
+        <div class="logo">🏪 <span>Soko</span>Pulse <button class="close-btn" onclick="toggleSidebar()">✕</button></div>
+        <nav>
+            <div class="nav-label">Main</div>
+            <a href="pos.html">🛒 POS</a>
+            <a href="dashboard.html">📊 Dashboard</a>
+            <a href="orders.html">📋 Orders</a>
+            <div class="nav-label">Inventory</div>
+            <a href="products.html">📦 Products</a>
+            <a href="categories.html">📂 Categories</a>
+            <a href="suppliers.html">📦 Suppliers</a>
+            <a href="stock.html">📦 Stock</a>
+            <a href="expiry.html" class="active">⏰ Expiry</a>
+            <div class="nav-label">Management</div>
+            <a href="customers.html">👤 Customers</a>
+            <a href="reports.html">📈 Reports</a>
+            <a href="audit.html">📋 Audit</a>
+            <a href="returns.html">🔄 Returns</a>
+            <a href="settings.html">⚙️ Settings</a>
+        </nav>
+        <div class="user-section">
+            <div class="name" id="userName">Administrator</div>
+        <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+            <div class="role" id="userRole">Admin</div>
+        </div>
+    </aside>
+    <main class="main-content">
+        <header class="topbar">
+            <div class="left"><button class="hamburger" onclick="toggleSidebar()">☰</button><h1>⏰ Expiry Management</h1></div>
+            <div class="right"><span class="store-badge">🏪 SokoPulse</span><span class="time" id="timeDisplay"></span></div>
+        </header>
+        <div class="page-container">
+            <div class="stats-grid">
+                <div class="stat-card"><div class="stat-number red" id="expiredCount">0</div><div class="stat-label">🔴 Expired</div></div>
+                <div class="stat-card"><div class="stat-number orange" id="expiringCount">0</div><div class="stat-label">🟡 Expiring Soon (7 days)</div></div>
+                <div class="stat-card"><div class="stat-number green" id="goodCount">0</div><div class="stat-label">🟢 Good</div></div>
+            </div>
+            <div class="table-container">
+                <table>
+                    <thead><tr><th>Product</th><th>SKU</th><th>Stock</th><th>Expiry Date</th><th>Days Left</th><th>Status</th></tr></thead>
+                    <tbody id="expiryBody"><tr><td colspan="6" style="text-align:center;padding:40px;color:#94a3b8;">No products with expiry dates</td></tr></tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="db.js"></script>
+<script>
 function toggleSidebar() {
- document.querySelector(".sidebar").classList.toggle("open");
- document.querySelector(".sidebar-overlay").classList.toggle("show");
+    document.querySelector(".sidebar").classList.toggle("open");
+    document.querySelector(".sidebar-overlay").classList.toggle("show");
 }
 
-let products =;
+let products = [];
 // ===== ROLE-BASED ACCESS =====
 const userData = localStorage.getItem('pos_user');
 if (userData) {
- const user = JSON.parse(userData);
- if (user.role === 'cashier' && window.location.pathname.includes('/pos/') &&!window.location.pathname.includes('pos.html')) {
- alert(' Cashiers can only access POS. Redirecting...');
- }
+    const user = JSON.parse(userData);
+    if (user.role === 'cashier' && window.location.pathname.includes('/pos/') && !window.location.pathname.includes('pos.html')) {
+        alert('⛔ Cashiers can only access POS. Redirecting...');
+    }
 }
 
 document.addEventListener('DOMContentLoaded', function() {
- const userData = localStorage.getItem('pos_user');
- if (!userData) { window.location.href = 'index.html'; return; }
- const user = JSON.parse(userData);
- document.getElementById('userName').textContent = user.name || user.username;
- document.getElementById('userRole').textContent = user.role || 'User';
- setInterval(() => { document.getElementById('timeDisplay').textContent = new Date().toLocaleTimeString('en-KE', { hour12: false }); }, 1000);
- loadProducts();
+    const userData = localStorage.getItem('pos_user');
+    if (!userData) { window.location.href = 'index.html'; return; }
+    const user = JSON.parse(userData);
+    document.getElementById('userName').textContent = user.name || user.username;
+    document.getElementById('userRole').textContent = user.role || 'User';
+    setInterval(() => { document.getElementById('timeDisplay').textContent = new Date().toLocaleTimeString('en-KE', { hour12: false }); }, 1000);
+    loadProducts();
 });
 function loadProducts() {
- openDB().then(function(db) {
- dbGetAll(db, 'products').then(function(data) {
- products = data ||;
- renderExpiry();
- }).catch(function(e) {
- console.error('Error loading products:', e);
- });
- }).catch(function(e) {
- console.error('Error opening database:', e);
- });
+    openDB().then(function(db) {
+        dbGetAll(db, 'products').then(function(data) {
+            products = data || [];
+            renderExpiry();
+        }).catch(function(e) {
+            console.error('Error loading products:', e);
+        });
+    }).catch(function(e) {
+        console.error('Error opening database:', e);
+    });
 }
 
 function renderExpiry() {
- const tbody = document.getElementById('expiryBody');
- const today = new Date();
- const sevenDays = new Date(today);
- sevenDays.setDate(sevenDays.getDate() + 7);
- 
- const withExpiry = products.filter(p => p.expiry_date);
- const expired = withExpiry.filter(p => new Date(p.expiry_date) < today);
- const expiring = withExpiry.filter(p => new Date(p.expiry_date) >= today && new Date(p.expiry_date) <= sevenDays);
- const good = withExpiry.filter(p => new Date(p.expiry_date) > sevenDays);
- 
- document.getElementById('expiredCount').textContent = expired.length;
- document.getElementById('expiringCount').textContent = expiring.length;
- document.getElementById('goodCount').textContent = good.length;
- 
- if (withExpiry.length === 0) {
- tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:40px;color:#94a3b8;">No products with expiry dates</td></tr>';
- return;
- }
- 
- const sorted = [...withExpiry].sort((a,b) => new Date(a.expiry_date) - new Date(b.expiry_date));
- tbody.innerHTML = sorted.map(p => {
- const expiry = new Date(p.expiry_date);
- const days = Math.ceil((expiry - today) / (1000 * 60 * 60 * 24));
- let status, statusLabel;
- if (days < 0) { status = 'expired'; statusLabel = ' Expired'; }
- else if (days <= 7) { status = 'expiring'; statusLabel = ' Expiring Soon'; }
- else { status = 'good'; statusLabel = ' Good'; }
- return `
- <tr><td><strong>${p.name || 'Unnamed'}</strong></td><td>${p.sku || '-'}</td><td>${p.current_stock || 0}</td><td>${expiry.toLocaleDateString()}</td><td>${days < 0? 'Expired': days + ' days'}</td><td><span class="status-badge ${status}">${statusLabel}</span></td></tr>
- `;
- }).join('');
+    const tbody = document.getElementById('expiryBody');
+    const today = new Date();
+    const sevenDays = new Date(today);
+    sevenDays.setDate(sevenDays.getDate() + 7);
+    
+    const withExpiry = products.filter(p => p.expiry_date);
+    const expired = withExpiry.filter(p => new Date(p.expiry_date) < today);
+    const expiring = withExpiry.filter(p => new Date(p.expiry_date) >= today && new Date(p.expiry_date) <= sevenDays);
+    const good = withExpiry.filter(p => new Date(p.expiry_date) > sevenDays);
+    
+    document.getElementById('expiredCount').textContent = expired.length;
+    document.getElementById('expiringCount').textContent = expiring.length;
+    document.getElementById('goodCount').textContent = good.length;
+    
+    if (withExpiry.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:40px;color:#94a3b8;">No products with expiry dates</td></tr>';
+        return;
+    }
+    
+    const sorted = [...withExpiry].sort((a,b) => new Date(a.expiry_date) - new Date(b.expiry_date));
+    tbody.innerHTML = sorted.map(p => {
+        const expiry = new Date(p.expiry_date);
+        const days = Math.ceil((expiry - today) / (1000 * 60 * 60 * 24));
+        let status, statusLabel;
+        if (days < 0) { status = 'expired'; statusLabel = '🔴 Expired'; }
+        else if (days <= 7) { status = 'expiring'; statusLabel = '🟡 Expiring Soon'; }
+        else { status = 'good'; statusLabel = '🟢 Good'; }
+        return `
+            <tr>
+                <td><strong>${p.name || 'Unnamed'}</strong></td>
+                <td>${p.sku || '-'}</td>
+                <td>${p.current_stock || 0}</td>
+                <td>${expiry.toLocaleDateString()}</td>
+                <td>${days < 0 ? 'Expired' : days + ' days'}</td>
+                <td><span class="status-badge ${status}">${statusLabel}</span></td>
+            </tr>
+        `;
+    }).join('');
 }
 function logout() {
- if (confirm('Logout?')) { localStorage.removeItem('pos_user'); window.location.href = 'index.html'; }
+    if (confirm('Logout?')) { localStorage.removeItem('pos_user'); window.location.href = 'index.html'; }
 }
-</script><script>
+</script>
+
+<script>
 if ('serviceWorker' in navigator) {
- window.addEventListener('load', function() {
- navigator.serviceWorker.register('/sw.js').then(function(reg) {
- console.log(' Service Worker registered');
- }).catch(function(err) {
- console.log(' Service Worker registration failed:', err);
- });
- });
+    window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/sw.js')
+            .then(function(reg) {
+                console.log('✅ Service Worker registered');
+            })
+            .catch(function(err) {
+                console.log('❌ Service Worker registration failed:', err);
+            });
+    });
 }
-</script><script>
+</script>
+
+<script>
 // ===== LICENSE STATUS CHECK =====
 function checkLicenseStatus() {
- const activated = localStorage.getItem("activated");
- const expiry = localStorage.getItem("expiry_date");
- 
- if (!activated || activated!== "true") {
- alert(" Your license is not activated.\nPlease go to Settings to activate your license.");
- window.location.href = "settings.html";
- return false;
- }
- 
- if (expiry) {
- const expiryDate = new Date(expiry);
- const now = new Date();
- const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
- 
- if (expiryDate < now) {
- alert(" Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
- localStorage.removeItem("activated");
- localStorage.removeItem("activation_code");
- localStorage.removeItem("expiry_date");
- window.location.href = "settings.html";
- return false;
- }
- 
- // Show warning 7 days before expiry
- if (daysRemaining <= 7 && daysRemaining > 0) {
- const message = " Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
- alert(message);
- }
- }
- 
- return true;
+    const activated = localStorage.getItem("activated");
+    const expiry = localStorage.getItem("expiry_date");
+    
+    if (!activated || activated !== "true") {
+        alert("⚠️ Your license is not activated.\nPlease go to Settings to activate your license.");
+        window.location.href = "settings.html";
+        return false;
+    }
+    
+    if (expiry) {
+        const expiryDate = new Date(expiry);
+        const now = new Date();
+        const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
+        
+        if (expiryDate < now) {
+            alert("⚠️ Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
+            localStorage.removeItem("activated");
+            localStorage.removeItem("activation_code");
+            localStorage.removeItem("expiry_date");
+            window.location.href = "settings.html";
+            return false;
+        }
+        
+        // Show warning 7 days before expiry
+        if (daysRemaining <= 7 && daysRemaining > 0) {
+            const message = "⚠️ Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
+            alert(message);
+        }
+    }
+    
+    return true;
 }
 
 function checkAndRedirect() {
- if (!checkLicenseStatus()) {
- // If not on settings page, redirect to settings
- if (!window.location.pathname.includes('settings.html') &&!window.location.pathname.includes('activation.html') &&!window.location.pathname.includes('index.html')) {
- window.location.href = 'activation.html';
- }
- }
+    if (!checkLicenseStatus()) {
+        // If not on settings page, redirect to settings
+        if (!window.location.pathname.includes('settings.html') &&
+            !window.location.pathname.includes('activation.html') &&
+            !window.location.pathname.includes('index.html')) {
+            window.location.href = 'activation.html';
+        }
+    }
 }
 
 // Run check on page load
 document.addEventListener('DOMContentLoaded', function() {
- checkAndRedirect();
+    checkAndRedirect();
 });
-</script><script>
+</script>
+
+<script>
 // ===== LICENSE CHECK WITH ALERTS AND BLOCKING =====
 function checkLicenseStatus() {
- const activated = localStorage.getItem("activated");
- const expiry = localStorage.getItem("expiry_date");
- 
- if (!activated || activated!== "true") {
- alert(" Your license is not activated.\nPlease go to Settings to activate your license.");
- window.location.href = "settings.html";
- return false;
- }
- 
- if (expiry) {
- const expiryDate = new Date(expiry);
- const now = new Date();
- const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
- 
- if (expiryDate < now) {
- alert(" Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
- localStorage.removeItem("activated");
- localStorage.removeItem("activation_code");
- localStorage.removeItem("expiry_date");
- window.location.href = "settings.html";
- return false;
- }
- 
- // Show warning 7 days before expiry
- if (daysRemaining <= 7 && daysRemaining > 0) {
- const message = " Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
- alert(message);
- }
- }
- 
- return true;
+    const activated = localStorage.getItem("activated");
+    const expiry = localStorage.getItem("expiry_date");
+    
+    if (!activated || activated !== "true") {
+        alert("⚠️ Your license is not activated.\nPlease go to Settings to activate your license.");
+        window.location.href = "settings.html";
+        return false;
+    }
+    
+    if (expiry) {
+        const expiryDate = new Date(expiry);
+        const now = new Date();
+        const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
+        
+        if (expiryDate < now) {
+            alert("⚠️ Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
+            localStorage.removeItem("activated");
+            localStorage.removeItem("activation_code");
+            localStorage.removeItem("expiry_date");
+            window.location.href = "settings.html";
+            return false;
+        }
+        
+        // Show warning 7 days before expiry
+        if (daysRemaining <= 7 && daysRemaining > 0) {
+            const message = "⚠️ Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
+            alert(message);
+        }
+    }
+    
+    return true;
 }
 
 // Run on page load
 if (document.readyState === 'loading') {
- document.addEventListener('DOMContentLoaded', function() {
- checkLicenseStatus();
- });
+    document.addEventListener('DOMContentLoaded', function() {
+        checkLicenseStatus();
+    });
 } else {
- checkLicenseStatus();
+    checkLicenseStatus();
 }
-</script></body></html><style>
-@media (max-width: 768px) {.page-container { padding: 10px!important; overflow-x: hidden!important; }.stats-grid { grid-template-columns: 1fr 1fr!important; gap: 8px!important; }.stat-card { padding: 10px!important; }.stat-card.stat-number { font-size: 18px!important; }.table-container { overflow-x: auto!important; -webkit-overflow-scrolling: touch!important; }
- table { font-size: 12px!important; min-width: 500px!important; }
- th, td { padding: 6px 8px!important; white-space: nowrap!important; }
+</script>
+
+</body>
+</html>
+<style>
+@media (max-width: 768px) {
+    .page-container { padding: 10px !important; overflow-x: hidden !important; }
+    .stats-grid { grid-template-columns: 1fr 1fr !important; gap: 8px !important; }
+    .stat-card { padding: 10px !important; }
+    .stat-card .stat-number { font-size: 18px !important; }
+    .table-container { overflow-x: auto !important; -webkit-overflow-scrolling: touch !important; }
+    table { font-size: 12px !important; min-width: 500px !important; }
+    th, td { padding: 6px 8px !important; white-space: nowrap !important; }
 }
-</style><style>
-/* ===== TOPBAR - STORE NAME ALWAYS VISIBLE ===== */.topbar {
- display: flex!important;
- justify-content: space-between!important;
- align-items: center!important;
- padding: 10px 20px!important;
- background: white!important;
- border-bottom: 1px solid #e2e8f0!important;
- flex-shrink: 0!important;
- min-height: 56px!important;
-}.topbar.left {
- display: flex!important;
- align-items: center!important;
- gap: 12px!important;
- flex: 1!important;
-}.topbar.right {
- display: flex!important;
- align-items: center!important;
- gap: 12px!important;
- flex-shrink: 0!important;
-}.topbar.right.store-badge {
- display: inline-block!important;
- font-size: 13px!important;
- padding: 4px 14px!important;
- background: #f1f5f9!important;
- border-radius: 20px!important;
- color: #0f172a!important;
- font-weight: 600!important;
- white-space: nowrap!important;
-}.topbar.right.time {
- font-size: 13px!important;
- color: #64748b!important;
- font-weight: 500!important;
+</style>
+<style>
+/* ===== TOPBAR - STORE NAME ALWAYS VISIBLE ===== */
+.topbar {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 10px 20px !important;
+    background: white !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    flex-shrink: 0 !important;
+    min-height: 56px !important;
+}
+.topbar .left {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    flex: 1 !important;
+}
+.topbar .right {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    flex-shrink: 0 !important;
+}
+.topbar .right .store-badge {
+    display: inline-block !important;
+    font-size: 13px !important;
+    padding: 4px 14px !important;
+    background: #f1f5f9 !important;
+    border-radius: 20px !important;
+    color: #0f172a !important;
+    font-weight: 600 !important;
+    white-space: nowrap !important;
+}
+.topbar .right .time {
+    font-size: 13px !important;
+    color: #64748b !important;
+    font-weight: 500 !important;
 }
 
-@media (max-width: 768px) {.topbar {
- padding: 6px 10px!important;
- min-height: 48px!important;
- flex-wrap: nowrap!important;
- }.topbar.left {
- gap: 6px!important;
- flex: 0 0 auto!important;
- }.topbar.left.hamburger {
- font-size: 18px!important;
- padding: 2px 6px!important;
- display: block!important;
- background: none!important;
- border: none!important;
- cursor: pointer!important;
- }.topbar.left h1 {
- font-size: 13px!important;
- white-space: nowrap!important;
- }.topbar.right {
- flex: 1!important;
- justify-content: flex-end!important;
- gap: 6px!important;
- }.topbar.right.store-badge {
- display: inline-block!important;
- font-size: 11px!important;
- padding: 3px 12px!important;
- background: #1a3c34!important;
- color: white!important;
- border-radius: 16px!important;
- max-width: 120px!important;
- overflow: hidden!important;
- text-overflow: ellipsis!important;
- white-space: nowrap!important;
- font-weight: 600!important;
- }.topbar.right.time {
- font-size: 10px!important;
- color: #64748b!important;
- display: inline-block!important;
- }
+@media (max-width: 768px) {
+    .topbar {
+        padding: 6px 10px !important;
+        min-height: 48px !important;
+        flex-wrap: nowrap !important;
+    }
+    .topbar .left {
+        gap: 6px !important;
+        flex: 0 0 auto !important;
+    }
+    .topbar .left .hamburger {
+        font-size: 18px !important;
+        padding: 2px 6px !important;
+        display: block !important;
+        background: none !important;
+        border: none !important;
+        cursor: pointer !important;
+    }
+    .topbar .left h1 {
+        font-size: 13px !important;
+        white-space: nowrap !important;
+    }
+    .topbar .right {
+        flex: 1 !important;
+        justify-content: flex-end !important;
+        gap: 6px !important;
+    }
+    .topbar .right .store-badge {
+        display: inline-block !important;
+        font-size: 11px !important;
+        padding: 3px 12px !important;
+        background: #1a3c34 !important;
+        color: white !important;
+        border-radius: 16px !important;
+        max-width: 120px !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        white-space: nowrap !important;
+        font-weight: 600 !important;
+    }
+    .topbar .right .time {
+        font-size: 10px !important;
+        color: #64748b !important;
+        display: inline-block !important;
+    }
 }
 
-@media (max-width: 480px) {.topbar {
- padding: 4px 8px!important;
- min-height: 42px!important;
- }.topbar.left.hamburger {
- font-size: 16px!important;
- padding: 2px 4px!important;
- }.topbar.left h1 {
- font-size: 12px!important;
- }.topbar.right.store-badge {
- font-size: 10px!important;
- padding: 2px 8px!important;
- max-width: 80px!important;
- }.topbar.right.time {
- font-size: 9px!important;
- }
+@media (max-width: 480px) {
+    .topbar {
+        padding: 4px 8px !important;
+        min-height: 42px !important;
+    }
+    .topbar .left .hamburger {
+        font-size: 16px !important;
+        padding: 2px 4px !important;
+    }
+    .topbar .left h1 {
+        font-size: 12px !important;
+    }
+    .topbar .right .store-badge {
+        font-size: 10px !important;
+        padding: 2px 8px !important;
+        max-width: 80px !important;
+    }
+    .topbar .right .time {
+        font-size: 9px !important;
+    }
 }
-</style><script>
+</style>
+
+<script>
 // ===== ACTIVATION CHECK =====
 
 </script>

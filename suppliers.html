@@ -1,421 +1,604 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Suppliers - SokoPulse</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="css/style.css"><link rel="stylesheet" href="css/responsive.css"><style>.toolbar {
- display: flex;
- gap: 12px;
- flex-wrap: wrap;
- margin-bottom: 16px;
- align-items: center;
- }.toolbar.search-wrapper {
- flex: 1;
- position: relative;
- min-width: 200px;
- }.toolbar.search-wrapper input {
- width: 100%;
- padding: 10px 16px 10px 40px;
- border: 2px solid #e2e8f0;
- border-radius: 10px;
- font-size: 14px;
- font-family: 'Inter', sans-serif;
- background: white;
- transition: all 0.2s;
- }.toolbar.search-wrapper input:focus {
- outline: none;
- border-color: #1a3c34;
- box-shadow: 0 0 0 4px rgba(26, 60, 52, 0.08);
- }.toolbar.search-wrapper.search-icon {
- position: absolute;
- left: 12px;
- top: 50%;
- transform: translateY(-50%);
- color: #94a3b8;
- }.btn-add {
- padding: 10px 20px;
- background: #1a3c34;
- color: white;
- border: none;
- border-radius: 10px;
- font-weight: 600;
- font-family: 'Inter', sans-serif;
- cursor: pointer;
- transition: all 0.15s;
- display: flex;
- align-items: center;
- gap: 6px;
- }.btn-add:hover { background: #2a5c54; transform: translateY(-2px); }.btn-export {
- padding: 10px 16px;
- background: #f1f5f9;
- color: #0f172a;
- border: none;
- border-radius: 10px;
- font-weight: 600;
- font-family: 'Inter', sans-serif;
- cursor: pointer;
- transition: all 0.15s;
- }.btn-export:hover { background: #e2e8f0; }.supplier-card {
- background: white;
- border-radius: 12px;
- padding: 16px 20px;
- border: 1px solid #f1f5f9;
- display: flex;
- justify-content: space-between;
- align-items: center;
- margin-bottom: 8px;
- transition: all 0.15s;
- }.supplier-card:hover { border-color: #1a3c34; }.supplier-card.info { flex: 1; }.supplier-card.info.name { font-weight: 600; color: #0f172a; }.supplier-card.info.details { font-size: 13px; color: #94a3b8; }.supplier-card.stats { text-align: right; }.supplier-card.stats.total { font-weight: 600; color: #0f172a; }.supplier-card.stats.orders { font-size: 12px; color: #94a3b8; }.supplier-card.actions { display: flex; gap: 6px; margin-left: 12px; }.supplier-card.actions button {
- padding: 4px 12px;
- border: none;
- border-radius: 6px;
- cursor: pointer;
- font-size: 12px;
- font-family: 'Inter', sans-serif;
- font-weight: 500;
- }.btn-edit { background: #f1f5f9; color: #0f172a; }.btn-edit:hover { background: #e2e8f0; }.btn-delete { background: #fef2f2; color: #ef4444; }.btn-delete:hover { background: #fee2e2; }.btn-view { background: #dbeafe; color: #1e40af; }.btn-view:hover { background: #bfdbfe; }.modal-content { max-width: 500px; }.modal-content.form-row { display: flex; gap: 12px; }.modal-content.form-row.form-group { flex: 1; }.empty-state {
- text-align: center;
- padding: 60px 20px;
- color: #94a3b8;
- }.empty-state.empty-icon { font-size: 48px; margin-bottom: 12px; }.empty-state h3 { color: #334155; font-weight: 600; }
- 
- @media (max-width: 768px) {.toolbar { flex-direction: column; align-items: stretch; }.toolbar.search-wrapper { min-width: unset; }.btn-add,.btn-export { width: 100%; justify-content: center; }.supplier-card { flex-direction: column; align-items: flex-start; gap: 8px; }.supplier-card.stats { width: 100%; text-align: left; }.supplier-card.actions { width: 100%; }.modal-content.form-row { flex-direction: column; }
- }
- </style><script src="js/printer.js"></script></head><body><div class="app"><div class="sidebar-overlay" onclick="toggleSidebar()"></div><aside class="sidebar"><div class="logo"><span>Soko</span>Pulse <button class="close-btn" onclick="toggleSidebar()"></button></div><nav><div class="nav-label">Main</div><a href="pos.html"> POS</a><a href="dashboard.html"> Dashboard</a><a href="orders.html"> Orders</a><div class="nav-label">Inventory</div><a href="products.html"> Products</a><a href="stock.html"> Stock</a><a href="expiry.html">⏰ Expiry</a><a href="categories.html"> Categories</a><a href="suppliers.html" class="active"> Suppliers</a><div class="nav-label">Management</div><a href="customers.html"> Customers</a><a href="reports.html"> Reports</a><a href="audit.html"> Audit</a><a href="returns.html"> Returns</a><a href="settings.html"> Settings</a></nav><div class="user-section"><div class="name" id="userName">Administrator</div><button class="logout-btn" onclick="logout()"> Logout</button><div class="role" id="userRole">Admin</div></div></aside><main class="main-content"><header class="topbar"><div class="left"><button class="hamburger" onclick="toggleSidebar()"></button><h1> Suppliers</h1></div><div class="right"><span class="store-badge"> SokoPulse</span><span class="time" id="timeDisplay"></span></div></header><div class="page-container"><div class="toolbar"><div class="search-wrapper"><span class="search-icon"></span><input type="text" id="searchInput" placeholder="Search suppliers..." oninput="renderSuppliers()"></div><button class="btn-add" onclick="openAddModal()"> Add Supplier</button><button class="btn-export" onclick="exportSuppliers()"> Export</button></div><div id="suppliersList"><div style="text-align:center;padding:40px;color:#94a3b8;">Loading suppliers...</div></div></div></main></div><!-- Add/Edit Modal --><div class="modal" id="supplierModal"><div class="modal-content"><span class="modal-close" onclick="closeModal()">&times;</span><h2 id="modalTitle">Add Supplier</h2><form id="supplierForm" onsubmit="saveSupplier(event)"><input type="hidden" id="editId"><div class="form-group"><label>Supplier Name *</label><input type="text" id="supplierName" placeholder="Enter supplier name" required></div><div class="form-group"><label>Contact Person</label><input type="text" id="supplierContact" placeholder="Contact person name"></div><div class="form-group"><label>Phone *</label><input type="tel" id="supplierPhone" placeholder="0712345678" required></div><div class="form-group"><label>Email</label><input type="email" id="supplierEmail" placeholder="supplier@email.com"></div><div class="form-group"><label>Address</label><input type="text" id="supplierAddress" placeholder="Supplier address"></div><div class="form-group"><label>Notes</label><textarea id="supplierNotes" rows="2" placeholder="Additional notes"></textarea></div><div class="modal-actions"><button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button><button type="submit" class="btn-save"> Save Supplier</button></div></form></div></div><script src="db.js"></script><script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suppliers - SokoPulse</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <style>
+        .toolbar {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+            align-items: center;
+        }
+        .toolbar .search-wrapper {
+            flex: 1;
+            position: relative;
+            min-width: 200px;
+        }
+        .toolbar .search-wrapper input {
+            width: 100%;
+            padding: 10px 16px 10px 40px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            background: white;
+            transition: all 0.2s;
+        }
+        .toolbar .search-wrapper input:focus {
+            outline: none;
+            border-color: #1a3c34;
+            box-shadow: 0 0 0 4px rgba(26, 60, 52, 0.08);
+        }
+        .toolbar .search-wrapper .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+        }
+        .btn-add {
+            padding: 10px 20px;
+            background: #1a3c34;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: all 0.15s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-add:hover { background: #2a5c54; transform: translateY(-2px); }
+        .btn-export {
+            padding: 10px 16px;
+            background: #f1f5f9;
+            color: #0f172a;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .btn-export:hover { background: #e2e8f0; }
+        
+        .supplier-card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px 20px;
+            border: 1px solid #f1f5f9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            transition: all 0.15s;
+        }
+        .supplier-card:hover { border-color: #1a3c34; }
+        .supplier-card .info { flex: 1; }
+        .supplier-card .info .name { font-weight: 600; color: #0f172a; }
+        .supplier-card .info .details { font-size: 13px; color: #94a3b8; }
+        .supplier-card .stats { text-align: right; }
+        .supplier-card .stats .total { font-weight: 600; color: #0f172a; }
+        .supplier-card .stats .orders { font-size: 12px; color: #94a3b8; }
+        .supplier-card .actions { display: flex; gap: 6px; margin-left: 12px; }
+        .supplier-card .actions button {
+            padding: 4px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+        }
+        .btn-edit { background: #f1f5f9; color: #0f172a; }
+        .btn-edit:hover { background: #e2e8f0; }
+        .btn-delete { background: #fef2f2; color: #ef4444; }
+        .btn-delete:hover { background: #fee2e2; }
+        .btn-view { background: #dbeafe; color: #1e40af; }
+        .btn-view:hover { background: #bfdbfe; }
+        
+        .modal-content { max-width: 500px; }
+        .modal-content .form-row { display: flex; gap: 12px; }
+        .modal-content .form-row .form-group { flex: 1; }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #94a3b8;
+        }
+        .empty-state .empty-icon { font-size: 48px; margin-bottom: 12px; }
+        .empty-state h3 { color: #334155; font-weight: 600; }
+        
+        @media (max-width: 768px) {
+            .toolbar { flex-direction: column; align-items: stretch; }
+            .toolbar .search-wrapper { min-width: unset; }
+            .btn-add, .btn-export { width: 100%; justify-content: center; }
+            .supplier-card { flex-direction: column; align-items: flex-start; gap: 8px; }
+            .supplier-card .stats { width: 100%; text-align: left; }
+            .supplier-card .actions { width: 100%; }
+            .modal-content .form-row { flex-direction: column; }
+        }
+    </style>
+    <script src="js/printer.js"></script>
+</head>
+<body>
+<div class="app">
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+    
+    <aside class="sidebar">
+        <div class="logo">🏪 <span>Soko</span>Pulse <button class="close-btn" onclick="toggleSidebar()">✕</button></div>
+        <nav>
+            <div class="nav-label">Main</div>
+            <a href="pos.html">🛒 POS</a>
+            <a href="dashboard.html">📊 Dashboard</a>
+            <a href="orders.html">📋 Orders</a>
+            <div class="nav-label">Inventory</div>
+            <a href="products.html">📦 Products</a>
+            <a href="stock.html">📦 Stock</a>
+            <a href="expiry.html">⏰ Expiry</a>
+            <a href="categories.html">📂 Categories</a>
+            <a href="suppliers.html" class="active">📦 Suppliers</a>
+            <div class="nav-label">Management</div>
+            <a href="customers.html">👤 Customers</a>
+            <a href="reports.html">📈 Reports</a>
+            <a href="audit.html">📋 Audit</a>
+            <a href="returns.html">🔄 Returns</a>
+            <a href="settings.html">⚙️ Settings</a>
+        </nav>
+        <div class="user-section">
+            <div class="name" id="userName">Administrator</div>
+        <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+            <div class="role" id="userRole">Admin</div>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div class="left">
+                <button class="hamburger" onclick="toggleSidebar()">☰</button>
+                <h1>📦 Suppliers</h1>
+            </div>
+            <div class="right">
+                <span class="store-badge">🏪 SokoPulse</span>
+                <span class="time" id="timeDisplay"></span>
+            </div>
+        </header>
+
+        <div class="page-container">
+            <div class="toolbar">
+                <div class="search-wrapper">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="searchInput" placeholder="Search suppliers..." oninput="renderSuppliers()">
+                </div>
+                <button class="btn-add" onclick="openAddModal()">➕ Add Supplier</button>
+                <button class="btn-export" onclick="exportSuppliers()">📤 Export</button>
+            </div>
+
+            <div id="suppliersList">
+                <div style="text-align:center;padding:40px;color:#94a3b8;">Loading suppliers...</div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Add/Edit Modal -->
+<div class="modal" id="supplierModal">
+    <div class="modal-content">
+        <span class="modal-close" onclick="closeModal()">&times;</span>
+        <h2 id="modalTitle">Add Supplier</h2>
+        <form id="supplierForm" onsubmit="saveSupplier(event)">
+            <input type="hidden" id="editId">
+            <div class="form-group">
+                <label>Supplier Name *</label>
+                <input type="text" id="supplierName" placeholder="Enter supplier name" required>
+            </div>
+            <div class="form-group">
+                <label>Contact Person</label>
+                <input type="text" id="supplierContact" placeholder="Contact person name">
+            </div>
+            <div class="form-group">
+                <label>Phone *</label>
+                <input type="tel" id="supplierPhone" placeholder="0712345678" required>
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="supplierEmail" placeholder="supplier@email.com">
+            </div>
+            <div class="form-group">
+                <label>Address</label>
+                <input type="text" id="supplierAddress" placeholder="Supplier address">
+            </div>
+            <div class="form-group">
+                <label>Notes</label>
+                <textarea id="supplierNotes" rows="2" placeholder="Additional notes"></textarea>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-cancel" onclick="closeModal()">Cancel</button>
+                <button type="submit" class="btn-save">💾 Save Supplier</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<script src="db.js"></script>
+<script>
 // ============================================================
 // SUPPLIERS - COMPLETE SCRIPT
 // ============================================================
 
-let suppliers =;
+let suppliers = [];
 let editingId = null;
 
 // ===== DB HELPERS =====
 
 function dbAdd(db, storeName, data) {
- return new Promise((resolve, reject) => {
- const tx = db.transaction(storeName, 'readwrite');
- const store = tx.objectStore(storeName);
- const req = store.add(data);
- req.onsuccess = () => resolve(req.result);
- req.onerror = () => reject(req.error);
- });
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction(storeName, 'readwrite');
+        const store = tx.objectStore(storeName);
+        const req = store.add(data);
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+    });
 }
 
 function dbPut(db, storeName, data) {
- return new Promise((resolve, reject) => {
- const tx = db.transaction(storeName, 'readwrite');
- const store = tx.objectStore(storeName);
- const req = store.put(data);
- req.onsuccess = () => resolve(req.result);
- req.onerror = () => reject(req.error);
- });
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction(storeName, 'readwrite');
+        const store = tx.objectStore(storeName);
+        const req = store.put(data);
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+    });
 }
 
 
 function dbDelete(db, storeName, id) {
- return new Promise((resolve, reject) => {
- const tx = db.transaction(storeName, 'readwrite');
- const store = tx.objectStore(storeName);
- const req = store.delete(id);
- req.onsuccess = () => resolve();
- req.onerror = () => reject(req.error);
- });
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction(storeName, 'readwrite');
+        const store = tx.objectStore(storeName);
+        const req = store.delete(id);
+        req.onsuccess = () => resolve();
+        req.onerror = () => reject(req.error);
+    });
 }
 
 // ===== SIDEBAR =====
 function toggleSidebar() {
- document.querySelector('.sidebar').classList.toggle('open');
- document.querySelector('.sidebar-overlay').classList.toggle('show');
+    document.querySelector('.sidebar').classList.toggle('open');
+    document.querySelector('.sidebar-overlay').classList.toggle('show');
 }
 
 // ===== LOGOUT =====
 function logout() {
- if (confirm('Logout?')) {
- localStorage.removeItem('pos_user');
- window.location.href = 'index.html';
- }
+    if (confirm('Logout?')) {
+        localStorage.removeItem('pos_user');
+        window.location.href = 'index.html';
+    }
 }
 
 // ===== TIME =====
 function updateTime() {
- const el = document.getElementById('timeDisplay');
- if (el) el.textContent = new Date().toLocaleTimeString('en-KE', { hour12: false });
+    const el = document.getElementById('timeDisplay');
+    if (el) el.textContent = new Date().toLocaleTimeString('en-KE', { hour12: false });
 }
 
 // ===== CLOSE MODAL =====
 function closeModal() {
- document.getElementById('supplierModal').classList.remove('show');
+    document.getElementById('supplierModal').classList.remove('show');
 }
 
 // ===== LOAD SUPPLIERS =====
 async function loadSuppliers() {
- try {
- const db = await openDB();
- suppliers = await dbGetAll(db, 'suppliers');
- renderSuppliers();
- } catch(e) {
- console.error('Error loading suppliers:', e);
- document.getElementById('suppliersList').innerHTML = '<div style="text-align:center;padding:40px;color:#ef4444;">Error loading suppliers</div>';
- }
+    try {
+        const db = await openDB();
+        suppliers = await dbGetAll(db, 'suppliers');
+        renderSuppliers();
+    } catch(e) {
+        console.error('Error loading suppliers:', e);
+        document.getElementById('suppliersList').innerHTML = '<div style="text-align:center;padding:40px;color:#ef4444;">Error loading suppliers</div>';
+    }
 }
 
 function renderSuppliers() {
- const container = document.getElementById('suppliersList');
- const search = document.getElementById('searchInput').value.toLowerCase();
- 
- let filtered = suppliers;
- if (search) {
- filtered = filtered.filter(s => 
- (s.name || '').toLowerCase().includes(search) || 
- (s.contact || '').toLowerCase().includes(search) ||
- (s.phone || '').includes(search)
- );
- }
- 
- if (filtered.length === 0) {
- container.innerHTML = `
- <div class="empty-state"><div class="empty-icon"></div><h3>No suppliers found</h3><p style="color:#94a3b8;">Add your first supplier to get started</p></div>
- `;
- return;
- }
- 
- container.innerHTML = filtered.map(s => `
- <div class="supplier-card"><div class="info"><div class="name">${s.name || 'Unnamed'}</div><div class="details">
- ${s.phone || '-'} 
- ${s.email? ' ' + s.email: ''}
- ${s.contact? ' ' + s.contact: ''}
- ${s.address? ' ' + s.address: ''}
- </div></div><div class="actions"><button class="btn-view" onclick="viewSupplier(${s.id})"></button><button class="btn-edit" onclick="openEditModal(${s.id})"></button><button class="btn-delete" onclick="deleteSupplier(${s.id})"></button></div></div>
- `).join('');
+    const container = document.getElementById('suppliersList');
+    const search = document.getElementById('searchInput').value.toLowerCase();
+    
+    let filtered = suppliers;
+    if (search) {
+        filtered = filtered.filter(s => 
+            (s.name || '').toLowerCase().includes(search) || 
+            (s.contact || '').toLowerCase().includes(search) ||
+            (s.phone || '').includes(search)
+        );
+    }
+    
+    if (filtered.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-icon">📦</div>
+                <h3>No suppliers found</h3>
+                <p style="color:#94a3b8;">Add your first supplier to get started</p>
+            </div>
+        `;
+        return;
+    }
+    
+    container.innerHTML = filtered.map(s => `
+        <div class="supplier-card">
+            <div class="info">
+                <div class="name">${s.name || 'Unnamed'}</div>
+                <div class="details">
+                    📱 ${s.phone || '-'} 
+                    ${s.email ? '✉️ ' + s.email : ''}
+                    ${s.contact ? '👤 ' + s.contact : ''}
+                    ${s.address ? '📍 ' + s.address : ''}
+                </div>
+            </div>
+            <div class="actions">
+                <button class="btn-view" onclick="viewSupplier(${s.id})">👁️</button>
+                <button class="btn-edit" onclick="openEditModal(${s.id})">✏️</button>
+                <button class="btn-delete" onclick="deleteSupplier(${s.id})">🗑️</button>
+            </div>
+        </div>
+    `).join('');
 }
 
 // ===== VIEW SUPPLIER =====
 function viewSupplier(id) {
- const s = suppliers.find(x => x.id === id);
- if (!s) return;
- alert(` Supplier Details\n\nName: ${s.name}\nContact: ${s.contact || '-'}\nPhone: ${s.phone}\nEmail: ${s.email || '-'}\nAddress: ${s.address || '-'}\nNotes: ${s.notes || '-'}`);
+    const s = suppliers.find(x => x.id === id);
+    if (!s) return;
+    alert(`📦 Supplier Details\n\nName: ${s.name}\nContact: ${s.contact || '-'}\nPhone: ${s.phone}\nEmail: ${s.email || '-'}\nAddress: ${s.address || '-'}\nNotes: ${s.notes || '-'}`);
 }
 
 // ===== ADD/EDIT MODAL =====
 function openAddModal() {
- editingId = null;
- document.getElementById('modalTitle').textContent = ' Add Supplier';
- document.getElementById('editId').value = '';
- document.getElementById('supplierName').value = '';
- document.getElementById('supplierContact').value = '';
- document.getElementById('supplierPhone').value = '';
- document.getElementById('supplierEmail').value = '';
- document.getElementById('supplierAddress').value = '';
- document.getElementById('supplierNotes').value = '';
- document.getElementById('supplierModal').classList.add('show');
+    editingId = null;
+    document.getElementById('modalTitle').textContent = '➕ Add Supplier';
+    document.getElementById('editId').value = '';
+    document.getElementById('supplierName').value = '';
+    document.getElementById('supplierContact').value = '';
+    document.getElementById('supplierPhone').value = '';
+    document.getElementById('supplierEmail').value = '';
+    document.getElementById('supplierAddress').value = '';
+    document.getElementById('supplierNotes').value = '';
+    document.getElementById('supplierModal').classList.add('show');
 }
 
 function openEditModal(id) {
- const s = suppliers.find(x => x.id === id);
- if (!s) return;
- editingId = id;
- document.getElementById('modalTitle').textContent = ' Edit Supplier';
- document.getElementById('editId').value = id;
- document.getElementById('supplierName').value = s.name || '';
- document.getElementById('supplierContact').value = s.contact || '';
- document.getElementById('supplierPhone').value = s.phone || '';
- document.getElementById('supplierEmail').value = s.email || '';
- document.getElementById('supplierAddress').value = s.address || '';
- document.getElementById('supplierNotes').value = s.notes || '';
- document.getElementById('supplierModal').classList.add('show');
+    const s = suppliers.find(x => x.id === id);
+    if (!s) return;
+    editingId = id;
+    document.getElementById('modalTitle').textContent = '✏️ Edit Supplier';
+    document.getElementById('editId').value = id;
+    document.getElementById('supplierName').value = s.name || '';
+    document.getElementById('supplierContact').value = s.contact || '';
+    document.getElementById('supplierPhone').value = s.phone || '';
+    document.getElementById('supplierEmail').value = s.email || '';
+    document.getElementById('supplierAddress').value = s.address || '';
+    document.getElementById('supplierNotes').value = s.notes || '';
+    document.getElementById('supplierModal').classList.add('show');
 }
 
 // ===== SAVE SUPPLIER =====
 async function saveSupplier(e) {
- e.preventDefault();
- const data = {
- name: document.getElementById('supplierName').value.trim(),
- contact: document.getElementById('supplierContact').value.trim(),
- phone: document.getElementById('supplierPhone').value.trim(),
- email: document.getElementById('supplierEmail').value.trim(),
- address: document.getElementById('supplierAddress').value.trim(),
- notes: document.getElementById('supplierNotes').value.trim()
- };
- 
- if (!data.name ||!data.phone) {
- alert(' Supplier name and phone are required');
- return;
- }
- 
- try {
- const db = await openDB();
- const id = document.getElementById('editId').value;
- if (id) {
- data.id = parseInt(id);
- await dbPut(db, 'suppliers', data);
- } else {
- await dbAdd(db, 'suppliers', data);
- }
- closeModal();
- loadSuppliers();
- alert(' Supplier saved successfully!');
- } catch(e) {
- alert(' Error saving supplier: ' + e.message);
- }
+    e.preventDefault();
+    const data = {
+        name: document.getElementById('supplierName').value.trim(),
+        contact: document.getElementById('supplierContact').value.trim(),
+        phone: document.getElementById('supplierPhone').value.trim(),
+        email: document.getElementById('supplierEmail').value.trim(),
+        address: document.getElementById('supplierAddress').value.trim(),
+        notes: document.getElementById('supplierNotes').value.trim()
+    };
+    
+    if (!data.name || !data.phone) {
+        alert('❌ Supplier name and phone are required');
+        return;
+    }
+    
+    try {
+        const db = await openDB();
+        const id = document.getElementById('editId').value;
+        if (id) {
+            data.id = parseInt(id);
+            await dbPut(db, 'suppliers', data);
+        } else {
+            await dbAdd(db, 'suppliers', data);
+        }
+        closeModal();
+        loadSuppliers();
+        alert('✅ Supplier saved successfully!');
+    } catch(e) {
+        alert('❌ Error saving supplier: ' + e.message);
+    }
 }
 
 // ===== DELETE SUPPLIER =====
 async function deleteSupplier(id) {
- if (!confirm('Delete this supplier?')) return;
- try {
- const db = await openDB();
- await dbDelete(db, 'suppliers', id);
- loadSuppliers();
- alert(' Supplier deleted');
- } catch(e) {
- alert(' Error: ' + e.message);
- }
+    if (!confirm('Delete this supplier?')) return;
+    try {
+        const db = await openDB();
+        await dbDelete(db, 'suppliers', id);
+        loadSuppliers();
+        alert('✅ Supplier deleted');
+    } catch(e) {
+        alert('❌ Error: ' + e.message);
+    }
 }
 
 // ===== EXPORT SUPPLIERS =====
 function exportSuppliers() {
- if (suppliers.length === 0) {
- alert('No suppliers to export');
- return;
- }
- let csv = 'Name,Contact,Phone,Email,Address,Notes\n';
- suppliers.forEach(s => {
- csv += `${s.name || ''},${s.contact || ''},${s.phone || ''},${s.email || ''},${s.address || ''},${s.notes || ''}\n`;
- });
- const blob = new Blob([csv], { type: 'text/csv' });
- const url = URL.createObjectURL(blob);
- const a = document.createElement('a');
- a.href = url;
- a.download = `suppliers_${new Date().toISOString().slice(0,10)}.csv`;
- a.click();
- URL.revokeObjectURL(url);
+    if (suppliers.length === 0) {
+        alert('No suppliers to export');
+        return;
+    }
+    let csv = 'Name,Contact,Phone,Email,Address,Notes\n';
+    suppliers.forEach(s => {
+        csv += `${s.name || ''},${s.contact || ''},${s.phone || ''},${s.email || ''},${s.address || ''},${s.notes || ''}\n`;
+    });
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `suppliers_${new Date().toISOString().slice(0,10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
 }
 
 // ===== INIT =====
 document.addEventListener('DOMContentLoaded', function() {
- const userData = localStorage.getItem('pos_user');
- if (!userData) { window.location.href = 'index.html'; return; }
- const user = JSON.parse(userData);
- document.getElementById('userName').textContent = user.name || user.username;
- document.getElementById('userRole').textContent = user.role || 'User';
- 
- setInterval(updateTime, 1000);
- updateTime();
- loadSuppliers();
+    const userData = localStorage.getItem('pos_user');
+    if (!userData) { window.location.href = 'index.html'; return; }
+    const user = JSON.parse(userData);
+    document.getElementById('userName').textContent = user.name || user.username;
+    document.getElementById('userRole').textContent = user.role || 'User';
+    
+    setInterval(updateTime, 1000);
+    updateTime();
+    loadSuppliers();
 });
 
 // Close modal on click outside
 document.addEventListener('click', function(e) {
- if (e.target.classList.contains('modal')) {
- e.target.classList.remove('show');
- }
+    if (e.target.classList.contains('modal')) {
+        e.target.classList.remove('show');
+    }
 });
 
 // Close modal on Escape
 document.addEventListener('keydown', function(e) {
- if (e.key === 'Escape') {
- document.querySelectorAll('.modal.show').forEach(m => m.classList.remove('show'));
- }
+    if (e.key === 'Escape') {
+        document.querySelectorAll('.modal.show').forEach(m => m.classList.remove('show'));
+    }
 });
-</script><script>
+</script>
+
+<script>
 if ('serviceWorker' in navigator) {
- window.addEventListener('load', function() {
- navigator.serviceWorker.register('/sw.js').then(function(reg) {
- console.log(' Service Worker registered');
- }).catch(function(err) {
- console.log(' Service Worker registration failed:', err);
- });
- });
+    window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/sw.js')
+            .then(function(reg) {
+                console.log('✅ Service Worker registered');
+            })
+            .catch(function(err) {
+                console.log('❌ Service Worker registration failed:', err);
+            });
+    });
 }
-</script><script>
+</script>
+
+<script>
 // ===== LICENSE STATUS CHECK =====
 function checkLicenseStatus() {
- const activated = localStorage.getItem("activated");
- const expiry = localStorage.getItem("expiry_date");
- 
- if (!activated || activated!== "true") {
- alert(" Your license is not activated.\nPlease go to Settings to activate your license.");
- window.location.href = "settings.html";
- return false;
- }
- 
- if (expiry) {
- const expiryDate = new Date(expiry);
- const now = new Date();
- const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
- 
- if (expiryDate < now) {
- alert(" Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
- localStorage.removeItem("activated");
- localStorage.removeItem("activation_code");
- localStorage.removeItem("expiry_date");
- window.location.href = "settings.html";
- return false;
- }
- 
- // Show warning 7 days before expiry
- if (daysRemaining <= 7 && daysRemaining > 0) {
- const message = " Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
- alert(message);
- }
- }
- 
- return true;
+    const activated = localStorage.getItem("activated");
+    const expiry = localStorage.getItem("expiry_date");
+    
+    if (!activated || activated !== "true") {
+        alert("⚠️ Your license is not activated.\nPlease go to Settings to activate your license.");
+        window.location.href = "settings.html";
+        return false;
+    }
+    
+    if (expiry) {
+        const expiryDate = new Date(expiry);
+        const now = new Date();
+        const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
+        
+        if (expiryDate < now) {
+            alert("⚠️ Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
+            localStorage.removeItem("activated");
+            localStorage.removeItem("activation_code");
+            localStorage.removeItem("expiry_date");
+            window.location.href = "settings.html";
+            return false;
+        }
+        
+        // Show warning 7 days before expiry
+        if (daysRemaining <= 7 && daysRemaining > 0) {
+            const message = "⚠️ Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
+            alert(message);
+        }
+    }
+    
+    return true;
 }
 
 function checkAndRedirect() {
- if (!checkLicenseStatus()) {
- // If not on settings page, redirect to settings
- if (!window.location.pathname.includes('settings.html') &&!window.location.pathname.includes('activation.html') &&!window.location.pathname.includes('index.html')) {
- window.location.href = 'activation.html';
- }
- }
+    if (!checkLicenseStatus()) {
+        // If not on settings page, redirect to settings
+        if (!window.location.pathname.includes('settings.html') &&
+            !window.location.pathname.includes('activation.html') &&
+            !window.location.pathname.includes('index.html')) {
+            window.location.href = 'activation.html';
+        }
+    }
 }
 
 // Run check on page load
 document.addEventListener('DOMContentLoaded', function() {
- checkAndRedirect();
+    checkAndRedirect();
 });
-</script><script>
+</script>
+
+<script>
 // ===== LICENSE CHECK WITH ALERTS AND BLOCKING =====
 function checkLicenseStatus() {
- const activated = localStorage.getItem("activated");
- const expiry = localStorage.getItem("expiry_date");
- 
- if (!activated || activated!== "true") {
- alert(" Your license is not activated.\nPlease go to Settings to activate your license.");
- window.location.href = "settings.html";
- return false;
- }
- 
- if (expiry) {
- const expiryDate = new Date(expiry);
- const now = new Date();
- const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
- 
- if (expiryDate < now) {
- alert(" Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
- localStorage.removeItem("activated");
- localStorage.removeItem("activation_code");
- localStorage.removeItem("expiry_date");
- window.location.href = "settings.html";
- return false;
- }
- 
- // Show warning 7 days before expiry
- if (daysRemaining <= 7 && daysRemaining > 0) {
- const message = " Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
- alert(message);
- }
- }
- 
- return true;
+    const activated = localStorage.getItem("activated");
+    const expiry = localStorage.getItem("expiry_date");
+    
+    if (!activated || activated !== "true") {
+        alert("⚠️ Your license is not activated.\nPlease go to Settings to activate your license.");
+        window.location.href = "settings.html";
+        return false;
+    }
+    
+    if (expiry) {
+        const expiryDate = new Date(expiry);
+        const now = new Date();
+        const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
+        
+        if (expiryDate < now) {
+            alert("⚠️ Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
+            localStorage.removeItem("activated");
+            localStorage.removeItem("activation_code");
+            localStorage.removeItem("expiry_date");
+            window.location.href = "settings.html";
+            return false;
+        }
+        
+        // Show warning 7 days before expiry
+        if (daysRemaining <= 7 && daysRemaining > 0) {
+            const message = "⚠️ Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
+            alert(message);
+        }
+    }
+    
+    return true;
 }
 
 // Run on page load
 if (document.readyState === 'loading') {
- document.addEventListener('DOMContentLoaded', function() {
- checkLicenseStatus();
- });
+    document.addEventListener('DOMContentLoaded', function() {
+        checkLicenseStatus();
+    });
 } else {
- checkLicenseStatus();
+    checkLicenseStatus();
 }
-</script></body></html><script>
+</script>
+
+</body>
+</html>
+
+<script>
 // ===== ACTIVATION CHECK =====
 
 </script>
