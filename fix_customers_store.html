@@ -1,91 +1,75 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Fix Customers Store</title>
-</head>
-<body>
-<h2>🔧 Creating Customers Store</h2>
-<div id="result"></div>
-
-<script src="db.js"></script>
-<script>
+<!DOCTYPE html><html><head><title>Fix Customers Store</title></head><body><h2> Creating Customers Store</h2><div id="result"></div><script src="db.js"></script><script>
 function fixCustomersStore() {
-    const result = document.getElementById('result');
-    result.innerHTML = '⏳ Opening database...';
-    
-    const DB_NAME = 'SokoPulsePOS';
-    const DB_VERSION = 7; // Increment version to trigger upgrade
-    
-    const req = indexedDB.open(DB_NAME, DB_VERSION);
-    
-        const db = e.target.result;
-        let created = [];
-        
-        // Create customers store
-        if (!db.objectStoreNames.contains('customers')) {
-            store.createIndex('name', 'name', { unique: false });
-            store.createIndex('phone', 'phone', { unique: false });
-            store.createIndex('email', 'email', { unique: false });
-            created.push('customers');
-            console.log('✅ Created customers store');
-        }
-        
-        // Also ensure other stores exist
-        const stores = {
-            'products': ['name', 'category', 'barcode'],
-            'orders': ['order_number', 'customer_id', 'date', 'status'],
-            'returns': ['order_number', 'status', 'date'],
-            'audit_log': ['user', 'action', 'date'],
-            'stock_movements': ['product_id', 'type', 'date'],
-            'settings': ['key'],
-            'users': ['username', 'role']
-        };
-        
-        for (const [name, indexes] of Object.entries(stores)) {
-            if (!db.objectStoreNames.contains(name)) {
-                for (const idx of indexes) {
-                    store.createIndex(idx, idx, { unique: false });
-                }
-                created.push(name);
-                console.log('✅ Created ' + name + ' store');
-            }
-        }
-        
-        if (created.length > 0) {
-            result.innerHTML = '✅ Created stores: ' + created.join(', ') + '<br><br>✅ Database upgraded to version ' + DB_VERSION;
-        } else {
-            result.innerHTML = '✅ All stores already exist. Database version: ' + DB_VERSION;
-        }
-    };
-    
-    req.onsuccess = function(e) {
-        const db = e.target.result;
-        const stores = Array.from(db.objectStoreNames);
-        result.innerHTML += '<br><br>📋 Available stores: ' + stores.join(', ');
-        result.innerHTML += '<br><br><a href="customers.html">👤 Go to Customers</a> | <a href="pos.html">🛒 Go to POS</a>';
-        db.close();
-    };
-    
-    req.onerror = function(e) {
-        result.innerHTML = '❌ Error: ' + e.target.error;
-    };
+ const result = document.getElementById('result');
+ result.innerHTML = '⏳ Opening database...';
+ 
+ const DB_NAME = 'SokoPulsePOS';
+ const DB_VERSION = 7; // Increment version to trigger upgrade
+ 
+ const req = indexedDB.open(DB_NAME, DB_VERSION);
+ 
+ const db = e.target.result;
+ let created =;
+ 
+ // Create customers store
+ if (!db.objectStoreNames.contains('customers')) {
+ store.createIndex('name', 'name', { unique: false });
+ store.createIndex('phone', 'phone', { unique: false });
+ store.createIndex('email', 'email', { unique: false });
+ created.push('customers');
+ console.log(' Created customers store');
+ }
+ 
+ // Also ensure other stores exist
+ const stores = {
+ 'products': ['name', 'category', 'barcode'],
+ 'orders': ['order_number', 'customer_id', 'date', 'status'],
+ 'returns': ['order_number', 'status', 'date'],
+ 'audit_log': ['user', 'action', 'date'],
+ 'stock_movements': ['product_id', 'type', 'date'],
+ 'settings': ['key'],
+ 'users': ['username', 'role']
+ };
+ 
+ for (const [name, indexes] of Object.entries(stores)) {
+ if (!db.objectStoreNames.contains(name)) {
+ for (const idx of indexes) {
+ store.createIndex(idx, idx, { unique: false });
+ }
+ created.push(name);
+ console.log(' Created ' + name + ' store');
+ }
+ }
+ 
+ if (created.length > 0) {
+ result.innerHTML = ' Created stores: ' + created.join(', ') + '<br><br> Database upgraded to version ' + DB_VERSION;
+ } else {
+ result.innerHTML = ' All stores already exist. Database version: ' + DB_VERSION;
+ }
+ };
+ 
+ req.onsuccess = function(e) {
+ const db = e.target.result;
+ const stores = Array.from(db.objectStoreNames);
+ result.innerHTML += '<br><br> Available stores: ' + stores.join(', ');
+ result.innerHTML += '<br><br><a href="customers.html"> Go to Customers</a> | <a href="pos.html"> Go to POS</a>';
+ db.close();
+ };
+ 
+ req.onerror = function(e) {
+ result.innerHTML = ' Error: ' + e.target.error;
+ };
 }
 
 fixCustomersStore();
-</script>
-
-<script>
+</script><script>
 if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/sw.js')
-            .then(function(reg) {
-                console.log('✅ Service Worker registered');
-            })
-            .catch(function(err) {
-                console.log('❌ Service Worker registration failed:', err);
-            });
-    });
+ window.addEventListener('load', function() {
+ navigator.serviceWorker.register('/sw.js').then(function(reg) {
+ console.log(' Service Worker registered');
+ }).catch(function(err) {
+ console.log(' Service Worker registration failed:', err);
+ });
+ });
 }
-</script>
-</body>
-</html>
+</script></body></html>
