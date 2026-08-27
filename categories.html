@@ -63,7 +63,7 @@
     <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
     
     <aside class="sidebar">
-        <div class="logo"> <span>Soko</span>Pulse <button class="close-btn" onclick="toggleSidebar()"></button></div>
+        <div class="logo"> <span>Soko</span>Pulse <button class="close-btn" onclick="toggleSidebar()">✕</button></div>
         <nav>
             <div class="nav-label">Main</div>
             <a href="pos.html"> POS</a>
@@ -210,7 +210,7 @@ function renderCategories() {
                 <div class="count">${productCount} products</div>
                 <div class="actions">
                     <button class="btn-edit-cat" onclick="editCategory(${c.id})"> Edit</button>
-                    <button class="btn-delete-cat" onclick="deleteCategory(${c.id})"></button>
+                    <button class="btn-delete-cat" onclick="deleteCategory(${c.id})">Delete</button>
                 </div>
             </div>
         `;
