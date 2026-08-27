@@ -446,7 +446,7 @@ async function loadUsers() {
             return;
         }
         container.innerHTML = users.map(function(u) {
-            return '<div class="user-row"><div class="user-info"><div class="name">' + (u.name || u.username) + '</div><div class="role"><span class="role-badge ' + (u.role || 'cashier') + '">' + (u.role || 'cashier') + '</span></div></div><div class="user-actions"><button class="btn-reset-pass" onclick="resetPassword(' + u.id + ')"> Reset</button>' + (u.username !== 'admin' ? '<button class="btn-delete-user" onclick="deleteUser(' + u.id + ')"></button>' : '') + '</div></div>';
+            return '<div class="user-row"><div class="user-info"><div class="name">' + (u.name || u.username) + '</div><div class="role"><span class="role-badge ' + (u.role || 'cashier') + '">' + (u.role || 'cashier') + '</span></div></div><div class="user-actions"><button class="btn-reset-pass" onclick="resetPassword(' + u.id + ')"> Reset</button>' + (u.username !== 'admin' ? '<button class="btn-delete-user" onclick="deleteUser(' + u.id + ')">Delete</button>' : '') + '</div></div>';
         }).join('');
     } catch(e) {
         console.error('Error loading users:', e);

@@ -634,7 +634,7 @@ function renderCart() {
                 (discount > 0 ? '<span style="text-decoration:line-through;color:#94a3b8;font-size:11px;">KES ' + originalTotal.toFixed(2) + '</span><br>' : '') +
                 'KES ' + discountedTotal.toFixed(2) +
             '</span>' +
-            '<button class="remove-btn" onclick="removeFromCart(' + i + ')"></button>' +
+            '<button class="remove-btn" onclick="removeFromCart(' + i + ')">Remove</button>' +
         '</div>';
     }).join('');
     updateTotals();
@@ -782,7 +782,7 @@ function loadHeldOrders() {
         var customerDisplay = h.customer ? '  ' + h.customer.name : '';
         html += '<div class="held-order-item">';
         html += '<div class="info"><strong style="font-size:12px;">' + h.id + '</strong> <span style="color:#94a3b8;font-size:11px;">' + h.items.length + ' items</span> <span style="font-weight:600;font-size:12px;">KES ' + total.toFixed(0) + '</span>' + customerDisplay + noteDisplay + '</div>';
-        html += '<div class="actions"><button class="retrieve" onclick="retrieveHold(' + index + ')"> Retrieve</button><button class="delete" onclick="deleteHold(' + index + ')"></button></div>';
+        html += '<div class="actions"><button class="retrieve" onclick="retrieveHold(' + index + ')"> Retrieve</button><button class="delete" onclick="deleteHold(' + index + ')">Delete</button></div>';
         html += '</div>';
     });
     list.innerHTML = html;

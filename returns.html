@@ -452,7 +452,7 @@ function renderReturns() {
         html += '<div class="amount">KES ' + (r.total || 0).toFixed(2) + '</div>';
         html += '<span class="status ' + statusClass + '">' + (statusLabels[statusClass] || statusClass) + '</span>';
         html += '<div>';
-        html += '<button class="btn-action view" onclick="viewReturn(' + r.id + ')"></button>';
+        html += '<button class="btn-action view" onclick="viewReturn(' + r.id + ')">View</button>';
         if (r.status === 'pending') {
             html += '<button class="btn-action approve" onclick="updateReturnStatus(' + r.id + ', \'approved\')"> Approve</button>';
             html += '<button class="btn-action reject" onclick="updateReturnStatus(' + r.id + ', \'rejected\')"> Reject</button>';
@@ -1238,7 +1238,7 @@ renderReturns = function() {
         html += '<div class="amount">KES ' + (r.total || 0).toFixed(2) + '</div>';
         html += '<span class="status ' + statusClass + '">' + (statusLabels[statusClass] || statusClass) + '</span>';
         html += '<div>';
-        html += '<button class="btn-action view" onclick="viewReturn(' + r.id + ')"></button>';
+        html += '<button class="btn-action view" onclick="viewReturn(' + r.id + ')">View</button>';
         if (r.status === 'pending') {
             html += '<button class="btn-action approve" onclick="updateReturnStatus(' + r.id + ', \'approved\')"> Approve</button>';
             html += '<button class="btn-action reject" onclick="updateReturnStatus(' + r.id + ', \'rejected\')"> Reject</button>';

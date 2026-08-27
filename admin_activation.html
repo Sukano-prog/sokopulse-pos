@@ -382,7 +382,7 @@ function renderCodeList() {
         if (c.active && !c.revoked) {
             html += '<button class="btn btn-danger btn-sm" onclick="revokeCode(' + originalIndex + ')"> Revoke</button>';
         }
-        html += '<button class="btn btn-secondary btn-sm" onclick="deleteCode(' + originalIndex + ')"></button>';
+        html += '<button class="btn btn-secondary btn-sm" onclick="deleteCode(' + originalIndex + ')">Delete</button>';
         html += '</div>';
         html += '</div>';
     });

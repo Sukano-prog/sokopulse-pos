@@ -243,9 +243,9 @@ function renderOrders() {
         html += '<td>KES ' + (o.total || 0).toFixed(2) + '</td>';
         html += '<td><span class="status-badge ' + (o.status || 'completed') + '">' + (o.status || 'completed') + '</span></td>';
         html += '<td>';
-        html += '<button class="btn-view" onclick="viewOrder(' + o.id + ')"></button>';
-        html += '<button class="btn-reprint" onclick="reprintReceipt(' + o.id + ')"></button>';
-        html += '<button class="btn-status" onclick="openStatusModal(' + o.id + ')"></button>';
+        html += '<button class="btn-view" onclick="viewOrder(' + o.id + ')">View</button>';
+        html += '<button class="btn-reprint" onclick="reprintReceipt(' + o.id + ')">Reprint</button>';
+        html += '<button class="btn-status" onclick="openStatusModal(' + o.id + ')">Status</button>';
         html += '</td>';
         html += '</tr>';
     });
