@@ -394,3 +394,17 @@ tr:hover { background: #f8f9fa; }
     color: #0f172a;
 }
 .topbar .time { font-size: 13px; color: #94a3b8; }
+
+/* Hamburger button */
+.hamburger {
+    font-size: 24px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px 8px;
+    color: #0f172a;
+    line-height: 1;
+}
+.hamburger:hover {
+    color: #1a3c34;
+}
