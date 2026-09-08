@@ -280,10 +280,13 @@ function viewOrder(id) {
         html += '<p style="color:#94a3b8;">No items</p>';
     } else {
         items.forEach(function(item) {
+            var qty = item.qty || 1;
+            var price = item.price || 0;
+            var total = price * qty;
             html += '<div class="order-detail-item">';
             html += '<span>' + item.name + '</span>';
-            html += '<span>x' + (item.qty || 1) + '</span>';
-            html += '<span>KES ' + ((item.price || 0) * (item.qty || 1)).toFixed(2) + '</span>';
+            html += '<span>@ KES ' + price.toFixed(2) + ' x' + qty + '</span>';
+            html += '<span>KES ' + total.toFixed(2) + '</span>';
             html += '</div>';
         });
     }
@@ -494,7 +497,7 @@ function checkLicenseStatus() {
         }
         
         // Show warning 7 days before expiry
-        if (daysRemaining <= 2 && daysRemaining > 0) {
+        if (daysRemaining <= 7 && daysRemaining > 0) {
             const message = " Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
             alert(message);
         }

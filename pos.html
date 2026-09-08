@@ -404,7 +404,7 @@ function renderProducts() {
         return;
     }
     grid.innerHTML = filtered.map(function(p) {
-        var price = mode === 'retail' ? (p.retail_price || p.selling_price || 0) : (p.wholesale_price || p.selling_price || 0);
+        var price = mode === 'retail' ? (p.price || 0) : (p.price || 0);
         var stock = p.current_stock || 0;
         var outOfStock = stock <= 0;
         var lowStock = stock > 0 && stock < (p.min_stock_alert || 5);
@@ -551,7 +551,7 @@ function addToCartBulk(productId) {
         return;
     }
     // Add the product multiple times or once with quantity
-    var price = mode === 'retail' ? (product.retail_price || product.selling_price) : (product.wholesale_price || product.selling_price);
+    var price = product.price || 0;
     var existing = cart.find(function(item) { return item.id === productId && item.mode === mode; });
     if (existing) {
         existing.qty += qty;
@@ -594,7 +594,7 @@ function addToCart(productId) {
         }
         existing.qty++;
     } else {
-        var price = mode === 'retail' ? (product.retail_price || product.selling_price) : (product.wholesale_price || product.selling_price);
+        var price = product.price || 0;
         cart.push({
             id: product.id,
             name: product.name,
@@ -1272,7 +1272,7 @@ function showReceipt(order) {
         var price = item.price || 0;
         var discount = item.discount || 0;
         var totalPrice = price * qty * (1 - discount / 100);
-        receipt += name.padEnd(20) + ' x' + qty + '  KES ' + totalPrice.toFixed(2) + '\n';
+        receipt += name.padEnd(16) + '  @ KES ' + price.toFixed(2) + ' x' + qty + '  = KES ' + totalPrice.toFixed(2) + '\n';
         if (discount > 0 && settings.showDiscount !== false) {
             receipt += '  (' + discount + '% off)\n';
         }
