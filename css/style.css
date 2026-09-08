@@ -408,3 +408,157 @@ tr:hover { background: #f8f9fa; }
 .hamburger:hover {
     color: #1a3c34;
 }
+
+/* ===== MOBILE SIDEBAR FIXES ===== */
+@media (max-width: 768px) {
+    /* Override the narrow sidebar */
+    .sidebar {
+        position: fixed !important;
+        top: 0 !important;
+        left: -300px !important;
+        width: 280px !important;
+        height: 100vh !important;
+        height: 100dvh !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        z-index: 9999 !important;
+        background: #1a3c34 !important;
+        padding: 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        transition: left 0.3s ease !important;
+        box-shadow: 2px 0 20px rgba(0,0,0,0.3) !important;
+    }
+    
+    .sidebar.open {
+        left: 0 !important;
+    }
+    
+    /* Logo - always visible at top */
+    .sidebar .logo {
+        font-size: 20px !important;
+        padding: 16px 20px !important;
+        flex-shrink: 0 !important;
+        border-bottom: 1px solid rgba(255,255,255,0.1) !important;
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        background: #1a3c34 !important;
+    }
+    
+    .sidebar .logo span {
+        color: #f5a623 !important;
+    }
+    
+    .sidebar .close-btn {
+        display: block !important;
+        font-size: 22px !important;
+        color: white !important;
+        background: none !important;
+        border: none !important;
+        cursor: pointer !important;
+        padding: 0 8px !important;
+    }
+    
+    /* Navigation - scrollable */
+    .sidebar nav {
+        flex: 1 !important;
+        overflow-y: auto !important;
+        padding: 12px 10px !important;
+        min-height: 0 !important;
+    }
+    
+    .sidebar nav a {
+        display: block !important;
+        padding: 10px 14px !important;
+        font-size: 14px !important;
+        color: rgba(255,255,255,0.8) !important;
+        text-decoration: none !important;
+        border-radius: 6px !important;
+        margin-bottom: 2px !important;
+        text-align: left !important;
+        white-space: nowrap !important;
+    }
+    
+    .sidebar nav a:active {
+        background: rgba(255,255,255,0.15) !important;
+    }
+    
+    .sidebar nav a.active {
+        background: #f5a623 !important;
+        color: #1a3c34 !important;
+        font-weight: bold !important;
+    }
+    
+    /* Nav labels */
+    .sidebar .nav-label {
+        display: block !important;
+        font-size: 10px !important;
+        text-transform: uppercase !important;
+        letter-spacing: 1px !important;
+        color: rgba(255,255,255,0.3) !important;
+        padding: 12px 14px 6px !important;
+        font-weight: 600 !important;
+    }
+    
+    /* User section - always at bottom */
+    .sidebar .user-section {
+        display: block !important;
+        flex-shrink: 0 !important;
+        padding: 12px 16px !important;
+        border-top: 1px solid rgba(255,255,255,0.1) !important;
+        margin-top: auto !important;
+        background: rgba(0,0,0,0.2) !important;
+    }
+    
+    .sidebar .user-section .name {
+        display: block !important;
+        font-size: 14px !important;
+        font-weight: 600 !important;
+        color: white !important;
+    }
+    
+    .sidebar .user-section .role {
+        display: block !important;
+        font-size: 11px !important;
+        color: rgba(255,255,255,0.5) !important;
+    }
+    
+    /* Logout button - always visible at bottom */
+    .sidebar .logout-btn {
+        display: block !important;
+        flex-shrink: 0 !important;
+        margin: 8px 14px 16px 14px !important;
+        padding: 10px 16px !important;
+        background: #c0392b !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 8px !important;
+        font-size: 14px !important;
+        font-weight: 600 !important;
+        cursor: pointer !important;
+        width: calc(100% - 28px) !important;
+        text-align: center !important;
+        font-family: 'Inter', sans-serif !important;
+    }
+    
+    .sidebar .logout-btn:active {
+        background: #e74c3c !important;
+    }
+    
+    /* Sidebar overlay */
+    .sidebar-overlay {
+        display: none !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        background: rgba(0,0,0,0.5) !important;
+        z-index: 9998 !important;
+    }
+    
+    .sidebar-overlay.show {
+        display: block !important;
+    }
+}
