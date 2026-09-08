@@ -404,7 +404,7 @@ function renderProducts() {
         return;
     }
     grid.innerHTML = filtered.map(function(p) {
-        var price = mode === 'retail' ? (p.price || 0) : (p.price || 0);
+        var price = parseFloat(p.price) || parseFloat(p.retail_price) || parseFloat(p.selling_price) || 0;
         var stock = p.current_stock || 0;
         var outOfStock = stock <= 0;
         var lowStock = stock > 0 && stock < (p.min_stock_alert || 5);
@@ -551,7 +551,7 @@ function addToCartBulk(productId) {
         return;
     }
     // Add the product multiple times or once with quantity
-    var price = product.price || 0;
+    var price = parseFloat(product.price) || parseFloat(product.retail_price) || parseFloat(product.selling_price) || 0;
     var existing = cart.find(function(item) { return item.id === productId && item.mode === mode; });
     if (existing) {
         existing.qty += qty;
@@ -594,7 +594,7 @@ function addToCart(productId) {
         }
         existing.qty++;
     } else {
-        var price = product.price || 0;
+        var price = parseFloat(product.price) || parseFloat(product.retail_price) || parseFloat(product.selling_price) || 0;
         cart.push({
             id: product.id,
             name: product.name,
