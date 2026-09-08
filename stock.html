@@ -1641,7 +1641,7 @@ function checkLicenseStatus() {
             window.location.href = "settings.html";
             return false;
         }
-        if (daysRemaining <= 7) {
+        if (daysRemaining <= 2) {
             alert(" Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease renew your license soon.");
         }
     }

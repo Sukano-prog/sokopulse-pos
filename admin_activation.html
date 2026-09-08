@@ -207,6 +207,16 @@ if (true) {
     
     <div class="form-row">
         <div class="form-group">
+            <label>License Duration</label>
+            <select id="licenseDuration">
+                <option value="1">1 Month</option>
+                <option value="3">3 Months</option>
+                <option value="6" selected>6 Months</option>
+                <option value="12">12 Months (1 Year)</option>
+            </select>
+            <div style="font-size:11px;color:#94a3b8;margin-top:4px;">Select how long the license should be valid</div>
+        </div>
+        <div class="form-group">
             <label>Month</label>
             <select id="codeMonth">
                 <option value="JAN">January</option>
@@ -223,6 +233,8 @@ if (true) {
                 <option value="DEC">December</option>
             </select>
         </div>
+    </div>
+    <div class="form-row">
         <div class="form-group">
             <label>Year</label>
             <select id="codeYear">
@@ -231,6 +243,10 @@ if (true) {
                 <option value="2027">2027</option>
                 <option value="2028">2028</option>
             </select>
+        </div>
+        <div class="form-group">
+            <label>Owner Name</label>
+            <input type="text" id="ownerNameInput" placeholder="Store owner">
         </div>
     </div>
     
@@ -253,7 +269,7 @@ if (true) {
             <div class="label">Activation Code (Send to Store Owner)</div>
             <div class="code" id="generatedCode">XXXX-XXXX-XXXX-XXXX</div>
             <div style="font-size:12px;color:#64748b;margin-top:4px;">
-                Valid for: <span id="codeExpiry">30 days</span>
+                Valid for: <span id="codeExpiry">--</span>
             </div>
         </div>
         <button class="btn btn-secondary" onclick="copyCode()" style="width:100%;"> Copy Code</button>
@@ -311,7 +327,8 @@ function generateCode() {
     }
     const code = parts.join('-');
     const expiryDate = new Date();
-    expiryDate.setDate(expiryDate.getDate() + 30);
+    const duration = parseInt(document.getElementById("licenseDuration").value) || 1;
+    expiryDate.setMonth(expiryDate.getMonth() + duration);
     
     // Save to localStorage
     const codeData = {
@@ -336,7 +353,7 @@ function generateCode() {
     
     // Display
     document.getElementById('generatedCode').textContent = code;
-    document.getElementById('codeExpiry').textContent = expiryDate.toLocaleDateString() + ' (30 days)';
+    document.getElementById("codeExpiry").textContent = expiryDate.toLocaleDateString() + " (" + duration + " months)";
     codeDisplay.style.display = 'block';
     status.className = 'status success show';
     status.textContent = ' Code generated and saved!';
@@ -504,7 +521,8 @@ window.generateCode = function() {
     }
     const code = parts.join('-');
     const expiryDate = new Date();
-    expiryDate.setDate(expiryDate.getDate() + 30);
+    const duration = parseInt(document.getElementById("licenseDuration").value) || 1;
+    expiryDate.setMonth(expiryDate.getMonth() + duration);
     
     // Save code
     const codeData = {
@@ -541,7 +559,7 @@ window.generateCode = function() {
     
     // Display
     document.getElementById('generatedCode').textContent = code;
-    document.getElementById('codeExpiry').textContent = expiryDate.toLocaleDateString() + ' (30 days)';
+    document.getElementById("codeExpiry").textContent = expiryDate.toLocaleDateString() + " (" + duration + " months)";
     codeDisplay.style.display = 'block';
     status.className = 'status success show';
     status.textContent = ' Code generated and SAVED! (' + saved.length + ' total)';

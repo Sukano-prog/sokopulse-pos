@@ -387,7 +387,7 @@ function checkLicenseStatus() {
         }
         
         // Show warning 7 days before expiry
-        if (daysRemaining <= 7 && daysRemaining > 0) {
+        if (daysRemaining <= 2 && daysRemaining > 0) {
             const message = " Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
             alert(message);
         }
@@ -440,7 +440,7 @@ function checkLicenseStatus() {
         }
         
         // Show warning 7 days before expiry
-        if (daysRemaining <= 7 && daysRemaining > 0) {
+        if (daysRemaining <= 2 && daysRemaining > 0) {
             const message = " Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
             alert(message);
         }
