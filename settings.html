@@ -733,3 +733,66 @@ document.addEventListener('DOMContentLoaded', function() {
     checkLicenseStatus();
 });
 </script>
+<style>
+/* ===== MOBILE SETTINGS FIXES ===== */
+@media (max-width: 768px) {
+    .page-container {
+        padding: 10px !important;
+        overflow-x: hidden !important;
+        width: 100% !important;
+    }
+    .settings-grid {
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+    }
+    .settings-card {
+        border-radius: 10px !important;
+    }
+    .settings-card .card-header {
+        padding: 12px 14px !important;
+        font-size: 14px !important;
+    }
+    .settings-card .card-body {
+        padding: 12px 14px !important;
+    }
+    .settings-card .card-body .form-group {
+        margin-bottom: 10px !important;
+    }
+    .settings-card .card-body .form-group input,
+    .settings-card .card-body .form-group select {
+        font-size: 16px !important;
+        padding: 10px 12px !important;
+    }
+    .form-row {
+        flex-direction: column !important;
+        gap: 6px !important;
+    }
+    .btn-save-setting {
+        width: 100% !important;
+        padding: 10px !important;
+    }
+    .toggle-row {
+        padding: 8px 0 !important;
+    }
+    .user-row {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 6px !important;
+        padding: 10px 0 !important;
+    }
+    .user-row .user-actions {
+        width: 100% !important;
+        display: flex !important;
+        gap: 6px !important;
+    }
+    .user-row .user-actions button {
+        flex: 1 !important;
+        padding: 8px !important;
+    }
+    .modal-content {
+        margin: 10px !important;
+        padding: 15px !important;
+        width: auto !important;
+    }
+}
+</style>

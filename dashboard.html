@@ -1199,3 +1199,76 @@ document.addEventListener('visibilitychange', function() {
     }
 });
 </script>
+<style>
+/* ===== MOBILE DASHBOARD FIXES ===== */
+@media (max-width: 768px) {
+    .page-container {
+        padding: 10px !important;
+        overflow-x: hidden !important;
+        width: 100% !important;
+    }
+    .dashboard-stats {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 8px !important;
+    }
+    .stat-card {
+        padding: 10px 12px !important;
+    }
+    .stat-card .stat-number {
+        font-size: 18px !important;
+    }
+    .dashboard-grid {
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+    }
+    .card {
+        padding: 12px 14px !important;
+    }
+    .card h3 {
+        font-size: 13px !important;
+    }
+    .chart-container {
+        height: 80px !important;
+    }
+    .top-product-item {
+        font-size: 12px !important;
+        padding: 4px 0 !important;
+    }
+    .order-row {
+        font-size: 12px !important;
+        padding: 4px 0 !important;
+    }
+    .quick-actions button {
+        font-size: 12px !important;
+        padding: 8px 12px !important;
+    }
+    .date-filter-row {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 8px !important;
+        padding: 10px !important;
+    }
+    .date-filter-row .date-inputs {
+        flex-wrap: wrap !important;
+    }
+    .date-filter-row .date-inputs input {
+        flex: 1 !important;
+        min-width: 120px !important;
+    }
+}
+@media (max-width: 480px) {
+    .dashboard-stats {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 6px !important;
+    }
+    .stat-card {
+        padding: 6px 8px !important;
+    }
+    .stat-card .stat-number {
+        font-size: 15px !important;
+    }
+    .stat-card .stat-label {
+        font-size: 9px !important;
+    }
+}
+</style>
