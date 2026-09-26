@@ -185,18 +185,19 @@
             </div>
             <div class="right">
                 <span class="store-badge" id="storeName">SokoPulse</span>
-                <span class="sync-status" id="syncStatus" style="font-size:11px;padding:4px 10px;border-radius:12px;background:#dcfce7;color:#166534;cursor:pointer;font-weight:600;" title="Sync status" onclick="showSyncDetails()">Online</span>
+                <!-- <span class="sync-status" id="syncStatus" style="font-size:11px;padding:4px 10px;border-radius:12px;background:#dcfce7;color:#166534;cursor:pointer;font-weight:600;" title="Sync status" onclick="showSyncDetails()">Online</span> -->
                 <a href="client_guide.html" target="_blank" style="font-size:11px;padding:4px 10px;background:#1a3c34;color:white;border-radius:12px;text-decoration:none;font-weight:600;">Guide</a>
                 <span class="time" id="timeDisplay"></span>
             </div>
         </header>
-        <div id="onlineReminderBanner" style="display:none;background:#dbeafe;border-bottom:2px solid #3b82f6;padding:8px 20px;font-size:13px;color:#1e40af;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+        <!-- KRA integration disabled
+<div id="onlineReminderBanner" style="display:none;background:#dbeafe;border-bottom:2px solid #3b82f6;padding:8px 20px;font-size:13px;color:#1e40af;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
             <span id="onlineReminderMessage">You're online! Sync your transactions to KRA.</span>
             <div style="display:flex;gap:8px;align-items:center;">
                 <button onclick="processSyncQueue()" style="padding:4px 14px;background:#3b82f6;color:white;border:none;border-radius:6px;cursor:pointer;font-weight:600;font-size:12px;">Sync Now</button>
                 <button onclick="dismissOnlineReminder()" style="padding:4px 10px;background:none;border:none;color:#1e40af;cursor:pointer;font-size:16px;">✕</button>
             </div>
-        </div>
+        </div> -->
         <div id="lowStockBanner">
             <span id="lowStockMessage">Low stock alert: Some products are running low!</span>
             <button class="close-btn" onclick="document.getElementById('lowStockBanner').style.display='none'">✕</button>
@@ -322,8 +323,9 @@
 </div>
 
 <script src="db.js"></script>
-<script src="sync.js"></script>
-<script src="etims.js"></script>
+<!-- KRA integration disabled
+<script src="sync.js"></script> -->
+<!-- <script src="etims.js"></script> -->
 <script src="js/printer.js"></script>
 <script src="qrcode.min.js"></script>
 <script>

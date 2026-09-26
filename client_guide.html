@@ -30,7 +30,35 @@
         .toc a:hover { color: #f5a623; }
         .icon-box { display: inline-block; width: 24px; text-align: center; }
         @media print { body { padding: 0; background: white; } .card { box-shadow: none; border: 1px solid #e2e8f0; } .toc a { border-bottom: none; } }
-        @media (max-width: 600px) { body { padding: 20px 12px; } h1 { font-size: 24px; } h2 { font-size: 20px; } .card { padding: 16px; } }
+        @media (max-width: 768px) {
+            body { padding: 20px 12px; }
+            h1 { font-size: 22px !important; }
+            h2 { font-size: 18px !important; }
+            h3 { font-size: 16px !important; }
+            h4 { font-size: 14px !important; }
+            .card { padding: 16px !important; margin: 12px 0 !important; }
+            table { font-size: 12px !important; }
+            th, td { padding: 6px 8px !important; }
+            .toc { padding: 16px !important; }
+            .toc a { font-size: 13px !important; padding: 4px 0 !important; }
+            ul, ol { margin-left: 18px !important; }
+            .step, .warning, .info, .danger { padding: 10px 12px !important; font-size: 13px !important; }
+            code { font-size: 11px !important; }
+            .btn { padding: 8px 16px !important; font-size: 13px !important; }
+        }
+        
+        @media (max-width: 480px) {
+            body { padding: 12px 8px; }
+            h1 { font-size: 18px !important; }
+            h2 { font-size: 16px !important; }
+            h3 { font-size: 14px !important; }
+            .card { padding: 12px !important; }
+            table { font-size: 11px !important; display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+            th, td { padding: 4px 6px !important; white-space: nowrap; }
+            .toc a { font-size: 12px !important; }
+            .step, .warning, .info, .danger { font-size: 12px !important; padding: 8px 10px !important; }
+            .btn { width: 100% !important; text-align: center !important; }
+        }
     </style>
 </head>
 <body>
