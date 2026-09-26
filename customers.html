@@ -4,6 +4,13 @@
     <script src="db.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1a3c34">
+    <meta name="description" content="SokoPulse POS - Offline Point of Sale with eTIMS compliance">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="SokoPulse">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiB2aWV3Qm94PSIwIDAgMTkyIDE5MiI+PHJlY3Qgd2lkdGg9IjE5MiIgaGVpZ2h0PSIxOTIiIHJ4PSIzMiIgZmlsbD0iIzFhM2MzNCIvPjx0ZXh0IHg9Ijk2IiB5PSIxMjAiIGZvbnQtc2l6ZT0iODAiIGZvbnQtZmFtaWx5PSJBcmlhbCxzYW5zLXNlcmlmIiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0iI2Y1YTYyMyIgdGV4dC1hbmNob3I9Im1pZGRsZSI+U1A8L3RleHQ+PC9zdmc+">
     <title>Customers - SokoPulse</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
@@ -113,19 +120,19 @@
     
     <aside class="sidebar">
         <div class="logo"> <span>Soko</span>Pulse <button class="close-btn" onclick="toggleSidebar()">✕</button></div>
-        <nav>
+                <nav>
             <div class="nav-label">Main</div>
             <a href="pos.html"> POS</a>
             <a href="dashboard.html"> Dashboard</a>
             <a href="orders.html"> Orders</a>
             <div class="nav-label">Inventory</div>
             <a href="products.html"> Products</a>
-            <a href="categories.html"> Categories</a>
-            <a href="suppliers.html"> Suppliers</a>
             <a href="stock.html"> Stock</a>
             <a href="expiry.html">Expiry</a>
+            <a href="categories.html"> Categories</a>
+            <a href="suppliers.html"> Suppliers</a>
             <div class="nav-label">Management</div>
-            <a href="customers.html" class="active"> Customers</a>
+            <a href="customers.html"> Customers</a>
             <a href="reports.html"> Reports</a>
             <a href="audit.html"> Audit</a>
             <a href="returns.html"> Returns</a>
@@ -133,9 +140,9 @@
         </nav>
         <div class="user-section">
             <div class="name" id="userName">Administrator</div>
-        <button class="logout-btn" onclick="logout()"> Logout</button>
             <div class="role" id="userRole">Admin</div>
         </div>
+        <button class="logout-btn" onclick="logout()">Logout</button>
     </aside>
 
     <main class="main-content">
@@ -196,6 +203,9 @@
                 <label>Phone Number *</label>
                 <input type="tel" id="custPhone" placeholder="0712345678" required>
             </div>
+<div class="form-group"><label>KRA PIN (for eTIMS)</label><input type="text" id="custPin" placeholder="P051234567X" style="text-transform:uppercase;"></div>
+            </div>
+<div class="form-group"><label>KRA PIN (for eTIMS)</label><input type="text" id="custPin" placeholder="P051234567X" style="text-transform:uppercase;"></div>
             <div class="form-group">
                 <label>Email</label>
                 <input type="email" id="custEmail" placeholder="customer@email.com">
@@ -239,6 +249,7 @@ function openAddModal() {
     document.getElementById('custName').value = '';
     document.getElementById('custPhone').value = '';
     document.getElementById('custEmail').value = '';
+    if (document.getElementById('custPin')) document.getElementById('custPin').value = '';
     document.getElementById('custAddress').value = '';
     document.getElementById('custCreditLimit').value = '0';
     document.getElementById('custCredit').value = '0';
@@ -254,6 +265,7 @@ function openEditModal(id) {
     document.getElementById('custName').value = c.name || '';
     document.getElementById('custPhone').value = c.phone || '';
     document.getElementById('custEmail').value = c.email || '';
+    if (document.getElementById('custPin')) document.getElementById('custPin').value = c.pin || '';
     document.getElementById('custAddress').value = c.address || '';
     document.getElementById('custCreditLimit').value = c.credit_limit || 0;
     document.getElementById('custCredit').value = c.credit || 0;
@@ -410,6 +422,7 @@ async function saveCustomer(e) {
         phone: document.getElementById("custPhone").value.trim(),
         email: document.getElementById("custEmail").value.trim(),
         address: document.getElementById("custAddress").value.trim(),
+        pin: document.getElementById("custPin") ? document.getElementById("custPin").value.trim().toUpperCase() : '',
         credit_limit: parseFloat(document.getElementById("custCreditLimit").value) || 0,
         credit: parseFloat(document.getElementById("custCredit").value) || 0,
         total_orders: 0,
@@ -457,131 +470,7 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 </script>
 
-<script>
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/sw.js')
-            .then(function(reg) {
-                console.log(' Service Worker registered');
-            })
-            .catch(function(err) {
-                console.log(' Service Worker registration failed:', err);
-            });
-    });
-}
-</script>
 
-<script>
-// ===== LICENSE CHECK =====
-
-// Run checks
-// License check removed);
-</script>
-
-<!-- License Warning Banner -->
-    <span id="licenseWarningMessage"> Your license expires soon. Please renew in Settings.</span>
-</div>
-
-<script>
-// ===== LICENSE STATUS CHECK =====
-function checkLicenseStatus() {
-    const activated = localStorage.getItem("activated");
-    const expiry = localStorage.getItem("expiry_date");
-    
-    if (!activated || activated !== "true") {
-        alert(" Your license is not activated.\nPlease go to Settings to activate your license.");
-        window.location.href = "settings.html";
-        return false;
-    }
-    
-    if (expiry) {
-        const expiryDate = new Date(expiry);
-        const now = new Date();
-        const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
-        
-        if (expiryDate < now) {
-            alert(" Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
-            localStorage.removeItem("activated");
-            localStorage.removeItem("activation_code");
-            localStorage.removeItem("expiry_date");
-            window.location.href = "settings.html";
-            return false;
-        }
-        
-        // Show warning 7 days before expiry
-        if (daysRemaining <= 2 && daysRemaining > 0) {
-            const message = " Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
-            alert(message);
-        }
-    }
-    
-    return true;
-}
-
-function checkAndRedirect() {
-    if (!checkLicenseStatus()) {
-        // If not on settings page, redirect to settings
-        if (!window.location.pathname.includes('settings.html') &&
-            !window.location.pathname.includes('activation.html') &&
-            !window.location.pathname.includes('index.html')) {
-            window.location.href = 'activation.html';
-        }
-    }
-}
-
-// Run check on page load
-document.addEventListener('DOMContentLoaded', function() {
-    checkAndRedirect();
-});
-</script>
-
-<script>
-// ===== LICENSE CHECK WITH ALERTS AND BLOCKING =====
-function checkLicenseStatus() {
-    const activated = localStorage.getItem("activated");
-    const expiry = localStorage.getItem("expiry_date");
-    
-    if (!activated || activated !== "true") {
-        alert(" Your license is not activated.\nPlease go to Settings to activate your license.");
-        window.location.href = "settings.html";
-        return false;
-    }
-    
-    if (expiry) {
-        const expiryDate = new Date(expiry);
-        const now = new Date();
-        const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
-        
-        if (expiryDate < now) {
-            alert(" Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
-            localStorage.removeItem("activated");
-            localStorage.removeItem("activation_code");
-            localStorage.removeItem("expiry_date");
-            window.location.href = "settings.html";
-            return false;
-        }
-        
-        // Show warning 7 days before expiry
-        if (daysRemaining <= 2 && daysRemaining > 0) {
-            const message = " Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
-            alert(message);
-        }
-    }
-    
-    return true;
-}
-
-// Run on page load
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function() {
-        checkLicenseStatus();
-    });
-} else {
-    checkLicenseStatus();
-}
-</script>
-
-</body>
 </html>
 <style>
 @media (max-width: 768px) {

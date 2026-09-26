@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Update Tax Types</title>
+    <style>
+        body { font-family: 'Inter', sans-serif; padding: 20px; max-width: 800px; margin: 0 auto; }
+        .card { background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin: 16px 0; }
+        table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #e2e8f0; }
+        th { background: #f8fafc; font-weight: 600; }
+        select { padding: 6px 10px; border: 2px solid #e2e8f0; border-radius: 6px; font-family: 'Inter', sans-serif; }
+        button { padding: 10px 20px; background: #1a3c34; color: white; border: none; border-radius: 8px; cursor: pointer; margin: 4px; }
+        .success { color: #166534; background: #dcfce7; padding: 8px 12px; border-radius: 6px; margin: 4px 0; }
+        .error { color: #991b1b; background: #fee2e2; padding: 8px 12px; border-radius: 6px; margin: 4px 0; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Update Product Tax Types</h1>
+        <p>Set the correct tax type for each product based on KRA rules.</p>
+        
+        <div id="result"></div>
+        
+        <table id="productTable">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Price</th>
+                    <th>Current Tax Type</th>
+                    <th>Set Tax Type</th>
+                </tr>
+            </thead>
+            <tbody id="productBody"></tbody>
+        </table>
+        
+        <button onclick="saveAllTaxTypes()">Save All Tax Types</button>
+        <button onclick="loadProducts()">Reload</button>
+    </div>
+    
+    <script src="db.js"></script>
+    <script>
+        function dbGetAll(db, storeName) {
+            return new Promise(function(resolve, reject) {
+                var tx = db.transaction(storeName, 'readonly');
+                var store = tx.objectStore(storeName);
+                var req = store.getAll();
+                req.onsuccess = function() { resolve(req.result); };
+                req.onerror = function() { reject(req.error); };
+            });
+        }
+        
+        function dbPut(db, storeName, data) {
+            return new Promise(function(resolve, reject) {
+                var tx = db.transaction(storeName, 'readwrite');
+                var store = tx.objectStore(storeName);
+                var req = store.put(data);
+                req.onsuccess = function() { resolve(req.result); };
+                req.onerror = function() { reject(req.error); };
+            });
+        }
+        
+        function log(msg, type) {
+            var el = document.getElementById('result');
+            el.innerHTML += '<div class="' + (type || '') + '">' + msg + '</div>';
+        }
+        
+        async function loadProducts() {
+            document.getElementById('result').innerHTML = '';
+            var tbody = document.getElementById('productBody');
+            tbody.innerHTML = '<tr><td colspan="4">Loading...</td></tr>';
+            
+            try {
+                var db = await openDB();
+                var products = await dbGetAll(db, 'products');
+                
+                tbody.innerHTML = products.map(function(p) {
+                    var taxType = p.tax_type || 'VAT';
+                    return '<tr>' +
+                        '<td>' + p.name + '</td>' +
+                        '<td>KES ' + (p.retail_price || p.price || 0) + '</td>' +
+                        '<td>' + taxType + '</td>' +
+                        '<td>' +
+                            '<select class="tax-select" data-id="' + p.id + '" onchange="updateTaxType(' + p.id + ', this.value)">' +
+                                '<option value="VAT"' + (taxType === 'VAT' ? ' selected' : '') + '>VAT (16%)</option>' +
+                                '<option value="EXEMPT"' + (taxType === 'EXEMPT' ? ' selected' : '') + '>Exempt</option>' +
+                                '<option value="ZERO"' + (taxType === 'ZERO' ? ' selected' : '') + '>Zero-rated</option>' +
+                            '</select>' +
+                        '</td>' +
+                    '</tr>';
+                }).join('');
+                
+                log('Loaded ' + products.length + ' products', 'success');
+            } catch(e) {
+                tbody.innerHTML = '<tr><td colspan="4">Error: ' + e.message + '</td></tr>';
+            }
+        }
+        
+        async function updateTaxType(id, newTaxType) {
+            try {
+                var db = await openDB();
+                var products = await dbGetAll(db, 'products');
+                var product = products.find(function(p) { return p.id === id; });
+                if (product) {
+                    product.tax_type = newTaxType;
+                    await dbPut(db, 'products', product);
+                    log('Updated ' + product.name + ' → ' + newTaxType, 'success');
+                }
+            } catch(e) {
+                log('Error: ' + e.message, 'error');
+            }
+        }
+        
+        async function saveAllTaxTypes() {
+            document.getElementById('result').innerHTML = '';
+            var selects = document.querySelectorAll('.tax-select');
+            
+            try {
+                var db = await openDB();
+                var products = await dbGetAll(db, 'products');
+                var updated = 0;
+                
+                for (var i = 0; i < selects.length; i++) {
+                    var id = parseInt(selects[i].dataset.id);
+                    var taxType = selects[i].value;
+                    var product = products.find(function(p) { return p.id === id; });
+                    if (product && product.tax_type !== taxType) {
+                        product.tax_type = taxType;
+                        await dbPut(db, 'products', product);
+                        updated++;
+                    }
+                }
+                
+                log('Saved ' + updated + ' products', 'success');
+            } catch(e) {
+                log('Error: ' + e.message, 'error');
+            }
+        }
+        
+        loadProducts();
+    </script>
+</body>
+</html>

@@ -3,6 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1a3c34">
+    <meta name="description" content="SokoPulse POS - Offline Point of Sale with eTIMS compliance">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="SokoPulse">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiB2aWV3Qm94PSIwIDAgMTkyIDE5MiI+PHJlY3Qgd2lkdGg9IjE5MiIgaGVpZ2h0PSIxOTIiIHJ4PSIzMiIgZmlsbD0iIzFhM2MzNCIvPjx0ZXh0IHg9Ijk2IiB5PSIxMjAiIGZvbnQtc2l6ZT0iODAiIGZvbnQtZmFtaWx5PSJBcmlhbCxzYW5zLXNlcmlmIiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0iI2Y1YTYyMyIgdGV4dC1hbmNob3I9Im1pZGRsZSI+U1A8L3RleHQ+PC9zdmc+">
     <title>Categories - SokoPulse</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
@@ -64,7 +71,7 @@
     
     <aside class="sidebar">
         <div class="logo"> <span>Soko</span>Pulse <button class="close-btn" onclick="toggleSidebar()">✕</button></div>
-        <nav>
+                <nav>
             <div class="nav-label">Main</div>
             <a href="pos.html"> POS</a>
             <a href="dashboard.html"> Dashboard</a>
@@ -73,7 +80,7 @@
             <a href="products.html"> Products</a>
             <a href="stock.html"> Stock</a>
             <a href="expiry.html">Expiry</a>
-            <a href="categories.html" class="active"> Categories</a>
+            <a href="categories.html"> Categories</a>
             <a href="suppliers.html"> Suppliers</a>
             <div class="nav-label">Management</div>
             <a href="customers.html"> Customers</a>
@@ -84,9 +91,9 @@
         </nav>
         <div class="user-section">
             <div class="name" id="userName">Administrator</div>
-        <button class="logout-btn" onclick="logout()"> Logout</button>
             <div class="role" id="userRole">Admin</div>
         </div>
+        <button class="logout-btn" onclick="logout()">Logout</button>
     </aside>
 
     <main class="main-content">
@@ -346,120 +353,7 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 </script>
 
-<script>
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/sw.js')
-            .then(function(reg) {
-                console.log(' Service Worker registered');
-            })
-            .catch(function(err) {
-                console.log(' Service Worker registration failed:', err);
-            });
-    });
-}
-</script>
 
-<script>
-// ===== LICENSE STATUS CHECK =====
-function checkLicenseStatus() {
-    const activated = localStorage.getItem("activated");
-    const expiry = localStorage.getItem("expiry_date");
-    
-    if (!activated || activated !== "true") {
-        alert(" Your license is not activated.\nPlease go to Settings to activate your license.");
-        window.location.href = "settings.html";
-        return false;
-    }
-    
-    if (expiry) {
-        const expiryDate = new Date(expiry);
-        const now = new Date();
-        const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
-        
-        if (expiryDate < now) {
-            alert(" Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
-            localStorage.removeItem("activated");
-            localStorage.removeItem("activation_code");
-            localStorage.removeItem("expiry_date");
-            window.location.href = "settings.html";
-            return false;
-        }
-        
-        // Show warning 7 days before expiry
-        if (daysRemaining <= 2 && daysRemaining > 0) {
-            const message = " Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
-            alert(message);
-        }
-    }
-    
-    return true;
-}
-
-function checkAndRedirect() {
-    if (!checkLicenseStatus()) {
-        // If not on settings page, redirect to settings
-        if (!window.location.pathname.includes('settings.html') &&
-            !window.location.pathname.includes('activation.html') &&
-            !window.location.pathname.includes('index.html')) {
-            window.location.href = 'activation.html';
-        }
-    }
-}
-
-// Run check on page load
-document.addEventListener('DOMContentLoaded', function() {
-    checkAndRedirect();
-});
-</script>
-
-<script>
-// ===== LICENSE CHECK WITH ALERTS AND BLOCKING =====
-function checkLicenseStatus() {
-    const activated = localStorage.getItem("activated");
-    const expiry = localStorage.getItem("expiry_date");
-    
-    if (!activated || activated !== "true") {
-        alert(" Your license is not activated.\nPlease go to Settings to activate your license.");
-        window.location.href = "settings.html";
-        return false;
-    }
-    
-    if (expiry) {
-        const expiryDate = new Date(expiry);
-        const now = new Date();
-        const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
-        
-        if (expiryDate < now) {
-            alert(" Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
-            localStorage.removeItem("activated");
-            localStorage.removeItem("activation_code");
-            localStorage.removeItem("expiry_date");
-            window.location.href = "settings.html";
-            return false;
-        }
-        
-        // Show warning 7 days before expiry
-        if (daysRemaining <= 2 && daysRemaining > 0) {
-            const message = " Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
-            alert(message);
-        }
-    }
-    
-    return true;
-}
-
-// Run on page load
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function() {
-        checkLicenseStatus();
-    });
-} else {
-    checkLicenseStatus();
-}
-</script>
-
-</body>
 </html>
 <style>
 @media (max-width: 768px) {

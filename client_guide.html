@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SokoPulse POS - Complete User Guide</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', -apple-system, sans-serif; max-width: 900px; margin: 0 auto; padding: 40px 24px; background: #f8fafc; color: #0f172a; line-height: 1.7; }
+        h1 { color: #1a3c34; border-bottom: 3px solid #f5a623; padding-bottom: 12px; font-size: 32px; }
+        h2 { color: #1a3c34; margin-top: 40px; font-size: 24px; border-left: 4px solid #f5a623; padding-left: 12px; }
+        h3 { color: #334155; margin-top: 24px; font-size: 18px; }
+        h4 { color: #475569; margin-top: 16px; font-size: 15px; }
+        .card { background: white; border-radius: 12px; padding: 28px; margin: 20px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+        .step { background: #f0fdf4; border-left: 4px solid #22c55e; padding: 14px 18px; margin: 12px 0; border-radius: 4px; }
+        .warning { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 14px 18px; margin: 12px 0; border-radius: 4px; }
+        .info { background: #dbeafe; border-left: 4px solid #3b82f6; padding: 14px 18px; margin: 12px 0; border-radius: 4px; }
+        .danger { background: #fef2f2; border-left: 4px solid #ef4444; padding: 14px 18px; margin: 12px 0; border-radius: 4px; }
+        code { background: #f1f5f9; padding: 2px 8px; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 13px; }
+        table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+        th, td { padding: 10px 14px; text-align: left; border-bottom: 1px solid #e2e8f0; }
+        th { background: #f8fafc; font-weight: 600; color: #334155; }
+        tr:hover td { background: #f8fafc; }
+        .btn { display: inline-block; padding: 10px 20px; background: #1a3c34; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; margin: 8px 0; }
+        .btn:hover { background: #2a5c54; }
+        ul, ol { margin: 8px 0 8px 24px; }
+        li { margin: 4px 0; }
+        .toc { background: white; border-radius: 12px; padding: 24px; margin: 20px 0; }
+        .toc a { color: #1a3c34; text-decoration: none; display: block; padding: 6px 0; border-bottom: 1px solid #f1f5f9; }
+        .toc a:hover { color: #f5a623; }
+        .icon-box { display: inline-block; width: 24px; text-align: center; }
+        @media print { body { padding: 0; background: white; } .card { box-shadow: none; border: 1px solid #e2e8f0; } .toc a { border-bottom: none; } }
+        @media (max-width: 600px) { body { padding: 20px 12px; } h1 { font-size: 24px; } h2 { font-size: 20px; } .card { padding: 16px; } }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h1>SokoPulse POS - Complete User Guide</h1>
+    <p style="font-size:16px;color:#64748b;margin-top:8px;">Everything you need to know to run your POS system</p>
+    <div style="background:#f0fdf4;border-radius:8px;padding:12px 16px;margin:16px 0;display:flex;flex-wrap:wrap;gap:20px;align-items:center;">
+        <span><strong>Support:</strong></span>
+        <span><a href="mailto:sukanoelijah@gmail.com" style="color:#1a3c34;font-weight:600;">sukanoelijah@gmail.com</a></span>
+        <span><a href="tel:+254719750245" style="color:#1a3c34;font-weight:600;">+254 719 750 245</a></span>
+    </div>
+    <a href="javascript:window.print()" class="btn">Print This Guide</a>
+</div>
+
+<!-- Table of Contents -->
+<div class="toc">
+    <h3 style="margin-top:0;">Table of Contents</h3>
+    <a href="#getting-started">1. Getting Started</a>
+    <a href="#pos">2. Point of Sale (POS)</a>
+    <a href="#products">3. Products</a>
+    <a href="#stock">4. Stock Management</a>
+    <a href="#orders">5. Orders</a>
+    <a href="#customers">6. Customers</a>
+    <a href="#returns">7. Returns</a>
+    <a href="#reports">8. Reports</a>
+    <a href="#audit">9. Audit Log</a>
+    <a href="#categories">10. Categories</a>
+    <a href="#suppliers">11. Suppliers</a>
+    <a href="#expiry">12. Expiry Tracking</a>
+    <a href="#dashboard">13. Dashboard</a>
+    <a href="#settings">14. Settings</a>
+    <a href="#etims">15. eTIMS Compliance</a>
+    <a href="#printer">16. Printer Setup</a>
+    <a href="#troubleshooting">17. Troubleshooting</a>
+</div>
+
+<!-- 1. GETTING STARTED -->
+<div class="card" id="getting-started">
+    <h2>1. Getting Started</h2>
+    
+    <h3>1.1 Logging In</h3>
+    <div class="step">Open your browser and go to your POS URL</div>
+    <div class="step">Enter your username and password</div>
+    <div class="info" style="margin-top:12px;">
+        <strong>Default Login Credentials:</strong><br>
+        <strong>Admin:</strong> <code>admin</code> / <code>admin123</code><br>
+        <strong>Cashier:</strong> <code>cashier</code> / <code>cashier123</code><br>
+        <span style="color:#92400e;font-weight:600;">IMPORTANT: Change these passwords immediately after first login!</span>
+    </div>
+    <div class="warning">
+        To change a password, go to <strong>Settings → Users</strong>, find your user, and click <strong>Reset Password</strong>.
+    </div>
+    
+    <h3>1.2 User Roles</h3>
+    <table>
+        <tr><th>Role</th><th>Access</th></tr>
+        <tr><td><strong>Admin</strong></td><td>Full access to all pages and settings</td></tr>
+        <tr><td><strong>Cashier</strong></td><td>POS only - can process sales but not manage products or settings</td></tr>
+    </table>
+    
+    <h3>1.3 Navigation</h3>
+    <p>Use the sidebar to navigate between pages. On mobile, tap the hamburger menu (☰) to open the sidebar.</p>
+    
+    <h3>1.4 Installing as App (PWA)</h3>
+    <p>SokoPulse can be installed as a standalone app on your device:</p>
+    <div class="step"><strong>Chrome/Edge:</strong> Look for the install icon in address bar, or Menu → Install app</div>
+    <div class="step"><strong>Safari (iOS):</strong> Share → Add to Home Screen</div>
+    <div class="step"><strong>Android:</strong> Menu → Add to Home Screen</div>
+    <p>Once installed, the app opens in its own window without browser UI.</p>
+
+    <h3>1.5 Sync Status</h3>
+    <p>The topbar shows your connection status:</p>
+    <ul>
+        <li><strong>Online</strong> (green) - Connected and synced</li>
+        <li><strong>Offline</strong> (red) - Working offline, transactions queued</li>
+        <li><strong>Syncing (X)</strong> (yellow) - X transactions waiting to sync</li>
+    </ul>
+</div>
+
+<!-- 2. POS -->
+<div class="card" id="pos">
+    <h2>2. Point of Sale (POS)</h2>
+    <p>The POS page is where you make sales. This is the main screen for cashiers.</p>
+    
+    <h3>2.1 Making a Sale</h3>
+    <div class="step">Click on a product to add it to the cart</div>
+    <div class="step">Use the search bar to find products quickly</div>
+    <div class="step">Filter by category using the category buttons</div>
+    <div class="step">Adjust quantity using + and − buttons</div>
+    <div class="step">Apply item discount using the % field</div>
+    <div class="step">Select a customer (or leave as Walk-in)</div>
+    <div class="step">Click the payment method button</div>
+    <div class="step">Complete the payment</div>
+    <div class="step">Receipt prints automatically with eTIMS QR code</div>
+    
+    <h3>2.2 Payment Methods</h3>
+    <table>
+        <tr><th>Button</th><th>Description</th></tr>
+        <tr><td><strong>Cash</strong></td><td>Opens cash tender modal - enter amount received, shows change</td></tr>
+        <tr><td><strong>M-Pesa</strong></td><td>Mobile money payment</td></tr>
+        <tr><td><strong>Card</strong></td><td>Card payment</td></tr>
+        <tr><td><strong>Credit</strong></td><td>Credit sale (requires registered customer with credit limit)</td></tr>
+        <tr><td><strong>Bank</strong></td><td>Bank transfer</td></tr>
+    </table>
+    
+    <h3>2.3 Cash Payment</h3>
+    <div class="step">Click <strong>Cash</strong> button</div>
+    <div class="step">Enter amount received from customer</div>
+    <div class="step">System calculates change automatically</div>
+    <div class="step">Click <strong>Confirm Payment</strong></div>
+    
+    <h3>2.4 Credit Sale</h3>
+    <div class="warning">Credit sales require a registered customer with a credit limit.</div>
+    <div class="step">Select a customer from the dropdown</div>
+    <div class="step">The credit info bar shows current credit and limit</div>
+    <div class="step">Click <strong>Credit</strong> button</div>
+    <div class="step">System checks credit limit before processing</div>
+    
+    <h3>2.5 Hold Order</h3>
+    <p>Use this when a customer needs to pause their purchase:</p>
+    <div class="step">Click <strong>Hold</strong> button</div>
+    <div class="step">Enter an optional note</div>
+    <div class="step">Order is saved in <strong>Held Orders</strong> section</div>
+    <div class="step">Click <strong>Retrieve</strong> to restore the held order</div>
+    
+    <h3>2.6 Receipt</h3>
+    <p>After payment, the receipt preview shows:</p>
+    <ul>
+        <li>Store name, address, phone, email</li>
+        <li>Order number, date, cashier, customer</li>
+        <li>Item details with unit price and total</li>
+        <li>Subtotal, tax, total</li>
+        <li>Payment method and change</li>
+        <li><strong>eTIMS Information</strong> - Invoice number, CU serial, QR code</li>
+    </ul>
+    
+    <h3>2.7 Cart Options</h3>
+    <table>
+        <tr><th>Button</th><th>Action</th></tr>
+        <tr><td><strong>Clear all</strong></td><td>Remove all items from cart</td></tr>
+        <tr><td><strong>Print</strong></td><td>Preview and print receipt</td></tr>
+        <tr><td><strong>Void</strong></td><td>Cancel the entire transaction</td></tr>
+        <tr><td><strong>Hold</strong></td><td>Save cart for later</td></tr>
+    </table>
+    
+    <h3>2.8 Retail vs Wholesale Mode</h3>
+    <p>Toggle between <strong>Retail</strong> and <strong>Wholesale</strong> prices using the mode toggle at the top. Wholesale prices apply automatically when in wholesale mode.</p>
+    
+    <h3>2.9 Keyboard Shortcuts</h3>
+    <table>
+        <tr><th>Shortcut</th><th>Action</th></tr>
+        <tr><td><code>Ctrl + Shift + C</code></td><td>Clear cart</td></tr>
+        <tr><td><code>Ctrl + Shift + P</code></td><td>Print receipt</td></tr>
+        <tr><td><code>Esc</code></td><td>Close any open modal</td></tr>
+    </table>
+</div>
+
+<!-- 3. PRODUCTS -->
+<div class="card" id="products">
+    <h2>3. Products</h2>
+    <p>Manage your product catalog here.</p>
+    
+    <h3>3.1 Adding a Product</h3>
+    <div class="step">Click <strong>Add Product</strong></div>
+    <div class="step">Fill in product details:
+        <ul>
+            <li><strong>Product Name</strong> (required)</li>
+            <li><strong>SKU</strong> - unique product code</li>
+            <li><strong>Barcode</strong> - scan barcode</li>
+            <li><strong>Retail Price</strong> (required)</li>
+            <li><strong>Wholesale Price</strong> - optional</li>
+            <li><strong>Current Stock</strong> - initial stock quantity</li>
+            <li><strong>Min Stock Alert</strong> - alert when stock falls below</li>
+            <li><strong>Category</strong> - select from categories</li>
+            <li><strong>HS Code</strong> - for eTIMS compliance</li>
+            <li><strong>Tax Type</strong> - VAT, Exempt, or Zero-rated</li>
+            <li><strong>Unit of Measure</strong> - pcs, kg, L, etc.</li>
+            <li><strong>Expiry Date</strong> - for perishable goods</li>
+            <li><strong>Product Image</strong> - optional photo</li>
+        </ul>
+    </div>
+    <div class="step">Click <strong>Save Product</strong></div>
+    
+    <h3>3.2 Editing a Product</h3>
+    <div class="step">Click <strong>Edit</strong> on any product row</div>
+    <div class="step">Modify fields as needed</div>
+    <div class="step">Click <strong>Save Product</strong></div>
+    <div class="warning">Only admins can lower prices. Cashiers will be blocked from reducing prices.</div>
+
+    <h3>3.3 Understanding Cost Price vs Retail Price</h3>
+    <table>
+        <tr><th>Field</th><th>Description</th><th>Used For</th></tr>
+        <tr><td><strong>Cost Price</strong></td><td>What YOU pay the supplier per unit</td><td>Profit reports, stock valuation</td></tr>
+        <tr><td><strong>Retail Price</strong></td><td>What CUSTOMER pays (VAT-inclusive)</td><td>Selling to walk-in customers</td></tr>
+        <tr><td><strong>Wholesale Price</strong></td><td>Discounted price for bulk buyers</td><td>Wholesale mode sales</td></tr>
+    </table>
+    
+    <h4>Example:</h4>
+    <div class="info">
+        Sugar 1kg — You buy from supplier at <strong>KES 100</strong> (cost), sell at <strong>KES 160</strong> (retail).<br>
+        Your profit per unit = 160 - 100 = <strong>KES 60</strong>.
+    </div>
+
+    <h4>When to Update Cost Price:</h4>
+    <ul>
+        <li>Supplier increases/decreases their price</li>
+        <li>You buy from a different supplier at a different rate</li>
+        <li>You want accurate profit reports</li>
+    </ul>
+    
+    <div class="step">Go to <strong>Products</strong></div>
+    <div class="step">Click <strong>Edit</strong> on the product</div>
+    <div class="step">Update the <strong>Cost Price</strong> field</div>
+    <div class="step">Click <strong>Save Product</strong></div>
+    
+    <div class="warning">
+        <strong>Note:</strong> When receiving stock, the cost you enter is for that <strong>batch only</strong> (tracked in stock history). To update the product's main cost price, edit it in the <strong>Products</strong> page.
+    </div>
+
+    <h4>Stock Valuation</h4>
+    <p>Your total stock value = (Cost Price × Current Stock) for each product. This is shown on the Dashboard.</p>
+
+    <h4>Profit Reports</h4>
+    <p>The <strong>Profit/Loss</strong> report uses Cost Price to calculate:</p>
+    <ul>
+        <li><strong>Gross Profit</strong> = Revenue − (Cost Price × Quantity Sold)</li>
+        <li><strong>Margin %</strong> = (Gross Profit ÷ Revenue) × 100</li>
+    </ul>
+
+    <h3>3.4 Deleting a Product</h3>
+    <div class="step">Click <strong>Delete</strong> on a product row</div>
+    <div class="step">Confirm deletion</div>
+    <div class="danger">Deletion is permanent and cannot be undone.</div>
+
+    <h3>3.5 Bulk Add Products</h3>
+    <div class="step">Click <strong>Bulk Add</strong></div>
+    <div class="step">Fill in multiple product rows</div>
+    <div class="step">Click <strong>Add Another Product</strong> for more rows</div>
+    <div class="step">Click <strong>Add All Products</strong> to save</div>
+
+    <h3>3.6 Bulk Delete Products</h3>
+    <div class="step">Click <strong>Bulk Delete</strong></div>
+    <div class="step">Check products to delete</div>
+    <div class="step">Click <strong>Delete Selected</strong></div>
+
+    <h3>3.7 Bulk Tax Update</h3>
+    <p>Set tax types for multiple products at once:</p>
+    <div class="step">Click <strong>Bulk Tax Update</strong></div>
+    <div class="step">Select products to update</div>
+    <div class="step">Choose tax type (VAT, Exempt, Zero-rated)</div>
+    <div class="step">Click <strong>Apply to Selected</strong></div>
+
+    <h3>3.8 Quick Image Add</h3>
+    <div class="step">Click <strong>Image</strong> on a product row</div>
+    <div class="step">Select an image file</div>
+    <div class="step">Image is saved to the product</div>
+
+    <h3>3.9 Export Products</h3>
+    <div class="step">Click <strong>Export</strong></div>
+    <div class="step">CSV file downloads with all product data</div>
+
+    <h3>3.10 Filters</h3>
+    <ul>
+        <li><strong>Search</strong> - by name or SKU</li>
+        <li><strong>Category filter</strong> - show only specific category</li>
+        <li><strong>Status filter</strong> - All, In Stock, Low Stock, Out of Stock</li>
+    </ul>
+    
+    <h3>3.3 Deleting a Product</h3>
+    <div class="step">Click <strong>Delete</strong> on a product row</div>
+    <div class="step">Confirm deletion</div>
+    <div class="danger">Deletion is permanent and cannot be undone.</div>
+    
+    <h3>3.4 Bulk Add Products</h3>
+    <div class="step">Click <strong>Bulk Add</strong></div>
+    <div class="step">Fill in multiple product rows</div>
+    <div class="step">Click <strong>Add Another Product</strong> for more rows</div>
+    <div class="step">Click <strong>Add All Products</strong> to save</div>
+    
+    <h3>3.5 Bulk Delete Products</h3>
+    <div class="step">Click <strong>Bulk Delete</strong></div>
+    <div class="step">Check products to delete</div>
+    <div class="step">Click <strong>Delete Selected</strong></div>
+    
+    <h3>3.6 Bulk Tax Update</h3>
+    <p>Set tax types for multiple products at once:</p>
+    <div class="step">Click <strong>Bulk Tax Update</strong></div>
+    <div class="step">Select products to update</div>
+    <div class="step">Choose tax type (VAT, Exempt, Zero-rated)</div>
+    <div class="step">Click <strong>Apply to Selected</strong></div>
+    
+    <h3>3.7 Quick Image Add</h3>
+    <div class="step">Click <strong>Image</strong> on a product row</div>
+    <div class="step">Select an image file</div>
+    <div class="step">Image is saved to the product</div>
+    
+    <h3>3.8 Export Products</h3>
+    <div class="step">Click <strong>Export</strong></div>
+    <div class="step">CSV file downloads with all product data</div>
+    
+    <h3>3.9 Filters</h3>
+    <ul>
+        <li><strong>Search</strong> - by name or SKU</li>
+        <li><strong>Category filter</strong> - show only specific category</li>
+        <li><strong>Status filter</strong> - All, In Stock, Low Stock, Out of Stock</li>
+    </ul>
+</div>
+
+<!-- 4. STOCK -->
+<div class="card" id="stock">
+    <h2>4. Stock Management</h2>
+    <p>Track and manage your inventory levels.</p>
+    
+    <h3>4.1 Tabs</h3>
+    <ul>
+        <li><strong>Stock Levels</strong> - Current stock for all products</li>
+        <li><strong>Movements</strong> - History of all stock changes</li>
+        <li><strong>Product Summary</strong> - Detailed stats for a specific product</li>
+    </ul>
+    
+    <h3>4.2 Receive Stock</h3>
+    <div class="info">
+        The cost price you enter when receiving stock is saved as the <strong>batch cost</strong> for that delivery. 
+        It does NOT change the product's main cost price. To update the product's cost, edit it in <strong>Products</strong>.
+    </div>
+    <p>Use when new stock arrives from supplier:</p>
+    <div class="step">Click <strong>Receive Stock</strong></div>
+    <div class="step">Select product</div>
+    <div class="step">Enter quantity received</div>
+    <div class="step">Enter cost price (optional)</div>
+    <div class="step">Enter supplier and invoice number (optional)</div>
+    <div class="step">Enter batch number and expiry date (optional)</div>
+    <div class="step">Click <strong>Receive Stock</strong></div>
+    
+    <h3>4.3 Adjust Stock</h3>
+    <p>Use for damages, losses, or corrections:</p>
+    <div class="step">Click <strong>Adjust Stock</strong></div>
+    <div class="step">Select product</div>
+    <div class="step">Choose adjustment type: Increase, Decrease, or Set</div>
+    <div class="step">Enter quantity</div>
+    <div class="step">Select reason (Damaged, Expired, Theft, Correction, Returned)</div>
+    <div class="step">Click <strong>Adjust Stock</strong></div>
+    
+    <h3>4.4 Bulk Adjust</h3>
+    <div class="step">Click <strong>Bulk Adjust</strong></div>
+    <div class="step">Select multiple products</div>
+    <div class="step">Choose adjustment type and quantity</div>
+    <div class="step">Click <strong>Apply to Selected</strong></div>
+    
+    <h3>4.5 Stock Movement Types</h3>
+    <table>
+        <tr><th>Type</th><th>Description</th></tr>
+        <tr><td><strong>Receive</strong></td><td>Stock received from supplier</td></tr>
+        <tr><td><strong>Sold</strong></td><td>Stock sold to customer</td></tr>
+        <tr><td><strong>Adjust</strong></td><td>Manual adjustment (damage, loss, correction)</td></tr>
+        <tr><td><strong>Return</strong></td><td>Stock returned from customer</td></tr>
+    </table>
+    
+    <h3>4.6 Product History</h3>
+    <div class="step">Click <strong>History</strong> on any product row</div>
+    <div class="step">View all stock movements for that product</div>
+</div>
+
+<!-- 5. ORDERS -->
+<div class="card" id="orders">
+    <h2>5. Orders</h2>
+    <p>View and manage all sales transactions.</p>
+    
+    <h3>5.1 Viewing Orders</h3>
+    <div class="step">Go to <strong>Orders</strong></div>
+    <div class="step">All orders are listed with: Order #, Customer, Date, Total, Status</div>
+    <div class="step">Use search to find orders by order number or customer name</div>
+    <div class="step">Filter by status: All, Completed, Pending, Processing, Cancelled</div>
+    
+    <h3>5.2 Order Actions</h3>
+    <table>
+        <tr><th>Button</th><th>Action</th></tr>
+        <tr><td><strong>View</strong></td><td>See full order details with items</td></tr>
+        <tr><td><strong>Reprint</strong></td><td>Print receipt again</td></tr>
+        <tr><td><strong>Status</strong></td><td>Change order status</td></tr>
+    </table>
+    
+    <h3>5.3 Order Details</h3>
+    <p>Click <strong>View</strong> to see:</p>
+    <ul>
+        <li>Customer, date, payment method, status</li>
+        <li>Items with unit price (@ KES X.XX x Qty)</li>
+        <li>Total amount</li>
+        <li>eTIMS status and invoice number</li>
+    </ul>
+    
+    <h3>5.4 Bulk Print</h3>
+    <div class="step">Click <strong>Bulk Print</strong></div>
+    <div class="step">All filtered orders are shown in preview</div>
+    <div class="step">Click <strong>Print All</strong> to print all receipts</div>
+    
+    <h3>5.5 Export Orders</h3>
+    <div class="step">Click <strong>Export CSV</strong></div>
+    <div class="step">CSV file downloads with all order data</div>
+</div>
+
+<!-- 6. CUSTOMERS -->
+<div class="card" id="customers">
+    <h2>6. Customers</h2>
+    <p>Manage your customer database.</p>
+    
+    <h3>6.1 Adding a Customer</h3>
+    <div class="step">Click <strong>Add Customer</strong></div>
+    <div class="step">Fill in:
+        <ul>
+            <li><strong>Full Name</strong> (required)</li>
+            <li><strong>Phone Number</strong> (required)</li>
+            <li><strong>Email</strong></li>
+            <li><strong>Address</strong></li>
+            <li><strong>KRA PIN</strong> - for eTIMS B2B sales</li>
+            <li><strong>Credit Limit</strong> - maximum credit allowed</li>
+            <li><strong>Current Credit</strong> - current balance</li>
+        </ul>
+    </div>
+    <div class="step">Click <strong>Save Customer</strong></div>
+    
+    <h3>6.2 Customer Stats</h3>
+    <p>Top of the page shows:</p>
+    <ul>
+        <li><strong>Total Customers</strong></li>
+        <li><strong>Total Credit</strong> - sum of all customer credit</li>
+        <li><strong>Total Spent</strong> - total revenue from customers</li>
+    </ul>
+    
+    <h3>6.3 Credit Status</h3>
+    <p>Each customer has a credit badge:</p>
+    <ul>
+        <li><strong>Green (Good)</strong> - Under 70% of credit limit</li>
+        <li><strong>Orange (High Credit)</strong> - 70-90% of limit</li>
+        <li><strong>Red (Max Credit)</strong> - At or over limit</li>
+    </ul>
+    
+    <h3>6.4 Customer Actions</h3>
+    <table>
+        <tr><th>Button</th><th>Action</th></tr>
+        <tr><td><strong>View</strong></td><td>See full customer details</td></tr>
+        <tr><td><strong>Edit</strong></td><td>Modify customer info</td></tr>
+        <tr><td><strong>Delete</strong></td><td>Remove customer</td></tr>
+    </table>
+</div>
+
+<!-- 7. RETURNS -->
+<div class="card" id="returns">
+    <h2>7. Returns</h2>
+    <p>Process customer returns and refunds.</p>
+    
+    <h3>7.1 Creating a Return</h3>
+    <div class="step">Go to <strong>Returns</strong></div>
+    <div class="step">Click <strong>New Return</strong></div>
+    <div class="step">Search and select the original order</div>
+    <div class="step">Check items to return</div>
+    <div class="step">Select reason (Damaged, Wrong Item, Cancelled, Expired, Other)</div>
+    <div class="step">Enter notes (optional)</div>
+    <div class="step">Select refund method (Cash, M-Pesa, Card, Credit)</div>
+    <div class="step">Click <strong>Process Return</strong></div>
+    
+    <h3>7.2 Approving Returns</h3>
+    <div class="warning">Only admins can approve returns.</div>
+    <div class="step">Find the pending return</div>
+    <div class="step">Click <strong>Approve</strong> or <strong>Reject</strong></div>
+    <div class="step">On approval, stock is automatically restored</div>
+    <div class="step">Customer credit is updated if refund method is Credit</div>
+    
+    <h3>7.3 Return Status</h3>
+    <table>
+        <tr><th>Status</th><th>Meaning</th></tr>
+        <tr><td><strong>Pending</strong></td><td>Waiting for admin approval</td></tr>
+        <tr><td><strong>Approved</strong></td><td>Stock restored, credit updated</td></tr>
+        <tr><td><strong>Rejected</strong></td><td>Return denied</td></tr>
+    </table>
+</div>
+
+<!-- 8. REPORTS -->
+<div class="card" id="reports">
+    <h2>8. Reports</h2>
+    <p>Analytics and business insights.</p>
+    
+    <h3>8.1 Date Filter</h3>
+    <p>All reports have a date range filter:</p>
+    <ul>
+        <li>Today, Yesterday, Last 7 Days, Last 30 Days, Last 90 Days, Last Year</li>
+        <li>Custom range - pick any start and end date</li>
+    </ul>
+    
+    <h3>8.2 Report Tabs</h3>
+    <table>
+        <tr><th>Tab</th><th>Shows</th></tr>
+        <tr><td><strong>Sales</strong></td><td>Total revenue, orders, average order, best day, daily trend</td></tr>
+        <tr><td><strong>Products</strong></td><td>Top selling products, quantities, revenue</td></tr>
+        <tr><td><strong>Payments</strong></td><td>Breakdown by payment method (Cash, M-Pesa, Card, Credit)</td></tr>
+        <tr><td><strong>Customers</strong></td><td>Top customers by spending, order counts</td></tr>
+        <tr><td><strong>Profit/Loss</strong></td><td>Revenue, COGS, gross profit, margin, profit by product</td></tr>
+        <tr><td><strong>Tax Report</strong></td><td>VAT collected, taxable sales, exempt sales, zero-rated sales</td></tr>
+    </table>
+    
+    <h3>8.3 Export Reports</h3>
+    <div class="step">Select report tab</div>
+    <div class="step">Set date range</div>
+    <div class="step">Click <strong>Export</strong></div>
+    <div class="step">Text file downloads with report data</div>
+</div>
+
+<!-- 9. AUDIT LOG -->
+<div class="card" id="audit">
+    <h2>9. Audit Log</h2>
+    <p>Track all system activities for accountability.</p>
+    
+    <h3>9.1 What's Logged</h3>
+    <table>
+        <tr><th>Action</th><th>Description</th></tr>
+        <tr><td><strong>Login</strong></td><td>User logged in</td></tr>
+        <tr><td><strong>Sale</strong></td><td>Sale completed</td></tr>
+        <tr><td><strong>Return</strong></td><td>Return processed</td></tr>
+        <tr><td><strong>Adjust</strong></td><td>Stock adjusted</td></tr>
+        <tr><td><strong>Delete</strong></td><td>Record deleted</td></tr>
+        <tr><td><strong>Update</strong></td><td>Record updated</td></tr>
+        <tr><td><strong>Credit</strong></td><td>Credit sale</td></tr>
+    </table>
+    
+    <h3>9.2 Viewing Logs</h3>
+    <div class="step">Go to <strong>Audit</strong></div>
+    <div class="step">Use date filter to narrow down</div>
+    <div class="step">Use search to find specific actions</div>
+    <div class="step">Filter by action type</div>
+    
+    <h3>9.3 Export Audit</h3>
+    <div class="step">Click <strong>Export CSV</strong></div>
+    <div class="step">CSV file downloads with all audit records</div>
+</div>
+
+<!-- 10. CATEGORIES -->
+<div class="card" id="categories">
+    <h2>10. Categories</h2>
+    <p>Organize your products into categories.</p>
+    
+    <h3>10.1 Adding a Category</h3>
+    <div class="step">Go to <strong>Categories</strong></div>
+    <div class="step">Click <strong>Add Category</strong></div>
+    <div class="step">Enter category name</div>
+    <div class="step">Choose an icon (emoji or text)</div>
+    <div class="step">Pick a color</div>
+    <div class="step">Click <strong>Save Category</strong></div>
+    
+    <h3>10.2 Editing a Category</h3>
+    <div class="step">Click <strong>Edit</strong> on a category card</div>
+    <div class="step">Modify details</div>
+    <div class="step">Click <strong>Save Category</strong></div>
+    
+    <h3>10.3 Deleting a Category</h3>
+    <div class="step">Click <strong>Delete</strong> on a category card</div>
+    <div class="step">Confirm deletion</div>
+    <div class="warning">If products are assigned to this category, they will become uncategorized.</div>
+</div>
+
+<!-- 11. SUPPLIERS -->
+<div class="card" id="suppliers">
+    <h2>11. Suppliers</h2>
+    <p>Manage your supplier database.</p>
+    
+    <h3>11.1 Adding a Supplier</h3>
+    <div class="step">Go to <strong>Suppliers</strong></div>
+    <div class="step">Click <strong>Add Supplier</strong></div>
+    <div class="step">Enter:
+        <ul>
+            <li><strong>Supplier Name</strong> (required)</li>
+            <li><strong>Contact Person</strong></li>
+            <li><strong>Phone</strong> (required)</li>
+            <li><strong>Email</strong></li>
+            <li><strong>Address</strong></li>
+            <li><strong>Notes</strong></li>
+        </ul>
+    </div>
+    <div class="step">Click <strong>Save Supplier</strong></div>
+    
+    <h3>11.2 Supplier Actions</h3>
+    <table>
+        <tr><th>Button</th><th>Action</th></tr>
+        <tr><td><strong>View</strong></td><td>See supplier details</td></tr>
+        <tr><td><strong>Edit</strong></td><td>Modify supplier info</td></tr>
+        <tr><td><strong>Delete</strong></td><td>Remove supplier</td></tr>
+    </table>
+</div>
+
+<!-- 12. EXPIRY -->
+<div class="card" id="expiry">
+    <h2>12. Expiry Tracking</h2>
+    <p>Monitor products approaching their expiry dates.</p>
+    
+    <h3>12.1 Expiry Categories</h3>
+    <table>
+        <tr><th>Category</th><th>Color</th><th>Description</th></tr>
+        <tr><td><strong>Expired</strong></td><td>Red</td><td>Already expired</td></tr>
+        <tr><td><strong>Expiring Soon</strong></td><td>Orange</td><td>Expiring within 7 days</td></tr>
+        <tr><td><strong>Good</strong></td><td>Green</td><td>More than 7 days left</td></tr>
+    </table>
+    
+    <h3>12.2 Viewing Expiry Status</h3>
+    <p>The table shows all products with expiry dates, sorted by nearest expiry first. Columns include:</p>
+    <ul>
+        <li>Product name</li>
+        <li>SKU</li>
+        <li>Current stock</li>
+        <li>Expiry date</li>
+        <li>Days left</li>
+        <li>Status badge</li>
+    </ul>
+    
+    <h3>12.3 Setting Expiry Dates</h3>
+    <p>Set expiry dates when adding/editing products in the <strong>Products</strong> page.</p>
+</div>
+
+<!-- 13. DASHBOARD -->
+<div class="card" id="dashboard">
+    <h2>13. Dashboard</h2>
+    <p>Your business at a glance.</p>
+    
+    <h3>13.1 Key Metrics</h3>
+    <table>
+        <tr><th>Metric</th><th>Shows</th></tr>
+        <tr><td><strong>Today's Sales</strong></td><td>Revenue from today</td></tr>
+        <tr><td><strong>Orders Today</strong></td><td>Number of orders today</td></tr>
+        <tr><td><strong>Total Products</strong></td><td>Number of products</td></tr>
+        <tr><td><strong>Low Stock</strong></td><td>Products below minimum stock</td></tr>
+        <tr><td><strong>Expiring Soon</strong></td><td>Products expiring within 7 days</td></tr>
+        <tr><td><strong>Total Revenue</strong></td><td>All-time revenue</td></tr>
+    </table>
+    
+    <h3>13.2 Charts</h3>
+    <ul>
+        <li><strong>Daily Sales Trend</strong> - Last 7 days bar chart</li>
+        <li><strong>Top Selling Products</strong> - This week's best sellers</li>
+        <li><strong>Recent Orders</strong> - Last 5 orders</li>
+    </ul>
+    
+    <h3>13.3 Quick Actions</h3>
+    <ul>
+        <li><strong>New Sale</strong> - Go to POS</li>
+        <li><strong>View Orders</strong> - Go to Orders</li>
+        <li><strong>Manage Products</strong> - Go to Products</li>
+        <li><strong>Receive Stock</strong> - Go to Stock</li>
+    </ul>
+    
+    <h3>13.4 Stock Valuation</h3>
+    <p>Shows total stock value (cost price × current stock), products count, low stock count, out of stock count.</p>
+</div>
+
+<!-- 14. SETTINGS -->
+<div class="card" id="settings">
+    <h2>14. Settings</h2>
+    <p>Configure your POS system.</p>
+    
+    <h3>14.1 License Activation</h3>
+    <div class="step">Enter activation code</div>
+    <div class="step">Click <strong>Activate License</strong></div>
+    <div class="step">System shows license status and expiry</div>
+    <div class="info">License warning shows when 2 days or less remain.</div>
+    
+    <h3>14.2 Tax Settings</h3>
+    <div class="step">Enable/Disable Tax</div>
+    <div class="step">Set Tax Rate (default 16%)</div>
+    <div class="step">Set Tax Name (default VAT)</div>
+    <div class="step">Click <strong>Save Tax Settings</strong></div>
+    
+    <h3>14.3 Store Information</h3>
+    <div class="step">Store Name</div>
+    <div class="step">Address</div>
+    <div class="step">Phone</div>
+    <div class="step">Email</div>
+    <div class="step">Business KRA PIN (for eTIMS)</div>
+    <div class="step">eTIMS Username</div>
+    <div class="step">eTIMS Password</div>
+    <div class="step">CU Serial Number</div>
+    <div class="step">Click <strong>Save Store Info</strong></div>
+    
+    <h3>14.4 Payment Methods</h3>
+    <p>Enable/disable payment methods using toggle switches:</p>
+    <ul>
+        <li>Cash, M-Pesa, Card, Credit, Bank Transfer</li>
+    </ul>
+    <div class="step">Toggle methods on/off</div>
+    <div class="step">Click <strong>Save Payment Settings</strong></div>
+    
+    <h3>14.5 Receipt Customization</h3>
+    <div class="step">Receipt Footer message</div>
+    <div class="step">Show Tax Breakdown</div>
+    <div class="step">Show Discount Applied</div>
+    <div class="step">Show Customer Name</div>
+    <div class="step">Show Cashier Name</div>
+    <div class="step">Click <strong>Save Receipt Settings</strong></div>
+    <div class="step">Click <strong>Test Receipt</strong> to preview</div>
+    
+    <h3>14.6 Printer Settings</h3>
+    <div class="step">Select Printer Mode (Browser, USB, Bluetooth)</div>
+    <div class="step">Select Paper Width (58mm or 80mm)</div>
+    <div class="step">Click <strong>Connect Printer</strong></div>
+    <div class="step">Click <strong>Test Print</strong> to verify</div>
+    
+    <h3>14.7 Users</h3>
+    <div class="step">View all users</div>
+    <div class="step">Add new user (username, password, role)</div>
+    <div class="step">Reset user password</div>
+    <div class="step">Delete user (except admin)</div>
+    
+    <h3>14.8 eTIMS Sync Status</h3>
+    <p>Shows counts of:</p>
+    <ul>
+        <li><strong>Synced</strong> - Successfully sent to eTIMS</li>
+        <li><strong>Pending</strong> - Waiting to sync</li>
+        <li><strong>Failed</strong> - Sync failed</li>
+    </ul>
+    <div class="step">Click <strong>Refresh Status</strong> to update</div>
+    <div class="step">View list of recent invoices and their status</div>
+    
+    <h3>14.9 Change Password</h3>
+    <div class="step">Go to <strong>Settings → Users</strong></div>
+    <div class="step">Click <strong>Change My Password</strong></div>
+    <div class="step">Enter current password</div>
+    <div class="step">Enter new password (min 8 chars, 1 uppercase, 1 lowercase, 1 number)</div>
+    <div class="step">Confirm new password</div>
+    <div class="step">Click <strong>Change Password</strong></div>
+    <div class="info">Password strength meter shows real-time validation</div>
+
+    <h3>14.10 Receipt Customization</h3>
+    <table>
+        <tr><th>Setting</th><th>Effect</th></tr>
+        <tr><td>Receipt Footer</td><td>Custom message at bottom of receipts</td></tr>
+        <tr><td>Show Tax Breakdown</td><td>Display VAT line on receipt</td></tr>
+        <tr><td>Show Discount Applied</td><td>Show discount % on receipt</td></tr>
+        <tr><td>Show Customer Name</td><td>Display customer on receipt</td></tr>
+        <tr><td>Show Cashier Name</td><td>Display cashier on receipt</td></tr>
+        <tr><td>Show eTIMS Info</td><td>Enable only if KRA integration is active</td></tr>
+    </table>
+
+    <h3>14.11 Tax Types</h3>
+    <p>Each product has a tax type that determines VAT calculation:</p>
+    <table>
+        <tr><th>Type</th><th>VAT Rate</th><th>Examples</th></tr>
+        <tr><td><strong>VAT</strong></td><td>16%</td><td>Sugar, Oil, Electronics, Cosmetics</td></tr>
+        <tr><td><strong>Exempt</strong></td><td>0%</td><td>Bread, Milk, Medicine, Books</td></tr>
+        <tr><td><strong>Zero-rated</strong></td><td>0%</td><td>Exports, Agricultural inputs</td></tr>
+    </table>
+    <div class="info">Set tax type per product in <strong>Products</strong> page, or use <strong>Bulk Tax Update</strong> for multiple products.</div>
+
+    <h3>14.9 Backup & Restore</h3>
+    <div class="step">Click <strong>Export Backup</strong> to download JSON backup</div>
+    <div class="step">Click <strong>Restore</strong> to upload a backup file</div>
+    <div class="danger">Click <strong>Clear All Data</strong> to reset the system (use with extreme caution!)</div>
+</div>
+
+<!-- 15. eTIMS COMPLIANCE -->
+<div class="card" id="etims">
+    <h2>15. eTIMS Compliance</h2>
+    <div class="warning">eTIMS is mandatory for all businesses in Kenya. Receipts must have a QR code to be legally valid.</div>
+    
+    <h3>15.1 What is eTIMS?</h3>
+    <p>eTIMS (electronic Tax Invoice Management System) is KRA's system for electronic tax invoicing. All businesses must issue invoices through eTIMS.</p>
+    
+    <h3>15.2 Required Fields</h3>
+    <table>
+        <tr><th>Field</th><th>Where to Set</th></tr>
+        <tr><td>Business KRA PIN</td><td>Settings → Store Information</td></tr>
+        <tr><td>eTIMS Username</td><td>Settings → Store Information</td></tr>
+        <tr><td>eTIMS Password</td><td>Settings → Store Information</td></tr>
+        <tr><td>CU Serial</td><td>Settings → Store Information</td></tr>
+        <tr><td>Product HS Codes</td><td>Products → Add/Edit Product</td></tr>
+        <tr><td>Product Tax Types</td><td>Products → Add/Edit or Bulk Tax Update</td></tr>
+        <tr><td>Customer KRA PIN</td><td>Customers → Add/Edit Customer</td></tr>
+    </table>
+    
+    <h3>15.3 Tax Types</h3>
+    <table>
+        <tr><th>Type</th><th>VAT Rate</th><th>Examples</th></tr>
+        <tr><td><strong>VAT</strong></td><td>16%</td><td>Sugar, Oil, Electronics</td></tr>
+        <tr><td><strong>Exempt</strong></td><td>0%</td><td>Bread, Milk, Medicine</td></tr>
+        <tr><td><strong>Zero-rated</strong></td><td>0%</td><td>Exports, Agricultural inputs</td></tr>
+    </table>
+    
+    <h3>15.4 How It Works</h3>
+    <div class="step">Sale is made in POS</div>
+    <div class="step">Order is saved locally</div>
+    <div class="step">Invoice is sent to eTIMS (when online)</div>
+    <div class="step">eTIMS returns: CU Invoice Number, CU Serial, QR Code</div>
+    <div class="step">Receipt prints with QR code</div>
+    <div class="step">If offline, transaction is queued and synced later</div>
+    
+    <h3>15.5 eTIMS Sync Status</h3>
+    <p>View current sync status in <strong>Settings → eTIMS Sync Status</strong>:</p>
+    <ul>
+        <li><strong>Synced</strong> - Successfully sent to KRA</li>
+        <li><strong>Pending</strong> - Waiting to sync</li>
+        <li><strong>Failed</strong> - Sync failed, will retry</li>
+    </ul>
+    <div class="info">Click <strong>Refresh Status</strong> to update the list of recent invoices.</div>
+
+    <h3>15.6 Tax Filing Support</h3>
+    <p>Even without KRA integration, SokoPulse helps with tax filing:</p>
+    <div class="step">Go to <strong>Reports → Tax Filing</strong></div>
+    <div class="step">Select your filing period</div>
+    <div class="step">View VAT 3 return figures (taxable, exempt, zero-rated, VAT collected)</div>
+    <div class="step">View TOT payable (if applicable)</div>
+    <div class="step">View Income Tax summary (Revenue, COGS, Gross Profit)</div>
+    <div class="step">Copy figures directly into iTax when filing</div>
+    <div class="info">This eliminates manual calculations and reduces filing errors.</div>
+
+    <h3>15.7 Offline Mode</h3>
+    <p>Your POS works offline:</p>
+    <ul>
+        <li>Sales continue as normal</li>
+        <li>Transactions are queued for sync</li>
+        <li>When back online, they sync automatically</li>
+        <li>Check sync status in topbar or Settings</li>
+    </ul>
+    
+    <h3>15.6 QR Code</h3>
+    <p>Every receipt has a QR code that contains:</p>
+    <ul>
+        <li>Invoice number</li>
+        <li>CU serial</li>
+        <li>Date and amount</li>
+        <li>Business KRA PIN</li>
+    </ul>
+    <p>KRA and customers can scan this to verify the invoice.</p>
+</div>
+
+<!-- 16. PRINTER SETUP -->
+<div class="card" id="printer">
+    <h2>16. Printer Setup</h2>
+    
+    <h3>16.1 Browser Print (Any Printer)</h3>
+    <div class="step">Go to Settings → Printer Settings</div>
+    <div class="step">Set Printer Mode to "Browser Print"</div>
+    <div class="step">Set Paper Width (58mm or 80mm)</div>
+    <div class="step">Click Test Print</div>
+    <p>Works with any printer connected to your computer.</p>
+    
+    <h3>16.2 USB Thermal Printer</h3>
+    <div class="step">Connect printer via USB</div>
+    <div class="step">Go to Settings → Printer Settings</div>
+    <div class="step">Set Printer Mode to "USB Thermal Printer"</div>
+    <div class="step">Click Connect Printer</div>
+    <div class="step">Select your printer from the list</div>
+    <div class="step">Click Test Print</div>
+    
+    <h3>16.3 Bluetooth Thermal Printer</h3>
+    <div class="step">Pair printer with your device first (in OS settings)</div>
+    <div class="step">Go to Settings → Printer Settings</div>
+    <div class="step">Set Printer Mode to "Bluetooth Thermal Printer"</div>
+    <div class="step">Click Connect Printer</div>
+    <div class="step">Select your printer</div>
+    <div class="step">Click Test Print</div>
+    
+    <h3>16.4 Paper Width</h3>
+    <table>
+        <tr><th>Width</th><th>Characters</th><th>Use Case</th></tr>
+        <tr><td>58mm</td><td>32 chars</td><td>Small receipts, portable printers</td></tr>
+        <tr><td>80mm</td><td>48 chars</td><td>Standard receipts, counter printers</td></tr>
+    </table>
+</div>
+
+<!-- 17. TROUBLESHOOTING -->
+<div class="card" id="troubleshooting">
+    <h2>17. Troubleshooting</h2>
+    
+    <h3>Printer not working?</h3>
+    <ul>
+        <li>Check printer is connected and turned on</li>
+        <li>Try Browser Print mode as fallback</li>
+        <li>Ensure paper is loaded correctly</li>
+        <li>Some connections require HTTPS (not HTTP)</li>
+        <li>Check browser console (F12) for errors</li>
+    </ul>
+    
+    <h3>eTIMS not syncing?</h3>
+    <ul>
+        <li>Check internet connection</li>
+        <li>Verify eTIMS credentials in Settings</li>
+        <li>Check Settings → eTIMS Sync Status for pending items</li>
+        <li>Ensure business KRA PIN is set</li>
+        <li>Contact your administrator if issues persist</li>
+    </ul>
+    
+    <h3>License expired?</h3>
+    <ul>
+        <li>Contact your administrator for a new activation code</li>
+        <li>Go to Settings → License Activation</li>
+        <li>Enter the new code and click Activate</li>
+    </ul>
+    
+    <h3>Products not loading?</h3>
+    <ul>
+        <li>Refresh the page (Ctrl+Shift+R)</li>
+        <li>Check browser console (F12) for errors</li>
+        <li>Clear browser cache</li>
+    </ul>
+    
+    <h3>Receipt not printing QR code?</h3>
+    <ul>
+        <li>Ensure eTIMS credentials are configured</li>
+        <li>Check if transaction was synced to eTIMS</li>
+        <li>View Settings → eTIMS Sync Status</li>
+    </ul>
+    
+    <h3>Tax not calculating correctly?</h3>
+    <ul>
+        <li>Verify tax rate in Settings (should be 16 for VAT)</li>
+        <li>Check product tax types in Products page</li>
+        <li>Only VAT products should have tax applied</li>
+        <li>Use Bulk Tax Update to fix multiple products</li>
+    </ul>
+    
+    <h3>Customer credit not updating?</h3>
+    <ul>
+        <li>Credit sales require a registered customer</li>
+        <li>Check credit limit is set correctly</li>
+        <li>View customer details to see current credit</li>
+    </ul>
+</div>
+
+<!-- Footer -->
+<div class="card" style="text-align:center;color:#94a3b8;">
+    <p><strong>SokoPulse POS</strong> - Offline Retail System</p>
+    <p>Version 1.0 | Last updated: September 2026</p>
+    <div style="background:#f0fdf4;border-radius:8px;padding:16px;margin:16px 0;text-align:left;">
+        <p style="font-weight:700;color:#1a3c34;margin-bottom:8px;">For Support, Contact:</p>
+        <p style="margin:4px 0;"><strong>Email:</strong> <a href="mailto:sukanoelijah@gmail.com" style="color:#1a3c34;">sukanoelijah@gmail.com</a></p>
+        <p style="margin:4px 0;"><strong>Phone:</strong> <a href="tel:+254719750245" style="color:#1a3c34;">+254 719 750 245</a></p>
+    </div>
+    <a href="javascript:window.print()" class="btn">Print This Guide</a>
+</div>
+
+</body>
+</html>

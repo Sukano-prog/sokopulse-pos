@@ -5,6 +5,13 @@
     
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1a3c34">
+    <meta name="description" content="SokoPulse POS - Offline Point of Sale with eTIMS compliance">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="SokoPulse">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiB2aWV3Qm94PSIwIDAgMTkyIDE5MiI+PHJlY3Qgd2lkdGg9IjE5MiIgaGVpZ2h0PSIxOTIiIHJ4PSIzMiIgZmlsbD0iIzFhM2MzNCIvPjx0ZXh0IHg9Ijk2IiB5PSIxMjAiIGZvbnQtc2l6ZT0iODAiIGZvbnQtZmFtaWx5PSJBcmlhbCxzYW5zLXNlcmlmIiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0iI2Y1YTYyMyIgdGV4dC1hbmNob3I9Im1pZGRsZSI+U1A8L3RleHQ+PC9zdmc+">
     <title>Audit Log - SokoPulse</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
@@ -124,7 +131,7 @@
 
     <aside class="sidebar">
         <div class="logo"> <span>Soko</span>Pulse <button class="close-btn" onclick="toggleSidebar()">✕</button></div>
-        <nav>
+                <nav>
             <div class="nav-label">Main</div>
             <a href="pos.html"> POS</a>
             <a href="dashboard.html"> Dashboard</a>
@@ -138,12 +145,15 @@
             <div class="nav-label">Management</div>
             <a href="customers.html"> Customers</a>
             <a href="reports.html"> Reports</a>
-            <a href="audit.html" class="active"> Audit</a>
+            <a href="audit.html"> Audit</a>
             <a href="returns.html"> Returns</a>
             <a href="settings.html"> Settings</a>
         </nav>
-        <div class="user-section"><div class="name" id="userName">Administrator</div><div class="role" id="userRole">Admin</div></div>
-        <button class="logout-btn" onclick="logout()"> Logout</button>
+        <div class="user-section">
+            <div class="name" id="userName">Administrator</div>
+            <div class="role" id="userRole">Admin</div>
+        </div>
+        <button class="logout-btn" onclick="logout()">Logout</button>
     </aside>
 
     <main class="main-content">
@@ -453,6 +463,36 @@ if ('serviceWorker' in navigator) {
             })
             .catch(function(err) {
                 console.log(' Service Worker registration failed:', err);
+            });
+    });
+}
+</script>
+
+<script src="pwa-install.js"></script>
+<script>
+// ===== SERVICE WORKER REGISTRATION =====
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/sw.js')
+            .then(function(reg) {
+                console.log('Service Worker registered:', reg.scope);
+                
+                // Check for updates
+                reg.addEventListener('updatefound', function() {
+                    var newWorker = reg.installing;
+                    newWorker.addEventListener('statechange', function() {
+                        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                            // New version available
+                            if (confirm('A new version is available. Update now?')) {
+                                newWorker.postMessage({ type: 'SKIP_WAITING' });
+                                window.location.reload();
+                            }
+                        }
+                    });
+                });
+            })
+            .catch(function(err) {
+                console.log('Service Worker registration failed:', err);
             });
     });
 }

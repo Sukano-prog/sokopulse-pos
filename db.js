@@ -11,16 +11,17 @@ const DB_VERSION = 8;
     req.onupgradeneeded = function(e) {
         const db = e.target.result;
         const stores = {
-            'products': ['name', 'category', 'barcode', 'price'],
-            'customers': ['name', 'phone', 'email'],
-            'orders': ['order_number', 'customer_id', 'date', 'status'],
+            'products': ['name', 'category', 'barcode', 'price', 'hs_code', 'tax_type'],
+            'customers': ['name', 'phone', 'email', 'pin'],
+            'orders': ['order_number', 'customer_id', 'date', 'status', 'etims_status'],
             'returns': ['order_number', 'status', 'date'],
             'audit_log': ['user', 'action', 'date'],
             'stock_movements': ['product_id', 'type', 'date'],
             'settings': ['key'],
             'users': ['username', 'role'],
             'categories': ['name', 'parent_id'],
-            'revoked_licenses': ['key', 'machine_id']
+            'revoked_licenses': ['key', 'machine_id'],
+            'sync_queue': ['store', 'action', 'status', 'created_at']
         };
         for (const [name, indexes] of Object.entries(stores)) {
             if (!db.objectStoreNames.contains(name)) {
@@ -217,16 +218,17 @@ function openDB() {
             
             // ALL 8 STORES - CREATED AT ONCE
             const stores = {
-                'products': ['name', 'category', 'barcode', 'price'],
-                'customers': ['name', 'phone', 'email'],
-                'orders': ['order_number', 'customer_id', 'date', 'status'],
+                'products': ['name', 'category', 'barcode', 'price', 'hs_code', 'tax_type'],
+                'customers': ['name', 'phone', 'email', 'pin'],
+                'orders': ['order_number', 'customer_id', 'date', 'status', 'etims_status'],
                 'returns': ['order_number', 'status', 'date'],
                 'audit_log': ['user', 'action', 'date'],
                 'stock_movements': ['product_id', 'type', 'date'],
                 'settings': ['key'],
                 'users': ['username', 'role'],
                 'revoked_licenses': ['key', 'machine_id'],
-                'categories': ['name', 'parent_id']
+                'categories': ['name', 'parent_id'],
+                'sync_queue': ['store', 'action', 'status', 'created_at']
             };
             
             for (const [name, indexes] of Object.entries(stores)) {

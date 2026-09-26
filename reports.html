@@ -3,6 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1a3c34">
+    <meta name="description" content="SokoPulse POS - Offline Point of Sale with eTIMS compliance">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="SokoPulse">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiB2aWV3Qm94PSIwIDAgMTkyIDE5MiI+PHJlY3Qgd2lkdGg9IjE5MiIgaGVpZ2h0PSIxOTIiIHJ4PSIzMiIgZmlsbD0iIzFhM2MzNCIvPjx0ZXh0IHg9Ijk2IiB5PSIxMjAiIGZvbnQtc2l6ZT0iODAiIGZvbnQtZmFtaWx5PSJBcmlhbCxzYW5zLXNlcmlmIiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0iI2Y1YTYyMyIgdGV4dC1hbmNob3I9Im1pZGRsZSI+U1A8L3RleHQ+PC9zdmc+">
     <title>Reports - SokoPulse</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
@@ -259,7 +266,7 @@
 
     <aside class="sidebar">
         <div class="logo"> <span>Soko</span>Pulse <button class="close-btn" onclick="toggleSidebar()">✕</button></div>
-        <nav>
+                <nav>
             <div class="nav-label">Main</div>
             <a href="pos.html"> POS</a>
             <a href="dashboard.html"> Dashboard</a>
@@ -272,13 +279,16 @@
             <a href="suppliers.html"> Suppliers</a>
             <div class="nav-label">Management</div>
             <a href="customers.html"> Customers</a>
-            <a href="reports.html" class="active"> Reports</a>
+            <a href="reports.html"> Reports</a>
             <a href="audit.html"> Audit</a>
             <a href="returns.html"> Returns</a>
             <a href="settings.html"> Settings</a>
         </nav>
-        <div class="user-section"><div class="name" id="userName">Administrator</div><div class="role" id="userRole">Admin</div></div>
-        <button class="logout-btn" onclick="logout()"> Logout</button>
+        <div class="user-section">
+            <div class="name" id="userName">Administrator</div>
+            <div class="role" id="userRole">Admin</div>
+        </div>
+        <button class="logout-btn" onclick="logout()">Logout</button>
     </aside>
 
     <main class="main-content">
@@ -295,6 +305,8 @@
                 <button onclick="switchTab('payments')"> Payments</button>
                 <button onclick="switchTab('customers')"> Customers</button>
                 <button onclick="switchTab('profitloss')"> Profit/Loss</button>
+                <button onclick="switchTab('tax')"> Tax Report</button>
+                <button onclick="switchTab('taxfiling')"> Tax Filing</button>
             </div>
 
             <!-- Date Filter -->
@@ -374,6 +386,63 @@
             <div class="report-content" id="tab-profitloss">
                 <div id="profitLossResult"><div class="no-data">Select date range and click Apply</div></div>
             </div>
+
+<!-- Tax Filing Report -->
+<div class="report-content" id="tab-taxfiling">
+    <div class="report-stats">
+        <div class="report-stat"><div class="number" id="tfTotalSales">KES 0</div><div class="label">Total Sales</div></div>
+        <div class="report-stat"><div class="number" id="tfStandardRated">KES 0</div><div class="label">Standard Rated (16%)</div></div>
+        <div class="report-stat"><div class="number" id="tfVATCollected">KES 0</div><div class="label">VAT Collected</div></div>
+        <div class="report-stat"><div class="number" id="tfZeroRated">KES 0</div><div class="label">Zero-Rated</div></div>
+        <div class="report-stat"><div class="number" id="tfExempt">KES 0</div><div class="label">Exempt Sales</div></div>
+        <div class="report-stat"><div class="number" id="tfTurnover">KES 0</div><div class="label">Turnover</div></div>
+    </div>
+    
+    <div class="chart-container" id="taxFilingSummary">
+        <h4>Tax Filing Summary</h4>
+        <div id="taxFilingContent"><div class="no-data">Loading...</div></div>
+    </div>
+</div>
+
+<!-- Tax Report -->
+<div class="report-content" id="tab-tax">
+    <div class="report-stats">
+        <div class="report-stat">
+            <div class="number" id="totalVATCollected">KES 0</div>
+            <div class="label">VAT Collected</div>
+        </div>
+        <div class="report-stat">
+            <div class="number" id="totalTaxableSales">KES 0</div>
+            <div class="label">Taxable Sales</div>
+        </div>
+        <div class="report-stat">
+            <div class="number" id="totalExemptSales">KES 0</div>
+            <div class="label">Exempt Sales</div>
+        </div>
+        <div class="report-stat">
+            <div class="number" id="totalZeroRatedSales">KES 0</div>
+            <div class="label">Zero-Rated Sales</div>
+        </div>
+        <div class="report-stat">
+            <div class="number" id="totalTaxInvoices">0</div>
+            <div class="label">Invoices Issued</div>
+        </div>
+    </div>
+    
+    <div class="chart-container">
+        <h4>VAT Breakdown by Tax Type</h4>
+        <div id="taxBreakdown">
+            <div class="no-data">No tax data available</div>
+        </div>
+    </div>
+    
+    <div class="chart-container">
+        <h4>Tax Summary</h4>
+        <div id="taxSummaryTable">
+            <div class="no-data">No tax data available</div>
+        </div>
+    </div>
+</div>
         </div>
     </main>
 </div>
@@ -381,6 +450,9 @@
 
 <script src="db.js"></script>
 <script>
+var allOrders = [];
+var allProducts = [];
+var allCustomers = [];
 
 function isAdmin() {
     try {
@@ -498,7 +570,9 @@ function loadActiveReport() {
         'products': loadProductsReport,
         'payments': loadPaymentsReport,
         'customers': loadCustomersReport,
-        'profitloss': loadProfitLoss
+        'profitloss': loadProfitLoss,
+        'tax': loadTaxReport,
+        'taxfiling': loadTaxFilingReport
     };
     var fn = funcMap[currentTab];
     if (fn && typeof fn === 'function') {
@@ -774,6 +848,194 @@ function loadCustomersReport() {
 }
 
 // ===== PROFIT/LOSS REPORT =====
+function loadTaxFilingReport() {
+    console.log('Loading Tax Filing Report...');
+    var range = getDateRange();
+    if (!range.start || !range.end) {
+        setDefaultDates();
+        range = getDateRange();
+    }
+    
+    var orders = getFilteredOrders(range.start, range.end);
+    
+    // Get business PIN
+    var businessPin = 'P000000000X';
+    try {
+        var settings = JSON.parse(localStorage.getItem('pos_settings') || '{}');
+        businessPin = settings.business_pin || businessPin;
+    } catch(e) {}
+    
+    var totalSales = 0;
+    var standardRated = 0;
+    var vatCollected = 0;
+    var zeroRated = 0;
+    var exempt = 0;
+    var totalCOGS = 0;
+    var totalOrders = orders.length;
+    
+    orders.forEach(function(order) {
+        totalSales += order.total || 0;
+        if (!order.items) return;
+        var items = typeof order.items === 'string' ? JSON.parse(order.items) : order.items;
+        
+        items.forEach(function(item) {
+            var product = allProducts.find(function(p) { return p.id === item.id || p.name === item.name; });
+            var taxType = product ? (product.tax_type || 'VAT') : 'VAT';
+            var itemTotal = (item.price || 0) * (item.qty || 1) * (1 - (item.discount || 0) / 100);
+            
+            if (taxType === 'VAT') {
+                // VAT is included in price in Kenya, so we extract it
+                var netAmount = itemTotal / 1.16;
+                var vatAmount = itemTotal - netAmount;
+                standardRated += netAmount;
+                vatCollected += vatAmount;
+            } else if (taxType === 'ZERO') {
+                zeroRated += itemTotal;
+            } else if (taxType === 'EXEMPT') {
+                exempt += itemTotal;
+            }
+            
+            // COGS
+            if (product) {
+                totalCOGS += (product.cost_price || 0) * (item.qty || 1);
+            }
+        });
+    });
+    
+    var grossProfit = totalSales - totalCOGS;
+    var turnoverTax = totalSales * 0.015; // 1.5% TOT rate
+    
+    // Update stat cards
+    document.getElementById('tfTotalSales').textContent = 'KES ' + totalSales.toFixed(2);
+    document.getElementById('tfStandardRated').textContent = 'KES ' + standardRated.toFixed(2);
+    document.getElementById('tfVATCollected').textContent = 'KES ' + vatCollected.toFixed(2);
+    document.getElementById('tfZeroRated').textContent = 'KES ' + zeroRated.toFixed(2);
+    document.getElementById('tfExempt').textContent = 'KES ' + exempt.toFixed(2);
+    document.getElementById('tfTurnover').textContent = 'KES ' + totalSales.toFixed(2);
+    
+    // Build summary table
+    var container = document.getElementById('taxFilingContent');
+    container.innerHTML = 
+        '<div style="padding:16px;">' +
+            '<h4 style="color:#1a3c34;margin-bottom:12px;">VAT RETURN (VAT 3)</h4>' +
+            '<table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:20px;">' +
+                '<tr style="border-bottom:1px solid #e2e8f0;"><td style="padding:8px 0;">1. Total Sales (incl. VAT)</td><td style="padding:8px 0;text-align:right;font-weight:600;">KES ' + totalSales.toFixed(2) + '</td></tr>' +
+                '<tr style="border-bottom:1px solid #e2e8f0;"><td style="padding:8px 0;">2. Standard Rated Sales (16%)</td><td style="padding:8px 0;text-align:right;">KES ' + standardRated.toFixed(2) + '</td></tr>' +
+                '<tr style="border-bottom:1px solid #e2e8f0;"><td style="padding:8px 0;">3. VAT on Standard Rated</td><td style="padding:8px 0;text-align:right;color:#166534;font-weight:600;">KES ' + vatCollected.toFixed(2) + '</td></tr>' +
+                '<tr style="border-bottom:1px solid #e2e8f0;"><td style="padding:8px 0;">4. Zero-Rated Sales (0%)</td><td style="padding:8px 0;text-align:right;">KES ' + zeroRated.toFixed(2) + '</td></tr>' +
+                '<tr style="border-bottom:1px solid #e2e8f0;"><td style="padding:8px 0;">5. Exempt Sales</td><td style="padding:8px 0;text-align:right;">KES ' + exempt.toFixed(2) + '</td></tr>' +
+                '<tr style="border-top:2px solid #1a3c34;background:#f0fdf4;"><td style="padding:10px 0;font-weight:700;">NET VAT PAYABLE</td><td style="padding:10px 0;text-align:right;font-weight:700;color:#166534;">KES ' + vatCollected.toFixed(2) + '</td></tr>' +
+            '</table>' +
+            '<h4 style="color:#1a3c34;margin-bottom:12px;">TURNOVER TAX (if applicable)</h4>' +
+            '<table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:20px;">' +
+                '<tr style="border-bottom:1px solid #e2e8f0;"><td style="padding:8px 0;">Monthly Turnover</td><td style="padding:8px 0;text-align:right;">KES ' + totalSales.toFixed(2) + '</td></tr>' +
+                '<tr style="border-bottom:1px solid #e2e8f0;"><td style="padding:8px 0;">TOT Rate (1.5%)</td><td style="padding:8px 0;text-align:right;">KES ' + turnoverTax.toFixed(2) + '</td></tr>' +
+                '<tr style="border-top:2px solid #1a3c34;background:#fef3c7;"><td style="padding:10px 0;font-weight:700;">TOT PAYABLE</td><td style="padding:10px 0;text-align:right;font-weight:700;color:#92400e;">KES ' + turnoverTax.toFixed(2) + '</td></tr>' +
+            '</table>' +
+            '<h4 style="color:#1a3c34;margin-bottom:12px;">INCOME TAX SUMMARY</h4>' +
+            '<table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:20px;">' +
+                '<tr style="border-bottom:1px solid #e2e8f0;"><td style="padding:8px 0;">Revenue</td><td style="padding:8px 0;text-align:right;">KES ' + totalSales.toFixed(2) + '</td></tr>' +
+                '<tr style="border-bottom:1px solid #e2e8f0;"><td style="padding:8px 0;">Cost of Goods Sold</td><td style="padding:8px 0;text-align:right;">KES ' + totalCOGS.toFixed(2) + '</td></tr>' +
+                '<tr style="border-bottom:1px solid #e2e8f0;"><td style="padding:8px 0;font-weight:600;">Gross Profit</td><td style="padding:8px 0;text-align:right;font-weight:600;">KES ' + grossProfit.toFixed(2) + '</td></tr>' +
+            '</table>' +
+            '<div style="background:#f8fafc;padding:12px;border-radius:8px;font-size:12px;color:#64748b;">' +
+                '<strong>Period:</strong> ' + range.start + ' to ' + range.end + '<br>' +
+                '<strong>Business PIN:</strong> ' + businessPin + '<br>' +
+                '<strong>Total Orders:</strong> ' + totalOrders + '<br>' +
+                '<strong>Note:</strong> Copy these figures into iTax when filing your returns.' +
+            '</div>' +
+        '</div>';
+    
+    console.log('Tax Filing Report loaded');
+}
+
+function loadTaxReport() {
+    console.log('Loading Tax Report...');
+    var range = getDateRange();
+    if (!range.start || !range.end) {
+        setDefaultDates();
+        range = getDateRange();
+    }
+    
+    var orders = getFilteredOrders(range.start, range.end);
+    
+    var totalVATCollected = 0;
+    var totalTaxableSales = 0;
+    var totalExemptSales = 0;
+    var totalZeroRatedSales = 0;
+    
+    orders.forEach(function(order) {
+        if (!order.items) return;
+        var items = typeof order.items === 'string' ? JSON.parse(order.items) : order.items;
+        
+        items.forEach(function(item) {
+            var product = allProducts.find(function(p) { return p.id === item.id || p.name === item.name; });
+            var taxType = product ? (product.tax_type || 'VAT') : 'VAT';
+            var itemTotal = (item.price || 0) * (item.qty || 1) * (1 - (item.discount || 0) / 100);
+            
+            if (taxType === 'VAT') {
+                totalTaxableSales += itemTotal;
+                totalVATCollected += itemTotal * 0.16;
+            } else if (taxType === 'EXEMPT') {
+                totalExemptSales += itemTotal;
+            } else if (taxType === 'ZERO') {
+                totalZeroRatedSales += itemTotal;
+            }
+        });
+    });
+    
+    var el1 = document.getElementById('totalVATCollected');
+    if (el1) el1.textContent = 'KES ' + totalVATCollected.toFixed(2);
+    var el2 = document.getElementById('totalTaxableSales');
+    if (el2) el2.textContent = 'KES ' + totalTaxableSales.toFixed(2);
+    var el3 = document.getElementById('totalExemptSales');
+    if (el3) el3.textContent = 'KES ' + totalExemptSales.toFixed(2);
+    var el4 = document.getElementById('totalZeroRatedSales');
+    if (el4) el4.textContent = 'KES ' + totalZeroRatedSales.toFixed(2);
+    
+    // Build breakdown
+    var breakdown = document.getElementById('taxBreakdown');
+    var total = totalTaxableSales + totalExemptSales + totalZeroRatedSales;
+    
+    if (total === 0) {
+        breakdown.innerHTML = '<div class="no-data">No tax data available</div>';
+    } else {
+        var vatPercent = (totalTaxableSales / total) * 100;
+        var exemptPercent = (totalExemptSales / total) * 100;
+        var zeroPercent = (totalZeroRatedSales / total) * 100;
+        
+        breakdown.innerHTML = 
+            '<div style="padding:12px;">' +
+                '<div style="margin-bottom:12px;"><strong>VAT (16%):</strong> KES ' + totalTaxableSales.toFixed(2) + ' (' + vatPercent.toFixed(1) + '%)' +
+                    '<div style="height:8px;background:#dcfce7;border-radius:4px;margin-top:4px;"><div style="height:8px;background:#22c55e;border-radius:4px;width:' + vatPercent + '%;"></div></div>' +
+                '</div>' +
+                '<div style="margin-bottom:12px;"><strong>Exempt:</strong> KES ' + totalExemptSales.toFixed(2) + ' (' + exemptPercent.toFixed(1) + '%)' +
+                    '<div style="height:8px;background:#fef3c7;border-radius:4px;margin-top:4px;"><div style="height:8px;background:#f59e0b;border-radius:4px;width:' + exemptPercent + '%;"></div></div>' +
+                '</div>' +
+                '<div style="margin-bottom:12px;"><strong>Zero-rated:</strong> KES ' + totalZeroRatedSales.toFixed(2) + ' (' + zeroPercent.toFixed(1) + '%)' +
+                    '<div style="height:8px;background:#dbeafe;border-radius:4px;margin-top:4px;"><div style="height:8px;background:#3b82f6;border-radius:4px;width:' + zeroPercent + '%;"></div></div>' +
+                '</div>' +
+            '</div>';
+    }
+    
+    // Build summary table
+    var summary = document.getElementById('taxSummaryTable');
+    summary.innerHTML = 
+        '<table style="width:100%;border-collapse:collapse;font-size:13px;">' +
+            '<thead><tr style="background:#f8fafc;border-bottom:2px solid #e2e8f0;">' +
+                '<th style="padding:8px 12px;text-align:left;">Category</th>' +
+                '<th style="padding:8px 12px;text-align:right;">Sales Amount</th>' +
+                '<th style="padding:8px 12px;text-align:right;">VAT Amount</th>' +
+            '</tr></thead><tbody>' +
+            '<tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:8px 12px;">VAT (16%)</td><td style="padding:8px 12px;text-align:right;">KES ' + totalTaxableSales.toFixed(2) + '</td><td style="padding:8px 12px;text-align:right;font-weight:600;color:#166534;">KES ' + totalVATCollected.toFixed(2) + '</td></tr>' +
+            '<tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:8px 12px;">Exempt</td><td style="padding:8px 12px;text-align:right;">KES ' + totalExemptSales.toFixed(2) + '</td><td style="padding:8px 12px;text-align:right;">KES 0.00</td></tr>' +
+            '<tr style="border-bottom:1px solid #f1f5f9;"><td style="padding:8px 12px;">Zero-rated</td><td style="padding:8px 12px;text-align:right;">KES ' + totalZeroRatedSales.toFixed(2) + '</td><td style="padding:8px 12px;text-align:right;">KES 0.00</td></tr>' +
+            '<tr style="background:#f8fafc;font-weight:700;"><td style="padding:8px 12px;">TOTAL</td><td style="padding:8px 12px;text-align:right;">KES ' + total.toFixed(2) + '</td><td style="padding:8px 12px;text-align:right;color:#166534;">KES ' + totalVATCollected.toFixed(2) + '</td></tr>' +
+            '</tbody></table>';
+    
+    console.log('Tax Report loaded');
+}
+
 function loadProfitLoss() {
     console.log(' Loading Profit/Loss...');
     var range = getDateRange();
@@ -956,129 +1218,5 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 
-<script>
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/sw.js')
-            .then(function(reg) {
-                console.log(' Service Worker registered');
-            })
-            .catch(function(err) {
-                console.log(' Service Worker registration failed:', err);
-            });
-    });
-}
-</script>
 
-<script>
-// ===== LICENSE CHECK =====
-
-// Run checks
-// License check removed);
-</script>
-
-<!-- License Warning Banner -->
-    <span id="licenseWarningMessage"> Your license expires soon. Please renew in Settings.</span>
-</div>
-
-<script>
-// ===== LICENSE STATUS CHECK =====
-function checkLicenseStatus() {
-    const activated = localStorage.getItem("activated");
-    const expiry = localStorage.getItem("expiry_date");
-    
-    if (!activated || activated !== "true") {
-        alert(" Your license is not activated.\nPlease go to Settings to activate your license.");
-        window.location.href = "settings.html";
-        return false;
-    }
-    
-    if (expiry) {
-        const expiryDate = new Date(expiry);
-        const now = new Date();
-        const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
-        
-        if (expiryDate < now) {
-            alert(" Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
-            localStorage.removeItem("activated");
-            localStorage.removeItem("activation_code");
-            localStorage.removeItem("expiry_date");
-            window.location.href = "settings.html";
-            return false;
-        }
-        
-        // Show warning 7 days before expiry
-        if (daysRemaining <= 2 && daysRemaining > 0) {
-            const message = " Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
-            alert(message);
-        }
-    }
-    
-    return true;
-}
-
-function checkAndRedirect() {
-    if (!checkLicenseStatus()) {
-        // If not on settings page, redirect to settings
-        if (!window.location.pathname.includes('settings.html') &&
-            !window.location.pathname.includes('activation.html') &&
-            !window.location.pathname.includes('index.html')) {
-            window.location.href = 'activation.html';
-        }
-    }
-}
-
-// Run check on page load
-document.addEventListener('DOMContentLoaded', function() {
-    checkAndRedirect();
-});
-</script>
-
-<script>
-// ===== LICENSE CHECK WITH ALERTS AND BLOCKING =====
-function checkLicenseStatus() {
-    const activated = localStorage.getItem("activated");
-    const expiry = localStorage.getItem("expiry_date");
-    
-    if (!activated || activated !== "true") {
-        alert(" Your license is not activated.\nPlease go to Settings to activate your license.");
-        window.location.href = "settings.html";
-        return false;
-    }
-    
-    if (expiry) {
-        const expiryDate = new Date(expiry);
-        const now = new Date();
-        const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
-        
-        if (expiryDate < now) {
-            alert(" Your license has expired on " + expiryDate.toLocaleDateString() + ".\nPlease contact your administrator to renew.");
-            localStorage.removeItem("activated");
-            localStorage.removeItem("activation_code");
-            localStorage.removeItem("expiry_date");
-            window.location.href = "settings.html";
-            return false;
-        }
-        
-        // Show warning 7 days before expiry
-        if (daysRemaining <= 2 && daysRemaining > 0) {
-            const message = " Your license will expire in " + daysRemaining + " days (" + expiryDate.toLocaleDateString() + ").\nPlease contact your administrator to renew.";
-            alert(message);
-        }
-    }
-    
-    return true;
-}
-
-// Run on page load
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function() {
-        checkLicenseStatus();
-    });
-} else {
-    checkLicenseStatus();
-}
-</script>
-
-</body>
 </html>

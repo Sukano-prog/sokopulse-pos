@@ -3,6 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1a3c34">
+    <meta name="description" content="SokoPulse POS - Offline Point of Sale with eTIMS compliance">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="SokoPulse">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiB2aWV3Qm94PSIwIDAgMTkyIDE5MiI+PHJlY3Qgd2lkdGg9IjE5MiIgaGVpZ2h0PSIxOTIiIHJ4PSIzMiIgZmlsbD0iIzFhM2MzNCIvPjx0ZXh0IHg9Ijk2IiB5PSIxMjAiIGZvbnQtc2l6ZT0iODAiIGZvbnQtZmFtaWx5PSJBcmlhbCxzYW5zLXNlcmlmIiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0iI2Y1YTYyMyIgdGV4dC1hbmNob3I9Im1pZGRsZSI+U1A8L3RleHQ+PC9zdmc+">
     <title>Products - SokoPulse</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
@@ -300,13 +307,13 @@
     <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
     <aside class="sidebar">
         <div class="logo"> <span>Soko</span>Pulse <button class="close-btn" onclick="toggleSidebar()">✕</button></div>
-        <nav>
+                <nav>
             <div class="nav-label">Main</div>
             <a href="pos.html"> POS</a>
             <a href="dashboard.html"> Dashboard</a>
             <a href="orders.html"> Orders</a>
             <div class="nav-label">Inventory</div>
-            <a href="products.html" class="active"> Products</a>
+            <a href="products.html"> Products</a>
             <a href="stock.html"> Stock</a>
             <a href="expiry.html">Expiry</a>
             <a href="categories.html"> Categories</a>
@@ -322,7 +329,7 @@
             <div class="name" id="userName">Administrator</div>
             <div class="role" id="userRole">Admin</div>
         </div>
-        <button class="logout-btn" onclick="logout()"> Logout</button>
+        <button class="logout-btn" onclick="logout()">Logout</button>
     </aside>
     <main class="main-content">
         <header class="topbar">
@@ -354,6 +361,7 @@
                 <button class="btn-add" onclick="openAddModal()"> Add Product</button>
                 <button class="btn-bulk" onclick="openBulkAddModal()"> Bulk Add</button>
                 <button class="btn-delete-bulk" onclick="openBulkDeleteModal()"> Bulk Delete</button>
+                <button class="btn-bulk" onclick="openBulkTaxModal()" style="background:#059669;"> Bulk Tax Update</button>
                 <button class="btn-export" onclick="exportProducts()"> Export</button>
             </div>
             <!-- Products Table -->
@@ -403,13 +411,21 @@
             </div>
             <div class="form-row">
                 <div class="form-group">
+                    <label>Cost Price (KES)</label>
+                    <input type="number" id="productCost" placeholder="0.00" step="0.01">
+                    <small style="font-size:10px;color:#94a3b8;">What you pay per unit — used for profit reports & stock valuation</small>
+                </div>
+                <div class="form-group">
                     <label>Retail Price (KES) *</label>
                     <input type="number" id="productRetail" placeholder="0.00" step="0.01" required>
                 </div>
+            </div>
+            <div class="form-row">
                 <div class="form-group">
                     <label>Wholesale Price (KES)</label>
                     <input type="number" id="productWholesale" placeholder="0.00" step="0.01">
                 </div>
+                <div class="form-group"></div>
             </div>
             <div class="form-row">
                 <div class="form-group">
@@ -425,6 +441,29 @@
                 <label>Category</label>
                 <select id="productCategory"><option value="">Select Category...</option></select>
             </div>
+            <div class="form-group">
+                <label>HS Code (for eTIMS)</label>
+                <input type="text" id="productHsCode" placeholder="e.g., 1701.99.00">
+            </div>
+            <div class="form-group">
+                <label>Tax Type</label>
+                <select id="productTaxType">
+                    <option value="VAT">VAT (16%)</option>
+                    <option value="EXEMPT">Exempt</option>
+                    <option value="ZERO">Zero-rated</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Unit of Measure</label>
+                <select id="productUnit">
+                    <option value="pcs">Pieces</option>
+                    <option value="kg">Kilograms</option>
+                    <option value="L">Litres</option>
+                    <option value="m">Metres</option>
+                    <option value="box">Boxes</option>
+                </select>
+            </div>
+
             <div class="form-group">
                 <label>Expiry Date</label>
                 <input type="date" id="productExpiry">
@@ -474,6 +513,40 @@
         </div>
     </div>
 </div>
+<!-- ===== BULK TAX UPDATE MODAL ===== -->
+<div class="modal" id="bulkTaxModal">
+    <div class="modal-content">
+        <span class="modal-close" onclick="closeModal('bulkTaxModal')">&times;</span>
+        <h2> Bulk Tax Type Update</h2>
+        <p style="color:#94a3b8;font-size:13px;margin-bottom:12px;">Select products and set their tax type at once.</p>
+        
+        <div style="display:flex;gap:8px;margin-bottom:12px;">
+            <button type="button" onclick="selectAllTaxProducts(true)" style="padding:6px 12px;background:#f1f5f9;border:none;border-radius:6px;cursor:pointer;font-size:12px;">Select All</button>
+            <button type="button" onclick="selectAllTaxProducts(false)" style="padding:6px 12px;background:#f1f5f9;border:none;border-radius:6px;cursor:pointer;font-size:12px;">Deselect All</button>
+        </div>
+        
+        <div class="bulk-product-list" id="bulkTaxProductList" style="max-height:300px;overflow-y:auto;border:1px solid #e2e8f0;border-radius:8px;padding:8px;">
+            <div style="text-align:center;padding:20px;color:#94a3b8;">Loading products...</div>
+        </div>
+        
+        <div style="margin:12px 0;">
+            <label style="font-size:13px;font-weight:600;color:#334155;">Set Tax Type To:</label>
+            <select id="bulkTaxType" style="width:100%;padding:10px;border:2px solid #e2e8f0;border-radius:8px;font-family:'Inter',sans-serif;font-size:14px;margin-top:4px;">
+                <option value="VAT">VAT (16%)</option>
+                <option value="EXEMPT">Exempt</option>
+                <option value="ZERO">Zero-rated</option>
+            </select>
+        </div>
+        
+        <div style="color:#94a3b8;font-size:12px;margin-bottom:12px;">Selected: <span id="bulkTaxSelectedCount">0</span> products</div>
+        
+        <div class="modal-actions">
+            <button type="button" class="btn-cancel" onclick="closeModal('bulkTaxModal')">Cancel</button>
+            <button type="button" class="btn-save" onclick="applyBulkTaxUpdate()" style="background:#059669;">Apply to Selected</button>
+        </div>
+    </div>
+</div>
+
 <!-- ===== BULK DELETE MODAL ===== -->
 <div class="modal" id="bulkDeleteModal">
     <div class="modal-content">
@@ -719,12 +792,16 @@ function openAddModal() {
     document.getElementById('productName').value = '';
     document.getElementById('productSku').value = '';
     document.getElementById('productBarcode').value = '';
+    document.getElementById('productCost').value = '';
     document.getElementById('productRetail').value = '';
     document.getElementById('productWholesale').value = '';
     document.getElementById('productStock').value = '0';
     document.getElementById('productMinStock').value = '5';
     document.getElementById('productExpiry').value = '';
     document.getElementById('productCategory').value = '';
+    if (document.getElementById('productHsCode')) document.getElementById('productHsCode').value = '';
+    if (document.getElementById('productTaxType')) document.getElementById('productTaxType').value = 'VAT';
+    if (document.getElementById('productUnit')) document.getElementById('productUnit').value = 'pcs';
     removeImageData();
     document.getElementById('productModal').classList.add('show');
 }
@@ -737,12 +814,16 @@ function openEditModal(id) {
     document.getElementById('productName').value = p.name || '';
     document.getElementById('productSku').value = p.sku || '';
     document.getElementById('productBarcode').value = p.barcode || '';
+    document.getElementById('productCost').value = p.cost_price || '';
     document.getElementById('productRetail').value = p.retail_price || p.selling_price || '';
     document.getElementById('productWholesale').value = p.wholesale_price || '';
     document.getElementById('productStock').value = p.current_stock || 0;
     document.getElementById('productMinStock').value = p.min_stock_alert || 5;
     document.getElementById('productExpiry').value = p.expiry_date || '';
     document.getElementById('productCategory').value = p.category_id || '';
+    if (document.getElementById('productHsCode')) document.getElementById('productHsCode').value = p.hs_code || '';
+    if (document.getElementById('productTaxType')) document.getElementById('productTaxType').value = p.tax_type || 'VAT';
+    if (document.getElementById('productUnit')) document.getElementById('productUnit').value = p.unit_of_measure || 'pcs';
     if (p.image && p.image.length > 100) {
         imageDataStore = p.image;
         const preview = document.getElementById('imagePreview');
@@ -764,6 +845,7 @@ async function saveProduct(e) {
     const name = document.getElementById('productName').value.trim();
     const sku = document.getElementById('productSku').value.trim();
     const barcode = document.getElementById('productBarcode').value.trim();
+    const costPrice = parseFloat(document.getElementById('productCost').value) || 0;
     const retailPrice = parseFloat(document.getElementById('productRetail').value) || 0;
     const wholesalePrice = parseFloat(document.getElementById('productWholesale').value) || 0;
     const stock = parseInt(document.getElementById('productStock').value) || 0;
@@ -809,10 +891,21 @@ async function saveProduct(e) {
             }
         }
     }
+    // Preserve existing cost_price if user leaves it empty
+    var existingCostPrice = 0;
+    if (id) {
+        var existingProduct = products.find(p => p.id == id);
+        if (existingProduct) {
+            existingCostPrice = existingProduct.cost_price || 0;
+        }
+    }
+    var finalCostPrice = costPrice > 0 ? costPrice : existingCostPrice;
+    
     const data = {
         name: name,
         sku: sku || '',
         barcode: barcode || '',
+        cost_price: finalCostPrice,
         retail_price: retailPrice,
         wholesale_price: wholesalePrice || 0,
         selling_price: retailPrice,
@@ -820,6 +913,9 @@ async function saveProduct(e) {
         min_stock_alert: minStock,
         category_id: category,
         expiry_date: expiry,
+        hs_code: document.getElementById('productHsCode') ? document.getElementById('productHsCode').value.trim() : '',
+        tax_type: document.getElementById('productTaxType') ? document.getElementById('productTaxType').value : 'VAT',
+        unit_of_measure: document.getElementById('productUnit') ? document.getElementById('productUnit').value : 'pcs',
         image: imageDataStore || null
     };
     try {
@@ -946,6 +1042,79 @@ async function bulkAddProducts() {
         alert(' Error adding products: ' + e.message);
     }
 }
+// ===== BULK TAX UPDATE =====
+let selectedTaxProducts = new Set();
+
+function openBulkTaxModal() {
+    document.getElementById('bulkTaxModal').classList.add('show');
+    selectedTaxProducts = new Set();
+    renderBulkTaxList();
+}
+
+function renderBulkTaxList() {
+    const container = document.getElementById('bulkTaxProductList');
+    if (products.length === 0) {
+        container.innerHTML = '<div style="text-align:center;padding:20px;color:#94a3b8;">No products available</div>';
+        return;
+    }
+    container.innerHTML = products.map(p => {
+        return '<label class="bulk-product-item" style="display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:4px;cursor:pointer;">' +
+            '<input type="checkbox" class="bulk-tax-checkbox" value="' + p.id + '" onchange="toggleTaxProduct(' + p.id + ', this.checked)">' +
+            '<span><strong>' + p.name + '</strong> - Current: <span style="font-weight:600;">' + (p.tax_type || 'VAT') + '</span></span>' +
+        '</label>';
+    }).join('');
+    updateBulkTaxCount();
+}
+
+function toggleTaxProduct(id, checked) {
+    if (checked) selectedTaxProducts.add(id);
+    else selectedTaxProducts.delete(id);
+    updateBulkTaxCount();
+}
+
+function selectAllTaxProducts(checked) {
+    document.querySelectorAll('.bulk-tax-checkbox').forEach(cb => {
+        cb.checked = checked;
+        const id = parseInt(cb.value);
+        if (checked) selectedTaxProducts.add(id);
+        else selectedTaxProducts.delete(id);
+    });
+    updateBulkTaxCount();
+}
+
+function updateBulkTaxCount() {
+    document.getElementById('bulkTaxSelectedCount').textContent = selectedTaxProducts.size;
+}
+
+async function applyBulkTaxUpdate() {
+    if (selectedTaxProducts.size === 0) {
+        alert('Select at least one product');
+        return;
+    }
+    var taxType = document.getElementById('bulkTaxType').value;
+    if (!confirm('Update ' + selectedTaxProducts.size + ' products to ' + taxType + '?')) return;
+    
+    try {
+        const db = await openDB();
+        let updated = 0;
+        for (const id of selectedTaxProducts) {
+            const product = products.find(p => p.id === id);
+            if (product) {
+                product.tax_type = taxType;
+                const tx = db.transaction('products', 'readwrite');
+                const store = tx.objectStore('products');
+                await store.put(product);
+                updated++;
+            }
+        }
+        closeModal('bulkTaxModal');
+        loadProducts();
+        alert(' ' + updated + ' products updated to ' + taxType);
+    } catch(e) {
+        alert('Error: ' + e.message);
+    }
+}
+
 // ===== BULK DELETE =====
 function openBulkDeleteModal() {
     document.getElementById('bulkDeleteModal').classList.add('show');
@@ -967,67 +1136,25 @@ function renderBulkProductList() {
     }).join('');
     updateBulkSelectedCount();
 }
-function toggleProduct(id, checked) {
-    if (checked) selectedProducts.add(id);
-    else selectedProducts.delete(id);
-    updateBulkSelectedCount();
-    document.getElementById('selectAllProducts').checked = selectedProducts.size === products.length;
-}
-function toggleAllProducts(checked) {
-    document.querySelectorAll('.bulk-product-checkbox').forEach(cb => {
-        cb.checked = checked;
-        const id = parseInt(cb.value);
-        if (checked) selectedProducts.add(id);
-        else selectedProducts.delete(id);
-    });
-    updateBulkSelectedCount();
-}
-function updateBulkSelectedCount() {
-    document.getElementById('bulkSelectedCount').textContent = selectedProducts.size;
-}
-async function bulkDeleteProducts() {
-    const count = selectedProducts.size;
-    if (count === 0) { alert(' Select at least one product to delete'); return; }
-    if (!confirm(' Delete ' + count + ' products? This cannot be undone!')) return;
-    try {
-        const db = await openDB();
-        const tx = db.transaction('products', 'readwrite');
-        const store = tx.objectStore('products');
-        let deleted = 0;
-        for (const id of selectedProducts) {
-            await store.delete(id);
-            deleted++;
-        }
-        closeModal('bulkDeleteModal');
-        loadProducts();
-        alert(' ' + deleted + ' products deleted successfully!');
-    } catch(e) {
-        alert(' Error deleting products: ' + e.message);
-    }
-}
+
 // ===== INIT =====
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('Products page initializing...');
     const userData = localStorage.getItem('pos_user');
-    if (!userData) { window.location.href = 'index.html'; return; }
+    if (!userData) {
+        console.log('No user, redirecting to login');
+        window.location.href = 'index.html';
+        return;
+    }
     const user = JSON.parse(userData);
     document.getElementById('userName').textContent = user.name || user.username;
     document.getElementById('userRole').textContent = user.role || 'User';
     setInterval(updateTime, 1000);
     updateTime();
+    console.log('Loading products...');
     loadProducts();
 });
-// Close modal on click outside
-document.addEventListener('click', function(e) {
-    if (e.target.classList.contains('modal')) {
-        e.target.classList.remove('show');
-    }
-});
-// Close modal on Escape key
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') {
-        document.querySelectorAll('.modal.show').forEach(m => m.classList.remove('show'));
-    }
-});
+
 </script>
 <script>
 // ===== LOAD STORE NAME =====
@@ -1083,20 +1210,7 @@ if (document.readyState === "loading") {
     checkLicenseStatus();
 }
 </script>
-<script>
-if ("serviceWorker" in navigator) {
-    window.addEventListener("load", function() {
-        navigator.serviceWorker.register("/sw.js")
-            .then(function(reg) {
-                console.log(" Service Worker registered for products.html");
-            })
-            .catch(function(err) {
-                console.log(" Service Worker registration failed:", err);
-            });
-    });
-}
-</script>
-</body>
+
 </html>
 <style>
 /* ===== TOPBAR - STORE NAME ALWAYS VISIBLE ===== */

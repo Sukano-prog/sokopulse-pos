@@ -36,7 +36,7 @@
 /* ===== TABLET ===== */
 @media (max-width: 1024px) {
     .sidebar {
-        width: 200px;
+        width: 160px;
     }
 }
 
@@ -98,12 +98,7 @@
     }
     
     /* Cart panel full width on mobile */
-    .cart-panel {
-        width: 100%;
-        max-height: 45vh;
-        border-left: none;
-        border-top: 1px solid #e2e8f0;
-    }
+    
     
     /* Stats grid 2 columns on mobile */
     .stats-grid {

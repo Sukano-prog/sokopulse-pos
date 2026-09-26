@@ -7,10 +7,10 @@ body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; height: 100vh; 
 
 /* ===== SIDEBAR ===== */
 .sidebar {
-    width: 220px;
+    width: 180px;
     background: #1a3c34;
     color: white;
-    padding: 20px 0;
+    padding: 12px 0;
     display: flex;
     flex-direction: column;
     flex-shrink: 0;
@@ -18,22 +18,22 @@ body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; height: 100vh; 
     overflow-y: auto;
 }
 .sidebar .logo {
-    font-size: 22px;
+    font-size: 18px;
     font-weight: bold;
-    padding: 0 20px 20px;
+    padding: 0 14px 12px;
     border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 .sidebar .logo span { color: #f5a623; }
-.sidebar nav { flex: 1; padding: 20px 10px; }
+.sidebar nav { flex: 1; padding: 10px 8px; }
 .sidebar nav a {
     display: block;
     color: rgba(255,255,255,0.7);
     text-decoration: none;
-    padding: 10px 14px;
-    border-radius: 6px;
-    margin-bottom: 2px;
-    font-size: 14px;
-    transition: 0.3s;
+    padding: 6px 10px;
+    border-radius: 5px;
+    margin-bottom: 1px;
+    font-size: 12px;
+    transition: 0.2s;
 }
 .sidebar nav a:hover,
 .sidebar nav a.active {
@@ -275,25 +275,25 @@ tr:hover { background: #f8f9fa; }
 /* ===== FORCE FULL SIDEBAR ON DESKTOP ===== */
 @media (min-width: 769px) {
     .sidebar {
-        width: 220px !important;
-        padding: 20px 0 !important;
+        width: 180px !important;
+        padding: 12px 0 !important;
     }
     .sidebar .logo {
-        font-size: 22px !important;
-        padding: 0 20px 20px !important;
+        font-size: 18px !important;
+        padding: 0 14px 12px !important;
         border-bottom: 1px solid rgba(255,255,255,0.1) !important;
     }
     .sidebar .logo span { color: #f5a623 !important; }
-    .sidebar nav { flex: 1 !important; padding: 20px 10px !important; }
+    .sidebar nav { flex: 1 !important; padding: 10px 8px !important; }
     .sidebar nav a {
         display: block !important;
         color: rgba(255,255,255,0.7) !important;
         text-decoration: none !important;
-        padding: 10px 14px !important;
-        border-radius: 6px !important;
-        margin-bottom: 2px !important;
-        font-size: 14px !important;
-        transition: 0.3s !important;
+        padding: 6px 10px !important;
+        border-radius: 5px !important;
+        margin-bottom: 1px !important;
+        font-size: 12px !important;
+        transition: 0.2s !important;
         text-align: left !important;
     }
     .sidebar nav a:hover,

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Migrate eTIMS Fields</title>
+    <style>
+        body { font-family: 'Inter', sans-serif; padding: 20px; max-width: 600px; margin: 0 auto; }
+        .card { background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin: 16px 0; }
+        button { padding: 10px 20px; background: #1a3c34; color: white; border: none; border-radius: 8px; cursor: pointer; margin: 4px; }
+        .success { color: #166534; background: #dcfce7; padding: 8px 12px; border-radius: 6px; margin: 4px 0; }
+        .error { color: #991b1b; background: #fee2e2; padding: 8px 12px; border-radius: 6px; margin: 4px 0; }
+        .info { color: #1e40af; background: #dbeafe; padding: 8px 12px; border-radius: 6px; margin: 4px 0; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Migrate eTIMS Fields</h1>
+        <p>This will add default eTIMS fields to existing products and customers.</p>
+        <button onclick="migrateProducts()">Migrate Products</button>
+        <button onclick="migrateCustomers()">Migrate Customers</button>
+        <button onclick="checkAll()">Check All Fields</button>
+        <div id="result"></div>
+    </div>
+    <script src="db.js"></script>
+    <script>
+        // ===== DB HELPERS =====
+        function dbGet(db, storeName, id) {
+            return new Promise(function(resolve, reject) {
+                var tx = db.transaction(storeName, 'readonly');
+                var store = tx.objectStore(storeName);
+                var req = store.get(id);
+                req.onsuccess = function() { resolve(req.result); };
+                req.onerror = function() { reject(req.error); };
+            });
+        }
+        
+        function dbPut(db, storeName, data) {
+            return new Promise(function(resolve, reject) {
+                var tx = db.transaction(storeName, 'readwrite');
+                var store = tx.objectStore(storeName);
+                var req = store.put(data);
+                req.onsuccess = function() { resolve(req.result); };
+                req.onerror = function() { reject(req.error); };
+            });
+        }
+        
+        function log(msg, type) {
+            var el = document.getElementById('result');
+            el.innerHTML += '<div class="' + (type || 'info') + '">' + msg + '</div>';
+        }
+        
+        async function migrateProducts() {
+            var result = document.getElementById('result');
+            result.innerHTML = '';
+            log('Starting product migration...');
+            
+            try {
+                var db = await openDB();
+                var products = await dbGetAll(db, 'products');
+                var updated = 0;
+                
+                for (var i = 0; i < products.length; i++) {
+                    var p = products[i];
+                    var changed = false;
+                    
+                    if (!p.hs_code) { p.hs_code = ''; changed = true; }
+                    if (!p.tax_type) { p.tax_type = 'VAT'; changed = true; }
+                    if (!p.unit_of_measure) { p.unit_of_measure = 'pcs'; changed = true; }
+                    
+                    if (changed) {
+                        await dbPut(db, 'products', p);
+                        updated++;
+                        log('Updated: ' + p.name, 'success');
+                    }
+                }
+                
+                log('Migrated ' + updated + ' products', 'success');
+            } catch(e) {
+                log('Error: ' + e.message, 'error');
+            }
+        }
+        
+        async function migrateCustomers() {
+            var result = document.getElementById('result');
+            result.innerHTML = '';
+            log('Starting customer migration...');
+            
+            try {
+                var db = await openDB();
+                var customers = await dbGetAll(db, 'customers');
+                var updated = 0;
+                
+                for (var i = 0; i < customers.length; i++) {
+                    var c = customers[i];
+                    if (!c.pin) {
+                        c.pin = '';
+                        await dbPut(db, 'customers', c);
+                        updated++;
+                        log('Updated: ' + c.name, 'success');
+                    }
+                }
+                
+                log('Migrated ' + updated + ' customers', 'success');
+            } catch(e) {
+                log('Error: ' + e.message, 'error');
+            }
+        }
+        
+        async function checkAll() {
+            var result = document.getElementById('result');
+            result.innerHTML = '';
+            
+            try {
+                var db = await openDB();
+                
+                var products = await dbGetAll(db, 'products');
+                var productsWithFields = products.filter(function(p) {
+                    return p.hs_code || p.tax_type || p.unit_of_measure;
+                });
+                log('Products with eTIMS fields: ' + productsWithFields.length + '/' + products.length, 
+                    productsWithFields.length > 0 ? 'success' : 'error');
+                
+                var customers = await dbGetAll(db, 'customers');
+                var customersWithPin = customers.filter(function(c) { return c.pin; });
+                log('Customers with KRA PIN: ' + customersWithPin.length + '/' + customers.length,
+                    customersWithPin.length > 0 ? 'success' : 'error');
+                
+                var settings = await dbGetAll(db, 'settings');
+                var map = {};
+                settings.forEach(function(s) { map[s.key] = s.value; });
+                var settingsSet = 0;
+                ['business_pin', 'etims_username', 'etims_password', 'cu_serial'].forEach(function(f) {
+                    if (map[f]) settingsSet++;
+                });
+                log('eTIMS credentials set: ' + settingsSet + '/4',
+                    settingsSet > 0 ? 'success' : 'error');
+                
+            } catch(e) {
+                log('Error: ' + e.message, 'error');
+            }
+        }
+    </script>
+</body>
+</html>

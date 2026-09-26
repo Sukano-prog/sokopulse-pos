@@ -54,10 +54,10 @@ class ReceiptPrinter {
             await this.printer.claimInterface(0);
             this.connected = true;
             this.mode = 'usb';
-            console.log('✅ USB printer connected');
+            console.log('USB printer connected');
             return true;
         } catch(e) {
-            console.error('❌ USB connection failed:', e);
+            console.error('USB connection failed:', e);
             return false;
         }
     }
@@ -81,10 +81,10 @@ class ReceiptPrinter {
             this.printer = characteristic;
             this.connected = true;
             this.mode = 'bluetooth';
-            console.log('✅ Bluetooth printer connected');
+            console.log('Bluetooth printer connected');
             return true;
         } catch(e) {
-            console.error('❌ Bluetooth connection failed:', e);
+            console.error('Bluetooth connection failed:', e);
             return false;
         }
     }
@@ -317,7 +317,7 @@ class ReceiptPrinter {
     async printUSB(data) {
         var commands = this.buildEscPos(data);
         await this.printer.transferOut(1, commands);
-        console.log('✅ Printed via USB');
+        console.log('Printed via USB');
     }
 
     // ===== PRINT VIA BLUETOOTH =====
@@ -331,7 +331,7 @@ class ReceiptPrinter {
             var chunk = bytes.slice(i, i + 20);
             await this.printer.writeValue(chunk);
         }
-        console.log('✅ Printed via Bluetooth');
+        console.log('Printed via Bluetooth');
     }
 
     // ===== PRINT VIA BROWSER =====
@@ -447,4 +447,4 @@ window.configurePrinter = function(options) {
     return posPrinter.configure(options);
 };
 
-console.log('🖨️ Universal printer module loaded');
+console.log('Universal printer module loaded');

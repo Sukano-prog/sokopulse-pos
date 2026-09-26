@@ -3,6 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1a3c34">
+    <meta name="description" content="SokoPulse POS - Offline Point of Sale with eTIMS compliance">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="SokoPulse">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiB2aWV3Qm94PSIwIDAgMTkyIDE5MiI+PHJlY3Qgd2lkdGg9IjE5MiIgaGVpZ2h0PSIxOTIiIHJ4PSIzMiIgZmlsbD0iIzFhM2MzNCIvPjx0ZXh0IHg9Ijk2IiB5PSIxMjAiIGZvbnQtc2l6ZT0iODAiIGZvbnQtZmFtaWx5PSJBcmlhbCxzYW5zLXNlcmlmIiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0iI2Y1YTYyMyIgdGV4dC1hbmNob3I9Im1pZGRsZSI+U1A8L3RleHQ+PC9zdmc+">
     <title>Settings - SokoPulse</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
@@ -147,7 +154,7 @@
     <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
     <aside class="sidebar">
         <div class="logo"> <span>Soko</span>Pulse <button class="close-btn" onclick="toggleSidebar()">✕</button></div>
-        <nav>
+                <nav>
             <div class="nav-label">Main</div>
             <a href="pos.html"> POS</a>
             <a href="dashboard.html"> Dashboard</a>
@@ -163,10 +170,13 @@
             <a href="reports.html"> Reports</a>
             <a href="audit.html"> Audit</a>
             <a href="returns.html"> Returns</a>
-            <a href="settings.html" class="active"> Settings</a>
+            <a href="settings.html"> Settings</a>
         </nav>
-        <div class="user-section"><div class="name" id="userName">Administrator</div><div class="role" id="userRole">Admin</div></div>
-        <button class="logout-btn" onclick="logout()"> Logout</button>
+        <div class="user-section">
+            <div class="name" id="userName">Administrator</div>
+            <div class="role" id="userRole">Admin</div>
+        </div>
+        <button class="logout-btn" onclick="logout()">Logout</button>
     </aside>
     <main class="main-content">
         <header class="topbar">
@@ -201,6 +211,30 @@
             </div>
         </div>
         <!-- End License Activation Card -->
+
+<!-- eTIMS Sync Status -->
+<div class="settings-card">
+    <div class="card-header"><span class="icon"></span> eTIMS Sync Status</div>
+    <div class="card-body">
+        <div id="etimsStatusSummary" style="font-size:13px;color:#64748b;margin-bottom:12px;">Loading...</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px;">
+            <div style="background:#f0fdf4;padding:10px;border-radius:8px;text-align:center;">
+                <div style="font-size:20px;font-weight:700;color:#166534;" id="etimsSynced">0</div>
+                <div style="font-size:10px;color:#166534;font-weight:600;">SYNCED</div>
+            </div>
+            <div style="background:#fef3c7;padding:10px;border-radius:8px;text-align:center;">
+                <div style="font-size:20px;font-weight:700;color:#92400e;" id="etimsPending">0</div>
+                <div style="font-size:10px;color:#92400e;font-weight:600;">PENDING</div>
+            </div>
+            <div style="background:#fef2f2;padding:10px;border-radius:8px;text-align:center;">
+                <div style="font-size:20px;font-weight:700;color:#991b1b;" id="etimsFailed">0</div>
+                <div style="font-size:10px;color:#991b1b;font-weight:600;">FAILED</div>
+            </div>
+        </div>
+        <button class="btn-save-setting" onclick="loadEtimsStatus()" style="width:100%;">Refresh Status</button>
+        <div id="etimsInvoiceList" style="margin-top:12px;max-height:200px;overflow-y:auto;"></div>
+    </div>
+</div>
                 <!-- Tax Settings -->
                 <div class="settings-card">
                     <div class="card-header"><span class="icon"></span> Tax Settings</div>
@@ -231,6 +265,10 @@
                         <div class="form-group"><label>Address</label><input type="text" id="storeAddress" placeholder="Store address"></div>
                         <div class="form-group"><label>Phone</label><input type="text" id="storePhone" placeholder="0712345678"></div>
                         <div class="form-group"><label>Email</label><input type="email" id="storeEmail" placeholder="store@email.com"></div>
+<div class="form-group"><label>Business KRA PIN (for eTIMS)</label><input type="text" id="businessPin" placeholder="P051234567X" style="text-transform:uppercase;"></div>
+<div class="form-group"><label>eTIMS Username</label><input type="text" id="etimsUsername" placeholder="eTIMS portal username"></div>
+<div class="form-group"><label>eTIMS Password</label><input type="password" id="etimsPassword" placeholder="eTIMS portal password"></div>
+<div class="form-group"><label>CU Serial Number</label><input type="text" id="cuSerial" placeholder="Control Unit serial number"></div>
                         <button class="btn-save-setting" onclick="saveStoreInfo()"> Save Store Info</button>
                     </div>
                 </div>
@@ -256,6 +294,10 @@
                             <label style="display:flex;align-items:center;gap:8px;font-weight:500;font-size:13px;"><input type="checkbox" id="receiptShowDiscount" checked> Show Discount Applied</label>
                             <label style="display:flex;align-items:center;gap:8px;font-weight:500;font-size:13px;"><input type="checkbox" id="receiptShowCustomer" checked> Show Customer Name</label>
                             <label style="display:flex;align-items:center;gap:8px;font-weight:500;font-size:13px;"><input type="checkbox" id="receiptShowCashier" checked> Show Cashier Name</label>
+                            <label style="display:flex;align-items:center;gap:8px;font-weight:500;font-size:13px;margin-top:8px;">
+                                <input type="checkbox" id="receiptShowEtims"> Show eTIMS Info (Invoice No, CU Serial, QR)
+                            </label>
+                            <small style="font-size:10px;color:#94a3b8;display:block;margin-top:4px;">Only enable if KRA integration is active.</small>
                         </div>
                         <button class="btn-save-setting" onclick="saveReceiptSettings()"> Save Receipt Settings</button>
                         <button class="btn-save-setting" onclick="testReceipt()" style="margin-top:8px;background:#f59e0b;color:#0f172a;"> Test Receipt</button>
@@ -351,13 +393,22 @@ async function saveTaxSettings() {
 
 // ===== STORE =====
 async function saveStoreInfo() {
-    var data = { storeName: document.getElementById('storeName').value, storeAddress: document.getElementById('storeAddress').value, storePhone: document.getElementById('storePhone').value, storeEmail: document.getElementById('storeEmail').value };
+    var data = { 
+        storeName: document.getElementById('storeName').value, 
+        storeAddress: document.getElementById('storeAddress').value, 
+        storePhone: document.getElementById('storePhone').value, 
+        storeEmail: document.getElementById('storeEmail').value,
+        business_pin: document.getElementById('businessPin') ? document.getElementById('businessPin').value.trim().toUpperCase() : '',
+        etims_username: document.getElementById('etimsUsername') ? document.getElementById('etimsUsername').value.trim() : '',
+        etims_password: document.getElementById('etimsPassword') ? document.getElementById('etimsPassword').value.trim() : '',
+        cu_serial: document.getElementById('cuSerial') ? document.getElementById('cuSerial').value.trim() : ''
+    };
     try {
         var db = await openDB();
         var tx = db.transaction('settings', 'readwrite');
         var store = tx.objectStore('settings');
         for (var key in data) { await store.put({ key: key, value: data[key] }); }
-        alert(' Store information saved!');
+        alert(' Store information and eTIMS credentials saved!');
         loadStoreName();
     } catch(e) { alert(' Error: ' + e.message); }
 }
@@ -434,7 +485,9 @@ async function testReceipt() {
         console.error('Error in testReceipt:', e);
         alert(' Error testing receipt: ' + e.message);
     }
-}// ===== USERS =====
+}
+
+// ===== USERS =====
 async function loadUsers() {
     try {
         var db = await openDB();
@@ -596,11 +649,16 @@ async function loadSettings() {
         if (map.storeAddress) document.getElementById('storeAddress').value = map.storeAddress;
         if (map.storePhone) document.getElementById('storePhone').value = map.storePhone;
         if (map.storeEmail) document.getElementById('storeEmail').value = map.storeEmail;
+    if (map.business_pin && document.getElementById('businessPin')) document.getElementById('businessPin').value = map.business_pin;
+    if (map.etims_username && document.getElementById('etimsUsername')) document.getElementById('etimsUsername').value = map.etims_username;
+    if (map.etims_password && document.getElementById('etimsPassword')) document.getElementById('etimsPassword').value = map.etims_password;
+    if (map.cu_serial && document.getElementById('cuSerial')) document.getElementById('cuSerial').value = map.cu_serial;
         if (map.receiptFooter) document.getElementById('receiptFooter').value = map.receiptFooter;
         if (map.receiptShowTax === 'yes') document.getElementById('receiptShowTax').checked = true;
         if (map.receiptShowDiscount === 'yes') document.getElementById('receiptShowDiscount').checked = true;
         if (map.receiptShowCustomer === 'yes') document.getElementById('receiptShowCustomer').checked = true;
         if (map.receiptShowCashier === 'yes') document.getElementById('receiptShowCashier').checked = true;
+        if (map.receiptShowEtims === 'yes' && document.getElementById('receiptShowEtims')) document.getElementById('receiptShowEtims').checked = true;
     } catch(e) { console.error('Error loading settings:', e); }
 }
 
@@ -633,6 +691,65 @@ async function testPrinter() {
     } catch(e) { alert(' Error: ' + e.message); }
 }
 
+// ===== eTIMS STATUS =====
+async function loadEtimsStatus() {
+    try {
+        var db = await openDB();
+        var orders = await dbGetAll(db, 'orders');
+        
+        var synced = 0, pending = 0, failed = 0;
+        var invoices = [];
+        
+        orders.forEach(function(o) {
+            var status = o.etims_status || 'pending';
+            if (status === 'synced') synced++;
+            else if (status === 'failed') failed++;
+            else pending++;
+            
+            if (o.etims_invoice_no || status !== 'synced') {
+                invoices.push({
+                    order_number: o.order_number,
+                    invoice_no: o.etims_invoice_no,
+                    cu_serial: o.etims_serial,
+                    status: status,
+                    date: o.date,
+                    total: o.total
+                });
+            }
+        });
+        
+        document.getElementById('etimsSynced').textContent = synced;
+        document.getElementById('etimsPending').textContent = pending;
+        document.getElementById('etimsFailed').textContent = failed;
+        document.getElementById('etimsStatusSummary').textContent = 
+            'Total: ' + orders.length + ' orders | ' + synced + ' synced, ' + pending + ' pending, ' + failed + ' failed';
+        
+        // Build invoice list
+        var list = document.getElementById('etimsInvoiceList');
+        if (invoices.length === 0) {
+            list.innerHTML = '<div style="text-align:center;padding:20px;color:#94a3b8;font-size:12px;">No invoices yet</div>';
+        } else {
+            var html = '<table style="width:100%;border-collapse:collapse;font-size:11px;">';
+            html += '<thead><tr style="background:#f8fafc;"><th style="padding:4px 8px;text-align:left;">Order</th><th style="padding:4px 8px;text-align:left;">Invoice</th><th style="padding:4px 8px;text-align:left;">Status</th></tr></thead><tbody>';
+            invoices.slice(0, 20).forEach(function(inv) {
+                var statusColor = inv.status === 'synced' ? '#166534' : (inv.status === 'failed' ? '#991b1b' : '#92400e');
+                var statusLabel = inv.status === 'synced' ? ' Synced' : (inv.status === 'failed' ? ' Failed' : ' Pending');
+                html += '<tr style="border-bottom:1px solid #f1f5f9;">';
+                html += '<td style="padding:4px 8px;">' + (inv.order_number || 'N/A') + '</td>';
+                html += '<td style="padding:4px 8px;font-family:monospace;">' + (inv.invoice_no || '-') + '</td>';
+                html += '<td style="padding:4px 8px;color:' + statusColor + ';font-weight:600;">' + statusLabel + '</td>';
+                html += '</tr>';
+            });
+            html += '</tbody></table>';
+            list.innerHTML = html;
+        }
+        
+        console.log('eTIMS Status loaded:', { synced: synced, pending: pending, failed: failed });
+    } catch(e) {
+        document.getElementById('etimsStatusSummary').textContent = 'Error: ' + e.message;
+    }
+}
+
 // ===== INIT =====
 document.addEventListener('DOMContentLoaded', function() {
     var userData = localStorage.getItem('pos_user');
@@ -645,9 +762,40 @@ document.addEventListener('DOMContentLoaded', function() {
     loadUsers();
     loadSettings();
     loadStoreName();
+    loadEtimsStatus();
 });
 </script>
 
+
+<script src="pwa-install.js"></script>
+<script>
+// ===== SERVICE WORKER REGISTRATION =====
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/sw.js')
+            .then(function(reg) {
+                console.log('Service Worker registered:', reg.scope);
+                
+                // Check for updates
+                reg.addEventListener('updatefound', function() {
+                    var newWorker = reg.installing;
+                    newWorker.addEventListener('statechange', function() {
+                        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                            // New version available
+                            if (confirm('A new version is available. Update now?')) {
+                                newWorker.postMessage({ type: 'SKIP_WAITING' });
+                                window.location.reload();
+                            }
+                        }
+                    });
+                });
+            })
+            .catch(function(err) {
+                console.log('Service Worker registration failed:', err);
+            });
+    });
+}
+</script>
 </body>
 </html>
 

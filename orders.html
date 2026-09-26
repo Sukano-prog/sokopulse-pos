@@ -3,6 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1a3c34">
+    <meta name="description" content="SokoPulse POS - Offline Point of Sale with eTIMS compliance">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="SokoPulse">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiB2aWV3Qm94PSIwIDAgMTkyIDE5MiI+PHJlY3Qgd2lkdGg9IjE5MiIgaGVpZ2h0PSIxOTIiIHJ4PSIzMiIgZmlsbD0iIzFhM2MzNCIvPjx0ZXh0IHg9Ijk2IiB5PSIxMjAiIGZvbnQtc2l6ZT0iODAiIGZvbnQtZmFtaWx5PSJBcmlhbCxzYW5zLXNlcmlmIiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0iI2Y1YTYyMyIgdGV4dC1hbmNob3I9Im1pZGRsZSI+U1A8L3RleHQ+PC9zdmc+">
     <title>Orders - SokoPulse</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
@@ -50,11 +57,11 @@
     <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
     <aside class="sidebar">
         <div class="logo"> <span>Soko</span>Pulse <button class="close-btn" onclick="toggleSidebar()">✕</button></div>
-        <nav>
+                <nav>
             <div class="nav-label">Main</div>
             <a href="pos.html"> POS</a>
             <a href="dashboard.html"> Dashboard</a>
-            <a href="orders.html" class="active"> Orders</a>
+            <a href="orders.html"> Orders</a>
             <div class="nav-label">Inventory</div>
             <a href="products.html"> Products</a>
             <a href="stock.html"> Stock</a>
@@ -70,9 +77,9 @@
         </nav>
         <div class="user-section">
             <div class="name" id="userName">Administrator</div>
-            <button class="logout-btn" onclick="logout()"> Logout</button>
             <div class="role" id="userRole">Admin</div>
         </div>
+        <button class="logout-btn" onclick="logout()">Logout</button>
     </aside>
     <main class="main-content">
         <header class="topbar">
@@ -306,23 +313,52 @@ function reprintReceipt(id) {
             items = order.items;
         }
     }
-    var receipt = '================================\n';
-    receipt += '        SOKOPULSE POS\n';
-    receipt += '================================\n';
+    var line = '--------------------------------\n';
+    var dline = '================================\n';
+    var storeName = document.querySelector('.store-badge')?.textContent || 'SokoPulse';
+    var subtotal = order.subtotal || items.reduce(function(s, i) { return s + (i.price || 0) * (i.qty || 1); }, 0);
+    var tax = order.tax || 0;
+    var total = order.total || (subtotal + tax);
+    var receipt = '';
+    receipt += dline;
+    receipt += '        ' + storeName + '\n';
+    receipt += dline;
     receipt += 'Order: ' + (order.order_number || '#' + order.id) + '\n';
     receipt += 'Date: ' + new Date(order.date).toLocaleString() + '\n';
+    receipt += 'Cashier: Administrator\n';
     receipt += 'Customer: ' + (order.customer_name || 'Walk-in') + '\n';
-    receipt += '--------------------------------\n';
+    receipt += line;
+    receipt += 'ITEM            QTY    PRICE      TOTAL\n';
+    receipt += line;
     items.forEach(function(item) {
-        receipt += item.name + ' x' + (item.qty || 1) + ' = KES ' + ((item.price || 0) * (item.qty || 1)).toFixed(2) + '\n';
+        var name = (item.name || 'Unknown').substring(0, 14);
+        while (name.length < 15) name += ' ';
+        var qtyStr = String(item.qty || 1);
+        while (qtyStr.length < 6) qtyStr = ' ' + qtyStr;
+        var unitStr = 'KES ' + (item.price || 0).toFixed(2);
+        while (unitStr.length < 12) unitStr = ' ' + unitStr;
+        var totalStr = 'KES ' + ((item.price || 0) * (item.qty || 1)).toFixed(2);
+        while (totalStr.length < 12) totalStr = ' ' + totalStr;
+        receipt += name + qtyStr + unitStr + totalStr + '\n';
     });
-    receipt += '--------------------------------\n';
-    receipt += 'TOTAL: KES ' + (order.total || 0).toFixed(2) + '\n';
+    receipt += line;
+    receipt += 'Subtotal:            KES ' + subtotal.toFixed(2) + '\n';
+    if (tax > 0) receipt += 'VAT (16%):           KES ' + tax.toFixed(2) + '\n';
+    receipt += 'TOTAL:               KES ' + total.toFixed(2) + '\n';
+    if (order.etims_invoice_no || order.etims_serial) {
+        receipt += line;
+        receipt += 'eTIMS INFORMATION\n';
+        if (order.etims_invoice_no) receipt += 'Invoice No:  ' + order.etims_invoice_no + '\n';
+        if (order.etims_serial) receipt += 'CU Serial:   ' + order.etims_serial + '\n';
+        receipt += line;
+    }
     receipt += 'Payment: ' + (order.payment_method || 'Cash') + '\n';
     receipt += 'Status: ' + (order.status || 'Completed') + '\n';
-    receipt += '================================\n';
+    receipt += dline;
     receipt += '  Thank you for shopping with us!\n';
-    receipt += '================================\n';
+    receipt += dline;
+    receipt += '        Powered by SokoPulse\n';
+    receipt += dline;
     var win = window.open('', '_blank', 'width=400,height=600');
     if (!win) { alert('Please allow popups for printing'); return; }
     win.document.write('<html><head><title>Receipt</title><style>body{font-family:monospace;padding:20px;white-space:pre;}</style></head><body><pre>' + receipt + '</pre></body></html>');
@@ -397,6 +433,8 @@ function openBulkPrintPreview() {
         }
         var orderTotal = o.total || 0;
         grandTotal += orderTotal;
+        var orderSubtotal = o.subtotal || items.reduce(function(s, i) { return s + (i.price || 0) * (i.qty || 1); }, 0);
+        var orderTax = o.tax || 0;
         html += '================================\n';
         html += '        SOKOPULSE POS\n';
         html += '================================\n';
@@ -406,21 +444,32 @@ function openBulkPrintPreview() {
         html += 'Payment: ' + (o.payment_method || 'Cash') + '\n';
         html += 'Status: ' + (o.status || 'Completed') + '\n';
         html += '--------------------------------\n';
+        html += 'ITEM            QTY    PRICE      TOTAL\n';
+        html += '--------------------------------\n';
         if (items.length === 0) {
             html += 'No items\n';
         } else {
             items.forEach(function(item) {
-                var qty = item.qty || 1;
-                var price = item.price || 0;
-                var total = price * qty;
-                var name = (item.name || 'Unknown').slice(0, 25);
-                html += name.padEnd(25) + ' x' + qty + '  KES ' + total.toFixed(2) + '\n';
+                var name = (item.name || 'Unknown').substring(0, 14);
+                while (name.length < 15) name += ' ';
+                var qtyStr = String(item.qty || 1);
+                while (qtyStr.length < 6) qtyStr = ' ' + qtyStr;
+                var unitStr = 'KES ' + (item.price || 0).toFixed(2);
+                while (unitStr.length < 12) unitStr = ' ' + unitStr;
+                var totalStr = 'KES ' + ((item.price || 0) * (item.qty || 1)).toFixed(2);
+                while (totalStr.length < 12) totalStr = ' ' + totalStr;
+                html += name + qtyStr + unitStr + totalStr + '\n';
             });
         }
         html += '--------------------------------\n';
-        html += 'Subtotal:    KES ' + (orderTotal || 0).toFixed(2) + '\n';
-        html += 'Tax (16%):   KES ' + ((orderTotal || 0) * 0.16).toFixed(2) + '\n';
-        html += 'TOTAL:       KES ' + (orderTotal || 0).toFixed(2) + '\n';
+        html += 'Subtotal:            KES ' + orderSubtotal.toFixed(2) + '\n';
+        if (orderTax > 0) html += 'VAT (16%):           KES ' + orderTax.toFixed(2) + '\n';
+        html += 'TOTAL:               KES ' + (o.total || 0).toFixed(2) + '\n';
+        if (o.etims_invoice_no || o.etims_serial) {
+            html += 'eTIMS INFORMATION\n';
+            if (o.etims_invoice_no) html += 'Invoice No:  ' + o.etims_invoice_no + '\n';
+            if (o.etims_serial) html += 'CU Serial:   ' + o.etims_serial + '\n';
+        }
         html += '================================\n';
         if (index < filtered.length - 1) { html += '\n\n'; }
     });
@@ -544,6 +593,36 @@ document.addEventListener('keydown', function(e) {
         document.querySelectorAll('.modal.show').forEach(function(m) { m.classList.remove('show'); });
     }
 });
+</script>
+
+<script src="pwa-install.js"></script>
+<script>
+// ===== SERVICE WORKER REGISTRATION =====
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/sw.js')
+            .then(function(reg) {
+                console.log('Service Worker registered:', reg.scope);
+                
+                // Check for updates
+                reg.addEventListener('updatefound', function() {
+                    var newWorker = reg.installing;
+                    newWorker.addEventListener('statechange', function() {
+                        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                            // New version available
+                            if (confirm('A new version is available. Update now?')) {
+                                newWorker.postMessage({ type: 'SKIP_WAITING' });
+                                window.location.reload();
+                            }
+                        }
+                    });
+                });
+            })
+            .catch(function(err) {
+                console.log('Service Worker registration failed:', err);
+            });
+    });
+}
 </script>
 </body>
 </html>
