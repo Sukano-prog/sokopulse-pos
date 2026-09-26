@@ -976,6 +976,7 @@ function voidTransaction() {
     alert('Transaction voided');
 }
 
+/* KRA integration disabled
 function showOnlineReminder(pendingCount) {
     var banner = document.getElementById('onlineReminderBanner');
     var message = document.getElementById('onlineReminderMessage');
@@ -989,6 +990,8 @@ function dismissOnlineReminder() {
     if (banner) banner.style.display = 'none';
     sessionStorage.setItem('online_reminder_dismissed', 'true');
 }
+*/
+/* KRA integration disabled
 async function checkPendingSyncReminder() {
     if (!isOnline()) return;
     if (sessionStorage.getItem('online_reminder_dismissed') === 'true') return;
@@ -997,6 +1000,7 @@ async function checkPendingSyncReminder() {
         if (status.pending > 0) setTimeout(function() { showOnlineReminder(status.pending); }, 2000);
     } catch(e) {}
 }
+*/
 
 document.addEventListener('keydown', function(e) {
     if (e.ctrlKey && e.shiftKey && e.key === 'C') { clearCart(); e.preventDefault(); }
@@ -1022,8 +1026,8 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(loadCart, 500);
     setTimeout(loadHeldOrders, 600);
     setTimeout(updateCreditButton, 700);
-    setTimeout(checkPendingSyncReminder, 3000);
-    setInterval(function() { if (typeof updateSyncIndicator === 'function') updateSyncIndicator(); }, 10000);
+    // setTimeout(checkPendingSyncReminder, 3000); // KRA disabled
+    // setInterval(function() { if (typeof updateSyncIndicator === 'function') updateSyncIndicator(); }, 10000); // KRA disabled
     console.log('POS initialized');
 });
 
