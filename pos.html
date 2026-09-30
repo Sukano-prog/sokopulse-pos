@@ -146,13 +146,47 @@
             .payment-buttons button { padding: 7px 4px !important; font-size: 10px !important; }
             .cart-actions { gap: 4px !important; margin-top: 4px !important; }
             .cart-actions button { padding: 7px !important; font-size: 10px !important; }
-            .topbar .left .mode-toggle { display: none !important; }
-            .topbar { padding: 6px 10px !important; min-height: 48px !important; }
+            /* KEEP mode toggle visible on mobile - compact */
+            .topbar .left .mode-toggle { 
+                display: flex !important; 
+                padding: 2px !important; 
+                border-radius: 8px !important; 
+                margin-left: 2px !important;
+            }
+            .topbar .left .mode-toggle button { 
+                padding: 3px 8px !important; 
+                font-size: 10px !important; 
+                border-radius: 6px !important; 
+            }
+            .topbar { 
+                padding: 6px 8px !important; 
+                min-height: auto !important; 
+                flex-wrap: wrap !important; 
+                gap: 4px !important; 
+            }
+            .topbar .left { flex-wrap: wrap !important; gap: 4px !important; }
+            .topbar .right { flex-wrap: wrap !important; gap: 4px !important; justify-content: flex-end !important; }
             .topbar .left h1 { font-size: 13px !important; }
-            .topbar .right .store-badge { font-size: 10px !important; padding: 3px 8px !important; max-width: 90px !important; overflow: hidden !important; text-overflow: ellipsis !important; white-space: nowrap !important; }
+            .topbar .right .store-badge { 
+                font-size: 10px !important; 
+                padding: 3px 6px !important; 
+                max-width: 70px !important; 
+                overflow: hidden !important; 
+                text-overflow: ellipsis !important; 
+                white-space: nowrap !important; 
+            }
+            .topbar .hamburger {
+                font-size: 16px !important;
+                padding: 2px 4px !important;
+            }
             .topbar .right .sync-status { font-size: 9px !important; padding: 3px 6px !important; }
             .topbar .right .time { font-size: 10px !important; }
-            .topbar .right a[href="client_guide.html"] { display: none !important; }
+            /* KEEP Guide link visible on mobile - compact */
+            .topbar .right a[href="client_guide.html"] { 
+                display: inline-block !important; 
+                font-size: 10px !important; 
+                padding: 3px 8px !important; 
+            }
             
             /* Ensure top elements don't shrink */
             .topbar { flex-shrink: 0 !important; }
