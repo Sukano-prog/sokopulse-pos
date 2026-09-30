@@ -59,6 +59,8 @@
         .payment-buttons .bank { background: #2c3e50; color: white; }
         .cart-actions { display: flex; gap: 6px; flex-shrink: 0; margin-top: 6px; }
         .cart-actions button { flex: 1; padding: 8px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 13px; }
+        .cart-actions button.hold-btn { background: #f59e0b; color: #0f172a; }
+        .cart-actions button.print-btn { background: #1a3c34; color: white; }
         .cart-actions .print-btn { background: #1a3c34; color: white; }
         .cart-actions .void-btn { background: #e74c3c; color: white; }
         .cart-actions .hold-btn { background: #f59e0b; color: #0f172a; }
@@ -104,13 +106,34 @@
             #categoryButtons { flex-wrap: nowrap !important; overflow-x: auto !important; gap: 4px !important; padding: 3px 0 !important; -webkit-overflow-scrolling: touch !important; }
             #categoryButtons::-webkit-scrollbar { display: none !important; }
             .category-btn { padding: 4px 10px !important; font-size: 10px !important; white-space: nowrap !important; flex-shrink: 0 !important; }
-            .cart-panel { flex: 1 1 auto !important; max-height: none !important; min-height: 0 !important; min-width: unset !important; max-width: unset !important; width: 100% !important; border-left: none !important; border-top: 2px solid #e2e8f0 !important; padding: 8px 10px !important; display: flex !important; flex-direction: column !important; overflow: hidden !important; }
+            .cart-panel { 
+                flex: 1 1 0 !important; 
+                max-height: none !important; 
+                min-height: 0 !important; 
+                min-width: unset !important; 
+                max-width: unset !important; 
+                width: 100% !important; 
+                border-left: none !important; 
+                border-top: 2px solid #e2e8f0 !important; 
+                padding: 6px 8px !important; 
+                display: flex !important; 
+                flex-direction: column !important; 
+                overflow: hidden !important; 
+            }
             .cart-header { flex-wrap: wrap !important; gap: 4px !important; margin-bottom: 4px !important; }
             .cart-header h2 { font-size: 14px !important; margin: 0 !important; }
             .cart-header .customer-select select { font-size: 10px !important; padding: 2px 6px !important; max-width: 100px !important; }
             .cart-header .btn-clear { font-size: 10px !important; padding: 2px 8px !important; }
             .cart-count { font-size: 11px !important; }
-            .cart-items { flex: 1 1 auto !important; overflow-y: auto !important; min-height: 0 !important; max-height: none !important; padding: 4px 0 !important; -webkit-overflow-scrolling: touch !important; }
+            /* Cart items - must scroll, not expand the panel */
+            .cart-items { 
+                flex: 1 1 0 !important; 
+                overflow-y: auto !important; 
+                min-height: 0 !important; 
+                max-height: none !important; 
+                padding: 4px 0 !important; 
+                -webkit-overflow-scrolling: touch !important;
+            }
             .cart-item { padding: 4px 0 !important; font-size: 11px !important; gap: 4px !important; }
             .cart-item .name { font-size: 11px !important; flex: 1 1 100% !important; }
             .cart-item .qty button { width: 20px !important; height: 20px !important; font-size: 11px !important; }
@@ -137,8 +160,17 @@
             #lowStockBanner { flex-shrink: 0 !important; }
             #onlineReminderBanner { flex-shrink: 0 !important; }
             
-            /* Make payment/action buttons always visible */
-            .cart-subtotal, .cart-tax, .cart-total, .payment-buttons, .cart-actions { flex-shrink: 0 !important; }
+            /* Make totals and buttons always visible (never shrink) */
+            .cart-subtotal, .cart-tax, .cart-total, .payment-buttons, .cart-actions { 
+                flex-shrink: 0 !important; 
+                flex-grow: 0 !important;
+            }
+            
+            /* Make cart-item more compact on mobile */
+            .cart-item .name { flex: 1 1 100% !important; margin-bottom: 2px !important; font-size: 11px !important; }
+            .cart-item .qty { flex: 0 0 auto !important; }
+            .cart-item .price-total { flex: 0 0 auto !important; }
+            .cart-item .remove-btn { flex: 0 0 auto !important; padding: 0 6px !important; }
         }
 
         @media (max-width: 480px) {
@@ -282,7 +314,6 @@
                 <div class="cart-actions">
                     <button class="hold-btn" onclick="holdOrder()">Hold</button>
                     <button class="print-btn" onclick="printCartPreview()">Print</button>
-                    <button class="void-btn" onclick="voidTransaction()">Void</button>
                 </div>
             </div>
         </div>
