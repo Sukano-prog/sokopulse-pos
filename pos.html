@@ -478,7 +478,9 @@ function renderProducts() {
     if (categoryFilter) filtered = filtered.filter(function(p) { return p.category_id == categoryFilter; });
     if (filtered.length === 0) { grid.innerHTML = '<div class="loading-text">No products found</div>'; return; }
     grid.innerHTML = filtered.map(function(p) {
-        var price = parseFloat(p.price) || parseFloat(p.retail_price) || parseFloat(p.selling_price) || 0;
+        var retailPrice = parseFloat(p.price) || parseFloat(p.retail_price) || parseFloat(p.selling_price) || 0;
+        var wholePrice = parseFloat(p.wholesale_price) || 0;
+        var price = (mode === 'wholesale' && wholePrice > 0) ? wholePrice : retailPrice;
         var stock = p.current_stock || 0;
         var outOfStock = stock <= 0;
         var lowStock = stock > 0 && stock < (p.min_stock_alert || 5);
@@ -567,7 +569,9 @@ function addToCart(productId) {
         if (existing.qty >= product.current_stock) { alert('Not enough stock'); return; }
         existing.qty++;
     } else {
-        var price = parseFloat(product.price) || parseFloat(product.retail_price) || parseFloat(product.selling_price) || 0;
+        var retailPrice = parseFloat(product.price) || parseFloat(product.retail_price) || parseFloat(product.selling_price) || 0;
+        var wholePrice = parseFloat(product.wholesale_price) || 0;
+        var price = (mode === 'wholesale' && wholePrice > 0) ? wholePrice : retailPrice;
         cart.push({ id: product.id, name: product.name, price: price, qty: 1, maxStock: product.current_stock, discount: 0 });
     }
     renderCart();
