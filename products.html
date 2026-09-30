@@ -219,7 +219,7 @@
         .btn-remove-image:hover { background: #fecaca; }
         .bulk-product-row {
             display: grid;
-            grid-template-columns: 2fr 1fr 1fr 1fr 1fr auto;
+            grid-template-columns: 2fr 0.8fr 1fr 1fr 1fr 0.8fr auto;
             gap: 8px;
             margin-bottom: 8px;
             align-items: end;
@@ -499,6 +499,7 @@
             <div class="bulk-product-row">
                 <div class="form-group"><label>Product Name</label><input type="text" class="bulk-name" placeholder="Product name"></div>
                 <div class="form-group"><label>SKU</label><input type="text" class="bulk-sku" placeholder="SKU"></div>
+                <div class="form-group"><label>Cost Price</label><input type="number" class="bulk-cost" placeholder="0.00" step="0.01"></div>
                 <div class="form-group"><label>Retail Price</label><input type="number" class="bulk-retail" placeholder="0.00" step="0.01"></div>
                 <div class="form-group"><label>Wholesale Price</label><input type="number" class="bulk-wholesale" placeholder="0.00" step="0.01"></div>
                 <div class="form-group"><label>Stock</label><input type="number" class="bulk-stock" placeholder="0"></div>
@@ -1006,6 +1007,7 @@ async function bulkAddProducts() {
     rows.forEach((row, i) => {
         const name = row.querySelector('.bulk-name').value.trim();
         const sku = row.querySelector('.bulk-sku').value.trim();
+        const cost = parseFloat(row.querySelector('.bulk-cost')?.value) || 0;
         const retail = parseFloat(row.querySelector('.bulk-retail').value) || 0;
         const wholesale = parseFloat(row.querySelector('.bulk-wholesale').value) || 0;
         const stock = parseInt(row.querySelector('.bulk-stock').value) || 0;
@@ -1017,9 +1019,10 @@ async function bulkAddProducts() {
         }
         productsToAdd.push({
             name: name, sku: sku || '', barcode: '',
+            cost_price: cost,
             retail_price: retail, wholesale_price: wholesale || 0,
             selling_price: retail, current_stock: stock,
-            min_stock_alert: 5, cost_price: 0,
+            min_stock_alert: 5,
             expiry_date: null, image: null, category_id: null
         });
     });
