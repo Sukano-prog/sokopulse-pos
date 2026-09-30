@@ -11,7 +11,7 @@
     <link rel="manifest" href="manifest.json">
     <style>
         /* ===== BASE POS LAYOUT ===== */
-        .pos-layout { display: flex; flex: 1; overflow: hidden; height: calc(100vh - 90px); }
+        .pos-layout { display: flex; flex: 1; overflow: hidden; min-height: 0; }
         .products-panel { flex: 2; padding: 15px; overflow-y: auto; background: #f5f6fa; height: 100%; }
         .search-row { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
         .search-row input { flex: 1; padding: 10px 14px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; min-width: 150px; }
@@ -39,7 +39,7 @@
         .cart-header h2 { font-size: 17px; }
         .cart-header .customer-select select { padding: 4px 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px; }
         .btn-clear { background: #e74c3c; color: white; border: none; padding: 4px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; }
-        .cart-items { flex: 1 1 auto; overflow-y: auto; margin-bottom: 10px; min-height: 0; max-height: calc(100vh - 480px); }
+        .cart-items { flex: 1 1 auto; overflow-y: auto; margin-bottom: 10px; min-height: 100px; }
         .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #f0f0f0; font-size: 14px; gap: 8px; flex-wrap: wrap; }
         .cart-item .name { flex: 1; font-weight: 500; }
         .cart-item .qty button { width: 24px; height: 24px; border-radius: 50%; border: 1px solid #ddd; background: white; cursor: pointer; font-weight: bold; font-size: 14px; }
@@ -86,8 +86,12 @@
 
         /* ===== MOBILE RESPONSIVE ===== */
         @media (max-width: 768px) {
-            .pos-layout { flex-direction: column !important; height: calc(100vh - 90px) !important; overflow: hidden !important; }
-            .products-panel { flex: 0 0 45% !important; max-height: 45vh !important; padding: 6px 8px !important; overflow-y: auto !important; }
+            /* Fix main content to fill available space */
+            .main-content { display: flex !important; flex-direction: column !important; height: 100dvh !important; overflow: hidden !important; }
+            .pos-layout { flex: 1 1 auto !important; flex-direction: column !important; overflow: hidden !important; min-height: 0 !important; height: auto !important; }
+            
+            /* Products panel: fixed 40% of remaining space */
+            .products-panel { flex: 0 0 auto !important; height: 40vh !important; max-height: 40vh !important; padding: 6px 8px !important; overflow-y: auto !important; }
             .search-row { gap: 6px !important; margin-bottom: 6px !important; }
             .search-row input, .search-row select { padding: 6px 10px !important; font-size: 12px !important; min-width: unset !important; }
             .product-grid { grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)) !important; gap: 5px !important; }
@@ -100,13 +104,13 @@
             #categoryButtons { flex-wrap: nowrap !important; overflow-x: auto !important; gap: 4px !important; padding: 3px 0 !important; -webkit-overflow-scrolling: touch !important; }
             #categoryButtons::-webkit-scrollbar { display: none !important; }
             .category-btn { padding: 4px 10px !important; font-size: 10px !important; white-space: nowrap !important; flex-shrink: 0 !important; }
-            .cart-panel { flex: 1 1 55% !important; max-height: 55vh !important; min-width: unset !important; max-width: unset !important; width: 100% !important; border-left: none !important; border-top: 2px solid #e2e8f0 !important; padding: 8px 10px !important; display: flex !important; flex-direction: column !important; overflow: hidden !important; }
+            .cart-panel { flex: 1 1 auto !important; max-height: none !important; min-height: 0 !important; min-width: unset !important; max-width: unset !important; width: 100% !important; border-left: none !important; border-top: 2px solid #e2e8f0 !important; padding: 8px 10px !important; display: flex !important; flex-direction: column !important; overflow: hidden !important; }
             .cart-header { flex-wrap: wrap !important; gap: 4px !important; margin-bottom: 4px !important; }
             .cart-header h2 { font-size: 14px !important; margin: 0 !important; }
             .cart-header .customer-select select { font-size: 10px !important; padding: 2px 6px !important; max-width: 100px !important; }
             .cart-header .btn-clear { font-size: 10px !important; padding: 2px 8px !important; }
             .cart-count { font-size: 11px !important; }
-            .cart-items { flex: 1 1 auto !important; overflow-y: auto !important; min-height: 60px !important; max-height: none !important; padding: 4px 0 !important; -webkit-overflow-scrolling: touch !important; }
+            .cart-items { flex: 1 1 auto !important; overflow-y: auto !important; min-height: 0 !important; max-height: none !important; padding: 4px 0 !important; -webkit-overflow-scrolling: touch !important; }
             .cart-item { padding: 4px 0 !important; font-size: 11px !important; gap: 4px !important; }
             .cart-item .name { font-size: 11px !important; flex: 1 1 100% !important; }
             .cart-item .qty button { width: 20px !important; height: 20px !important; font-size: 11px !important; }
@@ -126,10 +130,19 @@
             .topbar .right .sync-status { font-size: 9px !important; padding: 3px 6px !important; }
             .topbar .right .time { font-size: 10px !important; }
             .topbar .right a[href="client_guide.html"] { display: none !important; }
+            
+            /* Ensure top elements don't shrink */
+            .topbar { flex-shrink: 0 !important; }
+            #storeInfoBar { flex-shrink: 0 !important; }
+            #lowStockBanner { flex-shrink: 0 !important; }
+            #onlineReminderBanner { flex-shrink: 0 !important; }
+            
+            /* Make payment/action buttons always visible */
+            .cart-subtotal, .cart-tax, .cart-total, .payment-buttons, .cart-actions { flex-shrink: 0 !important; }
         }
 
         @media (max-width: 480px) {
-            .products-panel { max-height: 38vh !important; }
+            .products-panel { height: 35vh !important; max-height: 35vh !important; }
             .product-grid { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)) !important; gap: 4px !important; }
             .product-item { padding: 5px 3px !important; }
             .product-item .product-name { font-size: 10px !important; }
