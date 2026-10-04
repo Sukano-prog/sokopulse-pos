@@ -266,3 +266,51 @@ function dbGetAll(db, storeName) {
         req.onerror = () => reject(req.error);
     });
 }
+
+// ============================================================
+// MACHINE ID - Stable device identifier
+// Used for: license binding, VSCU device serial
+// ============================================================
+async function getMachineId() {
+    // 1. Return existing ID if present
+    var existing = localStorage.getItem('machine_id');
+    if (existing) return existing;
+
+    // 2. Derive from STABLE device signals only
+    //    (avoid userAgent/language - they change with updates)
+    var signals = [
+        navigator.hardwareConcurrency || 0,      // CPU cores
+        navigator.deviceMemory || 0,             // RAM in GB
+        screen.colorDepth || 0,                  // bit depth
+        (screen.width || 0) * (screen.height || 0), // pixel area
+        navigator.platform || 'unknown'          // OS
+    ];
+    var raw = 'SP|' + signals.join('|');
+
+    // 3. Hash with SHA-256 for a fixed-length deterministic ID
+    var hashHex = '';
+    try {
+        var buf = new TextEncoder().encode(raw);
+        var hashBuf = await crypto.subtle.digest('SHA-256', buf);
+        var bytes = new Uint8Array(hashBuf);
+        for (var i = 0; i < bytes.length; i++) {
+            hashHex += bytes[i].toString(16).padStart(2, '0');
+        }
+    } catch(e) {
+        // Fallback if crypto.subtle unavailable (http:// not https://)
+        // Use a simple deterministic hash instead
+        var h = 0;
+        for (var i = 0; i < raw.length; i++) {
+            h = ((h << 5) - h) + raw.charCodeAt(i);
+            h = h & h;
+        }
+        hashHex = Math.abs(h).toString(16).padStart(16, '0')
+                  + Math.abs(h * 31).toString(16).padStart(16, '0');
+    }
+
+    var machineId = 'SP-' + hashHex.slice(0, 16).toUpperCase();
+
+    // 4. Save permanently
+    localStorage.setItem('machine_id', machineId);
+    return machineId;
+}

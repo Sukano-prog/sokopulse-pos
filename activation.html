@@ -262,30 +262,20 @@
 // ============================================================
 
 // ===== GENERATE MACHINE ID =====
-function getMachineId() {
-    let machineId = localStorage.getItem('machine_id');
-    if (!machineId) {
-        const components = [
-            navigator.userAgent,
-            navigator.language,
-            screen.width,
-            screen.height,
-            navigator.hardwareConcurrency || 0,
-            navigator.platform,
-            navigator.deviceMemory || 0
-        ];
-        machineId = btoa(components.join('|')).slice(0, 24);
-        localStorage.setItem('machine_id', machineId);
-    }
-    return machineId;
+// Uses the shared async getMachineId() from db.js
+// This local wrapper keeps backward compatibility with sync callers.
+function getMachineIdSync() {
+    return localStorage.getItem('machine_id') || 'PENDING';
 }
 
-function displayMachineId() {
-    document.getElementById('machineId').textContent = getMachineId();
+async function displayMachineId() {
+    var id = await getMachineId();
+    var el = document.getElementById('machineId');
+    if (el) el.textContent = id;
 }
 
-function copyMachineId() {
-    const id = getMachineId();
+async function copyMachineId() {
+    const id = await getMachineId();
     navigator.clipboard.writeText(id).then(() => {
         alert(' Machine ID copied to clipboard!');
     }).catch(() => {
@@ -336,7 +326,7 @@ function updateDots(step) {
 }
 
 // ===== ACTIVATE SYSTEM =====
-function activateSystem() {
+async function activateSystem() {
     const codeInput = document.getElementById("activationCodeInput");
     const status = document.getElementById("activationStatus");
     const code = codeInput.value.trim().toUpperCase();
@@ -359,7 +349,7 @@ function activateSystem() {
     localStorage.setItem("activation_code", code);
     localStorage.setItem("expiry_date", expiryDate.toISOString());
     localStorage.setItem("license_type", "Monthly");
-    localStorage.setItem("machine_id", getMachineId());
+    localStorage.setItem("machine_id", await getMachineId());
     
     status.className = "status success show";
     status.textContent = " Activation successful! License valid until " + expiryDate.toLocaleDateString();

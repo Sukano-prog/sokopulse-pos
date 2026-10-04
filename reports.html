@@ -1,6 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script>
+// Early license check - runs before page renders
+(function() {
+    try {
+        var activated = localStorage.getItem('activated');
+        var expiry = localStorage.getItem('expiry_date');
+        if (activated !== 'true') {
+            window.location.replace('settings.html');
+            return;
+        }
+        if (expiry && new Date(expiry) < new Date()) {
+            localStorage.removeItem('activated');
+            localStorage.removeItem('activation_code');
+            localStorage.removeItem('expiry_date');
+            window.location.replace('settings.html');
+            return;
+        }
+    } catch (e) {
+        // If localStorage is broken, fail closed
+        window.location.replace('settings.html');
+    }
+})();
+</script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#1a3c34">

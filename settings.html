@@ -215,7 +215,6 @@
                      Activate License
                 </button>
                 <div style="margin-top:12px;text-align:center;font-size:11px;color:#94a3b8;">
-                    <a href="expiry.html" style="color:#1a3c34;">Check expiry status</a> | 
                     <a href="activation.html" style="color:#1a3c34;">Enter activation code</a>
                 </div>
             </div>
@@ -376,7 +375,10 @@ function isAdmin() {
         return false;
     }
 }
-if (!isAdmin()) {
+// Only enforce admin access if a user is logged in
+// (allows license activation when not yet signed in)
+var _loggedUser = localStorage.getItem('pos_user');
+if (_loggedUser && !isAdmin()) {
     window.location.href = "pos.html";
 }
 
@@ -824,7 +826,7 @@ if ('serviceWorker' in navigator) {
 
 <script>
 // ===== LICENSE ACTIVATION =====
-function activateLicense() {
+async function activateLicense() {
     const codeInput = document.getElementById('activationCodeInput');
     const statusDisplay = document.getElementById('activationStatus');
     const code = codeInput ? codeInput.value.trim().toUpperCase() : '';
@@ -835,7 +837,7 @@ function activateLicense() {
         return;
     }
     
-    const machineId = localStorage.getItem('machine_id') || 'DEVICE-' + Date.now().toString(36).toUpperCase();
+    const machineId = localStorage.getItem('machine_id') || (typeof getMachineId === 'function' ? await getMachineId() : 'UNKNOWN');
     const storedCodes = JSON.parse(localStorage.getItem('activation_codes') || '[]');
     
     // Find matching code
