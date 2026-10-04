@@ -428,6 +428,7 @@
 <!-- KRA integration disabled
 <script src="sync.js"></script> -->
 <!-- <script src="etims.js"></script> -->
+<script src="vscu.js"></script>
 <script src="js/printer.js"></script>
 <script src="qrcode.min.js"></script>
 <script>
@@ -854,7 +855,7 @@ function confirmCashPayment() {
 }
 function closeCashTender() { document.getElementById('cashTenderModal').classList.remove('show'); cashPendingOrder = null; }
 
-function processPayment(method, amountReceived) {
+async function processPayment(method, amountReceived) {
     if (cart.length === 0) { alert('Cart is empty'); return; }
     var subtotal = cart.reduce(function(s, i) { return s + (i.price * i.qty * (1 - (i.discount || 0) / 100)); }, 0);
     var tax = 0;
@@ -904,6 +905,27 @@ function processPayment(method, amountReceived) {
     //         order.etims_qr = etimsResult.qrCode;
     //     } else if (etimsResult.queued) { order.etims_status = 'pending'; }
     // });
+
+    // ---- Send to KRA VSCU (or queue if offline) ----
+    try {
+        var vscuResult = await vscuSendInvoice(order);
+        if (vscuResult && vscuResult.success) {
+            order.etims_status = 'synced';
+            order.etims_invoice_no = vscuResult.cuInvcNo || null;
+            order.etims_serial = vscuResult.cuSerial || null;
+            order.etims_qr = vscuResult.qrCode || null;
+            order.synced_at = new Date().toISOString();
+            console.log('VSCU: invoice attached to order', order.etims_invoice_no);
+        } else {
+            order.etims_status = 'pending';
+            order.etims_error = (vscuResult && vscuResult.error) || 'unknown';
+            console.warn('VSCU: queued for later', order.etims_error);
+        }
+    } catch(e) {
+        order.etims_status = 'pending';
+        order.etims_error = e.message;
+        console.warn('VSCU: exception, queued for later', e.message);
+    }
 
     // Save order to local database
     openDB().then(function(db) {
