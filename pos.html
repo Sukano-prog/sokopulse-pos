@@ -2,6 +2,12 @@
 <html lang="en">
 <head>
 <script>
+
+function fmtQty(n) {
+    if (n === null || n === undefined || isNaN(n)) return '0';
+    return parseFloat(Number(n).toFixed(3)).toString();
+}
+
 // Early license check - runs before page renders
 (function() {
     try {
@@ -508,10 +514,10 @@ function renderProducts() {
         var stock = p.current_stock || 0;
         var outOfStock = stock <= 0;
         var lowStock = stock > 0 && stock < (p.min_stock_alert || 5);
-        var stockDisplay = stock + ' in stock';
+        var stockDisplay = fmtQty(stock) + ' in stock';
         var stockClass = '';
         if (outOfStock) { stockDisplay = 'Out of stock'; stockClass = 'out'; }
-        else if (lowStock) { stockDisplay = stock + ' left'; stockClass = 'low'; }
+        else if (lowStock) { stockDisplay = fmtQty(stock) + ' left'; stockClass = 'low'; }
         var imageHtml = p.image ? '<img src="' + p.image + '" style="width:60px;height:60px;object-fit:cover;border-radius:6px;margin:0 auto 4px;display:block;">' : '<div style="width:60px;height:60px;background:#f1f5f9;border-radius:6px;margin:0 auto 4px;"></div>';
         return '<div class="product-item ' + (outOfStock ? 'out-of-stock' : '') + '" onclick="' + (outOfStock ? '' : 'addToCart(' + p.id + ')') + '">' +
             imageHtml +

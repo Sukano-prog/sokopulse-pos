@@ -2,6 +2,12 @@
 <html lang="en">
 <head>
 <script>
+
+function fmtQty(n) {
+    if (n === null || n === undefined || isNaN(n)) return '0';
+    return parseFloat(Number(n).toFixed(3)).toString();
+}
+
 // Early license check - runs before page renders
 (function() {
     try {
@@ -762,7 +768,7 @@ function renderProducts() {
             '<td>' + categoryName + '</td>' +
             '<td>KES ' + (p.retail_price || p.selling_price || 0).toFixed(2) + '</td>' +
             '<td>KES ' + (p.wholesale_price || 0).toFixed(2) + '</td>' +
-            '<td>' + (p.current_stock || 0) + '</td>' +
+            '<td>' + fmtQty(p.current_stock || 0) + '</td>' +
             '<td><span class="status-badge ' + status + '">' + statusLabel + '</span></td>' +
             '<td>' +
                 '<button class="btn-image" onclick="quickAddImage(' + p.id + ')">Image</button>' +
@@ -842,7 +848,7 @@ function openEditModal(id) {
     document.getElementById('productCost').value = p.cost_price || '';
     document.getElementById('productRetail').value = p.retail_price || p.selling_price || '';
     document.getElementById('productWholesale').value = p.wholesale_price || '';
-    document.getElementById('productStock').value = p.current_stock || 0;
+    document.getElementById('productStock').value = fmtQty(p.current_stock || 0);
     document.getElementById('productMinStock').value = p.min_stock_alert || 5;
     document.getElementById('productExpiry').value = p.expiry_date || '';
     document.getElementById('productCategory').value = p.category_id || '';
