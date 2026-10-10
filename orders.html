@@ -349,7 +349,7 @@ function reprintReceipt(id) {
     receipt += dline;
     receipt += 'Order: ' + (order.order_number || '#' + order.id) + '\n';
     receipt += 'Date: ' + new Date(order.date).toLocaleString() + '\n';
-    receipt += 'Cashier: Administrator\n';
+    receipt += 'Cashier: ' + (order.cashier || order.cashier_username || 'Unknown') + '\n';
     receipt += 'Customer: ' + (order.customer_name || 'Walk-in') + '\n';
     receipt += line;
     receipt += 'ITEM            QTY    PRICE      TOTAL\n';

@@ -912,7 +912,10 @@ function processPayment(method, amountReceived) {
         status: method === 'credit' ? 'pending' : 'completed',
         customer_id: customerId, customer_name: customerName,
         mode: mode, note: orderNote || '',
-        cash_received: method === 'cash' ? amountReceived : null
+        cash_received: method === 'cash' ? amountReceived : null,
+        cashier: currentUser ? (currentUser.name || currentUser.username) : 'System',
+        cashier_id: currentUser ? currentUser.id : null,
+        cashier_username: currentUser ? currentUser.username : null
     };
 
     var bizInfo = { business_pin: localStorage.getItem('business_pin') || 'P000000000X', storeName: localStorage.getItem('storeName') || 'SokoPulse', storeAddress: localStorage.getItem('storeAddress') || '', storePhone: localStorage.getItem('storePhone') || '' };
@@ -945,7 +948,7 @@ function processPayment(method, amountReceived) {
                     var oldStock = product.current_stock;
                     product.current_stock -= item.qty;
                     dbPut(db, 'products', product);
-                    dbAdd(db, 'stock_movements', { product_id: product.id, product_name: product.name, type: 'sold', quantity: item.qty, previous_stock: oldStock, new_stock: product.current_stock, reference: order.order_number, date: new Date().toISOString(), user: 'system' });
+                    dbAdd(db, 'stock_movements', { product_id: product.id, product_name: product.name, type: 'sold', quantity: item.qty, previous_stock: oldStock, new_stock: product.current_stock, reference: order.order_number, date: new Date().toISOString(), user: order.cashier || 'system' });
                 }
             }
             alert('Payment successful!\n' + (methodNames[method] || method) + ': KES ' + total.toFixed(2));
@@ -1024,7 +1027,7 @@ function showReceipt(order) {
     receipt += 'Order: ' + (order.order_number || 'ORD-' + Date.now().toString().slice(-6)) + '\n';
     receipt += 'Date: ' + new Date(order.date).toLocaleString() + '\n';
     receipt += 'Mode: ' + (order.mode || 'Retail') + '\n';
-    receipt += 'Cashier: ' + (currentUser ? currentUser.name || currentUser.username : 'System') + '\n';
+    receipt += 'Cashier: ' + (order.cashier || order.cashier_username || (currentUser ? (currentUser.name || currentUser.username) : 'System')) + '\n';
     if (settings.showCustomer !== false) receipt += 'Customer: ' + (order.customer_name || 'Walk-in') + '\n';
     receipt += line;
     receipt += 'ITEM            QTY    PRICE      TOTAL\n';
