@@ -289,7 +289,7 @@
             <div class="right">
                 <span class="store-badge" id="storeName">SokoPulse</span>
                 <!-- <span class="sync-status" id="syncStatus" style="font-size:11px;padding:4px 10px;border-radius:12px;background:#dcfce7;color:#166534;cursor:pointer;font-weight:600;" title="Sync status" onclick="showSyncDetails()">Online</span> -->
-                <a href="client_guide.html" target="_blank" style="font-size:11px;padding:4px 10px;background:#1a3c34;color:white;border-radius:12px;text-decoration:none;font-weight:600;">Guide</a>
+                <button onclick="window.location.href='client_guide.html'" style="font-size:11px;padding:4px 10px;background:#1a3c34;color:white;border-radius:12px;text-decoration:none;font-weight:600;border:none;cursor:pointer;font-family:inherit;">Guide</button>
                 <span class="time" id="timeDisplay"></span>
             </div>
         </header>
@@ -621,7 +621,7 @@ function renderCart() {
             '<span class="name">' + item.name + taxBadge + '</span>' +
             '<div class="qty">' +
                 '<button onclick="updateQty(' + i + ', -1)">−</button>' +
-                '<span>' + item.qty + '</span>' +
+                '<input type="number" step="any" min="0.01" value="' + item.qty + '" onchange="setQty(' + i + ', this.value)" onclick="this.select()" style="width:60px;text-align:center;border:1px solid #ddd;border-radius:6px;padding:2px 4px;font-size:13px;font-family:inherit;" />' +
                 '<button onclick="updateQty(' + i + ', 1)">+</button>' +
             '</div>' +
             '<span class="price-total">KES ' + discountedTotal.toFixed(2) + '</span>' +
@@ -654,10 +654,27 @@ function updateTotals() {
 function updateQty(index, delta) {
     var item = cart[index];
     if (!item) return;
-    var newQty = item.qty + delta;
-    if (newQty <= 0) cart.splice(index, 1);
-    else if (newQty > item.maxStock) { alert('Not enough stock'); return; }
-    else item.qty = newQty;
+    var newQty = roundQty(item.qty + delta);
+    if (newQty <= 0) { cart.splice(index, 1); renderCart(); return; }
+    if (newQty > item.maxStock) { alert('Not enough stock. Available: ' + item.maxStock); return; }
+    item.qty = newQty;
+    renderCart();
+}
+
+function setQty(index, value) {
+    var item = cart[index];
+    if (!item) return;
+    var v = parseFloat(value);
+    if (isNaN(v) || v <= 0) { renderCart(); return; }
+    v = roundQty(v);
+    if (v > item.maxStock) { alert('Not enough stock. Available: ' + item.maxStock); renderCart(); return; }
+    item.qty = v;
+    renderCart();
+}
+
+function roundQty(n) {
+    return Math.round(n * 1000) / 1000;
+
     renderCart();
     saveCart();
 }
