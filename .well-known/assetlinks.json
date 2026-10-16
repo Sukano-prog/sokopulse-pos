@@ -1,0 +1,10 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.sokopulse.pos",
+    "sha256_cert_fingerprints": [
+      "35:4F:B0:BD:A1:01:25:FD:52:12:AB:01:50:D6:7F:E0:CF:64:58:28:EA:FC:34:30:13:49:5B:15:3F:BF:3C:43"
+    ]
+  }
+}]
