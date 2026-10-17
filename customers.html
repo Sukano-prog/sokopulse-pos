@@ -136,7 +136,53 @@
         }
         .empty-state .empty-icon { font-size: 48px; margin-bottom: 12px; }
         .empty-state h3 { color: #334155; font-weight: 600; }
-    </style>
+    
+@media (max-width: 768px) {
+    .modal.show {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 0 !important;
+    }
+    .modal-content {
+        width: calc(100% - 20px) !important;
+        max-width: calc(100% - 20px) !important;
+        max-height: 85vh !important;
+        max-height: 85dvh !important;
+        margin: 10px auto !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        padding: 20px !important;
+    }
+    .modal-content h2 {
+        font-size: 18px !important;
+        margin-bottom: 15px !important;
+    }
+    .modal-close {
+        top: 10px !important;
+        right: 15px !important;
+        font-size: 24px !important;
+    }
+    .form-group {
+        margin-bottom: 12px !important;
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        font-size: 16px !important;
+        padding: 12px !important;
+    }
+    .modal-actions {
+        flex-direction: column !important;
+        gap: 8px !important;
+    }
+    .modal-actions button {
+        width: 100% !important;
+        padding: 12px !important;
+        font-size: 15px !important;
+    }
+}
+</style>
 </head>
 <body>
 <div class="app">
@@ -226,10 +272,6 @@
             <div class="form-group">
                 <label>Phone Number *</label>
                 <input type="tel" id="custPhone" placeholder="0712345678" required>
-            </div>
-<!-- KRA integration disabled
-<div class="form-group"><label>KRA PIN (for eTIMS)</label><input type="text" id="custPin" placeholder="P051234567X" style="text-transform:uppercase;"></div>
--->
             </div>
 <!-- KRA integration disabled
 <div class="form-group"><label>KRA PIN (for eTIMS)</label><input type="text" id="custPin" placeholder="P051234567X" style="text-transform:uppercase;"></div>

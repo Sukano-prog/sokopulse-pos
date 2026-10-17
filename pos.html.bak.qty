@@ -1,0 +1,1184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+// Early license check - runs before page renders
+(function() {
+    try {
+        var activated = localStorage.getItem('activated');
+        var expiry = localStorage.getItem('expiry_date');
+        if (activated !== 'true') {
+            window.location.replace('settings.html');
+            return;
+        }
+        if (expiry && new Date(expiry) < new Date()) {
+            localStorage.removeItem('activated');
+            localStorage.removeItem('activation_code');
+            localStorage.removeItem('expiry_date');
+            window.location.replace('settings.html');
+            return;
+        }
+    } catch (e) {
+        // If localStorage is broken, fail closed
+        window.location.replace('settings.html');
+    }
+})();
+</script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#1a3c34">
+    <title>SokoPulse POS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="manifest" href="manifest.json">
+    <style>
+        /* ===== BASE POS LAYOUT ===== */
+        .pos-layout { display: flex; flex: 1; overflow: hidden; min-height: 0; }
+        .products-panel { flex: 2; padding: 15px; overflow-y: auto; background: #f5f6fa; height: 100%; }
+        .search-row { display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
+        .search-row input { flex: 1; padding: 10px 14px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; min-width: 150px; }
+        .search-row input:focus { border-color: #f5a623; outline: none; }
+        .search-row select { padding: 10px 14px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; background: white; min-width: 150px; }
+        #categoryButtons { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0 12px 0; padding: 6px 0; border-bottom: 1px solid #e2e8f0; min-height: 40px; }
+        .category-btn { padding: 6px 16px; border: 1px solid #e2e8f0; border-radius: 20px; background: white; cursor: pointer; font-size: 12px; font-weight: 600; font-family: 'Inter', sans-serif; transition: all 0.2s; color: #0f172a; }
+        .category-btn:hover { background: #f1f5f9; border-color: #1a3c34; }
+        .category-btn.active { background: #1a3c34; color: white; border-color: #1a3c34; }
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 8px; }
+        .product-item { background: white; padding: 8px; border-radius: 6px; text-align: center; cursor: pointer; border: 2px solid transparent; transition: 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+        .product-item:hover:not(.out-of-stock) { border-color: #f5a623; transform: translateY(-3px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .product-item .product-name { font-weight: 600; font-size: 12px; margin-bottom: 3px; line-height: 1.3; }
+        .product-item .product-price { color: #1a3c34; font-weight: bold; font-size: 14px; }
+        .product-item .product-price.wholesale { color: #f5a623; font-size: 14px; }
+        .product-item .product-stock { font-size: 10px; color: #888; }
+        .product-item .product-stock.low { color: #e74c3c; }
+        .product-item .product-stock.out { color: #e74c3c; font-weight: bold; }
+        .product-item .product-sku { font-size: 9px; color: #bbb; margin-top: 2px; }
+        .product-item .wholesale-badge { font-size: 10px; background: #f5a623; color: #1a3c34; padding: 1px 8px; border-radius: 10px; display: inline-block; margin-top: 4px; }
+        .product-item.out-of-stock { opacity: 0.5; cursor: not-allowed; }
+        .loading-text { text-align: center; padding: 40px; color: #888; grid-column: 1 / -1; }
+        .cart-panel { flex: 1; background: white; padding: 15px 20px; border-left: 1px solid #ddd; display: flex; flex-direction: column; min-width: 280px; max-width: 400px; height: 100%; overflow: hidden; }
+        .cart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-shrink: 0; flex-wrap: wrap; gap: 8px; }
+        .cart-header h2 { font-size: 17px; }
+        .cart-header .customer-select select { padding: 4px 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px; }
+        .btn-clear { background: #e74c3c; color: white; border: none; padding: 4px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; }
+        .cart-items { flex: 1 1 auto; overflow-y: auto; margin-bottom: 10px; min-height: 100px; }
+        .cart-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #f0f0f0; font-size: 14px; gap: 8px; flex-wrap: wrap; }
+        .cart-item .name { flex: 1; font-weight: 500; }
+        .cart-item .qty button { width: 24px; height: 24px; border-radius: 50%; border: 1px solid #ddd; background: white; cursor: pointer; font-weight: bold; font-size: 14px; }
+        .cart-item .price-total { font-weight: bold; min-width: 70px; text-align: right; }
+        .cart-item .remove-btn { background: none; border: none; color: #e74c3c; cursor: pointer; font-size: 16px; padding: 0 4px; }
+        .cart-item .discount-input { display: flex; align-items: center; gap: 2px; }
+        .cart-item .discount-input input { width: 40px; padding: 2px 4px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px; }
+        .empty-cart { text-align: center; padding: 40px 0; color: #bbb; }
+        .cart-subtotal, .cart-tax { display: flex; justify-content: space-between; padding: 4px 0; font-size: 14px; flex-shrink: 0; }
+        .cart-total { display: flex; justify-content: space-between; padding: 12px 0; border-top: 2px solid #1a3c34; font-size: 18px; font-weight: bold; flex-shrink: 0; }
+        .payment-buttons { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; flex-shrink: 0; margin-top: 6px; }
+        .payment-buttons button { padding: 10px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 13px; }
+        .payment-buttons .cash { background: #27ae60; color: white; }
+        .payment-buttons .mpesa { background: #f39c12; color: white; }
+        .payment-buttons .card { background: #3498db; color: white; }
+        .payment-buttons .credit { background: #8e44ad; color: white; }
+        .payment-buttons .bank { background: #2c3e50; color: white; }
+        .cart-actions { display: flex; gap: 6px; flex-shrink: 0; margin-top: 6px; }
+        .cart-actions button { flex: 1; padding: 8px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 13px; }
+        .cart-actions button.hold-btn { background: #f59e0b; color: #0f172a; }
+        .cart-actions button.print-btn { background: #1a3c34; color: white; }
+        .cart-actions .print-btn { background: #1a3c34; color: white; }
+        .cart-actions .void-btn { background: #e74c3c; color: white; }
+        .cart-actions .hold-btn { background: #f59e0b; color: #0f172a; }
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; }
+        .modal.show { display: flex; }
+        .modal-content { background: white; padding: 30px; border-radius: 8px; max-width: 500px; width: 95%; max-height: 90vh; overflow-y: auto; position: relative; }
+        .modal-content h2 { margin-top: 0; color: #1a3c34; border-bottom: 2px solid #f5a623; padding-bottom: 10px; }
+        .modal-close { position: absolute; top: 15px; right: 20px; font-size: 28px; cursor: pointer; color: #888; }
+        .modal-actions { display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end; }
+        .modal-actions button { padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; }
+        .btn-cancel { background: #6c757d; color: white; }
+        .btn-save { background: #1a3c34; color: white; }
+        .mode-toggle { display: flex !important; background: #f1f5f9 !important; border-radius: 12px !important; padding: 4px !important; gap: 2px !important; }
+        .mode-toggle button { padding: 6px 16px !important; border: none !important; border-radius: 9px !important; font-size: 13px !important; font-weight: 600 !important; cursor: pointer !important; background: transparent !important; color: #64748b !important; }
+        .mode-toggle button.active { background: white !important; color: #1a3c34 !important; box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important; }
+        .mode-toggle button.active.retail { background: #dcfce7 !important; color: #166534 !important; }
+        .mode-toggle button.active.wholesale { background: #fef3c7 !important; color: #92400e !important; }
+        #heldOrdersContainer { display: none; margin: 4px 0 8px 0; padding: 6px 8px; background: #f8fafc; border-radius: 6px; border: 1px solid #e2e8f0; }
+        .held-order-item { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; border-bottom: 1px solid #f1f5f9; font-size: 12px; }
+        .held-order-item .actions button { padding: 2px 10px; border: none; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: 600; }
+        .held-order-item .actions .retrieve { background: #1a3c34; color: white; }
+        .held-order-item .actions .delete { background: #fee2e2; color: #ef4444; }
+        #customerCreditInfo { display: none; font-size: 12px; color: #64748b; padding: 4px 0; border-bottom: 1px dashed #e2e8f0; margin-bottom: 4px; gap: 12px; align-items: center; }
+        #lowStockBanner { display: none; background: #fef3c7; border-bottom: 2px solid #f59e0b; padding: 6px 20px; font-size: 13px; color: #92400e; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+
+        /* ===== MOBILE RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            /* Fix main content to fill available space */
+            .main-content { display: flex !important; flex-direction: column !important; height: 100dvh !important; overflow: hidden !important; }
+            .pos-layout { flex: 1 1 auto !important; flex-direction: column !important; overflow: hidden !important; min-height: 0 !important; height: auto !important; }
+            
+            /* Products panel: fixed 40% of remaining space */
+            .products-panel { flex: 0 0 auto !important; height: 40vh !important; max-height: 40vh !important; padding: 6px 8px !important; overflow-y: auto !important; }
+            .search-row { gap: 6px !important; margin-bottom: 6px !important; }
+            .search-row input, .search-row select { padding: 6px 10px !important; font-size: 12px !important; min-width: unset !important; }
+            .product-grid { grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)) !important; gap: 5px !important; }
+            .product-item { padding: 6px 4px !important; border-radius: 5px !important; }
+            .product-item .product-name { font-size: 11px !important; line-height: 1.2 !important; }
+            .product-item .product-price { font-size: 12px !important; }
+            .product-item .product-stock { font-size: 9px !important; }
+            .product-item .product-sku { display: none !important; }
+            .product-item img { width: 40px !important; height: 40px !important; }
+            #categoryButtons { flex-wrap: nowrap !important; overflow-x: auto !important; gap: 4px !important; padding: 3px 0 !important; -webkit-overflow-scrolling: touch !important; }
+            #categoryButtons::-webkit-scrollbar { display: none !important; }
+            .category-btn { padding: 4px 10px !important; font-size: 10px !important; white-space: nowrap !important; flex-shrink: 0 !important; }
+            .cart-panel { 
+                flex: 1 1 0 !important; 
+                max-height: none !important; 
+                min-height: 0 !important; 
+                min-width: unset !important; 
+                max-width: unset !important; 
+                width: 100% !important; 
+                border-left: none !important; 
+                border-top: 2px solid #e2e8f0 !important; 
+                padding: 6px 8px !important; 
+                display: flex !important; 
+                flex-direction: column !important; 
+                overflow: hidden !important; 
+            }
+            .cart-header { flex-wrap: wrap !important; gap: 4px !important; margin-bottom: 4px !important; }
+            .cart-header h2 { font-size: 14px !important; margin: 0 !important; }
+            .cart-header .customer-select select { font-size: 10px !important; padding: 2px 6px !important; max-width: 100px !important; }
+            .cart-header .btn-clear { font-size: 10px !important; padding: 2px 8px !important; }
+            .cart-count { font-size: 11px !important; }
+            /* Cart items - must scroll, not expand the panel */
+            .cart-items { 
+                flex: 1 1 0 !important; 
+                overflow-y: auto !important; 
+                min-height: 0 !important; 
+                max-height: none !important; 
+                padding: 4px 0 !important; 
+                -webkit-overflow-scrolling: touch !important;
+            }
+            .cart-item { padding: 4px 0 !important; font-size: 11px !important; gap: 4px !important; }
+            .cart-item .name { font-size: 11px !important; flex: 1 1 100% !important; }
+            .cart-item .qty button { width: 20px !important; height: 20px !important; font-size: 11px !important; }
+            .cart-item .price-total { font-size: 11px !important; min-width: 55px !important; }
+            .cart-item .remove-btn { font-size: 11px !important; }
+            .cart-item .discount-input { display: none !important; }
+            .cart-subtotal, .cart-tax { font-size: 12px !important; padding: 2px 0 !important; }
+            .cart-total { font-size: 15px !important; padding: 6px 0 !important; }
+            .payment-buttons { grid-template-columns: 1fr 1fr 1fr !important; gap: 4px !important; margin-top: 4px !important; }
+            .payment-buttons button { padding: 7px 4px !important; font-size: 10px !important; }
+            .cart-actions { gap: 4px !important; margin-top: 4px !important; }
+            .cart-actions button { padding: 7px !important; font-size: 10px !important; }
+            /* KEEP mode toggle visible on mobile - compact */
+            .topbar .left .mode-toggle { 
+                display: flex !important; 
+                padding: 2px !important; 
+                border-radius: 8px !important; 
+                margin-left: 2px !important;
+            }
+            .topbar .left .mode-toggle button { 
+                padding: 3px 8px !important; 
+                font-size: 10px !important; 
+                border-radius: 6px !important; 
+            }
+            .topbar { 
+                padding: 6px 8px !important; 
+                min-height: auto !important; 
+                flex-wrap: wrap !important; 
+                gap: 4px !important; 
+            }
+            .topbar .left { flex-wrap: wrap !important; gap: 4px !important; }
+            .topbar .right { flex-wrap: wrap !important; gap: 4px !important; justify-content: flex-end !important; }
+            .topbar .left h1 { font-size: 13px !important; }
+            .topbar .right .store-badge { 
+                font-size: 10px !important; 
+                padding: 3px 6px !important; 
+                max-width: 70px !important; 
+                overflow: hidden !important; 
+                text-overflow: ellipsis !important; 
+                white-space: nowrap !important; 
+            }
+            .topbar .hamburger {
+                font-size: 16px !important;
+                padding: 2px 4px !important;
+            }
+            .topbar .right .sync-status { font-size: 9px !important; padding: 3px 6px !important; }
+            .topbar .right .time { font-size: 10px !important; }
+            /* KEEP Guide link visible on mobile - compact */
+            .topbar .right a[href="client_guide.html"] { 
+                display: inline-block !important; 
+                font-size: 10px !important; 
+                padding: 3px 8px !important; 
+            }
+            
+            /* Ensure top elements don't shrink */
+            .topbar { flex-shrink: 0 !important; }
+            #storeInfoBar { flex-shrink: 0 !important; }
+            #lowStockBanner { flex-shrink: 0 !important; }
+            #onlineReminderBanner { flex-shrink: 0 !important; }
+            
+            /* Make totals and buttons always visible (never shrink) */
+            .cart-subtotal, .cart-tax, .cart-total, .payment-buttons, .cart-actions { 
+                flex-shrink: 0 !important; 
+                flex-grow: 0 !important;
+            }
+            
+            /* Make cart-item more compact on mobile */
+            .cart-item .name { flex: 1 1 100% !important; margin-bottom: 2px !important; font-size: 11px !important; }
+            .cart-item .qty { flex: 0 0 auto !important; }
+            .cart-item .price-total { flex: 0 0 auto !important; }
+            .cart-item .remove-btn { flex: 0 0 auto !important; padding: 0 6px !important; }
+        }
+
+        @media (max-width: 480px) {
+            .products-panel { height: 35vh !important; max-height: 35vh !important; }
+            .product-grid { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)) !important; gap: 4px !important; }
+            .product-item { padding: 5px 3px !important; }
+            .product-item .product-name { font-size: 10px !important; }
+            .product-item .product-price { font-size: 11px !important; }
+            .product-item img { width: 35px !important; height: 35px !important; }
+            .cart-items { max-height: 25vh !important; }
+            .cart-item .name { font-size: 10px !important; }
+            .payment-buttons { grid-template-columns: 1fr 1fr !important; }
+            .payment-buttons button { font-size: 9px !important; padding: 6px 2px !important; }
+            .cart-actions button { font-size: 9px !important; padding: 6px !important; }
+            .cart-total { font-size: 14px !important; }
+        }
+    </style>
+</head>
+<body>
+<div class="app">
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+    <aside class="sidebar">
+        <div class="logo"> <span>Soko</span>Pulse <button class="close-btn" onclick="toggleSidebar()">✕</button></div>
+                <nav>
+            <div class="nav-label">Main</div>
+            <a href="pos.html"> POS</a>
+            <a href="dashboard.html"> Dashboard</a>
+            <a href="orders.html"> Orders</a>
+            <div class="nav-label">Inventory</div>
+            <a href="products.html"> Products</a>
+            <a href="stock.html"> Stock</a>
+            <a href="expiry.html">Expiry</a>
+            <a href="categories.html"> Categories</a>
+            <a href="suppliers.html"> Suppliers</a>
+            <div class="nav-label">Management</div>
+            <a href="customers.html"> Customers</a>
+            <a href="reports.html"> Reports</a>
+            <a href="audit.html"> Audit</a>
+            <a href="returns.html"> Returns</a>
+            <a href="settings.html"> Settings</a>
+        </nav>
+        <div class="user-section">
+            <div class="name" id="userName">Administrator</div>
+            <div class="role" id="userRole">Admin</div>
+        </div>
+        <button class="logout-btn" onclick="logout()">Logout</button>
+    </aside>
+    <main class="main-content">
+        <header class="topbar">
+            <div class="left">
+                <button class="hamburger" onclick="toggleSidebar()">☰</button>
+                <h1>Point of Sale</h1>
+                <div class="mode-toggle">
+                    <button class="active retail" id="retailToggle" onclick="setMode('retail')">Retail</button>
+                    <button id="wholesaleToggle" onclick="setMode('wholesale')">Wholesale</button>
+                </div>
+            </div>
+            <div class="right">
+                <span class="store-badge" id="storeName">SokoPulse</span>
+                <!-- <span class="sync-status" id="syncStatus" style="font-size:11px;padding:4px 10px;border-radius:12px;background:#dcfce7;color:#166534;cursor:pointer;font-weight:600;" title="Sync status" onclick="showSyncDetails()">Online</span> -->
+                <button onclick="window.location.href='client_guide.html'" style="font-size:11px;padding:4px 10px;background:#1a3c34;color:white;border-radius:12px;text-decoration:none;font-weight:600;border:none;cursor:pointer;font-family:inherit;">Guide</button>
+                <span class="time" id="timeDisplay"></span>
+            </div>
+        </header>
+        <!-- KRA integration disabled
+<div id="onlineReminderBanner" style="display:none;background:#dbeafe;border-bottom:2px solid #3b82f6;padding:8px 20px;font-size:13px;color:#1e40af;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+            <span id="onlineReminderMessage">You're online! Sync your transactions to KRA.</span>
+            <div style="display:flex;gap:8px;align-items:center;">
+                <button onclick="processSyncQueue()" style="padding:4px 14px;background:#3b82f6;color:white;border:none;border-radius:6px;cursor:pointer;font-weight:600;font-size:12px;">Sync Now</button>
+                <button onclick="dismissOnlineReminder()" style="padding:4px 10px;background:none;border:none;color:#1e40af;cursor:pointer;font-size:16px;">✕</button>
+            </div>
+        </div> -->
+        <div id="lowStockBanner">
+            <span id="lowStockMessage">Low stock alert: Some products are running low!</span>
+            <button class="close-btn" onclick="document.getElementById('lowStockBanner').style.display='none'">✕</button>
+        </div>
+        <div id="storeInfoBar" style="display:flex;gap:15px;padding:4px 20px;background:#f8fafc;border-bottom:1px solid #e2e8f0;font-size:12px;color:#64748b;flex-wrap:wrap;align-items:center;min-height:32px;">
+            <span id="storeNameDisplay">SokoPulse</span>
+            <span id="storeAddressDisplay"></span>
+            <span id="storePhoneDisplay"></span>
+            <span id="storeEmailDisplay"></span>
+        </div>
+        <div class="pos-layout">
+            <div class="products-panel">
+                <div class="search-row">
+                    <input type="text" id="searchInput" placeholder="Search products by name or SKU..." oninput="renderProducts()">
+                    <select id="categoryFilter" onchange="renderProducts()">
+                        <option value="">All Categories</option>
+                    </select>
+                </div>
+                <div id="categoryButtons">
+                    <button class="category-btn active" data-category="" onclick="filterByCategory('')">All</button>
+                </div>
+                <div class="product-grid" id="productGrid">
+                    <div class="loading-text">Loading products...</div>
+                </div>
+            </div>
+            <div class="cart-panel">
+                <div class="cart-header">
+                    <div>
+                        <h2>Cart</h2>
+                        <span class="cart-count" id="cartCount">0 items</span>
+                    </div>
+                    <div class="customer-select">
+                        <select id="cartCustomer" onchange="selectCustomer(this.value)">
+                            <option value="">Walk-in Customer</option>
+                        </select>
+                    </div>
+                    <button class="btn-clear" onclick="clearCart()">Clear all</button>
+                </div>
+                <div id="customerCreditInfo">
+                    Credit: <span id="creditAmount">KES 0.00</span> / <span id="creditLimit">KES 0.00</span>
+                    <span class="status" id="creditStatus"></span>
+                </div>
+                <div id="heldOrdersContainer">
+                    <div style="font-size:11px;font-weight:600;color:#64748b;margin-bottom:4px;">Held Orders</div>
+                    <div id="heldOrdersList"></div>
+                </div>
+                <div class="cart-items" id="cartItems">
+                    <div class="empty-cart">Your cart is empty</div>
+                </div>
+                <div class="cart-subtotal">
+                    <span>Subtotal</span>
+                    <span id="cartSubtotal">KES 0.00</span>
+                </div>
+                <div class="cart-tax">
+                    <span id="cartTaxLabel">Tax (16%)</span>
+                    <span id="cartTax">KES 0.00</span>
+                </div>
+                <div class="cart-total">
+                    <span>Total</span>
+                    <span id="cartTotal">KES 0.00</span>
+                </div>
+                <div class="payment-buttons">
+                    <button class="cash" id="paymentCash" onclick="openCashTender()">Cash</button>
+                    <button class="mpesa" id="paymentMpesa" onclick="processPayment('mpesa')">M-Pesa</button>
+                    <button class="card" id="paymentCard" onclick="processPayment('card')">Card</button>
+                    <button class="credit" id="paymentCredit" onclick="processPayment('credit')">Credit</button>
+                    <button class="bank" id="paymentBank" onclick="processPayment('bank')">Bank</button>
+                </div>
+                <div class="cart-actions">
+                    <button class="hold-btn" onclick="holdOrder()">Hold</button>
+                    <button class="print-btn" onclick="printCartPreview()">Print</button>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<div class="modal" id="cashTenderModal">
+    <div class="modal-content" style="max-width:420px;">
+        <span class="modal-close" onclick="closeCashTender()">&times;</span>
+        <h2>Cash Payment</h2>
+        <div style="margin:8px 0 12px 0;padding:12px;background:#f8fafc;border-radius:8px;">
+            <div style="display:flex;justify-content:space-between;font-size:14px;">
+                <span>Total Amount:</span>
+                <span style="font-weight:700;color:#1a3c34;" id="cashTotalAmount">KES 0.00</span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label style="display:block;font-size:13px;font-weight:600;color:#334155;margin-bottom:6px;">Amount Received (KES)</label>
+            <input type="number" id="cashReceived" placeholder="0.00" step="0.01" min="0" oninput="calculateCashChange()" style="width:100%;padding:10px;border:2px solid #e2e8f0;border-radius:8px;font-size:16px;">
+        </div>
+        <div style="padding:10px;border-radius:8px;margin:8px 0;background:#f0fdf4;border:1px solid #bbf7d0;">
+            <div style="display:flex;justify-content:space-between;font-size:16px;">
+                <span>Change:</span>
+                <span style="font-weight:700;color:#166534;" id="cashChangeAmount">KES 0.00</span>
+            </div>
+        </div>
+        <div style="color:#ef4444;font-size:13px;display:none;margin:8px 0;padding:8px;background:#fef2f2;border-radius:6px;" id="cashError">
+            Amount received must be equal to or greater than the total.
+        </div>
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeCashTender()">Cancel</button>
+            <button class="btn-save" onclick="confirmCashPayment()">Confirm Payment</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="receiptPreviewModal">
+    <div class="modal-content" style="max-width:500px;">
+        <span class="modal-close" onclick="closeReceiptPreview()">&times;</span>
+        <h2>Receipt Preview</h2>
+        <div id="receiptPreviewContent" style="background:#f8fafc;padding:20px;border-radius:8px;font-family:monospace;font-size:13px;white-space:pre-wrap;max-height:400px;overflow-y:auto;margin:12px 0;border:1px solid #e2e8f0;"></div>
+        <div id="qrCodeContainer" style="text-align:center;margin:8px 0 12px 0;display:none;">
+            <div id="qrcode" style="display:inline-block;padding:4px;background:white;border-radius:4px;"></div>
+            <div style="font-size:11px;color:#64748b;margin-top:4px;">Scan to verify eTIMS invoice</div>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeReceiptPreview()">Close</button>
+            <button class="btn-save" onclick="printFromPreview()">Print</button>
+        </div>
+    </div>
+</div>
+
+<script src="db.js"></script>
+<!-- KRA integration disabled
+<script src="sync.js"></script> -->
+<!-- <script src="etims.js"></script> -->
+<script src="js/printer.js"></script>
+<script src="qrcode.min.js"></script>
+<script>
+var products = [];
+var cart = [];
+var mode = 'retail';
+var currentUser = null;
+var selectedCustomer = null;
+var taxRate = 16;
+var taxEnabled = true;
+var taxName = 'VAT';
+var categoryFilter = '';
+var allCustomers = [];
+var orderNote = '';
+
+function dbAdd(db, storeName, data) {
+    return new Promise(function(resolve, reject) {
+        var tx = db.transaction(storeName, 'readwrite');
+        var store = tx.objectStore(storeName);
+        var req = store.add(data);
+        req.onsuccess = function() { resolve(req.result); };
+        req.onerror = function() { reject(req.error); };
+    });
+}
+function dbPut(db, storeName, data) {
+    return new Promise(function(resolve, reject) {
+        var tx = db.transaction(storeName, 'readwrite');
+        var store = tx.objectStore(storeName);
+        var req = store.put(data);
+        req.onsuccess = function() { resolve(req.result); };
+        req.onerror = function() { reject(req.error); };
+    });
+}
+
+function toggleSidebar() {
+    document.querySelector('.sidebar').classList.toggle('open');
+    document.querySelector('.sidebar-overlay').classList.toggle('show');
+}
+function logout() {
+    if (confirm('Logout?')) { localStorage.removeItem('pos_user'); window.location.href = 'index.html'; }
+}
+function updateTime() {
+    var el = document.getElementById('timeDisplay');
+    if (el) el.textContent = new Date().toLocaleTimeString('en-KE', { hour12: false });
+}
+function setMode(newMode) {
+    mode = newMode;
+    document.querySelectorAll('.mode-toggle button').forEach(function(b) { b.classList.remove('active'); });
+    if (newMode === 'retail') document.getElementById('retailToggle').classList.add('active', 'retail');
+    else document.getElementById('wholesaleToggle').classList.add('active', 'wholesale');
+    renderProducts();
+}
+
+async function loadProducts() {
+    try {
+        var db = await openDB();
+        products = await dbGetAll(db, 'products');
+        renderProducts();
+        setTimeout(checkLowStock, 300);
+    } catch(e) {
+        document.getElementById('productGrid').innerHTML = '<div class="loading-text">Error loading products</div>';
+    }
+}
+
+function renderProducts() {
+    var grid = document.getElementById('productGrid');
+    var search = document.getElementById('searchInput')?.value?.toLowerCase() || '';
+    var categoryId = document.getElementById('categoryFilter')?.value || '';
+    var filtered = products || [];
+    if (search) filtered = filtered.filter(function(p) { return (p.name || '').toLowerCase().includes(search) || (p.sku || '').toLowerCase().includes(search); });
+    if (categoryId) filtered = filtered.filter(function(p) { return p.category_id == categoryId; });
+    if (categoryFilter) filtered = filtered.filter(function(p) { return p.category_id == categoryFilter; });
+    if (filtered.length === 0) { grid.innerHTML = '<div class="loading-text">No products found</div>'; return; }
+    grid.innerHTML = filtered.map(function(p) {
+        var retailPrice = parseFloat(p.price) || parseFloat(p.retail_price) || parseFloat(p.selling_price) || 0;
+        var wholePrice = parseFloat(p.wholesale_price) || 0;
+        var price = (mode === 'wholesale' && wholePrice > 0) ? wholePrice : retailPrice;
+        var stock = p.current_stock || 0;
+        var outOfStock = stock <= 0;
+        var lowStock = stock > 0 && stock < (p.min_stock_alert || 5);
+        var stockDisplay = stock + ' in stock';
+        var stockClass = '';
+        if (outOfStock) { stockDisplay = 'Out of stock'; stockClass = 'out'; }
+        else if (lowStock) { stockDisplay = stock + ' left'; stockClass = 'low'; }
+        var imageHtml = p.image ? '<img src="' + p.image + '" style="width:60px;height:60px;object-fit:cover;border-radius:6px;margin:0 auto 4px;display:block;">' : '<div style="width:60px;height:60px;background:#f1f5f9;border-radius:6px;margin:0 auto 4px;"></div>';
+        return '<div class="product-item ' + (outOfStock ? 'out-of-stock' : '') + '" onclick="' + (outOfStock ? '' : 'addToCart(' + p.id + ')') + '">' +
+            imageHtml +
+            '<div class="product-name">' + (p.name || 'Unnamed') + '</div>' +
+            '<div class="product-price ' + (mode === 'wholesale' ? 'wholesale' : '') + '">KES ' + (price || 0).toFixed(2) + '</div>' +
+            (mode === 'wholesale' ? '<div class="wholesale-badge">Wholesale</div>' : '') +
+            '<div class="product-stock ' + stockClass + '">' + stockDisplay + '</div>' +
+        '</div>';
+    }).join('');
+}
+
+async function loadCustomers() {
+    try {
+        var db = await openDB();
+        allCustomers = await dbGetAll(db, 'customers');
+        var select = document.getElementById('cartCustomer');
+        if (select) {
+            select.innerHTML = '<option value="">Walk-in Customer</option>';
+            allCustomers.forEach(function(c) { select.innerHTML += '<option value="' + c.id + '">' + c.name + ' (' + c.phone + ')</option>'; });
+        }
+        updateCreditButton();
+    } catch(e) {}
+}
+function selectCustomer(customerId) {
+    if (customerId) selectedCustomer = allCustomers.find(function(c) { return c.id == customerId; }) || null;
+    else selectedCustomer = null;
+    updateCreditButton();
+    updateCustomerCreditInfo();
+}
+function updateCreditButton() {
+    var creditBtn = document.getElementById('paymentCredit');
+    if (!creditBtn) return;
+    creditBtn.style.display = (selectedCustomer && selectedCustomer.id) ? 'block' : 'none';
+}
+function updateCustomerCreditInfo() {
+    var creditDiv = document.getElementById('customerCreditInfo');
+    if (!creditDiv) return;
+    if (!selectedCustomer) { creditDiv.style.display = 'none'; return; }
+    document.getElementById('creditAmount').textContent = 'KES ' + (selectedCustomer.credit || 0).toFixed(2);
+    document.getElementById('creditLimit').textContent = 'KES ' + (selectedCustomer.credit_limit || 0).toFixed(2);
+    creditDiv.style.display = 'flex';
+}
+
+async function loadCategories() {
+    try {
+        var db = await openDB();
+        var categories = await dbGetAll(db, 'categories');
+        var select = document.getElementById('categoryFilter');
+        if (select) {
+            select.innerHTML = '<option value="">All Categories</option>';
+            categories.forEach(function(c) { select.innerHTML += '<option value="' + c.id + '">' + (c.icon || '') + ' ' + c.name + '</option>'; });
+        }
+        var container = document.getElementById('categoryButtons');
+        if (container) {
+            var html = '<button class="category-btn active" data-category="" onclick="filterByCategory(\'\')">All</button>';
+            categories.forEach(function(c) { html += '<button class="category-btn" data-category="' + c.id + '" onclick="filterByCategory(\'' + c.id + '\')">' + (c.icon || '') + ' ' + c.name + '</button>'; });
+            container.innerHTML = html;
+        }
+    } catch(e) {}
+}
+function filterByCategory(categoryId) {
+    categoryFilter = categoryId;
+    document.querySelectorAll('.category-btn').forEach(function(btn) {
+        var isActive = btn.dataset.category == categoryId;
+        btn.style.background = isActive ? '#1a3c34' : 'white';
+        btn.style.color = isActive ? 'white' : '#0f172a';
+        btn.style.borderColor = isActive ? '#1a3c34' : '#e2e8f0';
+    });
+    renderProducts();
+}
+
+function addToCart(productId) {
+    var product = products.find(function(p) { return p.id === productId; });
+    if (!product) return;
+    if (product.current_stock <= 0) { alert('Product is out of stock'); return; }
+    if (product.expiry_date && new Date(product.expiry_date) < new Date()) { alert('Cannot sell expired product: ' + product.name); return; }
+    var existing = cart.find(function(c) { return c.id === productId; });
+    if (existing) {
+        if (existing.qty >= product.current_stock) { alert('Not enough stock'); return; }
+        existing.qty++;
+    } else {
+        var retailPrice = parseFloat(product.price) || parseFloat(product.retail_price) || parseFloat(product.selling_price) || 0;
+        var wholePrice = parseFloat(product.wholesale_price) || 0;
+        var price = (mode === 'wholesale' && wholePrice > 0) ? wholePrice : retailPrice;
+        cart.push({ id: product.id, name: product.name, price: price, qty: 1, maxStock: product.current_stock, discount: 0 });
+    }
+    renderCart();
+    saveCart();
+}
+
+function renderCart() {
+    var container = document.getElementById('cartItems');
+    if (cart.length === 0) {
+        container.innerHTML = '<div class="empty-cart">Your cart is empty</div>';
+        updateTotals();
+        return;
+    }
+    container.innerHTML = cart.map(function(item, i) {
+        var discount = item.discount || 0;
+        var originalTotal = item.price * item.qty;
+        var discountedTotal = originalTotal * (1 - discount / 100);
+        var taxBadge = '';
+        var p = products.find(function(pr) { return pr.id === item.id; });
+        if (p && p.tax_type === 'EXEMPT') taxBadge = ' <span style="font-size:9px;background:#fef3c7;color:#92400e;padding:1px 6px;border-radius:8px;">EXEMPT</span>';
+        else if (p && p.tax_type === 'ZERO') taxBadge = ' <span style="font-size:9px;background:#dbeafe;color:#1e40af;padding:1px 6px;border-radius:8px;">ZERO</span>';
+        return '<div class="cart-item">' +
+            '<span class="name">' + item.name + taxBadge + '</span>' +
+            '<div class="qty">' +
+                '<button onclick="updateQty(' + i + ', -1)">−</button>' +
+                '<span>' + item.qty + '</span>' +
+                '<button onclick="updateQty(' + i + ', 1)">+</button>' +
+            '</div>' +
+            '<span class="price-total">KES ' + discountedTotal.toFixed(2) + '</span>' +
+            '<button class="remove-btn" onclick="removeFromCart(' + i + ')">✕</button>' +
+        '</div>';
+    }).join('');
+    updateTotals();
+}
+
+function updateTotals() {
+    var subtotal = cart.reduce(function(s, i) { return s + (i.price * i.qty * (1 - (i.discount || 0) / 100)); }, 0);
+    var tax = 0;
+    if (taxEnabled && taxRate > 0) {
+        var taxableSubtotal = 0;
+        cart.forEach(function(item) {
+            var product = products.find(function(p) { return p.id === item.id; });
+            var taxType = product ? (product.tax_type || 'VAT') : 'VAT';
+            var itemTotal = item.price * item.qty * (1 - (item.discount || 0) / 100);
+            if (taxType === 'VAT') taxableSubtotal += itemTotal;
+        });
+        tax = taxableSubtotal * (taxRate / 100);
+    }
+    var total = subtotal + tax;
+    document.getElementById('cartSubtotal').textContent = 'KES ' + subtotal.toFixed(2);
+    document.getElementById('cartTax').textContent = 'KES ' + tax.toFixed(2);
+    document.getElementById('cartTotal').textContent = 'KES ' + total.toFixed(2);
+    document.getElementById('cartCount').textContent = cart.reduce(function(s, i) { return s + i.qty; }, 0) + ' items';
+}
+
+function updateQty(index, delta) {
+    var item = cart[index];
+    if (!item) return;
+    var newQty = item.qty + delta;
+    if (newQty <= 0) cart.splice(index, 1);
+    else if (newQty > item.maxStock) { alert('Not enough stock'); return; }
+    else item.qty = newQty;
+    renderCart();
+    saveCart();
+}
+function removeFromCart(index) { cart.splice(index, 1); renderCart(); saveCart(); }
+function clearCart() {
+    if (cart.length === 0) return;
+    if (!confirm('Clear cart?')) return;
+    cart = [];
+    renderCart();
+    clearCartSession();
+}
+function saveCart() {
+    try { sessionStorage.setItem('pos_cart', JSON.stringify({ items: cart, mode: mode, customer: selectedCustomer, timestamp: Date.now() })); } catch(e) {}
+}
+function loadCart() {
+    try {
+        var saved = sessionStorage.getItem('pos_cart');
+        if (saved) {
+            var data = JSON.parse(saved);
+            if (Date.now() - data.timestamp < 30 * 60 * 1000) {
+                cart = data.items || [];
+                mode = data.mode || 'retail';
+                selectedCustomer = data.customer || null;
+                renderCart();
+                setMode(mode);
+                updateCreditButton();
+                updateCustomerCreditInfo();
+                return true;
+            }
+        }
+    } catch(e) {}
+    return false;
+}
+function clearCartSession() { sessionStorage.removeItem('pos_cart'); }
+
+function holdOrder() {
+    if (cart.length === 0) { alert('Cart is empty'); return; }
+    var holdId = 'HOLD-' + Date.now().toString().slice(-6);
+    var note = prompt('Enter note for this hold (optional):') || '';
+    var holds = JSON.parse(localStorage.getItem('held_orders') || '[]');
+    holds.push({ id: holdId, items: JSON.parse(JSON.stringify(cart)), mode: mode, customer: selectedCustomer ? { id: selectedCustomer.id, name: selectedCustomer.name } : null, timestamp: Date.now(), note: note });
+    localStorage.setItem('held_orders', JSON.stringify(holds));
+    cart = []; renderCart(); clearCartSession();
+    alert('Order held!\nID: ' + holdId);
+    loadHeldOrders();
+}
+function loadHeldOrders() {
+    var holds = JSON.parse(localStorage.getItem('held_orders') || '[]');
+    var container = document.getElementById('heldOrdersContainer');
+    var list = document.getElementById('heldOrdersList');
+    if (!container || !list) return;
+    if (holds.length === 0) { container.style.display = 'none'; return; }
+    container.style.display = 'block';
+    list.innerHTML = holds.map(function(h, index) {
+        var total = h.items.reduce(function(s, i) { return s + (i.price || 0) * (i.qty || 1); }, 0);
+        return '<div class="held-order-item"><div><strong>' + h.id + '</strong> - KES ' + total.toFixed(0) + '</div><div class="actions"><button class="retrieve" onclick="retrieveHold(' + index + ')">Retrieve</button><button class="delete" onclick="deleteHold(' + index + ')">Delete</button></div></div>';
+    }).join('');
+}
+function retrieveHold(index) {
+    var holds = JSON.parse(localStorage.getItem('held_orders') || '[]');
+    if (index < 0 || index >= holds.length) return;
+    cart = holds[index].items || [];
+    mode = holds[index].mode || 'retail';
+    selectedCustomer = holds[index].customer || null;
+    setMode(mode); renderCart(); updateCreditButton(); updateCustomerCreditInfo();
+    holds.splice(index, 1);
+    localStorage.setItem('held_orders', JSON.stringify(holds));
+    loadHeldOrders();
+}
+function deleteHold(index) {
+    var holds = JSON.parse(localStorage.getItem('held_orders') || '[]');
+    if (index < 0 || index >= holds.length) return;
+    if (!confirm('Delete held order?')) return;
+    holds.splice(index, 1);
+    localStorage.setItem('held_orders', JSON.stringify(holds));
+    loadHeldOrders();
+}
+
+async function checkLowStock() {
+    try {
+        var db = await openDB();
+        var prods = await dbGetAll(db, 'products');
+        var lowStock = prods.filter(function(p) { var min = p.min_stock_alert || 5; return (p.current_stock || 0) > 0 && (p.current_stock || 0) < min; });
+        var outStock = prods.filter(function(p) { return (p.current_stock || 0) <= 0; });
+        var banner = document.getElementById('lowStockBanner');
+        var message = document.getElementById('lowStockMessage');
+        if (lowStock.length > 0 || outStock.length > 0) {
+            var msg = '';
+            if (lowStock.length > 0) msg += lowStock.length + ' product(s) low on stock. ';
+            if (outStock.length > 0) msg += outStock.length + ' product(s) out of stock.';
+            message.textContent = msg;
+            banner.style.display = 'flex';
+        } else { banner.style.display = 'none'; }
+    } catch(e) {}
+}
+
+async function loadTaxSettings() {
+    try {
+        var db = await openDB();
+        var settings = await dbGetAll(db, 'settings');
+        var map = {};
+        settings.forEach(function(s) { map[s.key] = s.value; });
+        taxEnabled = map.tax_enabled !== 'no';
+        taxRate = parseFloat(map.tax_rate) || 0;
+        taxName = map.tax_name || 'VAT';
+        var taxLabel = document.getElementById('cartTaxLabel');
+        if (taxLabel) taxLabel.textContent = (taxEnabled && taxRate > 0) ? taxName + ' (' + taxRate + '%)' : 'Tax (0%)';
+        updateTotals();
+    } catch(e) { taxEnabled = true; taxRate = 16; taxName = 'VAT'; }
+}
+async function loadPaymentSettings() {
+    try {
+        var db = await openDB();
+        var settings = await dbGetAll(db, 'settings');
+        var map = {};
+        settings.forEach(function(s) { map[s.key] = s.value; });
+        var payments = {};
+        if (map.payments) { try { payments = JSON.parse(map.payments); } catch(e) { payments = {}; } }
+        var normalized = { cash: true, mpesa: true, card: true, credit: true, bank: true };
+        Object.keys(payments).forEach(function(key) { if (key in normalized) normalized[key] = payments[key] === true || payments[key] === 'true'; });
+        var buttonIds = { cash: 'paymentCash', mpesa: 'paymentMpesa', card: 'paymentCard', credit: 'paymentCredit', bank: 'paymentBank' };
+        Object.keys(buttonIds).forEach(function(key) { var btn = document.getElementById(buttonIds[key]); if (btn) btn.style.display = normalized[key] ? 'block' : 'none'; });
+    } catch(e) {}
+}
+async function loadStoreName() {
+    try {
+        var db = await openDB();
+        var settings = await dbGetAll(db, 'settings');
+        var map = {};
+        settings.forEach(function(s) { map[s.key] = s.value; });
+        if (map.storeName) { var b = document.getElementById('storeName'); if (b) b.textContent = map.storeName; var d = document.getElementById('storeNameDisplay'); if (d) d.textContent = map.storeName; }
+        if (map.storeAddress) { var a = document.getElementById('storeAddressDisplay'); if (a) a.textContent = map.storeAddress; }
+        if (map.storePhone) { var p = document.getElementById('storePhoneDisplay'); if (p) p.textContent = 'Tel: ' + map.storePhone; }
+        if (map.storeEmail) { var e = document.getElementById('storeEmailDisplay'); if (e) e.textContent = map.storeEmail; }
+    } catch(e) {}
+}
+async function loadReceiptSettings() {
+    try {
+        var db = await openDB();
+        var settings = await dbGetAll(db, 'settings');
+        var map = {};
+        settings.forEach(function(s) { map[s.key] = s.value; });
+        window.receiptSettings = { 
+            footer: map.receiptFooter || 'Thank you for shopping with us!', 
+            showTax: map.receiptShowTax !== 'no', 
+            showDiscount: map.receiptShowDiscount !== 'no', 
+            showCustomer: map.receiptShowCustomer !== 'no', 
+            showCashier: map.receiptShowCashier !== 'no',
+            showEtims: map.receiptShowEtims === 'yes'
+        };
+    } catch(e) { window.receiptSettings = { footer: 'Thank you for shopping with us!', showTax: true, showDiscount: true, showCustomer: true, showCashier: true, showEtims: false }; }
+}
+
+var cashPendingOrder = null;
+function openCashTender() {
+    if (cart.length === 0) { alert('Cart is empty'); return; }
+    var subtotal = cart.reduce(function(s, i) { return s + (i.price * i.qty * (1 - (i.discount || 0) / 100)); }, 0);
+    var tax = 0;
+    if (taxEnabled && taxRate > 0) {
+        var taxableSubtotal = 0;
+        cart.forEach(function(item) {
+            var product = products.find(function(p) { return p.id === item.id; });
+            var taxType = product ? (product.tax_type || 'VAT') : 'VAT';
+            var itemTotal = item.price * item.qty * (1 - (item.discount || 0) / 100);
+            if (taxType === 'VAT') taxableSubtotal += itemTotal;
+        });
+        tax = taxableSubtotal * (taxRate / 100);
+    }
+    var total = subtotal + tax;
+    cashPendingOrder = { subtotal: subtotal, tax: tax, total: total };
+    document.getElementById('cashTotalAmount').textContent = 'KES ' + total.toFixed(2);
+    document.getElementById('cashReceived').value = '';
+    document.getElementById('cashChangeAmount').textContent = 'KES 0.00';
+    document.getElementById('cashError').style.display = 'none';
+    document.getElementById('cashTenderModal').classList.add('show');
+    document.getElementById('cashReceived').focus();
+}
+function calculateCashChange() {
+    var received = parseFloat(document.getElementById('cashReceived').value) || 0;
+    var total = cashPendingOrder ? cashPendingOrder.total : 0;
+    var change = received - total;
+    var errorEl = document.getElementById('cashError');
+    var changeEl = document.getElementById('cashChangeAmount');
+    if (change < 0) { errorEl.style.display = 'block'; changeEl.textContent = 'KES 0.00'; changeEl.style.color = '#991b1b'; }
+    else { errorEl.style.display = 'none'; changeEl.textContent = 'KES ' + change.toFixed(2); changeEl.style.color = '#166534'; }
+}
+function confirmCashPayment() {
+    var received = parseFloat(document.getElementById('cashReceived').value) || 0;
+    var total = cashPendingOrder ? cashPendingOrder.total : 0;
+    if (received < total) { alert('Amount received is less than the total.'); return; }
+    if (!confirm('Cash Payment\n\nTotal: KES ' + total.toFixed(2) + '\nReceived: KES ' + received.toFixed(2) + '\nChange: KES ' + (received - total).toFixed(2) + '\n\nConfirm?')) return;
+    closeCashTender();
+    processPayment('cash', received);
+}
+function closeCashTender() { document.getElementById('cashTenderModal').classList.remove('show'); cashPendingOrder = null; }
+
+function processPayment(method, amountReceived) {
+    if (cart.length === 0) { alert('Cart is empty'); return; }
+    var subtotal = cart.reduce(function(s, i) { return s + (i.price * i.qty * (1 - (i.discount || 0) / 100)); }, 0);
+    var tax = 0;
+    if (taxEnabled && taxRate > 0) {
+        var taxableSubtotal = 0;
+        cart.forEach(function(item) {
+            var product = products.find(function(p) { return p.id === item.id; });
+            var taxType = product ? (product.tax_type || 'VAT') : 'VAT';
+            var itemTotal = item.price * item.qty * (1 - (item.discount || 0) / 100);
+            if (taxType === 'VAT') taxableSubtotal += itemTotal;
+        });
+        tax = taxableSubtotal * (taxRate / 100);
+    }
+    var total = subtotal + tax;
+    var customerName = selectedCustomer ? selectedCustomer.name : 'Walk-in';
+    var customerId = selectedCustomer ? selectedCustomer.id : null;
+    var methodNames = { cash: 'Cash', mpesa: 'M-Pesa', card: 'Card', credit: 'Credit', bank: 'Bank Transfer' };
+    if (method === 'credit') {
+        if (!selectedCustomer) { alert('Credit payment requires a registered customer.'); return; }
+        var currentCredit = selectedCustomer.credit || 0;
+        var creditLimit = selectedCustomer.credit_limit || 0;
+        if (creditLimit > 0 && (currentCredit + total) > creditLimit) { alert('Credit limit exceeded!'); return; }
+    }
+    if (!confirm('Confirm Payment\n\nCustomer: ' + customerName + '\nPayment: ' + (methodNames[method] || method) + '\nTotal: KES ' + total.toFixed(2) + '\n\nConfirm?')) return;
+
+    var order = {
+        order_number: 'ORD-' + Date.now().toString().slice(-6),
+        date: new Date().toISOString(),
+        items: cart.map(function(item) { return Object.assign({}, item); }),
+        subtotal: subtotal, tax: tax, total: total,
+        payment_method: method,
+        status: method === 'credit' ? 'pending' : 'completed',
+        customer_id: customerId, customer_name: customerName,
+        mode: mode, note: orderNote || '',
+        cash_received: method === 'cash' ? amountReceived : null
+    };
+
+    var bizInfo = { business_pin: localStorage.getItem('business_pin') || 'P000000000X', storeName: localStorage.getItem('storeName') || 'SokoPulse', storeAddress: localStorage.getItem('storeAddress') || '', storePhone: localStorage.getItem('storePhone') || '' };
+
+    // eTIMS submission disabled - uncomment the block below to enable KRA integration
+    // var bizInfo = { business_pin: localStorage.getItem('business_pin') || 'P000000000X', storeName: localStorage.getItem('storeName') || 'SokoPulse', storeAddress: localStorage.getItem('storeAddress') || '', storePhone: localStorage.getItem('storePhone') || '' };
+    // sendInvoiceToEtims(order, bizInfo).then(function(etimsResult) {
+    //     if (etimsResult.success) {
+    //         order.etims_status = 'synced';
+    //         order.etims_serial = etimsResult.cuSerial;
+    //         order.etims_invoice_no = etimsResult.cuInvoiceNo;
+    //         order.etims_qr = etimsResult.qrCode;
+    //     } else if (etimsResult.queued) { order.etims_status = 'pending'; }
+    // });
+
+    // Save order to local database
+    openDB().then(function(db) {
+        var creditPromise = Promise.resolve();
+        if (method === 'credit' && selectedCustomer) {
+            creditPromise = dbGetAll(db, 'customers').then(function(customers) {
+                var customer = customers.find(function(c) { return c.id === selectedCustomer.id; });
+                if (customer) { customer.credit = (customer.credit || 0) + total; var tx = db.transaction('customers', 'readwrite'); tx.objectStore('customers').put(customer); }
+            });
+        }
+        creditPromise.then(function() { return dbAdd(db, 'orders', order); }).then(function() {
+            for (var i = 0; i < cart.length; i++) {
+                var item = cart[i];
+                var product = products.find(function(p) { return p.id === item.id; });
+                if (product) {
+                    var oldStock = product.current_stock;
+                    product.current_stock -= item.qty;
+                    dbPut(db, 'products', product);
+                    dbAdd(db, 'stock_movements', { product_id: product.id, product_name: product.name, type: 'sold', quantity: item.qty, previous_stock: oldStock, new_stock: product.current_stock, reference: order.order_number, date: new Date().toISOString(), user: 'system' });
+                }
+            }
+            alert('Payment successful!\n' + (methodNames[method] || method) + ': KES ' + total.toFixed(2));
+            showReceipt(order);
+            cart = []; renderCart(); clearCartSession(); loadProducts();
+        }).catch(function(e) { alert('Error: ' + e.message); });
+    });
+}
+
+function printCartPreview() {
+    if (cart.length === 0) { alert('Cart is empty'); return; }
+    var subtotal = cart.reduce(function(s, i) { return s + (i.price * i.qty * (1 - (i.discount || 0) / 100)); }, 0);
+    var tax = 0;
+    if (taxEnabled && taxRate > 0) {
+        var taxableSubtotal = 0;
+        cart.forEach(function(item) {
+            var product = products.find(function(p) { return p.id === item.id; });
+            var taxType = product ? (product.tax_type || 'VAT') : 'VAT';
+            var itemTotal = item.price * item.qty * (1 - (item.discount || 0) / 100);
+            if (taxType === 'VAT') taxableSubtotal += itemTotal;
+        });
+        tax = taxableSubtotal * (taxRate / 100);
+    }
+    var total = subtotal + tax;
+    var order = {
+        order_number: 'PREVIEW-' + Date.now().toString().slice(-6),
+        date: new Date().toISOString(),
+        items: cart.map(function(item) { return Object.assign({}, item); }),
+        subtotal: subtotal, tax: tax, total: total,
+        payment_method: 'Pending', status: 'Preview',
+        customer_name: selectedCustomer ? selectedCustomer.name : 'Walk-in',
+        mode: mode, note: orderNote || ''
+    };
+    showReceipt(order);
+}
+
+function showReceipt(order) {
+    window.currentReceiptOrder = order;
+    var modal = document.getElementById('receiptPreviewModal');
+    var content = document.getElementById('receiptPreviewContent');
+    if (!modal || !content) return;
+    var items = order.items || [];
+    var storeName = document.getElementById('storeName')?.textContent || 'SokoPulse';
+    var storeAddress = document.getElementById('storeAddressDisplay')?.textContent || '';
+    var storePhone = document.getElementById('storePhoneDisplay')?.textContent || '';
+    // Strip existing 'Tel: ' prefix to avoid duplication
+    storePhone = storePhone.replace(/^Tel:\s*/i, '');
+    var storeEmail = document.getElementById('storeEmailDisplay')?.textContent || '';
+    var subtotal = order.subtotal || items.reduce(function(s, i) { return s + (i.price || 0) * (i.qty || 1) * (1 - (i.discount || 0) / 100); }, 0);
+    var tax = 0;
+    var taxDisplay = '';
+    var settings = window.receiptSettings || {};
+    if (taxEnabled && taxRate > 0 && settings.showTax !== false) {
+        var taxableSubtotal = 0;
+        items.forEach(function(item) {
+            var product = products.find(function(p) { return p.id === item.id; });
+            var taxType = product ? (product.tax_type || 'VAT') : 'VAT';
+            var itemTotal = item.price * item.qty * (1 - (item.discount || 0) / 100);
+            if (taxType === 'VAT') taxableSubtotal += itemTotal;
+        });
+        tax = taxableSubtotal * (taxRate / 100);
+        taxDisplay = taxName + ' (' + taxRate + '%):   KES ' + tax.toFixed(2) + '\n';
+    } else {
+        taxDisplay = 'Tax:          KES 0.00\n';
+    }
+    var total = subtotal + tax;
+    var line = '--------------------------------\n';
+    var dline = '================================\n';
+    var receipt = '';
+    receipt += dline;
+    receipt += '        ' + storeName + '\n';
+    if (storeAddress) receipt += '        ' + storeAddress + '\n';
+    if (storePhone) receipt += '        Tel: ' + storePhone + '\n';
+    if (storeEmail) receipt += '        Email: ' + storeEmail + '\n';
+    receipt += dline;
+    receipt += 'Order: ' + (order.order_number || 'ORD-' + Date.now().toString().slice(-6)) + '\n';
+    receipt += 'Date: ' + new Date(order.date).toLocaleString() + '\n';
+    receipt += 'Mode: ' + (order.mode || 'Retail') + '\n';
+    receipt += 'Cashier: ' + (currentUser ? currentUser.name || currentUser.username : 'System') + '\n';
+    if (settings.showCustomer !== false) receipt += 'Customer: ' + (order.customer_name || 'Walk-in') + '\n';
+    receipt += line;
+    receipt += 'ITEM            QTY    PRICE      TOTAL\n';
+    receipt += line;
+    items.forEach(function(item) {
+        var name = (item.name || 'Unknown').substring(0, 14);
+        while (name.length < 15) name += ' ';
+        var qtyStr = String(item.qty || 1);
+        while (qtyStr.length < 6) qtyStr = ' ' + qtyStr;
+        var unitStr = 'KES ' + (item.price || 0).toFixed(2);
+        while (unitStr.length < 12) unitStr = ' ' + unitStr;
+        var totalStr = 'KES ' + ((item.price || 0) * (item.qty || 1)).toFixed(2);
+        while (totalStr.length < 12) totalStr = ' ' + totalStr;
+        receipt += name + qtyStr + unitStr + totalStr + '\n';
+    });
+    receipt += line;
+    receipt += 'Subtotal:            KES ' + subtotal.toFixed(2) + '\n';
+    receipt += taxDisplay;
+    receipt += 'TOTAL:               KES ' + total.toFixed(2) + '\n';
+    if (settings.showEtims && (order.etims_invoice_no || order.etims_serial)) {
+        receipt += line;
+        receipt += 'eTIMS INFORMATION\n';
+        if (order.etims_invoice_no) receipt += 'Invoice No:  ' + order.etims_invoice_no + '\n';
+        if (order.etims_serial) receipt += 'CU Serial:   ' + order.etims_serial + '\n';
+        receipt += line;
+    }
+    receipt += 'Payment: ' + (order.payment_method || 'Cash') + '\n';
+    if (order.payment_method === 'cash' && order.cash_received) {
+        receipt += 'Cash Received:      KES ' + order.cash_received.toFixed(2) + '\n';
+        receipt += 'Change:             KES ' + (order.cash_received - order.total).toFixed(2) + '\n';
+    }
+    receipt += dline;
+    receipt += '  ' + (settings.footer || 'Thank you for shopping with us!') + '\n';
+    receipt += dline;
+    receipt += '        Powered by SokoPulse\n';
+    receipt += dline;
+    content.textContent = receipt;
+    modal.classList.add('show');
+
+    var qrContainer = document.getElementById('qrCodeContainer');
+    var qrDiv = document.getElementById('qrcode');
+    if (settings.showEtims && order.etims_qr && qrContainer && qrDiv && typeof QRCode !== 'undefined') {
+        qrContainer.style.display = 'block';
+        qrDiv.innerHTML = '';
+        try { new QRCode(qrDiv, { text: order.etims_qr, width: 120, height: 120, colorDark: '#1a3c34', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M }); } catch(e) {}
+    } else if (qrContainer) { qrContainer.style.display = 'none'; }
+}
+
+function closeReceiptPreview() { var m = document.getElementById('receiptPreviewModal'); if (m) m.classList.remove('show'); }
+
+function printFromPreview() {
+    var content = document.getElementById('receiptPreviewContent');
+    if (!content) { alert('No receipt to print'); return; }
+    var receipt = content.textContent;
+    var qrHtml = '';
+    var qrDiv = document.getElementById('qrcode');
+    if (qrDiv && qrDiv.querySelector('img')) {
+        var qrImg = qrDiv.querySelector('img').src;
+        qrHtml = '<div style="text-align:center;margin:10px 0;"><img src="' + qrImg + '" style="width:120px;height:120px;"><br><small>Scan to verify eTIMS invoice</small></div>';
+    }
+    var iframe = document.createElement('iframe');
+    iframe.style.cssText = 'position:fixed;top:0;left:0;width:0;height:0;border:none;z-index:9999;';
+    document.body.appendChild(iframe);
+    var doc = iframe.contentWindow.document;
+    doc.open();
+    doc.write('<html><head><title>Receipt</title><style>body{font-family:"Courier New",monospace;font-size:13px;padding:10px;white-space:pre-wrap;background:white;margin:0;}@media print{body{padding:5px;}@page{margin:0.3cm;}}</style></head><body>' + receipt + qrHtml + '</body></html>');
+    doc.close();
+    setTimeout(function() {
+        iframe.contentWindow.print();
+        setTimeout(function() { document.body.removeChild(iframe); closeReceiptPreview(); }, 2000);
+    }, 500);
+}
+
+function voidTransaction() {
+    if (cart.length === 0) { alert('Cart is empty'); return; }
+    if (!confirm('Void this transaction?')) return;
+    cart = []; renderCart(); clearCartSession();
+    alert('Transaction voided');
+}
+
+/* KRA integration disabled
+function showOnlineReminder(pendingCount) {
+    var banner = document.getElementById('onlineReminderBanner');
+    var message = document.getElementById('onlineReminderMessage');
+    if (!banner || !message) return;
+    if (sessionStorage.getItem('online_reminder_dismissed') === 'true') return;
+    message.textContent = "You're online! " + pendingCount + " transaction(s) waiting to sync to KRA.";
+    banner.style.display = 'flex';
+}
+function dismissOnlineReminder() {
+    var banner = document.getElementById('onlineReminderBanner');
+    if (banner) banner.style.display = 'none';
+    sessionStorage.setItem('online_reminder_dismissed', 'true');
+}
+*/
+/* KRA integration disabled
+async function checkPendingSyncReminder() {
+    if (!isOnline()) return;
+    if (sessionStorage.getItem('online_reminder_dismissed') === 'true') return;
+    try {
+        var status = await getSyncStatus();
+        if (status.pending > 0) setTimeout(function() { showOnlineReminder(status.pending); }, 2000);
+    } catch(e) {}
+}
+*/
+
+document.addEventListener('keydown', function(e) {
+    if (e.ctrlKey && e.shiftKey && e.key === 'C') { clearCart(); e.preventDefault(); }
+    if (e.ctrlKey && e.shiftKey && e.key === 'P') { printCartPreview(); e.preventDefault(); }
+    if (e.key === 'Escape') { document.querySelectorAll('.modal.show').forEach(function(m) { m.classList.remove('show'); }); }
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    var userData = localStorage.getItem('pos_user');
+    if (!userData) { window.location.href = 'index.html'; return; }
+    currentUser = JSON.parse(userData);
+    document.getElementById('userName').textContent = currentUser.name || currentUser.username;
+    document.getElementById('userRole').textContent = currentUser.role || 'User';
+    setInterval(updateTime, 1000);
+    updateTime();
+    loadProducts();
+    loadCustomers();
+    loadCategories();
+    loadTaxSettings();
+    loadPaymentSettings();
+    loadStoreName();
+    loadReceiptSettings();
+    setTimeout(loadCart, 500);
+    setTimeout(loadHeldOrders, 600);
+    setTimeout(updateCreditButton, 700);
+    // setTimeout(checkPendingSyncReminder, 3000); // KRA disabled
+    // setInterval(function() { if (typeof updateSyncIndicator === 'function') updateSyncIndicator(); }, 10000); // KRA disabled
+    console.log('POS initialized');
+});
+
+document.getElementById('searchInput')?.addEventListener('input', renderProducts);
+setInterval(checkLowStock, 300000);
+</script>
+
+<script src="pwa-install.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/sw.js').then(function(reg) {
+            console.log('SW registered:', reg.scope);
+        }).catch(function(err) { console.log('SW failed:', err); });
+    });
+}
+</script>
+
+<script>
+function checkLicenseStatus() {
+    const activated = localStorage.getItem("activated");
+    const expiry = localStorage.getItem("expiry_date");
+    if (!activated || activated !== "true") {
+        alert("Your license is not activated. Please go to Settings to activate your license.");
+        window.location.href = "settings.html";
+        return false;
+    }
+    if (expiry) {
+        const expiryDate = new Date(expiry);
+        const now = new Date();
+        const daysRemaining = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
+        if (expiryDate < now) {
+            alert("Your license has expired.");
+            localStorage.removeItem("activated");
+            localStorage.removeItem("activation_code");
+            localStorage.removeItem("expiry_date");
+            window.location.href = "settings.html";
+            return false;
+        }
+        if (daysRemaining <= 2 && daysRemaining > 0) alert("License expires in " + daysRemaining + " days.");
+    }
+    return true;
+}
+// License check moved to <head> (early guard)
+</script>
+
+</body>
+</html>
