@@ -1,501 +1,220 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    
-    
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#1a3c34">
-    <meta name="description" content="SokoPulse POS - Offline Point of Sale with eTIMS compliance">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="SokoPulse">
-    <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiB2aWV3Qm94PSIwIDAgMTkyIDE5MiI+PHJlY3Qgd2lkdGg9IjE5MiIgaGVpZ2h0PSIxOTIiIHJ4PSIzMiIgZmlsbD0iIzFhM2MzNCIvPjx0ZXh0IHg9Ijk2IiB5PSIxMjAiIGZvbnQtc2l6ZT0iODAiIGZvbnQtZmFtaWx5PSJBcmlhbCxzYW5zLXNlcmlmIiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0iI2Y1YTYyMyIgdGV4dC1hbmNob3I9Im1pZGRsZSI+U1A8L3RleHQ+PC9zdmc+">
-    <title>Audit Log - SokoPulse</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/responsive.css">
-    <style>
-        .toolbar {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            margin-bottom: 16px;
-            align-items: center;
-        }
-        .toolbar .search-wrapper {
-            flex: 1;
-            position: relative;
-            min-width: 180px;
-        }
-        .toolbar .search-wrapper input {
-            width: 100%;
-            padding: 10px 14px 10px 38px;
-            border: 2px solid #e2e8f0;
-            border-radius: 10px;
-            font-size: 14px;
-            font-family: 'Inter', sans-serif;
-        }
-        .toolbar .search-wrapper input:focus {
-            outline: none;
-            border-color: #1a3c34;
-        }
-        .toolbar .search-wrapper .search-icon {
-            position: absolute;
-            left: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #94a3b8;
-        }
-        .toolbar .filter-select {
-            padding: 10px 14px;
-            border: 2px solid #e2e8f0;
-            border-radius: 10px;
-            font-family: 'Inter', sans-serif;
-            font-size: 13px;
-            background: white;
-        }
-        .btn-refresh {
-            padding: 10px 18px;
-            background: #1a3c34;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-weight: 600;
-            font-family: 'Inter', sans-serif;
-            cursor: pointer;
-        }
-        .btn-refresh:hover { background: #2a5c54; }
-        .btn-export {
-            padding: 10px 18px;
-            background: #f1f5f9;
-            color: #0f172a;
-            border: none;
-            border-radius: 10px;
-            font-weight: 600;
-            font-family: 'Inter', sans-serif;
-            cursor: pointer;
-        }
-        .btn-export:hover { background: #e2e8f0; }
-
-        .audit-item {
-            background: white;
-            border-radius: 8px;
-            padding: 12px 16px;
-            border: 1px solid #f1f5f9;
-            margin-bottom: 6px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 8px;
-            transition: all 0.15s;
-        }
-        .audit-item:hover { border-color: #1a3c34; }
-        .audit-item .info { flex: 1; min-width: 0; }
-        .audit-item .info .action { font-weight: 600; color: #0f172a; }
-        .audit-item .info .details { font-size: 13px; color: #64748b; }
-        .audit-item .info .user { font-size: 12px; color: #94a3b8; }
-        .audit-item .time { font-size: 12px; color: #94a3b8; white-space: nowrap; }
-        
-        .action-badge {
-            padding: 2px 10px;
-            border-radius: 20px;
-            font-size: 10px;
-            font-weight: 600;
-        }
-        .action-badge.login { background: #dbeafe; color: #1e40af; }
-        .action-badge.sale { background: #dcfce7; color: #166534; }
-        .action-badge.return { background: #fef3c7; color: #92400e; }
-        .action-badge.adjust { background: #fce4ec; color: #c62828; }
-        .action-badge.delete { background: #fee2e2; color: #991b1b; }
-        .action-badge.update { background: #e8eaf6; color: #283593; }
-        .action-badge.credit { background: #f3e5f5; color: #6a1b9a; }
-
-        .modal-content { max-width: 500px; }
-
-        @media (max-width: 768px) {
-            .toolbar { flex-direction: column; align-items: stretch; }
-            .toolbar .search-wrapper { min-width: unset; }
-            .btn-refresh, .btn-export { width: 100%; }
-            .filter-select { width: 100%; }
-            .audit-item { flex-direction: column; align-items: flex-start; }
-            .audit-item .time { align-self: flex-start; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Audit Log - SokoPulse</title>
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/responsive.css">
+<style>
+  .audit-wrap { max-width: 1100px; margin: 0 auto; padding: 16px; }
+  .audit-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+  .audit-head h1 { margin: 0; font-size: 20px; }
+  .audit-head a { font-size: 12px; color: #1a3c34; font-weight: 600; text-decoration: none; }
+  .audit-filters { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; margin-bottom: 16px; }
+  .audit-filters input, .audit-filters select {
+    padding: 8px 10px; border: 2px solid #e2e8f0; border-radius: 8px;
+    font-family: inherit; font-size: 13px; background: white;
+  }
+  .audit-filters button {
+    padding: 8px 12px; background: #1a3c34; color: white; border: none;
+    border-radius: 8px; font-weight: 600; cursor: pointer; font-family: inherit;
+  }
+  .audit-day { background: white; border-radius: 12px; padding: 12px 16px; margin-bottom: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+  .audit-day h3 { margin: 0 0 8px; font-size: 12px; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; }
+  .audit-row {
+    display: grid; grid-template-columns: 50px 80px 1fr auto 16px;
+    gap: 10px; padding: 9px 6px; border-bottom: 1px solid #f1f5f9;
+    cursor: pointer; align-items: center; border-radius: 6px;
+    font-size: 13px;
+  }
+  .audit-row:hover { background: #f8fafc; }
+  .audit-row:last-child { border-bottom: none; }
+  .audit-time { font-size: 12px; color: #94a3b8; font-variant-numeric: tabular-nums; }
+  .audit-user { font-size: 12px; font-weight: 600; color: #334155; overflow: hidden; text-overflow: ellipsis; }
+  .audit-action { color: #0f172a; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .audit-badge { font-size: 10px; padding: 2px 8px; border-radius: 10px; font-weight: 600; white-space: nowrap; }
+  .badge-sale { background: #dcfce7; color: #166534; }
+  .badge-edit { background: #fef3c7; color: #92400e; }
+  .badge-delete { background: #fee2e2; color: #991b1b; }
+  .badge-login { background: #dbeafe; color: #1e40af; }
+  .badge-stock { background: #f3e8ff; color: #6b21a8; }
+  .audit-chevron { color: #94a3b8; font-size: 10px; transition: transform 0.15s; }
+  .audit-row.open .audit-chevron { transform: rotate(90deg); }
+  .audit-detail {
+    display: none; padding: 10px 12px 14px 66px;
+    font-size: 12px; color: #475569; background: #f8fafc;
+    border-radius: 6px; margin: -4px 0 8px;
+    font-family: 'Menlo', 'Consolas', monospace;
+    line-height: 1.7;
+  }
+  .audit-row.open + .audit-detail { display: block; }
+  .audit-detail .kv { display: inline-block; margin-right: 16px; }
+  .audit-detail .kv b { color: #334155; }
+  .audit-empty { text-align: center; padding: 40px; color: #94a3b8; font-size: 14px; }
+</style>
 </head>
 <body>
-<div class="app">
-    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
 
-    <aside class="sidebar">
-        <div class="logo"> <span>Soko</span>Pulse <button class="close-btn" onclick="toggleSidebar()">✕</button></div>
-                <nav>
-            <div class="nav-label">Main</div>
-            <a href="pos.html"> POS</a>
-            <a href="dashboard.html"> Dashboard</a>
-            <a href="orders.html"> Orders</a>
-            <div class="nav-label">Inventory</div>
-            <a href="products.html"> Products</a>
-            <a href="stock.html"> Stock</a>
-            <a href="expiry.html">Expiry</a>
-            <a href="categories.html"> Categories</a>
-            <a href="suppliers.html"> Suppliers</a>
-            <div class="nav-label">Management</div>
-            <a href="customers.html"> Customers</a>
-            <a href="reports.html"> Reports</a>
-            <a href="audit.html"> Audit</a>
-            <a href="returns.html"> Returns</a>
-            <a href="settings.html"> Settings</a>
-        </nav>
-        <div class="user-section">
-            <div class="name" id="userName">Administrator</div>
-            <div class="role" id="userRole">Admin</div>
-        </div>
-        <button class="logout-btn" onclick="logout()">Logout</button>
-    </aside>
+<div class="audit-wrap">
+  <div class="audit-head">
+    <h1>Audit Log</h1>
+    <a href="pos.html">← Back to POS</a>
+  </div>
 
-    <main class="main-content">
-        <header class="topbar">
-            <div class="left">
-                <button class="hamburger" onclick="toggleSidebar()">☰</button>
-                <h1> Audit Log</h1>
-            </div>
-            <div class="right">
-                <span class="store-badge"> SokoPulse</span>
-                <span class="time" id="timeDisplay"></span>
-            </div>
-        </header>
+  <div class="audit-filters">
+    <input type="date" id="fromDate" aria-label="From date">
+    <input type="date" id="toDate" aria-label="To date">
+    <select id="userFilter"><option value="">All users</option></select>
+    <select id="actionFilter">
+      <option value="">All actions</option>
+      <option value="sale">Sales</option>
+      <option value="product_add">Product adds</option>
+      <option value="product_edit">Product edits</option>
+      <option value="product_delete">Product deletes</option>
+      <option value="login">Logins</option>
+      <option value="backup">Backups</option>
+    </select>
+    <input type="text" id="searchFilter" placeholder="Search…">
+    <button id="refreshBtn">Refresh</button>
+  </div>
 
-        <div class="page-container">
-            <div class="toolbar">
-                <div class="search-wrapper">
-                    <span class="search-icon"></span>
-                    <input type="text" id="searchInput" placeholder="Search by user or action..." oninput="renderAudit()">
-                </div>
-                <select class="filter-select" id="actionFilter" onchange="renderAudit()">
-                    <option value="all">All Actions</option>
-                    <option value="login">Login</option>
-                    <option value="sale">Sale</option>
-                    <option value="return">Return</option>
-                    <option value="adjust">Stock Adjust</option>
-                    <option value="delete">Delete</option>
-                    <option value="update">Update</option>
-                    <option value="credit">Credit</option>
-                </select>
-                <button class="btn-refresh" onclick="loadAudit()"> Refresh</button>
-                <button class="btn-export" onclick="exportAudit()"> Export CSV</button>
-            </div>
-
-            <div id="auditList">
-                <div style="text-align:center;padding:40px;color:#94a3b8;">Loading audit log...</div>
-            </div>
-        </div>
-    </main>
+  <div id="auditList"><div class="audit-empty">Loading...</div></div>
 </div>
-
 
 <script src="db.js"></script>
 <script>
-function isAdmin() {
-    try {
-        const user = JSON.parse(localStorage.getItem("pos_user") || "{}");
-        return user.role === "admin";
-    } catch(e) {
-        return false;
-    }
-}
-if (!isAdmin()) {
-    window.location.href = "pos.html";
-}
+(function () {
+  var all = [];
 
-function isAdmin() {
-    try {
-        const user = JSON.parse(localStorage.getItem("pos_user") || "{}");
-        return user.role === "admin";
-    } catch(e) {
-        return false;
-    }
-}
-if (!isAdmin()) {
-    window.location.href = "pos.html";
-}
+  function badgeClass(a) {
+    if (a.indexOf('sale') === 0) return 'badge-sale';
+    if (a.indexOf('delete') > -1) return 'badge-delete';
+    if (a === 'login' || a === 'login_failed') return 'badge-login';
+    if (a.indexOf('stock') > -1) return 'badge-stock';
+    return 'badge-edit';
+  }
 
+  function fmtTime(iso) {
+    var d = new Date(iso);
+    return d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+  }
 
-// ===== DATABASE FUNCTIONS =====
-
-
-function dbAdd(db, storeName, data) {
-    return new Promise((resolve, reject) => {
-        const tx = db.transaction(storeName, 'readwrite');
-        const store = tx.objectStore(storeName);
-        const req = store.add(data);
-        req.onsuccess = function() { resolve(req.result); };
-        req.onerror = function() { reject(req.error); };
+  function esc(s) {
+    if (s === null || s === undefined) return '';
+    return String(s).replace(/[&<>"']/g, function(c) {
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
     });
-}
+  }
 
-function dbPut(db, storeName, data) {
-    return new Promise((resolve, reject) => {
-        const tx = db.transaction(storeName, 'readwrite');
-        const store = tx.objectStore(storeName);
-        const req = store.put(data);
-        req.onsuccess = function() { resolve(req.result); };
-        req.onerror = function() { reject(req.error); };
+  function render() {
+    var from = document.getElementById('fromDate').value;
+    var to = document.getElementById('toDate').value;
+    var user = document.getElementById('userFilter').value;
+    var action = document.getElementById('actionFilter').value;
+    var search = document.getElementById('searchFilter').value.toLowerCase();
+
+    var filtered = all.filter(function(e) {
+      var d = new Date(e.date).toISOString().slice(0, 10);
+      if (from && d < from) return false;
+      if (to && d > to) return false;
+      if (user && e.user !== user) return false;
+      if (action && e.action.indexOf(action) !== 0) return false;
+      if (search) {
+        var hay = (e.entity_name || '') + ' ' + (e.entity_id || '') + ' ' + (e.details || '') + ' ' + (e.field || '') + ' ' + (e.user || '');
+        if (hay.toLowerCase().indexOf(search) === -1) return false;
+      }
+      return true;
     });
-}
 
-function dbDelete(db, storeName, id) {
-    return new Promise((resolve, reject) => {
-        const tx = db.transaction(storeName, 'readwrite');
-        const store = tx.objectStore(storeName);
-        const req = store.delete(id);
-        req.onsuccess = function() { resolve(); };
-        req.onerror = function() { reject(req.error); };
+    var byDay = {};
+    filtered.forEach(function(e) {
+      var day = new Date(e.date).toISOString().slice(0, 10);
+      if (!byDay[day]) byDay[day] = [];
+      byDay[day].push(e);
     });
-}
 
-// ============================================================
-// AUDIT LOG - COMPLETE SCRIPT
-// ============================================================
+    var days = Object.keys(byDay).sort().reverse();
 
-var auditLogs = [];
-
-// ===== DB HELPERS =====
-
-// ===== SIDEBAR =====
-function toggleSidebar() {
-    document.querySelector('.sidebar').classList.toggle('open');
-    document.querySelector('.sidebar-overlay').classList.toggle('show');
-}
-
-function logout() {
-    if (confirm('Logout?')) {
-        localStorage.removeItem('pos_user');
-        window.location.href = 'index.html';
+    if (!days.length) {
+      document.getElementById('auditList').innerHTML = '<div class="audit-empty">No matching events.</div>';
+      return;
     }
-}
-
-function updateTime() {
-    var el = document.getElementById('timeDisplay');
-    if (el) el.textContent = new Date().toLocaleTimeString('en-KE', { hour12: false });
-}
-
-// ===== LOAD AUDIT =====
-
-async function loadAudit() {
-    try {
-        var db = await openDB();
-        // Check if audit_log store exists
-        if (!db.objectStoreNames.contains('audit_log')) {
-            console.log(' audit_log store not found - creating it now');
-            // Create the store by closing and reopening with upgrade
-            db.close();
-            var req = indexedDB.open('SokoPulsePOS', 7);
-            req.onsuccess = function(e) {
-                var db2 = e.target.result;
-                auditLogs = [];
-                renderAudit();
-                console.log(' Audit store created, no records yet');
-                db2.close();
-            };
-            req.onerror = function(e) {
-                console.error('Error creating audit store:', e);
-                document.getElementById('auditList').innerHTML = '<div style="text-align:center;padding:40px;color:#ef4444;">Error creating audit log</div>';
-            };
-            return;
-        }
-        
-        auditLogs = await dbGetAll(db, 'audit_log');
-        // Sort by date descending
-        auditLogs.sort(function(a, b) { return new Date(b.date) - new Date(a.date); });
-        renderAudit();
-        console.log(' Audit loaded:', auditLogs.length, 'records');
-    } catch(e) {
-        console.error('Error loading audit:', e);
-        document.getElementById('auditList').innerHTML = '<div style="text-align:center;padding:40px;color:#ef4444;">Error loading audit log</div>';
-    }
-}
-
-
-function renderAudit() {
-    var container = document.getElementById('auditList');
-    var search = document.getElementById('searchInput').value.toLowerCase();
-    var filter = document.getElementById('actionFilter').value;
-
-    var filtered = auditLogs;
-    if (search) {
-        filtered = filtered.filter(function(a) {
-            return (a.user || '').toLowerCase().includes(search) ||
-                   (a.action || '').toLowerCase().includes(search) ||
-                   (a.details || '').toLowerCase().includes(search);
-        });
-    }
-    if (filter !== 'all') {
-        filtered = filtered.filter(function(a) { return a.action === filter; });
-    }
-
-    if (filtered.length === 0) {
-        container.innerHTML = '<div style="text-align:center;padding:40px;color:#94a3b8;">No audit records found</div>';
-        return;
-    }
-
-    var actionLabels = {
-        'login': ' Login',
-        'sale': ' Sale',
-        'return': ' Return',
-        'adjust': ' Stock Adjust',
-        'delete': ' Delete',
-        'update': ' Update',
-        'credit': ' Credit'
-    };
-
-    var actionClasses = {
-        'login': 'login',
-        'sale': 'sale',
-        'return': 'return',
-        'adjust': 'adjust',
-        'delete': 'delete',
-        'update': 'update',
-        'credit': 'credit'
-    };
 
     var html = '';
-    filtered.forEach(function(a) {
-        var actionLabel = actionLabels[a.action] || a.action;
-        var actionClass = actionClasses[a.action] || '';
-        var date = new Date(a.date);
-        var timeStr = date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
-        html += '<div class="audit-item">';
-        html += '<div class="info">';
-        html += '<span class="action-badge ' + actionClass + '">' + actionLabel + '</span>';
-        html += ' <span class="action">' + (a.details || '') + '</span>';
-        html += '<div class="user"> ' + (a.user || 'System') + '</div>';
-        html += '</div>';
-        html += '<div class="time">' + timeStr + '</div>';
-        html += '</div>';
+    days.forEach(function(day) {
+      var d = new Date(day);
+      var label = d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+      html += '<div class="audit-day"><h3>' + label + '</h3>';
+      byDay[day].forEach(function(e) {
+        var summary = e.action.replace(/_/g, ' ');
+        if (e.entity_name) summary += ' — ' + e.entity_name;
+
+        var detailParts = [];
+        if (e.entity) detailParts.push('<span class="kv"><b>Entity:</b> ' + esc(e.entity) + '</span>');
+        if (e.entity_id) detailParts.push('<span class="kv"><b>ID:</b> ' + esc(e.entity_id) + '</span>');
+        if (e.field) detailParts.push('<span class="kv"><b>Field:</b> ' + esc(e.field) + '</span>');
+        if (e.old_value !== null && e.old_value !== undefined) detailParts.push('<span class="kv"><b>Before:</b> ' + esc(e.old_value) + '</span>');
+        if (e.new_value !== null && e.new_value !== undefined) detailParts.push('<span class="kv"><b>After:</b> ' + esc(e.new_value) + '</span>');
+        if (e.details) detailParts.push('<span class="kv"><b>Note:</b> ' + esc(e.details) + '</span>');
+        if (e.device) detailParts.push('<span class="kv"><b>Device:</b> ' + esc(e.device) + '</span>');
+
+        var detail = detailParts.length ? detailParts.join('') : '<span style="color:#94a3b8;">No extra details</span>';
+
+        html += '<div class="audit-row" onclick="this.classList.toggle(\'open\')">'
+              + '<div class="audit-time">' + fmtTime(e.date) + '</div>'
+              + '<div class="audit-user">' + esc(e.user || 'system') + '</div>'
+              + '<div class="audit-action">' + esc(summary) + '</div>'
+              + '<div><span class="audit-badge ' + badgeClass(e.action) + '">' + esc(e.action.replace(/_/g, ' ')) + '</span></div>'
+              + '<div class="audit-chevron">▶</div>'
+              + '</div>'
+              + '<div class="audit-detail">' + detail + '</div>';
+      });
+      html += '</div>';
     });
 
-    container.innerHTML = html;
-}
+    document.getElementById('auditList').innerHTML = html;
+  }
 
-// ===== EXPORT AUDIT =====
-function exportAudit() {
-    if (auditLogs.length === 0) {
-        alert('No audit data to export');
-        return;
-    }
-    var csv = 'Date,User,Action,Details\n';
-    auditLogs.forEach(function(a) {
-        var date = new Date(a.date).toLocaleString();
-        csv += date + ',' + (a.user || 'System') + ',' + (a.action || '') + ',' + (a.details || '') + '\n';
-    });
-    var blob = new Blob([csv], { type: 'text/csv' });
-    var url = URL.createObjectURL(blob);
-    var a = document.createElement('a');
-    a.href = url;
-    a.download = 'audit_log_' + new Date().toISOString().slice(0, 10) + '.csv';
-    a.click();
-    URL.revokeObjectURL(url);
-    alert(' Audit exported!');
-}
-
-// ===== LOG ACTION =====
-function logAction(action, details) {
-    var user = JSON.parse(localStorage.getItem('pos_user') || '{}');
-    var log = {
-        user: user.username || 'System',
-        action: action,
-        details: details,
-        date: new Date().toISOString()
-    };
-    openDB().then(function(db) {
-        dbAdd(db, 'audit_log', log);
-    }).catch(function(e) {
-        console.error('Error logging action:', e);
-    });
-}
-
-// ===== INIT =====
-document.addEventListener('DOMContentLoaded', function() {
-    var userData = localStorage.getItem('pos_user');
-    if (!userData) {
-        window.location.href = 'index.html';
-        return;
-    }
-    var user = JSON.parse(userData);
-    document.getElementById('userName').textContent = user.name || user.username;
-    document.getElementById('userRole').textContent = user.role || 'User';
-
-    setInterval(updateTime, 1000);
-    updateTime();
-
-    // Create audit_log store if needed
-    openDB().then(function(db) {
-        if (!db.objectStoreNames.contains('audit_log')) {
-            // Store doesn't exist, will be created on upgrade
-            console.log(' Audit log store not found, will be created on next upgrade');
-        }
-        loadAudit();
-    });
-});
-</script>
-
-
-<script>
-function isAdmin() {
+  async function load() {
     try {
-        const user = JSON.parse(localStorage.getItem("pos_user") || "{}");
-        return user.role === "admin";
-    } catch(e) {
-        return false;
-    }
-}
-if (!isAdmin()) {
-    window.location.href = "pos.html";
-}
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/sw.js')
-            .then(function(reg) {
-                console.log(' Service Worker registered');
-            })
-            .catch(function(err) {
-                console.log(' Service Worker registration failed:', err);
-            });
-    });
-}
-</script>
+      var db = await openDB();
+      var records = await dbGetAll(db, 'audit_log') || [];
+      records.sort(function(a, b) { return new Date(b.date) - new Date(a.date); });
+      all = records;
 
-<script src="pwa-install.js"></script>
-<script>
-// ===== SERVICE WORKER REGISTRATION =====
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function() {
-        navigator.serviceWorker.register('/sw.js')
-            .then(function(reg) {
-                console.log('Service Worker registered:', reg.scope);
-                
-                // Check for updates
-                reg.addEventListener('updatefound', function() {
-                    var newWorker = reg.installing;
-                    newWorker.addEventListener('statechange', function() {
-                        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                            // New version available
-                            if (confirm('A new version is available. Update now?')) {
-                                newWorker.postMessage({ type: 'SKIP_WAITING' });
-                                window.location.reload();
-                            }
-                        }
-                    });
-                });
-            })
-            .catch(function(err) {
-                console.log('Service Worker registration failed:', err);
-            });
-    });
-}
+      var userSel = document.getElementById('userFilter');
+      var seen = {};
+      userSel.innerHTML = '<option value="">All users</option>';
+      all.forEach(function(e) {
+        if (e.user && !seen[e.user]) {
+          seen[e.user] = true;
+          var o = document.createElement('option');
+          o.value = e.user; o.textContent = e.user;
+          userSel.appendChild(o);
+        }
+      });
+
+      render();
+    } catch (err) {
+      document.getElementById('auditList').innerHTML = '<div class="audit-empty">Error loading audit log: ' + err.message + '</div>';
+    }
+  }
+
+  // Default to today
+  var today = new Date().toISOString().slice(0, 10);
+  document.getElementById('fromDate').value = today;
+  document.getElementById('toDate').value = today;
+
+  document.getElementById('refreshBtn').onclick = load;
+  ['fromDate','toDate','userFilter','actionFilter','searchFilter'].forEach(function(id) {
+    var el = document.getElementById(id);
+    el.addEventListener('input', render);
+    el.addEventListener('change', render);
+  });
+
+  load();
+})();
 </script>
 </body>
 </html>

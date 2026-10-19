@@ -941,6 +941,15 @@ function processPayment(method, amountReceived) {
             });
         }
         creditPromise.then(function() { return dbAdd(db, 'orders', order); }).then(function() {
+        try {
+            logAudit('sale_completed', {
+                entity: 'order',
+                entity_id: order.order_number,
+                entity_name: 'KES ' + Number(order.total).toFixed(2),
+                details: order.items.length + ' items, ' + order.payment_method + ', ' + order.mode,
+                new_value: order.total
+            });
+        } catch(e) { console.warn('audit failed', e); }
             for (var i = 0; i < cart.length; i++) {
                 var item = cart[i];
                 var product = products.find(function(p) { return p.id === item.id; });

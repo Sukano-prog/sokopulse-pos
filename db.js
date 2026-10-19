@@ -314,3 +314,42 @@ async function getMachineId() {
     localStorage.setItem('machine_id', machineId);
     return machineId;
 }
+
+
+// ===== DB WRITE HELPERS =====
+function dbAddGlobal(db, storeName, data) {
+  return new Promise(function(resolve, reject) {
+    var tx = db.transaction(storeName, 'readwrite');
+    var store = tx.objectStore(storeName);
+    var req = store.add(data);
+    req.onsuccess = function() { resolve(req.result); };
+    req.onerror = function() { reject(req.error); };
+  });
+}
+
+// ===== AUDIT LOG =====
+async function logAudit(action, opts) {
+  opts = opts || {};
+  try {
+    var db = await openDB();
+    var entry = {
+      user: opts.user || sessionStorage.getItem('currentUser') || localStorage.getItem('pos_user') || 'system',
+      user_role: opts.user_role || sessionStorage.getItem('currentRole') || '',
+      action: action,
+      entity: opts.entity || null,
+      entity_id: opts.entity_id || null,
+      entity_name: opts.entity_name || null,
+      field: opts.field || null,
+      old_value: opts.old_value === undefined ? null : opts.old_value,
+      new_value: opts.new_value === undefined ? null : opts.new_value,
+      details: opts.details || '',
+      device: navigator.userAgent.indexOf('Android') > -1 ? 'Android'
+            : navigator.userAgent.indexOf('Linux') > -1 ? 'Linux' : 'Other',
+      date: new Date().toISOString()
+    };
+    await dbAddGlobal(db, 'audit_log', entry);
+    return entry;
+  } catch (e) {
+    console.warn('Audit log failed:', e);
+  }
+}
