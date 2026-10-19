@@ -520,6 +520,13 @@ async function saveCustomer(e) {
             request.onerror = () => reject(request.error);
         });
         
+        logAudit(editId ? 'customer_edit' : 'customer_add', {
+            entity: 'customer',
+            entity_id: data.phone,
+            entity_name: data.name,
+            details: 'Phone: ' + data.phone + (data.credit_limit ? ', Credit limit: KES ' + data.credit_limit : '')
+        });
+
         closeModal();
         alert(editId ? " Customer updated successfully" : " Customer added successfully");
         await loadCustomers();

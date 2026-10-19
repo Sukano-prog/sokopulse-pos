@@ -3,7 +3,7 @@
 // Offline caching for PWA support
 // ============================================
 
-const CACHE_NAME = 'sokopulse-202610190817';
+const CACHE_NAME = 'sokopulse-202610190843';
 const CACHE_URLS = [
     '/',
     '/pos.html',

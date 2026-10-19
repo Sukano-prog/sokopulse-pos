@@ -460,11 +460,11 @@ function fmtQty(n) {
             <div class="form-row">
                 <div class="form-group">
                     <label>Current Stock</label>
-                    <input type="number" id="productStock" placeholder="0" value="0">
+                    <input type="number" id="productStock" placeholder="0" value="0" step="any">
                 </div>
                 <div class="form-group">
                     <label>Min Stock Alert</label>
-                    <input type="number" id="productMinStock" placeholder="5" value="5">
+                    <input type="number" id="productMinStock" placeholder="5" value="5" step="any">
                 </div>
             </div>
             <div class="form-group">
@@ -532,7 +532,7 @@ function fmtQty(n) {
                 <div class="form-group"><label>Cost Price</label><input type="number" class="bulk-cost" placeholder="0.00" step="0.01"></div>
                 <div class="form-group"><label>Retail Price</label><input type="number" class="bulk-retail" placeholder="0.00" step="0.01"></div>
                 <div class="form-group"><label>Wholesale Price</label><input type="number" class="bulk-wholesale" placeholder="0.00" step="0.01"></div>
-                <div class="form-group"><label>Stock</label><input type="number" class="bulk-stock" placeholder="0"></div>
+                <div class="form-group"><label>Stock</label><input type="number" class="bulk-stock" placeholder="0" step="any"></div>
                 <button type="button" onclick="removeBulkRow(this)" style="background:none;border:none;color:#ef4444;font-size:18px;cursor:pointer;padding:4px 8px;">✕</button>
             </div>
         </div>
@@ -951,35 +951,53 @@ async function saveProduct(e) {
     };
     try {
         const db = await openDB();
-        const tx = db.transaction('products', 'readwrite');
-        const store = tx.objectStore('products');
-        if (id) { 
-            data.id = parseInt(id);
-            const oldProduct = await new Promise(function(res, rej) {
+
+        // STEP 1: Fetch old product in its OWN read transaction (before opening write tx)
+        var oldProduct = null;
+        if (id) {
+            oldProduct = await new Promise(function(res, rej) {
                 var getTx = db.transaction('products', 'readonly');
-                var getReq = getTx.objectStore('products').get(data.id);
+                var getReq = getTx.objectStore('products').get(parseInt(id));
                 getReq.onsuccess = function() { res(getReq.result); };
                 getReq.onerror = function() { rej(getReq.error); };
             });
-            await store.put(data);
-            if (oldProduct) {
-                var watchFields = ['name', 'sku', 'retail_price', 'wholesale_price', 'cost_price', 'current_stock', 'min_stock_alert', 'category_id'];
-                for (var wf = 0; wf < watchFields.length; wf++) {
-                    var f = watchFields[wf];
-                    if (oldProduct[f] !== data[f]) {
-                        logAudit('product_edit', {
-                            entity: 'product',
-                            entity_id: data.sku,
-                            entity_name: data.name,
-                            field: f,
-                            old_value: oldProduct[f],
-                            new_value: data[f]
-                        });
-                    }
+        }
+
+        // STEP 2: Write in its OWN transaction (no awaits before the write request)
+        var writeTx = db.transaction('products', 'readwrite');
+        var writeStore = writeTx.objectStore('products');
+        if (id) {
+            data.id = parseInt(id);
+            await new Promise(function(res, rej) {
+                var req = writeStore.put(data);
+                req.onsuccess = function() { res(); };
+                req.onerror = function() { rej(req.error); };
+            });
+        } else {
+            await new Promise(function(res, rej) {
+                var req = writeStore.add(data);
+                req.onsuccess = function() { res(); };
+                req.onerror = function() { rej(req.error); };
+            });
+        }
+
+        // STEP 3: Log audit (now outside the write transaction)
+        if (id && oldProduct) {
+            var watchFields = ['name', 'sku', 'retail_price', 'wholesale_price', 'cost_price', 'current_stock', 'min_stock_alert', 'category_id'];
+            for (var wf = 0; wf < watchFields.length; wf++) {
+                var f = watchFields[wf];
+                if (oldProduct[f] !== data[f]) {
+                    logAudit('product_edit', {
+                        entity: 'product',
+                        entity_id: data.sku,
+                        entity_name: data.name,
+                        field: f,
+                        old_value: oldProduct[f],
+                        new_value: data[f]
+                    });
                 }
             }
         } else {
-            await store.add(data);
             logAudit('product_add', {
                 entity: 'product',
                 entity_id: data.sku,
@@ -999,9 +1017,28 @@ async function deleteProduct(id) {
     if (!confirm('Delete this product?')) return;
     try {
         const db = await openDB();
+
+        // Fetch product BEFORE deleting for audit snapshot
+        var productToDelete = await new Promise(function(resolve, reject) {
+            var getTx = db.transaction('products', 'readonly');
+            var getReq = getTx.objectStore('products').get(id);
+            getReq.onsuccess = function() { resolve(getReq.result); };
+            getReq.onerror = function() { reject(getReq.error); };
+        });
+
         const tx = db.transaction('products', 'readwrite');
         const store = tx.objectStore('products');
         await store.delete(id);
+
+        if (productToDelete) {
+            logAudit('product_delete', {
+                entity: 'product',
+                entity_id: productToDelete.sku,
+                entity_name: productToDelete.name,
+                old_value: 'KES ' + productToDelete.retail_price + ' / Stock ' + productToDelete.current_stock
+            });
+        }
+
         loadProducts();
         alert(' Product deleted');
     } catch(e) {

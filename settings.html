@@ -588,9 +588,14 @@ async function backupData() {
         var url = URL.createObjectURL(blob);
         var a = document.createElement('a');
         a.href = url;
-        a.download = 'backup_' + new Date().toISOString().slice(0, 10) + '.json';
+        var fileName = 'backup_' + new Date().toISOString().slice(0, 10) + '.json';
+        a.download = fileName;
         a.click();
         URL.revokeObjectURL(url);
+        logAudit('backup_export', {
+            details: 'Exported all data to JSON',
+            new_value: fileName
+        });
         alert(' Backup downloaded!');
     } catch(e) { alert(' Error: ' + e.message); }
 }

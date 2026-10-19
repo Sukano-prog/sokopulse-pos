@@ -647,65 +647,6 @@ function updateReturnTotal() {
     document.getElementById('returnTotal').textContent = 'KES ' + total.toFixed(2);
 }
 
-async function processReturn(e) {
-    e.preventDefault();
-    var orderNumber = document.getElementById('returnOrderNumber').value.trim();
-    var reason = document.getElementById('returnReason').value;
-    var notes = document.getElementById('returnNotes').value;
-    var refundMethod = document.getElementById('refundMethod').value;
-
-    if (!orderNumber) {
-        alert('Please select an order');
-        return;
-    }
-
-    var selectedItems = [];
-    var checkboxes = document.querySelectorAll('.return-item-check:checked');
-    checkboxes.forEach(function(cb) {
-        var index = parseInt(cb.dataset.index);
-        var item = selectedOrderItems[index];
-        if (item) {
-            selectedItems.push(item);
-        }
-    });
-
-    if (selectedItems.length === 0) {
-        alert('Please select at least one item to return');
-        return;
-    }
-
-    var total = selectedItems.reduce(function(s, item) {
-        return s + (item.price || 0) * (item.qty || 1);
-    }, 0);
-
-    if (!confirm('Process return of ' + selectedItems.length + ' items for KES ' + total.toFixed(2) + '?')) return;
-
-    var order = orders.find(function(o) { return o.order_number === orderNumber; });
-    var customerName = order ? order.customer_name : 'Unknown';
-
-    var returnData = {
-        order_number: orderNumber,
-        customer_name: customerName,
-        items: JSON.stringify(selectedItems),
-        total: total,
-        reason: reason,
-        notes: notes,
-        refund_method: refundMethod,
-        status: 'pending',
-        date: new Date().toISOString(),
-        user: JSON.parse(localStorage.getItem('pos_user') || '{}').username || 'System'
-    };
-
-    try {
-        var db = await openDB();
-        await dbAdd(db, 'returns', returnData);
-        closeModal();
-        loadReturns();
-        alert(' Return submitted for approval!');
-    } catch(e) {
-        alert(' Error processing return: ' + e.message);
-    }
-}
 
 // ===== VIEW RETURN =====
 function viewReturn(id) {
@@ -782,9 +723,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-
-</html>
-
 <script>
 function isAdmin() {
     try {
@@ -848,8 +786,13 @@ async function processReturn(e) {
         var db = await openDB();
         await dbAdd(db, 'returns', returnData);
         
-        // Log action
-        logAction('return', 'Return submitted for order ' + orderNumber + ' - KES ' + total.toFixed(2));
+        logAudit('return_processed', {
+            entity: 'return',
+            entity_id: orderNumber,
+            entity_name: customerName + ' - KES ' + total.toFixed(2),
+            details: 'Reason: ' + reason + ', Refund: ' + refundMethod + ', Items: ' + selectedItems.length,
+            new_value: total
+        });
         
         closeModal();
         loadReturns();
@@ -1149,7 +1092,5 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-        req.onsuccess = function() { resolve(req.result); };
-        req.onerror = function() { reject(req.error); };
-    });
-}
+</body>
+</html>

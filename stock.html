@@ -952,6 +952,16 @@ async function receiveStock(e) {
         const store2 = tx2.objectStore('stock_movements');
         await store2.add(movement);
 
+        logAudit('stock_change', {
+            entity: 'product',
+            entity_id: product.sku,
+            entity_name: product.name,
+            field: 'current_stock',
+            old_value: oldStock,
+            new_value: newStock,
+            details: 'Received from supplier' + (supplier ? ': ' + supplier : '') + (invoice ? ' | Invoice: ' + invoice : '')
+        });
+
         closeModal('receiveModal');
         await loadStockData();
         alert(` Received ${qty} units of ${product.name}\nNew stock: ${newStock}`);
@@ -1019,6 +1029,16 @@ async function adjustStock(e) {
         const tx2 = db.transaction('stock_movements', 'readwrite');
         const store2 = tx2.objectStore('stock_movements');
         await store2.add(movement);
+
+        logAudit('stock_change', {
+            entity: 'product',
+            entity_id: product.sku,
+            entity_name: product.name,
+            field: 'current_stock',
+            old_value: oldStock,
+            new_value: newStock,
+            details: 'Reason: ' + reason + (notes ? ' | ' + notes : '')
+        });
 
         closeModal('adjustModal');
         await loadStockData();
@@ -1185,6 +1205,16 @@ async function bulkAdjustStock() {
             const tx2 = db.transaction('stock_movements', 'readwrite');
             const store2 = tx2.objectStore('stock_movements');
             await store2.add(movement);
+
+            logAudit('stock_change', {
+                entity: 'product',
+                entity_id: product.sku,
+                entity_name: product.name,
+                field: 'current_stock',
+                old_value: oldStock,
+                new_value: newStock,
+                details: 'Bulk adjustment: ' + reason + (notes ? ' | ' + notes : '') + ' (' + count + ' products)'
+            });
 
             adjusted++;
         }

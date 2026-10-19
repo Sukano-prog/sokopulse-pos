@@ -405,8 +405,20 @@ async function changeOrderStatus() {
         var db = await openDB();
         var order = orders.find(function(o) { return o.id === id; });
         if (!order) { alert('Order not found'); return; }
+        var oldStatus = order.status;
         order.status = newStatus;
         await dbPut(db, 'orders', order);
+
+        logAudit('order_status_change', {
+            entity: 'order',
+            entity_id: order.order_number,
+            entity_name: 'KES ' + Number(order.total || 0).toFixed(2),
+            field: 'status',
+            old_value: oldStatus,
+            new_value: newStatus,
+            details: 'Status changed via Orders page'
+        });
+
         closeModal();
         loadOrders();
         alert('Order status updated!');

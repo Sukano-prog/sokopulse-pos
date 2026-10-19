@@ -333,8 +333,24 @@ async function logAudit(action, opts) {
   try {
     var db = await openDB();
     var entry = {
-      user: opts.user || sessionStorage.getItem('currentUser') || localStorage.getItem('pos_user') || 'system',
-      user_role: opts.user_role || sessionStorage.getItem('currentRole') || '',
+      user: (function() {
+        if (opts.user) return opts.user;
+        var stored = sessionStorage.getItem('currentUser') || localStorage.getItem('pos_user');
+        if (!stored) return 'system';
+        try {
+          var parsed = JSON.parse(stored);
+          return parsed.username || parsed.name || 'system';
+        } catch(e) { return stored; }
+      })(),
+      user_role: (function() {
+        if (opts.user_role) return opts.user_role;
+        var stored = sessionStorage.getItem('currentRole') || localStorage.getItem('pos_user');
+        if (!stored) return '';
+        try {
+          var parsed = JSON.parse(stored);
+          return parsed.role || '';
+        } catch(e) { return ''; }
+      })(),
       action: action,
       entity: opts.entity || null,
       entity_id: opts.entity_id || null,

@@ -251,7 +251,44 @@
             }
         }
 
-        async function handleLogin(e) {
+        // Audit helper for login (self-contained, no db.js dependency)
+async function logAuditLogin(action, opts) {
+    opts = opts || {};
+    try {
+        const db = await new Promise(function(resolve, reject) {
+            const req = indexedDB.open('SokoPulsePOS');
+            req.onsuccess = function() { resolve(req.result); };
+            req.onerror = function() { reject(req.error); };
+        });
+        const entry = {
+            user: opts.user || 'system',
+            user_role: opts.user_role || '',
+            action: action,
+            entity: opts.entity || null,
+            entity_id: opts.entity_id || null,
+            entity_name: opts.entity_name || null,
+            field: opts.field || null,
+            old_value: opts.old_value === undefined ? null : opts.old_value,
+            new_value: opts.new_value === undefined ? null : opts.new_value,
+            details: opts.details || '',
+            device: navigator.userAgent.indexOf('Android') > -1 ? 'Android'
+                  : navigator.userAgent.indexOf('Linux') > -1 ? 'Linux' : 'Other',
+            date: new Date().toISOString()
+        };
+        await new Promise(function(resolve, reject) {
+            const tx = db.transaction('audit_log', 'readwrite');
+            const store = tx.objectStore('audit_log');
+            const req = store.add(entry);
+            req.onsuccess = function() { resolve(); };
+            req.onerror = function() { reject(req.error); };
+        });
+        db.close();
+    } catch (e) {
+        console.warn('Login audit failed:', e);
+    }
+}
+
+async function handleLogin(e) {
             e.preventDefault();
             const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value.trim();
@@ -281,6 +318,11 @@
                         role: user.role,
                         name: user.name
                     }));
+                    logAuditLogin('login', {
+                        user: user.username,
+                        user_role: user.role,
+                        details: 'Successful login'
+                    });
                     window.location.href = 'pos.html';
                 } else {
                     errorMsg.textContent = 'Invalid username or password';
