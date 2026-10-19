@@ -344,7 +344,10 @@ eTIMS Sync Status
                 <div class="settings-card">
                     <div class="card-header"><span class="icon"></span> Backup & Restore</div>
                     <div class="card-body">
-                        <button class="btn-save-setting" onclick="backupData()" style="width:100%;margin-bottom:12px;padding:10px;font-size:14px;">Export Backup (Download JSON)</button>
+                        <button class="btn-save-setting" onclick="backupData()" style="width:100%;margin-bottom:12px;padding:10px;font-size:14px;"><div id="lastBackupInfo" style="font-size:12px;color:#64748b;margin-bottom:12px;padding:8px;background:#f8fafc;border-radius:6px;border-left:3px solid #1a3c34;">
+          <strong>Last backup:</strong> <span id="lastBackupDisplay">Loading...</span>
+        </div>
+        <button class="btn-save-setting" onclick="backupData()" style="width:100%;margin-bottom:12px;padding:10px;font-size:14px;">Export Backup (Download JSON)</button></button>
                         
                         <div style="border-top:1px solid #e2e8f0;margin:12px 0;padding-top:12px;">
                             <label style="display:block;font-size:12px;font-weight:600;color:#64748b;margin-bottom:6px;">Restore from Backup File</label>
@@ -824,6 +827,33 @@ if ('serviceWorker' in navigator) {
                 console.log('Service Worker registration failed:', err);
             });
     });
+}
+</script>
+<script>
+async function loadBackupStatus() {
+  try {
+    var lastBackup = await getLastBackupTime();
+    var el = document.getElementById('lastBackupDisplay');
+    if (!el) return;
+    if (!lastBackup) {
+      el.textContent = 'Never backed up — click Export Backup below to create your first backup';
+      el.style.color = '#dc2626';
+      return;
+    }
+    var dt = new Date(lastBackup);
+    var daysAgo = Math.floor((Date.now() - lastBackup) / (1000 * 60 * 60 * 24));
+    var text = dt.toLocaleDateString() + ' at ' + dt.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    if (daysAgo === 0) text += ' (today)';
+    else if (daysAgo === 1) text += ' (yesterday)';
+    else text += ' (' + daysAgo + ' days ago)';
+    el.textContent = text;
+    el.style.color = daysAgo >= 3 ? '#dc2626' : '#0f172a';
+  } catch(e) {
+    console.warn('Failed to load backup status:', e);
+  }
+}
+if (document.getElementById('lastBackupDisplay')) {
+  setTimeout(loadBackupStatus, 1000);
 }
 </script>
 </body>

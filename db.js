@@ -369,3 +369,44 @@ async function logAudit(action, opts) {
     console.warn('Audit log failed:', e);
   }
 }
+
+
+// ===== BACKUP TRACKING =====
+async function getLastBackupTime() {
+  try {
+    const db = await openDB();
+    const settings = await dbGetAll(db, 'settings');
+    const backupSetting = settings.find(s => s.key === 'last_backup_at');
+    return backupSetting ? parseInt(backupSetting.value) : 0;
+  } catch(e) {
+    return 0;
+  }
+}
+
+async function setLastBackupTime() {
+  try {
+    const db = await openDB();
+    
+    // STEP 1: Fetch existing settings OUTSIDE the write transaction
+    const all = await dbGetAll(db, 'settings');
+    const existing = all.find(s => s.key === 'last_backup_at');
+    
+    // STEP 2: Do the write in its own transaction (no awaits inside)
+    const tx = db.transaction('settings', 'readwrite');
+    const store = tx.objectStore('settings');
+    
+    if (existing) {
+      existing.value = Date.now().toString();
+      store.put(existing);
+    } else {
+      store.add({ key: 'last_backup_at', value: Date.now().toString(), updated_at: new Date().toISOString() });
+    }
+    
+    return new Promise((resolve, reject) => {
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+  } catch(e) {
+    console.warn('Failed to set backup time:', e);
+  }
+}
