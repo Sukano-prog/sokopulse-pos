@@ -639,18 +639,19 @@ function renderCart() {
 
 function updateTotals() {
     var subtotal = cart.reduce(function(s, i) { return s + (i.price * i.qty * (1 - (i.discount || 0) / 100)); }, 0);
-    var tax = 0;
-    if (taxEnabled && taxRate > 0) {
-        var taxableSubtotal = 0;
-        cart.forEach(function(item) {
-            var product = products.find(function(p) { return p.id === item.id; });
-            var taxType = product ? (product.tax_type || 'VAT') : 'VAT';
-            var itemTotal = item.price * item.qty * (1 - (item.discount || 0) / 100);
-            if (taxType === 'VAT') taxableSubtotal += itemTotal;
-        });
-        tax = taxableSubtotal * (taxRate / 100);
-    }
-    var total = subtotal + tax;
+var tax = 0;
+if (taxEnabled && taxRate > 0) {
+cart.forEach(function(item) {
+var product = products.find(function(p) { return p.id === item.id; });
+var taxType = product ? (product.tax_type || 'VAT') : 'VAT';
+var itemTotal = item.price * item.qty * (1 - (item.discount || 0) / 100);
+// Extract VAT from inclusive price
+if (taxType === 'VAT') {
+tax += itemTotal - (itemTotal / (1 + (taxRate / 100)));
+}
+});
+}
+var total = subtotal; // Total is just the sum of inclusive prices
     document.getElementById('cartSubtotal').textContent = 'KES ' + subtotal.toFixed(2);
     document.getElementById('cartTax').textContent = 'KES ' + tax.toFixed(2);
     document.getElementById('cartTotal').textContent = 'KES ' + total.toFixed(2);
@@ -838,18 +839,19 @@ var cashPendingOrder = null;
 function openCashTender() {
     if (cart.length === 0) { alert('Cart is empty'); return; }
     var subtotal = cart.reduce(function(s, i) { return s + (i.price * i.qty * (1 - (i.discount || 0) / 100)); }, 0);
-    var tax = 0;
-    if (taxEnabled && taxRate > 0) {
-        var taxableSubtotal = 0;
-        cart.forEach(function(item) {
-            var product = products.find(function(p) { return p.id === item.id; });
-            var taxType = product ? (product.tax_type || 'VAT') : 'VAT';
-            var itemTotal = item.price * item.qty * (1 - (item.discount || 0) / 100);
-            if (taxType === 'VAT') taxableSubtotal += itemTotal;
-        });
-        tax = taxableSubtotal * (taxRate / 100);
-    }
-    var total = subtotal + tax;
+var tax = 0;
+if (taxEnabled && taxRate > 0) {
+cart.forEach(function(item) {
+var product = products.find(function(p) { return p.id === item.id; });
+var taxType = product ? (product.tax_type || 'VAT') : 'VAT';
+var itemTotal = item.price * item.qty * (1 - (item.discount || 0) / 100);
+// Extract VAT from inclusive price
+if (taxType === 'VAT') {
+tax += itemTotal - (itemTotal / (1 + (taxRate / 100)));
+}
+});
+}
+var total = subtotal; // Total is just the sum of inclusive prices
     cashPendingOrder = { subtotal: subtotal, tax: tax, total: total };
     document.getElementById('cashTotalAmount').textContent = 'KES ' + total.toFixed(2);
     document.getElementById('cashReceived').value = '';
@@ -880,18 +882,19 @@ function closeCashTender() { document.getElementById('cashTenderModal').classLis
 function processPayment(method, amountReceived) {
     if (cart.length === 0) { alert('Cart is empty'); return; }
     var subtotal = cart.reduce(function(s, i) { return s + (i.price * i.qty * (1 - (i.discount || 0) / 100)); }, 0);
-    var tax = 0;
-    if (taxEnabled && taxRate > 0) {
-        var taxableSubtotal = 0;
-        cart.forEach(function(item) {
-            var product = products.find(function(p) { return p.id === item.id; });
-            var taxType = product ? (product.tax_type || 'VAT') : 'VAT';
-            var itemTotal = item.price * item.qty * (1 - (item.discount || 0) / 100);
-            if (taxType === 'VAT') taxableSubtotal += itemTotal;
-        });
-        tax = taxableSubtotal * (taxRate / 100);
-    }
-    var total = subtotal + tax;
+var tax = 0;
+if (taxEnabled && taxRate > 0) {
+cart.forEach(function(item) {
+var product = products.find(function(p) { return p.id === item.id; });
+var taxType = product ? (product.tax_type || 'VAT') : 'VAT';
+var itemTotal = item.price * item.qty * (1 - (item.discount || 0) / 100);
+// Extract VAT from inclusive price
+if (taxType === 'VAT') {
+tax += itemTotal - (itemTotal / (1 + (taxRate / 100)));
+}
+});
+}
+var total = subtotal; // Total is just the sum of inclusive prices
     var customerName = selectedCustomer ? selectedCustomer.name : 'Walk-in';
     var customerId = selectedCustomer ? selectedCustomer.id : null;
     var methodNames = { cash: 'Cash', mpesa: 'M-Pesa', card: 'Card', credit: 'Credit', bank: 'Bank Transfer' };
@@ -970,18 +973,19 @@ function processPayment(method, amountReceived) {
 function printCartPreview() {
     if (cart.length === 0) { alert('Cart is empty'); return; }
     var subtotal = cart.reduce(function(s, i) { return s + (i.price * i.qty * (1 - (i.discount || 0) / 100)); }, 0);
-    var tax = 0;
-    if (taxEnabled && taxRate > 0) {
-        var taxableSubtotal = 0;
-        cart.forEach(function(item) {
-            var product = products.find(function(p) { return p.id === item.id; });
-            var taxType = product ? (product.tax_type || 'VAT') : 'VAT';
-            var itemTotal = item.price * item.qty * (1 - (item.discount || 0) / 100);
-            if (taxType === 'VAT') taxableSubtotal += itemTotal;
-        });
-        tax = taxableSubtotal * (taxRate / 100);
-    }
-    var total = subtotal + tax;
+var tax = 0;
+if (taxEnabled && taxRate > 0) {
+cart.forEach(function(item) {
+var product = products.find(function(p) { return p.id === item.id; });
+var taxType = product ? (product.tax_type || 'VAT') : 'VAT';
+var itemTotal = item.price * item.qty * (1 - (item.discount || 0) / 100);
+// Extract VAT from inclusive price
+if (taxType === 'VAT') {
+tax += itemTotal - (itemTotal / (1 + (taxRate / 100)));
+}
+});
+}
+var total = subtotal; // Total is just the sum of inclusive prices
     var order = {
         order_number: 'PREVIEW-' + Date.now().toString().slice(-6),
         date: new Date().toISOString(),
@@ -1006,24 +1010,24 @@ function showReceipt(order) {
     // Strip existing 'Tel: ' prefix to avoid duplication
     storePhone = storePhone.replace(/^Tel:\s*/i, '');
     var storeEmail = document.getElementById('storeEmailDisplay')?.textContent || '';
-    var subtotal = order.subtotal || items.reduce(function(s, i) { return s + (i.price || 0) * (i.qty || 1) * (1 - (i.discount || 0) / 100); }, 0);
-    var tax = 0;
-    var taxDisplay = '';
-    var settings = window.receiptSettings || {};
-    if (taxEnabled && taxRate > 0 && settings.showTax !== false) {
-        var taxableSubtotal = 0;
-        items.forEach(function(item) {
-            var product = products.find(function(p) { return p.id === item.id; });
-            var taxType = product ? (product.tax_type || 'VAT') : 'VAT';
-            var itemTotal = item.price * item.qty * (1 - (item.discount || 0) / 100);
-            if (taxType === 'VAT') taxableSubtotal += itemTotal;
-        });
-        tax = taxableSubtotal * (taxRate / 100);
-        taxDisplay = taxName + ' (' + taxRate + '%):   KES ' + tax.toFixed(2) + '\n';
-    } else {
-        taxDisplay = 'Tax:          KES 0.00\n';
-    }
-    var total = subtotal + tax;
+    var total = order.total || items.reduce(function(s, i) { return s + (i.price || 0) * (i.qty || 1) * (1 - (i.discount || 0) / 100); }, 0);
+var subtotal = total; // Base amount
+var tax = 0;
+var taxDisplay = '';
+var settings = window.receiptSettings || {};
+if (taxEnabled && taxRate > 0 && settings.showTax !== false) {
+items.forEach(function(item) {
+var product = products.find(function(p) { return p.id === item.id; });
+var taxType = product ? (product.tax_type || 'VAT') : 'VAT';
+var itemTotal = item.price * item.qty * (1 - (item.discount || 0) / 100);
+if (taxType === 'VAT') {
+tax += itemTotal - (itemTotal / (1 + (taxRate / 100)));
+}
+});
+taxDisplay = taxName + ' (' + taxRate + '%) Included: KES ' + tax.toFixed(2) + '\n';
+} else {
+taxDisplay = '';
+}
     var line = '--------------------------------\n';
     var dline = '================================\n';
     var receipt = '';
